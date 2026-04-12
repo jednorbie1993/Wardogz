@@ -1,4 +1,4 @@
-# Wardogz
+# Wardogz 🐶⚔️
 A text-based dog RPG game in C.
 
 Wardogz is a text-based RPG game written in C where players train dogs, battle enemies, and explore a simple world.
