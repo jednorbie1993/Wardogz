@@ -7,6 +7,11 @@ Wardogz is a text-based RPG game written in C where players train dogs, battle e
 - Battle system
 - Leveling system
 - Items and upgrades
+- 
+- ## Future Plans
+- Add inventory system
+- Add boss battles
+- Save/Load system
 
 ## How to Run
 gcc main.c -o wardogz
