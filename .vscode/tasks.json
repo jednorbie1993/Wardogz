@@ -2,15 +2,14 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Run C Program",
+      "label": "build C program",
       "type": "shell",
       "command": "gcc",
       "args": [
+        "-g",
         "${file}",
         "-o",
-        "${workspaceFolder}/output/${fileBasenameNoExtension}.exe",
-        "&&",
-        "${workspaceFolder}/output/${fileBasenameNoExtension}.exe"
+        "${fileDirname}\\${fileBasenameNoExtension}.exe"
       ],
       "group": {
         "kind": "build",
