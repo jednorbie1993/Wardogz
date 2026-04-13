@@ -1,30 +1,40 @@
 #include <stdio.h>
-
-// Structure for Dog
-struct Dog {
-    char name[50];
-    int hp;
-    int attack;
-    int speed;
-};
+#include "dog.h"
 
 int main() {
     struct Dog player;
+    int choice;
 
-    // Assign values
-    printf("Enter your dog's name: ");
-    scanf("%s", player.name);
+    createDog(&player);
 
-    player.hp = 100;
-    player.attack = 20;
-    player.speed = 10;
+    while (1) {
+        printf("\n===== WARDOGZ MENU =====\n");
+        printf("1. View Stats\n");
+        printf("2. Train Dog\n");
+        printf("3. Battle \n");
+        printf("4. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
 
-    // Display stats
-    printf("\n--- Your Dog ---\n");
-    printf("Name: %s\n", player.name);
-    printf("HP: %d\n", player.hp);
-    printf("Attack: %d\n", player.attack);
-    printf("Speed: %d\n", player.speed);
+        if (choice == 1) {
+            printDog(player);
+        }
+        else if (choice == 2) {
+            player.attack += 5;
+            player.hp += 10;
+            printf("You trained your dog!\n");
+        }
+        else if (choice == 3) {
+            battle(&player);
+        }
+        else if (choice == 4) {
+            printf("Exiting game...\n");
+            break;
+        }
+        else {
+            printf("Invalid choice!\n");
+        }
+    }
 
     return 0;
 }
