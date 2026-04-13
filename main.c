@@ -1,7 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include "dog.h"
 
+
+
 int main() {
+
+    srand(time(NULL));
+
     struct Dog player;
     int choice;
 
