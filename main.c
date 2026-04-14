@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "dog.h"
-
+#include <windows.h>
 
 
 int main() {

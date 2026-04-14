@@ -72,7 +72,7 @@ void battle(struct Dog *player) {
             printf("1. Bite\n2. Scratch\n3. Growl\n4. Lock Jaw\n");
             scanf("%d", &move);
             while (getchar() != '\n');
-            
+
             int damage = player->attack;
 
             if (move == 1) damage += 5;
@@ -101,7 +101,7 @@ void battle(struct Dog *player) {
         }
 
         if (enemy.hp <= 0) {
-            printf("\n🏆 YOU WIN!\n");
+            printf("\n YOU WIN!\n");
             break;
         }
 
@@ -131,7 +131,7 @@ void battle(struct Dog *player) {
 
             if (move == 0) {
                 enemyDamage += 5;
-                printf("Enemy used Bite!\n");
+               printf("Enemy used Bite!\n");
             }
             else if (move == 1) {
                 enemyDamage += 3;
