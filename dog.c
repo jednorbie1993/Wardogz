@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "dog.h"
+#include <windows.h>
 
 void createDog(struct Dog *d) {
     printf("Enter your dog's name: ");
@@ -19,17 +20,51 @@ void printDog(struct Dog d) {
     printf("Speed: %d\n", d.speed);
 }
 
-void showHPBar(int hp, int maxHp) {
-    int bars = (hp * 10) / maxHp;
+void typeText(char *text, int speed) {
+    for (int i = 0; text[i] != '\0'; i++) {
+        printf("%c", text[i]);
+        Sleep(speed); //  dynamic na
+    }
+}
 
-    for (int i = 0; i < 10; i++) {
-        if (i < bars)
-            printf("#");
-        else
-            printf("-");
+void showHPBarPlayer(int hp, int maxHp) {
+    static int lastHP = 100;
+
+    for (int current = lastHP; current >= hp; current--) {
+        int bars = (current * 10) / maxHp;
+
+        printf("\rPLAYER: ");
+        for (int i = 0; i < 10; i++) {
+            if (i < bars) printf("#");
+            else printf("-");
+        }
+
+        printf(" (%d/%d)", current, maxHp);
+        Sleep(30);
     }
 
-    printf(" (%d/%d)\n", hp, maxHp);
+    printf("\n");
+    lastHP = hp;
+}
+
+void showHPBarEnemy(int hp, int maxHp) {
+    static int lastHP = 100;
+
+    for (int current = lastHP; current >= hp; current--) {
+        int bars = (current * 10) / maxHp;
+
+        printf("\rENEMY : ");
+        for (int i = 0; i < 10; i++) {
+            if (i < bars) printf("#");
+            else printf("-");
+        }
+
+        printf(" (%d/%d)", current, maxHp);
+        Sleep(30);
+    }
+
+    printf("\n");
+    lastHP = hp;
 }
 
 void waitForEnter() {
@@ -51,10 +86,8 @@ void battle(struct Dog *player) {
 
         // ================= STATUS =================
         printf("\n--- BATTLE STATUS ---\n");
-        printf("PLAYER: ");
-        showHPBar(player->hp, 100);
-        printf("ENEMY : ");
-        showHPBar(enemy.hp, 100);
+        showHPBarPlayer(player->hp, 100);
+        showHPBarEnemy(enemy.hp, 100);
 
         // ================= PLAYER TURN =================
         printf("\n--- YOUR TURN ---\n");
@@ -131,15 +164,15 @@ void battle(struct Dog *player) {
 
             if (move == 0) {
                 enemyDamage += 5;
-               printf("Enemy used Bite!\n");
+               typeText("Enemy used Bite!\n", 30);
             }
             else if (move == 1) {
                 enemyDamage += 3;
-                printf("Enemy used Scratch!\n");
+                typeText("Enemy used Scratch!\n", 20);
             }
             else {
                 enemyDamage += 8;
-                printf("Enemy used Lock Jaw!\n");
+                typeText("Enemy used Lock Jaw!\n", 25);
             }
 
             if (defending) {
