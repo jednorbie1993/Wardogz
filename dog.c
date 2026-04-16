@@ -84,6 +84,8 @@ void battle(struct Dog *player) {
 
     while (player->hp > 0 && enemy.hp > 0) {
 
+        system("cls"); //  CLEAR SCREEN EVERY TURN
+
         // ================= STATUS =================
         printf("\n--- BATTLE STATUS ---\n");
         showHPBarPlayer(player->hp, 100);
@@ -106,17 +108,51 @@ void battle(struct Dog *player) {
             scanf("%d", &move);
             while (getchar() != '\n');
 
+            if (move < 1 || move > 4) {
+            printf("Invalid move!\n");
+            waitForEnter();
+            continue; // balik sa next loop (your turn ulit)
+            }
+
             int damage = player->attack;
 
-            if (move == 1) damage += 5;
-            else if (move == 2) damage += 3;
-            else if (move == 3) damage += 1;
-            else if (move == 4) damage += 8;
+            char *moveName = "Unknown"; // default
+
+            if (move == 1) {
+                damage += 5;
+                moveName = "Bite";
+            }
+            else if (move == 2) {
+                damage += 3;
+                moveName = "Scratch";
+            }
+            else if (move == 3) {
+                damage += 1;
+                moveName = "Growl";
+            }
+            else if (move == 4) {
+                damage += 8;
+                moveName = "Lock Jaw";
+            }
+            
+            char buffer[50];
+            sprintf(buffer, "You used %s...\n", moveName);
+            typeText(buffer, 20);
+
+            printf("Attacking");
+            for (int i = 0; i < 3; i++) {
+                printf(".");
+                Sleep(300);
+            }
+            printf("\n");
 
             enemy.hp -= damage;
             if (enemy.hp < 0) enemy.hp = 0;
 
-            printf("You dealt %d damage!\n", damage);
+            int variance = rand() % 6; // 0–5
+            damage += variance;
+
+            printf("You dealt %d damage! (+%d random)\n", damage, variance);
             waitForEnter();
         }
         else if (choice == 2) {
@@ -141,17 +177,19 @@ void battle(struct Dog *player) {
         // ================= ENEMY TURN =================
         printf("\n--- ENEMY TURN ---\n");
 
-        int action = rand() % 3;
+        int action = rand() % 100;
         int enemyDamage = enemy.attack;
+        int variance = rand() % 6;
+        enemyDamage += variance;
 
-        if (enemy.hp <= 30 && action == 0) {
+        if (enemy.hp <= 30 && action == 40) {
             // HEAL
             enemy.hp += 15;
             if (enemy.hp > 100) enemy.hp = 100;
             printf("Enemy used Heal! (+15 HP)\n");
             waitForEnter();
         }
-        else if (action == 1) {
+        else if (action == 75) {
             // DEFEND (simple)
             printf("Enemy is defending!\n");
             waitForEnter();
@@ -162,17 +200,19 @@ void battle(struct Dog *player) {
             // ATTACK
             int move = rand() % 3;
 
+            char *moveName;
+
             if (move == 0) {
                 enemyDamage += 5;
-               typeText("Enemy used Bite!\n", 30);
+                moveName = "Bite";
             }
             else if (move == 1) {
                 enemyDamage += 3;
-                typeText("Enemy used Scratch!\n", 20);
+                moveName = "Scratch";
             }
             else {
                 enemyDamage += 8;
-                typeText("Enemy used Lock Jaw!\n", 25);
+                moveName = "Lock Jaw";
             }
 
             if (defending) {
@@ -180,7 +220,21 @@ void battle(struct Dog *player) {
                 defending = 0;
             }
 
-                        player->hp -= enemyDamage;
+            char buffer[50];
+            sprintf(buffer, "Enemy used %s...\n", moveName);
+            typeText(buffer, 25);
+
+            // 🔥 attack animation
+            printf("Attacking");
+            for (int i = 0; i < 3; i++) {
+                printf(".");
+                Sleep(300);
+            }
+            printf("\n");
+
+            player->hp -= enemyDamage;
+            if (player->hp < 0) player->hp = 0;
+
             printf("Enemy dealt %d damage!\n", enemyDamage);
             waitForEnter();
         }
