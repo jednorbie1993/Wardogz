@@ -4,12 +4,11 @@
 #include "dog.h"
 #include <windows.h>
 
-
 int main() {
 
     srand(time(NULL));
 
-    struct Dog player;
+    Dog player;
     int choice;
 
     createDog(&player);
@@ -18,7 +17,7 @@ int main() {
         printf("\n===== WARDOGZ MENU =====\n");
         printf("1. View Stats\n");
         printf("2. Train Dog\n");
-        printf("3. Battle \n");
+        printf("3. Battle\n");
         printf("4. Exit\n");
         printf("Enter choice: ");
         scanf("%d", &choice);
@@ -29,9 +28,11 @@ int main() {
         else if (choice == 2) {
             player.attack += 5;
             player.hp += 10;
+            if (player.hp > player.maxHP) player.hp = player.maxHP;
             printf("You trained your dog!\n");
         }
         else if (choice == 3) {
+            system("cls");
             battle(&player);
         }
         else if (choice == 4) {
@@ -45,3 +46,10 @@ int main() {
 
     return 0;
 }
+
+/*
+
+gcc main.c dog.c -o wardogz
+.\wardogz.exe
+
+*/

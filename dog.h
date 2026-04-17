@@ -1,16 +1,18 @@
 #ifndef DOG_H
 #define DOG_H
 
-struct Dog {
+typedef struct {
     char name[50];
     int hp;
+    int maxHP;
     int attack;
     int speed;
-};
+} Dog;
 
-void createDog(struct Dog *d);
-void printDog(struct Dog d);
-void battle(struct Dog *player);
-void showHPBar(int hp, int maxHp);
+// prototypes (WALANG struct Dog dito!)
+void createDog(Dog *d);
+void printDog(Dog d);
+void battle(Dog *player);
+void displayBattleStatus(Dog player, Dog enemy);
 
 #endif

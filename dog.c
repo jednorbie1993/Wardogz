@@ -1,18 +1,19 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include "dog.h"
+#include <stdlib.h>
 #include <windows.h>
 
-void createDog(struct Dog *d) {
+void createDog(Dog *d) {
     printf("Enter your dog's name: ");
     scanf("%s", d->name);
 
     d->hp = 100;
+    d->maxHP = 100;  
     d->attack = 20;
     d->speed = 10;
 }
 
-void printDog(struct Dog d) {
+void printDog(Dog d) {
     printf("\n--- Dog Info ---\n");
     printf("Name: %s\n", d.name);
     printf("HP: %d\n", d.hp);
@@ -67,14 +68,25 @@ void showHPBarEnemy(int hp, int maxHp) {
     lastHP = hp;
 }
 
+void displayBattleStatus(Dog player, Dog enemy) {
+    printf("\n--- BATTLE STATUS ---\n");
+
+    printf("PLAYER: ");
+    showHPBarPlayer(player.hp, player.maxHP);
+
+    printf("ENEMY : ");
+    showHPBarEnemy(enemy.hp, enemy.maxHP);
+}
+
 void waitForEnter() {
     printf("\nPress Enter to continue...");
     getchar(); // wait for enter
 }
 
-void battle(struct Dog *player) {
-    struct Dog enemy;
+void battle(Dog *player) {
+    Dog enemy;
     enemy.hp = 100;
+    enemy.maxHP = 100;
     enemy.attack = 10;
 
     int choice;
@@ -102,6 +114,10 @@ void battle(struct Dog *player) {
         while (getchar() != '\n'); // clear buffer
 
         if (choice == 1) {
+
+            system("cls");
+            displayBattleStatus(*player, enemy);
+
             int move;
             printf("\nChoose Attack:\n");
             printf("1. Bite\n2. Scratch\n3. Growl\n4. Lock Jaw\n");
