@@ -1,18 +1,41 @@
-# Wardogz 🐶⚔️
-A text-based dog RPG game in C.
+# 🐶⚔️ Wardogz
 
-Wardogz is a text-based RPG game written in C where players train dogs, battle enemies, and explore a simple world.
+A text-based RPG game built in C where players train, upgrade, and battle dogs in a simple turn-based combat system.
 
-## Features
-- Battle system
-- Leveling system
-- Items and upgrades
-- 
-- ## Future Plans
-- Add inventory system
-- Add boss battles
-- Save/Load system
+---
 
-## How to Run
-gcc main.c -o wardogz
+## 🎮 Overview
+
+Wardogz is a console-based role-playing game written in C.  
+Players manage their dog, improve stats, and fight enemies through a turn-based battle system.
+
+This project demonstrates core programming concepts such as:
+- Structs and pointers
+- Modular programming (multiple `.c` and `.h` files)
+- Game loop design
+- Basic combat system logic
+
+---
+
+## ✨ Features
+- ⚔️ Turn-based battle system  
+- 🐶 Dog stats (HP, attack, speed)  
+- 📈 Leveling / progression system  
+- 🎒 Items and upgrades system  
+- 🧠 Simple AI enemy behavior  
+
+---
+
+## 🚀 Future Improvements
+- 💾 Save / Load system  
+- 🎒 Inventory system upgrade  
+- 👹 Boss battles  
+- 🗺️ Map / exploration system  
+- 🎨 Better UI (colored terminal or ASCII UI)  
+
+---
+
+## ▶️ How to Run
+```bash
+gcc main.c dog.c -o wardogz
 ./wardogz
