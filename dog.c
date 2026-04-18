@@ -31,17 +31,32 @@ void typeText(char *text, int speed) {
 void showHPBarPlayer(int hp, int maxHp) {
     static int lastHP = 100;
 
-    for (int current = lastHP; current >= hp; current--) {
-        int bars = (current * 10) / maxHp;
+    if (hp < lastHP) {
+        for (int current = lastHP; current >= hp; current--) {
+            int bars = (current * 10) / maxHp;
 
-        printf("\rPLAYER: ");
-        for (int i = 0; i < 10; i++) {
-            if (i < bars) printf("#");
-            else printf("-");
+            printf("\rPLAYER: [");
+            for (int i = 0; i < 10; i++) {
+                if (i < bars) printf("#");
+                else printf("-");
+            }
+
+            printf("] (%d/%d)", current, maxHp);
+            Sleep(30);
         }
+    } else {
+        for (int current = lastHP; current <= hp; current++) {
+            int bars = (current * 10) / maxHp;
 
-        printf(" (%d/%d)", current, maxHp);
-        Sleep(30);
+            printf("\rPLAYER: [");
+            for (int i = 0; i < 10; i++) {
+                if (i < bars) printf("#");
+                else printf("-");
+            }
+
+            printf("] (%d/%d)", current, maxHp);
+            Sleep(30);
+        }
     }
 
     printf("\n");
@@ -49,19 +64,38 @@ void showHPBarPlayer(int hp, int maxHp) {
 }
 
 void showHPBarEnemy(int hp, int maxHp) {
-    static int lastHP = 100;
+    static int lastHP = -1;
 
-    for (int current = lastHP; current >= hp; current--) {
-        int bars = (current * 10) / maxHp;
+    if (lastHP == -1) {
+        lastHP = hp;
+    }
 
-        printf("\rENEMY : ");
-        for (int i = 0; i < 10; i++) {
-            if (i < bars) printf("#");
-            else printf("-");
+    if (hp < lastHP) {
+        for (int current = lastHP; current >= hp; current--) {
+            int bars = (current * 10) / maxHp;
+
+            printf("\rENEMY : [");
+            for (int i = 0; i < 10; i++) {
+                if (i < bars) printf("#");
+                else printf("-");
+            }
+
+            printf("] (%d/%d)", current, maxHp);
+            Sleep(30);
         }
+    } else {
+        for (int current = lastHP; current <= hp; current++) {
+            int bars = (current * 10) / maxHp;
 
-        printf(" (%d/%d)", current, maxHp);
-        Sleep(30);
+            printf("\rENEMY : [");
+            for (int i = 0; i < 10; i++) {
+                if (i < bars) printf("#");
+                else printf("-");
+            }
+
+            printf("] (%d/%d)", current, maxHp);
+            Sleep(30);
+        }
     }
 
     printf("\n");
@@ -151,6 +185,10 @@ void battle(Dog *player) {
                 moveName = "Lock Jaw";
             }
             
+            system("cls");
+            displayBattleStatus(*player, enemy);
+            printf("\n");
+
             char buffer[50];
             sprintf(buffer, "You used %s...\n", moveName);
             typeText(buffer, 20);
@@ -171,6 +209,7 @@ void battle(Dog *player) {
             printf("You dealt %d damage! (+%d random)\n", damage, variance);
             waitForEnter();
         }
+
         else if (choice == 2) {
             defending = 1;
             printf("You are defending!\n");
@@ -189,6 +228,9 @@ void battle(Dog *player) {
             printf("\n YOU WIN!\n");
             break;
         }
+
+        system("cls");
+        displayBattleStatus(*player, enemy);
 
         // ================= ENEMY TURN =================
         printf("\n--- ENEMY TURN ---\n");
@@ -248,9 +290,14 @@ void battle(Dog *player) {
             }
             printf("\n");
 
+            system("cls");
+            displayBattleStatus(*player, enemy);
+            printf("\n");
+
             player->hp -= enemyDamage;
             if (player->hp < 0) player->hp = 0;
 
+            printf("\n");
             printf("Enemy dealt %d damage!\n", enemyDamage);
             waitForEnter();
         }
