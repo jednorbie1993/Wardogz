@@ -13,12 +13,15 @@ int main() {
 
     createDog(&player);
 
+    int restCount = 0;
+
     while (1) {
         printf("\n===== WARDOGZ MENU =====\n");
         printf("1. View Stats\n");
         printf("2. Train Dog\n");
         printf("3. Battle\n");
-        printf("4. Exit\n");
+        printf("4. Rest\n");
+        printf("5. Exit\n");
         printf("Enter choice: ");
         scanf("%d", &choice);
 
@@ -36,6 +39,16 @@ int main() {
             battle(&player);
         }
         else if (choice == 4) {
+            if (restCount < 3) {
+                player.hp = player.maxHP;
+                restCount++;
+                printf("You rested (%d/3)\n", restCount);
+            } else {
+                printf("You can't rest anymore today!\n");
+            }
+            waitForEnter();
+        }
+        else if (choice == 5) {
             printf("Exiting game...\n");
             break;
         }
