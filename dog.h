@@ -15,5 +15,7 @@ void printDog(Dog d);
 void battle(Dog *player);
 void displayBattleStatus(Dog player, Dog enemy);
 void waitForEnter();
+void showHPBarPlayer(int hp, int maxHp);
+void pauseAndClear();
 
 #endif

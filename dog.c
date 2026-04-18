@@ -2,10 +2,13 @@
 #include "dog.h"
 #include <stdlib.h>
 #include <windows.h>
+#include <conio.h>
 
 void createDog(Dog *d) {
     printf("Enter your dog's name: ");
-    scanf("%s", d->name);
+    fgets(d->name, 50, stdin);
+    d->name[strcspn(d->name, "\n")] = 0;
+    
 
     d->hp = 100;
     d->maxHP = 100;  
@@ -114,7 +117,12 @@ void displayBattleStatus(Dog player, Dog enemy) {
 
 void waitForEnter() {
     printf("\nPress Enter to continue...");
-    getchar(); // wait for enter
+    getchar(); // works perfectly kapag fgets na lahat
+}
+
+void pauseAndClear() {
+    waitForEnter();
+    system("cls");
 }
 
 void battle(Dog *player) {
@@ -144,19 +152,23 @@ void battle(Dog *player) {
         printf("3. Item (Heal)\n");
         printf("4. Surrender\n");
         printf("Choice: ");
-        scanf("%d", &choice);
-        while (getchar() != '\n'); // clear buffer
+
+        char input[10];
+        fgets(input, sizeof(input), stdin);
+        choice = atoi(input);
 
         if (choice == 1) {
 
             system("cls");
             displayBattleStatus(*player, enemy);
 
-            int move;
+            
             printf("\nChoose Attack:\n");
             printf("1. Bite\n2. Scratch\n3. Growl\n4. Lock Jaw\n");
-            scanf("%d", &move);
-            while (getchar() != '\n');
+
+            char input[10];
+            fgets(input, sizeof(input), stdin);
+            int move = atoi(input);
 
             if (move < 1 || move > 4) {
             printf("Invalid move!\n");
@@ -196,7 +208,7 @@ void battle(Dog *player) {
             printf("Attacking");
             for (int i = 0; i < 3; i++) {
                 printf(".");
-                Sleep(300);
+                Sleep(100);
             }
             printf("\n");
 
@@ -221,12 +233,15 @@ void battle(Dog *player) {
         }
         else if (choice == 4) {
             printf("You surrendered...\n");
+            pauseAndClear();
             break;
         }
 
         if (enemy.hp <= 0) {
             printf("\n YOU WIN!\n");
+            pauseAndClear();
             break;
+            
         }
 
         system("cls");
@@ -286,13 +301,8 @@ void battle(Dog *player) {
             printf("Attacking");
             for (int i = 0; i < 3; i++) {
                 printf(".");
-                Sleep(300);
+                Sleep(100);
             }
-            printf("\n");
-
-            system("cls");
-            displayBattleStatus(*player, enemy);
-            printf("\n");
 
             player->hp -= enemyDamage;
             if (player->hp < 0) player->hp = 0;
@@ -303,16 +313,32 @@ void battle(Dog *player) {
         }
 
         if (player->hp <= 0) {
-            printf("\n YOU LOST!\n");
-            break;
+                printf("\nYOU LOST...\n");
+                Sleep(500);
+
+                printf("Recovering");
+                for (int i = 0; i < 3; i++) {
+                    printf(".");
+                    fflush(stdout);
+                    Sleep(150);
+                }
+
+                // reset HP
+                player->hp = player->maxHP;
+                enemy.hp = enemy.maxHP;
+            
+                printf("\nYou are back to full HP!\n");
+
+            // pause (press Enter)
+            printf("\nPress Enter to continue...");
+            getch();
+
+            system("cls"); // clear screen AFTER enter
+
+            return;
         }
 
     }   //  CLOSES while loop
 
 }   //  CLOSES battle function
-
-
-// =========================================
-// OUTSIDE NA DAPAT ITO
-// =========================================
 

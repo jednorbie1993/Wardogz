@@ -20,13 +20,18 @@ int main() {
         printf("1. View Stats\n");
         printf("2. Train Dog\n");
         printf("3. Battle\n");
-        printf("4. Rest\n");
+        printf("4. Rest (%d/3)\n", restCount);
         printf("5. Exit\n");
         printf("Enter choice: ");
-        scanf("%d", &choice);
+
+        char input[10];
+        fgets(input, sizeof(input), stdin);
+        choice = atoi(input);
 
         if (choice == 1) {
+            system("cls");
             printDog(player);
+            pauseAndClear(); // 👈 eto na kapalit
         }
         else if (choice == 2) {
             player.attack += 5;
@@ -37,16 +42,41 @@ int main() {
         else if (choice == 3) {
             system("cls");
             battle(&player);
+
+            restCount = 0; //  RESET AFTER BATTLE
         }
-        else if (choice == 4) {
-            if (restCount < 3) {
-                player.hp = player.maxHP;
-                restCount++;
-                printf("You rested (%d/3)\n", restCount);
+        else if (choice == 4) { // REST
+
+            system("cls");
+            
+            if (player.hp == player.maxHP) {
+                printf("You're already at full HP!\n");
             } else {
-                printf("You can't rest anymore today!\n");
+
+                // 🔥 DITO ILAGAY (before heal)
+                printf("%s is resting", player.name);
+                for (int i = 0; i < 3; i++) {
+                    printf(".");
+                    Sleep(300);
+                }
+                printf("\n");
+
+                int heal = 20;
+                player.hp += heal;
+
+                if (player.hp > player.maxHP)
+                    player.hp = player.maxHP;
+
+                restCount++; // 🔥 IMPORTANT    
+
+                printf("You recovered +%d HP!\n", heal);
+
+                // 🔥 then show updated HP
+                showHPBarPlayer(player.hp, player.maxHP);
             }
+
             waitForEnter();
+            system("cls");
         }
         else if (choice == 5) {
             printf("Exiting game...\n");
