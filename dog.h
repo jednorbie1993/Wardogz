@@ -7,6 +7,11 @@ typedef struct {
     int maxHP;
     int attack;
     int speed;
+
+    int defense;
+    int accuracy;
+    int intelligence;
+
 } Dog;
 
 // prototypes (WALANG struct Dog dito!)

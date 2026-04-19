@@ -34,12 +34,22 @@ int main() {
             pauseAndClear(); // 👈 eto na kapalit
         }
         else if (choice == 2) {
+            system("cls");
+
             player.attack += 5;
             player.hp += 10;
+            player.defense += 2;
+            player.speed += 1;
+            player.accuracy += 2;
+            player.intelligence += 2;
+
             if (player.hp > player.maxHP) player.hp = player.maxHP;
+
             printf("You trained your dog!\n");
+
+            pauseAndClear();
         }
-        else if (choice == 3) {
+                else if (choice == 3) {
             system("cls");
             battle(&player);
 

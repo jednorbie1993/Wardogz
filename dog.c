@@ -3,20 +3,27 @@
 #include <stdlib.h>
 #include <windows.h>
 #include <conio.h>
+#include <string.h> // para sa strcspn
 
-void createDog(Dog *d) {
+void createDog(Dog *d)
+{
     printf("Enter your dog's name: ");
+
     fgets(d->name, 50, stdin);
     d->name[strcspn(d->name, "\n")] = 0;
-    
 
     d->hp = 100;
-    d->maxHP = 100;  
+    d->maxHP = 100;
     d->attack = 20;
     d->speed = 10;
+
+    d->defense = 5;
+    d->accuracy = 80; // 80% hit chance
+    d->intelligence = 10;
 }
 
-void printDog(Dog d) {
+void printDog(Dog d)
+{
     printf("\n--- Dog Info ---\n");
     printf("Name: %s\n", d.name);
     printf("HP: %d\n", d.hp);
@@ -24,37 +31,51 @@ void printDog(Dog d) {
     printf("Speed: %d\n", d.speed);
 }
 
-void typeText(char *text, int speed) {
-    for (int i = 0; text[i] != '\0'; i++) {
+void typeText(char *text, int speed)
+{
+    for (int i = 0; text[i] != '\0'; i++)
+    {
         printf("%c", text[i]);
         Sleep(speed); //  dynamic na
     }
 }
 
-void showHPBarPlayer(int hp, int maxHp) {
+void showHPBarPlayer(int hp, int maxHp)
+{
     static int lastHP = 100;
 
-    if (hp < lastHP) {
-        for (int current = lastHP; current >= hp; current--) {
+    if (hp < lastHP)
+    {
+        for (int current = lastHP; current >= hp; current--)
+        {
             int bars = (current * 10) / maxHp;
 
             printf("\rPLAYER: [");
-            for (int i = 0; i < 10; i++) {
-                if (i < bars) printf("#");
-                else printf("-");
+            for (int i = 0; i < 10; i++)
+            {
+                if (i < bars)
+                    printf("#");
+                else
+                    printf("-");
             }
 
             printf("] (%d/%d)", current, maxHp);
             Sleep(30);
         }
-    } else {
-        for (int current = lastHP; current <= hp; current++) {
+    }
+    else
+    {
+        for (int current = lastHP; current <= hp; current++)
+        {
             int bars = (current * 10) / maxHp;
 
             printf("\rPLAYER: [");
-            for (int i = 0; i < 10; i++) {
-                if (i < bars) printf("#");
-                else printf("-");
+            for (int i = 0; i < 10; i++)
+            {
+                if (i < bars)
+                    printf("#");
+                else
+                    printf("-");
             }
 
             printf("] (%d/%d)", current, maxHp);
@@ -66,34 +87,47 @@ void showHPBarPlayer(int hp, int maxHp) {
     lastHP = hp;
 }
 
-void showHPBarEnemy(int hp, int maxHp) {
+void showHPBarEnemy(int hp, int maxHp)
+{
     static int lastHP = -1;
 
-    if (lastHP == -1) {
+    if (lastHP == -1)
+    {
         lastHP = hp;
     }
 
-    if (hp < lastHP) {
-        for (int current = lastHP; current >= hp; current--) {
+    if (hp < lastHP)
+    {
+        for (int current = lastHP; current >= hp; current--)
+        {
             int bars = (current * 10) / maxHp;
 
             printf("\rENEMY : [");
-            for (int i = 0; i < 10; i++) {
-                if (i < bars) printf("#");
-                else printf("-");
+            for (int i = 0; i < 10; i++)
+            {
+                if (i < bars)
+                    printf("#");
+                else
+                    printf("-");
             }
 
             printf("] (%d/%d)", current, maxHp);
             Sleep(30);
         }
-    } else {
-        for (int current = lastHP; current <= hp; current++) {
+    }
+    else
+    {
+        for (int current = lastHP; current <= hp; current++)
+        {
             int bars = (current * 10) / maxHp;
 
             printf("\rENEMY : [");
-            for (int i = 0; i < 10; i++) {
-                if (i < bars) printf("#");
-                else printf("-");
+            for (int i = 0; i < 10; i++)
+            {
+                if (i < bars)
+                    printf("#");
+                else
+                    printf("-");
             }
 
             printf("] (%d/%d)", current, maxHp);
@@ -105,7 +139,8 @@ void showHPBarEnemy(int hp, int maxHp) {
     lastHP = hp;
 }
 
-void displayBattleStatus(Dog player, Dog enemy) {
+void displayBattleStatus(Dog player, Dog enemy)
+{
     printf("\n--- BATTLE STATUS ---\n");
 
     printf("PLAYER: ");
@@ -115,230 +150,242 @@ void displayBattleStatus(Dog player, Dog enemy) {
     showHPBarEnemy(enemy.hp, enemy.maxHP);
 }
 
-void waitForEnter() {
+void waitForEnter()
+{
     printf("\nPress Enter to continue...");
     getchar(); // works perfectly kapag fgets na lahat
 }
 
-void pauseAndClear() {
-    waitForEnter();
+void pauseAndClear()
+{
+    printf("\nPress Enter to continue...");
+    fflush(stdin); // optional (Windows)
+    getchar();
     system("cls");
 }
 
-void battle(Dog *player) {
+void battle(Dog *player)
+{
+    char input[10];
     Dog enemy;
+
     enemy.hp = 100;
     enemy.maxHP = 100;
     enemy.attack = 10;
+    enemy.defense = 5; // 🔥 IMPORTANT FIX
 
     int choice;
     int defending = 0;
 
     printf("\n=== BATTLE START ===\n");
 
-    while (player->hp > 0 && enemy.hp > 0) {
+    while (player->hp > 0 && enemy.hp > 0)
+    {
+        system("cls");
 
-        system("cls"); //  CLEAR SCREEN EVERY TURN
-
-        // ================= STATUS =================
         printf("\n--- BATTLE STATUS ---\n");
-        showHPBarPlayer(player->hp, 100);
-        showHPBarEnemy(enemy.hp, 100);
+        showHPBarPlayer(player->hp, player->maxHP);
+        showHPBarEnemy(enemy.hp, enemy.maxHP);
 
-        // ================= PLAYER TURN =================
         printf("\n--- YOUR TURN ---\n");
-        printf("1. Attack\n");
-        printf("2. Defend\n");
-        printf("3. Item (Heal)\n");
-        printf("4. Surrender\n");
+        printf("1. Attack\n2. Defend\n3. Item (Heal)\n4. Surrender\n");
         printf("Choice: ");
 
-        char input[10];
         fgets(input, sizeof(input), stdin);
         choice = atoi(input);
 
-        if (choice == 1) {
-
+        // ================= ATTACK =================
+        if (choice == 1)
+        {
             system("cls");
             displayBattleStatus(*player, enemy);
-
-            
             printf("\nChoose Attack:\n");
             printf("1. Bite\n2. Scratch\n3. Growl\n4. Lock Jaw\n");
 
-            char input[10];
             fgets(input, sizeof(input), stdin);
             int move = atoi(input);
 
-            if (move < 1 || move > 4) {
-            printf("Invalid move!\n");
-            waitForEnter();
-            continue; // balik sa next loop (your turn ulit)
+            if (move < 1 || move > 4)
+            {
+                printf("Invalid move!\n");
+                waitForEnter();
+                continue;
             }
 
-            int damage = player->attack;
+            int damage = 0;
+            char *moveName = "Unknown";
 
-            char *moveName = "Unknown"; // default
-
-            if (move == 1) {
-                damage += 5;
+            if (move == 1)
+            {
+                damage = player->attack + 5;
                 moveName = "Bite";
             }
-            else if (move == 2) {
-                damage += 3;
+            else if (move == 2)
+            {
+                damage = player->attack + 3;
                 moveName = "Scratch";
             }
-            else if (move == 3) {
-                damage += 1;
+            else if (move == 3)
+            {
                 moveName = "Growl";
             }
-            else if (move == 4) {
-                damage += 8;
+            else if (move == 4)
+            {
+                damage = player->attack + 8;
                 moveName = "Lock Jaw";
             }
-            
+
+            // 🎮 animation
             system("cls");
             displayBattleStatus(*player, enemy);
-            printf("\n");
 
-            char buffer[50];
-            sprintf(buffer, "You used %s...\n", moveName);
-            typeText(buffer, 20);
+            printf("\nYou used %s...\n", moveName);
 
             printf("Attacking");
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 3; i++)
+            {
                 printf(".");
-                Sleep(100);
+                fflush(stdout);
+                Sleep(200);
             }
             printf("\n");
 
-            enemy.hp -= damage;
-            if (enemy.hp < 0) enemy.hp = 0;
+            int hitChance = rand() % 100;
 
-            int variance = rand() % 6; // 0–5
-            damage += variance;
+            if (hitChance < player->accuracy)
+            {
+                if (move == 3)
+                {
+                    printf("Enemy attack reduced!\n");
+                    enemy.attack -= 2;
+                }
+                else
+                {
+                    int variance = rand() % 6;
+                    damage += variance;
 
-            printf("You dealt %d damage! (+%d random)\n", damage, variance);
+                    damage -= enemy.defense;
+                    if (damage < 1)
+                        damage = 1;
+
+                    enemy.hp -= damage;
+                    if (enemy.hp < 0)
+                        enemy.hp = 0;
+
+                    printf("It hit! You dealt %d damage!\n", damage);
+                }
+            }
+            else
+            {
+                printf("But it missed!\n");
+            }
+
             waitForEnter();
         }
 
-        else if (choice == 2) {
+        // ================= DEFEND =================
+        else if (choice == 2)
+        {
             defending = 1;
             printf("You are defending!\n");
+            waitForEnter();
         }
-        else if (choice == 3) {
+
+        // ================= HEAL =================
+        else if (choice == 3)
+        {
             player->hp += 20;
-            if (player->hp > 100) player->hp = 100;
+            if (player->hp > player->maxHP)
+                player->hp = player->maxHP;
+
             printf("You healed +20 HP!\n");
+            waitForEnter();
         }
-        else if (choice == 4) {
+
+        // ================= SURRENDER =================
+        else if (choice == 4)
+        {
             printf("You surrendered...\n");
             pauseAndClear();
             break;
         }
 
-        if (enemy.hp <= 0) {
-            printf("\n YOU WIN!\n");
+        // ================= WIN CHECK =================
+        if (enemy.hp <= 0)
+        {
+            printf("\nYOU WIN!\n");
             pauseAndClear();
             break;
-            
         }
-
+        // ================= ENEMY TURN =================
         system("cls");
         displayBattleStatus(*player, enemy);
 
-        // ================= ENEMY TURN =================
         printf("\n--- ENEMY TURN ---\n");
 
         int action = rand() % 100;
-        int enemyDamage = enemy.attack;
-        int variance = rand() % 6;
-        enemyDamage += variance;
+        int enemyDamage = enemy.attack + (rand() % 6);
 
-        if (enemy.hp <= 30 && action == 40) {
-            // HEAL
+        if (enemy.hp <= 30 && action < 20)
+        {
             enemy.hp += 15;
-            if (enemy.hp > 100) enemy.hp = 100;
-            printf("Enemy used Heal! (+15 HP)\n");
-            waitForEnter();
-        }
-        else if (action == 75) {
-            // DEFEND (simple)
-            printf("Enemy is defending!\n");
-            waitForEnter();
-            enemyDamage = enemyDamage / 2; // weaker next attack
-            
-        }
-        else {
-            // ATTACK
-            int move = rand() % 3;
+            if (enemy.hp > enemy.maxHP)
+                enemy.hp = enemy.maxHP;
 
+            printf("Enemy used Heal! (+15 HP)\n");
+        }
+        else
+        {
+            int move = rand() % 3;
             char *moveName;
 
-            if (move == 0) {
+            if (move == 0)
+            {
                 enemyDamage += 5;
                 moveName = "Bite";
             }
-            else if (move == 1) {
+            else if (move == 1)
+            {
                 enemyDamage += 3;
                 moveName = "Scratch";
             }
-            else {
+            else
+            {
                 enemyDamage += 8;
                 moveName = "Lock Jaw";
             }
 
-            if (defending) {
+            if (defending)
+            {
                 enemyDamage /= 2;
                 defending = 0;
+                printf("You defended! Damage reduced!\n");
             }
 
-            char buffer[50];
-            sprintf(buffer, "Enemy used %s...\n", moveName);
-            typeText(buffer, 25);
+            printf("Enemy used %s...\n", moveName);
 
-            // 🔥 attack animation
             printf("Attacking");
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 3; i++)
+            {
                 printf(".");
-                Sleep(100);
+                Sleep(150);
             }
 
             player->hp -= enemyDamage;
-            if (player->hp < 0) player->hp = 0;
+            if (player->hp < 0)
+                player->hp = 0;
 
-            printf("\n");
-            printf("Enemy dealt %d damage!\n", enemyDamage);
-            waitForEnter();
+            printf("\nEnemy dealt %d damage!\n", enemyDamage);
         }
 
-        if (player->hp <= 0) {
-                printf("\nYOU LOST...\n");
-                Sleep(500);
+        waitForEnter();
 
-                printf("Recovering");
-                for (int i = 0; i < 3; i++) {
-                    printf(".");
-                    fflush(stdout);
-                    Sleep(150);
-                }
-
-                // reset HP
-                player->hp = player->maxHP;
-                enemy.hp = enemy.maxHP;
-            
-                printf("\nYou are back to full HP!\n");
-
-            // pause (press Enter)
-            printf("\nPress Enter to continue...");
-            getch();
-
-            system("cls"); // clear screen AFTER enter
-
-            return;
+        // ================= LOSE CHECK =================
+        if (player->hp <= 0)
+        {
+            printf("\nYOU LOST...\n");
+            pauseAndClear();
+            break;
         }
-
-    }   //  CLOSES while loop
-
-}   //  CLOSES battle function
-
+    }
+}
