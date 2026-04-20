@@ -4,7 +4,8 @@
 #include "dog.h"
 #include <windows.h>
 
-int main() {
+int main()
+{
 
     srand(time(NULL));
 
@@ -15,25 +16,29 @@ int main() {
 
     int restCount = 0;
 
-    while (1) {
+    while (1)
+    {
         printf("\n===== WARDOGZ MENU =====\n");
         printf("1. View Stats\n");
         printf("2. Train Dog\n");
         printf("3. Battle\n");
         printf("4. Rest (%d/3)\n", restCount);
-        printf("5. Exit\n");
+        printf("5. System Log (%s)\n", systemLog ? "ON" : "OFF");
+        printf("6. Exit\n");
         printf("Enter choice: ");
 
         char input[10];
         fgets(input, sizeof(input), stdin);
         choice = atoi(input);
 
-        if (choice == 1) {
+        if (choice == 1)
+        {
             system("cls");
             printDog(player);
             pauseAndClear(); // 👈 eto na kapalit
         }
-        else if (choice == 2) {
+        else if (choice == 2)
+        {
             system("cls");
 
             player.attack += 5;
@@ -43,29 +48,41 @@ int main() {
             player.accuracy += 2;
             player.intelligence += 2;
 
-            if (player.hp > player.maxHP) player.hp = player.maxHP;
+            if (player.hp > player.maxHP)
+                player.hp = player.maxHP;
 
             printf("You trained your dog!\n");
 
             pauseAndClear();
         }
-                else if (choice == 3) {
+        else if (choice == 3)
+        {
             system("cls");
             battle(&player);
 
-            restCount = 0; //  RESET AFTER BATTLE
+            restCount = 0; // RESET AFTER BATTLE
         }
-        else if (choice == 4) { // REST
-
+        else if (choice == 4)
+        {
             system("cls");
-            
-            if (player.hp == player.maxHP) {
-                printf("You're already at full HP!\n");
-            } else {
 
-                // 🔥 DITO ILAGAY (before heal)
+            if (restCount >= 3)
+            {
+                printf("You're too tired to rest anymore!\n");
+                waitForEnter();
+                system("cls");
+            }
+            else if (player.hp == player.maxHP)
+            {
+                printf("You're already at full HP!\n");
+                waitForEnter();
+                system("cls");
+            }
+            else
+            {
                 printf("%s is resting", player.name);
-                for (int i = 0; i < 3; i++) {
+                for (int i = 0; i < 3; i++)
+                {
                     printf(".");
                     Sleep(300);
                 }
@@ -77,22 +94,49 @@ int main() {
                 if (player.hp > player.maxHP)
                     player.hp = player.maxHP;
 
-                restCount++; // 🔥 IMPORTANT    
+                restCount++;
 
                 printf("You recovered +%d HP!\n", heal);
-
-                // 🔥 then show updated HP
                 showHPBarPlayer(player.hp, player.maxHP);
+                waitForEnter();
+                system("cls");
             }
+        }
+        else if (choice == 5)
+        {
+            systemLog = !systemLog;
+
+            printf("System Log is now %s\n",
+                   systemLog ? "ON" : "OFF");
 
             waitForEnter();
             system("cls");
         }
-        else if (choice == 5) {
+        else if (choice == 6)
+        {
             printf("Exiting game...\n");
             break;
         }
-        else {
+        else
+        {
+            printf("Invalid choice!\n");
+        }
+        if (choice == 5)
+        {
+            systemLog = !systemLog;
+
+            printf("System Log is now %s\n",
+                   systemLog ? "ON" : "OFF");
+
+            waitForEnter();
+        }
+        else if (choice == 6)
+        {
+            printf("Exiting game...\n");
+            break;
+        }
+        else
+        {
             printf("Invalid choice!\n");
         }
     }

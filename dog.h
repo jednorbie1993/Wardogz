@@ -1,6 +1,8 @@
 #ifndef DOG_H
 #define DOG_H
 
+extern int systemLog;
+
 typedef struct {
     char name[50];
     int hp;
@@ -22,5 +24,6 @@ void displayBattleStatus(Dog player, Dog enemy);
 void waitForEnter();
 void showHPBarPlayer(int hp, int maxHp);
 void pauseAndClear();
+void loseSequence(Dog *player, Dog *enemy);
 
 #endif
