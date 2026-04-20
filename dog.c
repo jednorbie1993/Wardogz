@@ -6,6 +6,7 @@
 #include <string.h> // para sa strcspn
 
 int systemLog = 0;
+int animationOn = 1; //  NEW (default ON)
 
 void createDog(Dog *d)
 {
@@ -49,10 +50,17 @@ void printDog(Dog d)
 
 void typeText(char *text, int speed)
 {
+    if (!animationOn)
+    {
+        printf("%s", text);
+        return;
+    }
+
     for (int i = 0; text[i] != '\0'; i++)
     {
         printf("%c", text[i]);
-        Sleep(speed); //  dynamic na
+        fflush(stdout);   // 👉 para real-time output
+        Sleep(speed);
     }
 }
 
@@ -60,6 +68,26 @@ void showHPBarPlayer(int hp, int maxHp)
 {
     static int lastHP = 100;
 
+    // 👉 PAG OFF ANG ANIMATION (priority agad)
+    if (!animationOn)
+    {
+        int bars = (hp * 10) / maxHp;
+
+        printf("PLAYER: [");
+        for (int i = 0; i < 10; i++)
+        {
+            if (i < bars)
+                printf("#");
+            else
+                printf("-");
+        }
+        printf("] (%d/%d)\n", hp, maxHp);
+
+        lastHP = hp;
+        return;
+    }
+
+    // 👉 DAMAGE (HP pababa)
     if (hp < lastHP)
     {
         for (int current = lastHP; current >= hp; current--)
@@ -79,6 +107,7 @@ void showHPBarPlayer(int hp, int maxHp)
             Sleep(30);
         }
     }
+    // 👉 HEAL (HP pataas)
     else
     {
         for (int current = lastHP; current <= hp; current++)
@@ -106,6 +135,24 @@ void showHPBarPlayer(int hp, int maxHp)
 void showHPBarEnemy(int hp, int maxHp)
 {
     static int lastHP = -1;
+
+    if (!animationOn)
+    {
+        int bars = (hp * 10) / maxHp;
+
+        printf("ENEMY : [");
+        for (int i = 0; i < 10; i++)
+        {
+            if (i < bars)
+                printf("#");
+            else
+                printf("-");
+        }
+        printf("] (%d/%d)\n", hp, maxHp);
+
+        lastHP = hp;
+        return;
+    }
 
     if (lastHP == -1)
     {
@@ -183,7 +230,6 @@ void loseSequence(Dog *player, Dog *enemy)
     enemy->hp = enemy->maxHP;
 
     printf("\nYou are back to full HP!\n");
-
 }
 
 void waitForEnter()
@@ -196,7 +242,7 @@ void pauseAndClear()
 {
     printf("\nPress Enter to continue...");
 
-    getchar();   // no loop, no fflush, simple lang
+    getchar(); // no loop, no fflush, simple lang
 
     system("cls");
 }
@@ -312,17 +358,13 @@ void battle(Dog *player)
                     Sleep(80);
                 }
 
-                printf("\n");
-            }
-
-            // FINAL RESULT (always show once)
-            if (systemLog)
-            {
-                printf("\rRoll: %d | Accuracy: %d\n", roll, finalAccuracy);
+                // FINAL RESULT (overwrite same line, no extra line)
+                printf("\rRoll: %d | Accuracy: %d   \n", roll, finalAccuracy);
             }
             else
             {
-                printf("\r"); // just clean line, no spam
+                // no animation, just final
+                printf("Roll: %d | Accuracy: %d\n", roll, finalAccuracy);
             }
 
             if (roll < finalAccuracy)

@@ -2,6 +2,7 @@
 #define DOG_H
 
 extern int systemLog;
+extern int animationOn;
 
 typedef struct {
     char name[50];

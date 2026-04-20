@@ -6,7 +6,6 @@
 
 int main()
 {
-
     srand(time(NULL));
 
     Dog player;
@@ -23,7 +22,7 @@ int main()
         printf("2. Train Dog\n");
         printf("3. Battle\n");
         printf("4. Rest (%d/3)\n", restCount);
-        printf("5. System Log (%s)\n", systemLog ? "ON" : "OFF");
+        printf("5. Options\n");
         printf("6. Exit\n");
         printf("Enter choice: ");
 
@@ -35,7 +34,7 @@ int main()
         {
             system("cls");
             printDog(player);
-            pauseAndClear(); // 👈 eto na kapalit
+            pauseAndClear();
         }
         else if (choice == 2)
         {
@@ -52,20 +51,16 @@ int main()
                 player.hp = player.maxHP;
 
             printf("You trained your dog!\n");
-
             pauseAndClear();
         }
         else if (choice == 3)
         {
             system("cls");
             battle(&player);
-
-            restCount = 0; // RESET AFTER BATTLE
+            restCount = 0;
         }
         else if (choice == 4)
         {
-            system("cls");
-
             if (restCount >= 3)
             {
                 printf("You're too tired to rest anymore!\n");
@@ -104,31 +99,44 @@ int main()
         }
         else if (choice == 5)
         {
-            systemLog = !systemLog;
+            int optChoice;
 
-            printf("System Log is now %s\n",
-                   systemLog ? "ON" : "OFF");
+            while (1)
+            {
+                system("cls");
+                printf("\n===== OPTIONS =====\n");
+                printf("1. System Log (%s)\n", systemLog ? "ON" : "OFF");
+                printf("2. Animation (%s)\n", animationOn ? "ON" : "OFF");
+                printf("3. Back\n");
+                printf("Enter choice: ");
 
-            waitForEnter();
-            system("cls");
-        }
-        else if (choice == 6)
-        {
-            printf("Exiting game...\n");
-            break;
-        }
-        else
-        {
-            printf("Invalid choice!\n");
-        }
-        if (choice == 5)
-        {
-            systemLog = !systemLog;
+                char input[10];
+                fgets(input, sizeof(input), stdin);
+                optChoice = atoi(input);
 
-            printf("System Log is now %s\n",
-                   systemLog ? "ON" : "OFF");
-
-            waitForEnter();
+                if (optChoice == 1)
+                {
+                    systemLog = !systemLog;
+                    printf("System Log is now %s\n", systemLog ? "ON" : "OFF");
+                    waitForEnter();
+                }
+                else if (optChoice == 2)
+                {
+                    animationOn = !animationOn;
+                    printf("Animation is now %s\n", animationOn ? "ON" : "OFF");
+                    waitForEnter();
+                }
+                else if (optChoice == 3)
+                {
+                    system("cls");
+                    break;
+                }
+                else
+                {
+                    printf("Invalid choice!\n");
+                    waitForEnter();
+                }
+            }
         }
         else if (choice == 6)
         {
@@ -143,10 +151,5 @@ int main()
 
     return 0;
 }
-
-/*
-
-gcc main.c dog.c -o wardogz
-.\wardogz.exe
-
-*/
+// gcc main.c dog.c -o wardogz
+//.\wardogz.exe
