@@ -17,6 +17,56 @@ int clamp(int value)
     return value;
 }
 
+int clampFatigue(int value)
+{
+    if (value > 100)
+        return 100;
+    if (value < 0)
+        return 0;
+    return value;
+}
+
+int getFatiguePenalty(int fatigue)
+{
+    if (fatigue >= 80)
+        return 0;
+    else if (fatigue >= 60)
+        return 2;
+    else if (fatigue >= 40)
+        return 6;
+    else if (fatigue >= 20)
+        return 12;
+    else if (fatigue > 0)
+        return 24;
+    else
+        return 50;
+}
+
+int isCritical(int currentHP, int maxHP)
+{
+    int critChance;
+
+    if (currentHP <= maxHP * 0.2)
+    {
+        // LOW HP → clutch mode
+        critChance = (rand() % 16) + 20; // 20–35%
+    }
+    else
+    {
+        // NORMAL
+        critChance = (rand() % 8) + 8; // 8–15%
+    }
+
+    int roll = rand() % 100;
+
+    if (systemLog)
+    {
+        printf("[CRIT ] Roll: %-3d | Chance : %-3d\n", roll, critChance);
+    }
+
+    return roll < critChance;
+}
+
 void createDog(Dog *d)
 {
     printf("Enter your dog's name: ");
@@ -32,6 +82,8 @@ void createDog(Dog *d)
     d->defense = 5;
     d->accuracy = 80; // 80% hit chance
     d->intelligence = 10;
+
+    d->fatigue = 100; // full energy
 }
 
 void createEnemy(Dog *e)
@@ -114,6 +166,12 @@ void printDog(Dog d)
     printf("HP: %d\n", d.hp);
     printf("Attack: %d\n", d.attack);
     printf("Speed: %d\n", d.speed);
+
+    printf("Defense: %d\n", d.defense);
+    printf("Accuracy: %d\n", d.accuracy);
+    printf("Intelligence: %d\n", d.intelligence);
+
+    printf("Fatigue: %d/100\n", d.fatigue); // ✅ DITO LANG
 }
 
 void typeText(char *text, int speed)
@@ -214,8 +272,10 @@ void showHPBarEnemy(int hp, int maxHp)
     if (lastHP == -1)
         lastHP = hp;
 
-    if (hp < 0) hp = 0;
-    if (hp > maxHp) hp = maxHp;
+    if (hp < 0)
+        hp = 0;
+    if (hp > maxHp)
+        hp = maxHp;
 
     // 👉 OFF animation (clean single print)
     if (!animationOn)
@@ -225,8 +285,10 @@ void showHPBarEnemy(int hp, int maxHp)
         printf("\rENEMY : [");
         for (int i = 0; i < 10; i++)
         {
-            if (i < bars) printf("#");
-            else printf("-");
+            if (i < bars)
+                printf("#");
+            else
+                printf("-");
         }
 
         printf("] (%d/%d)        \n", hp, maxHp);
@@ -244,8 +306,10 @@ void showHPBarEnemy(int hp, int maxHp)
         printf("\rENEMY : [");
         for (int i = 0; i < 10; i++)
         {
-            if (i < bars) printf("#");
-            else printf("-");
+            if (i < bars)
+                printf("#");
+            else
+                printf("-");
         }
 
         printf("] (%d/%d)   ", current, maxHp);
@@ -260,8 +324,10 @@ void showHPBarEnemy(int hp, int maxHp)
     printf("\rENEMY : [");
     for (int i = 0; i < 10; i++)
     {
-        if (i < bars) printf("#");
-        else printf("-");
+        if (i < bars)
+            printf("#");
+        else
+            printf("-");
     }
 
     printf("] (%d/%d)        \n", hp, maxHp);
@@ -319,7 +385,7 @@ void battle(Dog *player)
     char input[10];
     Dog enemy;
 
-    createEnemy(&enemy); // dito na manggagaling stats
+    createEnemy(&enemy);
 
     int choice;
     int defending = 0;
@@ -330,22 +396,27 @@ void battle(Dog *player)
     {
         system("cls");
 
-        printf("\n--- BATTLE STATUS ---\n");
-        showHPBarPlayer(player->hp, player->maxHP);
-        showHPBarEnemy(enemy.hp, enemy.maxHP);
+        displayBattleStatus(*player, enemy);
 
         printf("\n--- YOUR TURN ---\n");
+
+        if (player->fatigue <= 20)
+        {
+            printf("Your dog is exhausted!\n");
+        }
+
         printf("1. Attack\n2. Defend\n3. Item (Heal)\n4. Surrender\n");
         printf("Choice: ");
 
         fgets(input, sizeof(input), stdin);
         choice = atoi(input);
 
-        // ================= ATTACK =================
+        // ================= PLAYER TURN =================
         if (choice == 1)
         {
             system("cls");
             displayBattleStatus(*player, enemy);
+
             printf("\nChoose Attack:\n");
             printf("1. Bite\n2. Scratch\n3. Growl\n4. Lock Jaw\n");
 
@@ -362,29 +433,14 @@ void battle(Dog *player)
             int damage = 0;
             char *moveName = "Unknown";
 
-            if (move == 1)
-            {
-                damage = player->attack + 5;
-                moveName = "Bite";
-            }
-            else if (move == 2)
-            {
-                damage = player->attack + 3;
-                moveName = "Scratch";
-            }
-            else if (move == 3)
-            {
-                moveName = "Growl";
-            }
-            else if (move == 4)
-            {
-                damage = player->attack + 8;
-                moveName = "Lock Jaw";
-            }
+            int penalty = getFatiguePenalty(player->fatigue);
+            int effectiveAttack = player->attack - penalty;
+            if (effectiveAttack < 1) effectiveAttack = 1;
 
-            //  animation
-            system("cls");
-            displayBattleStatus(*player, enemy);
+            if (move == 1) { damage = effectiveAttack + 5; moveName = "Bite"; }
+            else if (move == 2) { damage = effectiveAttack + 3; moveName = "Scratch"; }
+            else if (move == 3) { moveName = "Growl"; }
+            else if (move == 4) { damage = effectiveAttack + 8; moveName = "Lock Jaw"; }
 
             printf("\nYou used %s...\n", moveName);
 
@@ -400,63 +456,38 @@ void battle(Dog *player)
             int dodgeChance = enemy.speed * 2;
             int finalAccuracy = player->accuracy - dodgeChance;
 
-            if (finalAccuracy < 70)
-                finalAccuracy = 70;
-            if (finalAccuracy > 95)
-                finalAccuracy = 95;
+            if (finalAccuracy < 70) finalAccuracy = 70;
+            if (finalAccuracy > 95) finalAccuracy = 95;
 
             int roll = rand() % 100;
 
-            // =====================
-            // ANIMATION ONLY IF ON
-            // =====================
             if (systemLog)
-            {
-                printf("\nCalculating...\n");
-
-                for (int i = 0; i < 10; i++)
-                {
-                    int tempRoll = rand() % 100;
-                    int tempAcc = rand() % 100;
-
-                    printf("\rRoll: %d | Accuracy: %d   ", tempRoll, tempAcc);
-                    fflush(stdout);
-
-                    Sleep(80);
-                }
-
-                // FINAL RESULT (overwrite same line, no extra line)
-                printf("\rRoll: %d | Accuracy: %d   \n", roll, finalAccuracy);
-            }
-            else
-            {
-                // no animation, just final
-                printf("Roll: %d | Accuracy: %d\n", roll, finalAccuracy);
-            }
+                printf("[HIT  ] Roll: %-3d | Acc : %-3d\n", roll, finalAccuracy);
 
             if (roll < finalAccuracy)
             {
                 if (move == 3)
                 {
-                    printf("Enemy attack reduced!\n");
                     enemy.attack -= 2;
+                    printf("Enemy attack reduced!\n");
                 }
                 else
                 {
-                    int variance = rand() % 6;
-                    damage += variance;
+                    damage += rand() % 6;
+
+                    if (isCritical(player->hp, player->maxHP))
+                    {
+                        damage *= 2;
+                        printf("CRITICAL HIT!\n");
+                    }
 
                     damage -= enemy.defense;
-                    if (damage < 1)
-                        damage = 1;
+                    if (damage < 1) damage = 1;
 
                     enemy.hp -= damage;
-                    if (enemy.hp > enemy.maxHP)
-                        enemy.hp = enemy.maxHP;
-
                     enemy.hp = clamp(enemy.hp);
 
-                    printf("It hit! You dealt %d damage!\n", damage);
+                    printf("You dealt %d damage!\n", damage);
                 }
             }
             else
@@ -466,30 +497,21 @@ void battle(Dog *player)
 
             waitForEnter();
         }
-
-        // ================= DEFEND =================
         else if (choice == 2)
         {
             defending = 1;
             printf("You are defending!\n");
             waitForEnter();
         }
-
-        // ================= HEAL =================
         else if (choice == 3)
         {
             player->hp += 20;
-
             if (player->hp > player->maxHP)
                 player->hp = player->maxHP;
-
-            player->hp = clamp(player->hp);
 
             printf("You healed +20 HP!\n");
             waitForEnter();
         }
-
-        // ================= SURRENDER =================
         else if (choice == 4)
         {
             printf("You surrendered...\n");
@@ -501,13 +523,11 @@ void battle(Dog *player)
         if (enemy.hp <= 0)
         {
             printf("\nYOU WIN!\n");
-
-            printf("\nStat Gains:\n");
             applyBattleStatGain(player);
-
             pauseAndClear();
             break;
         }
+
         // ================= ENEMY TURN =================
         system("cls");
         displayBattleStatus(*player, enemy);
@@ -530,21 +550,9 @@ void battle(Dog *player)
             int move = rand() % 3;
             char *moveName;
 
-            if (move == 0)
-            {
-                enemyDamage += 5;
-                moveName = "Bite";
-            }
-            else if (move == 1)
-            {
-                enemyDamage += 3;
-                moveName = "Scratch";
-            }
-            else
-            {
-                enemyDamage += 8;
-                moveName = "Lock Jaw";
-            }
+            if (move == 0) { enemyDamage += 5; moveName = "Bite"; }
+            else if (move == 1) { enemyDamage += 3; moveName = "Scratch"; }
+            else { enemyDamage += 8; moveName = "Lock Jaw"; }
 
             if (defending)
             {
@@ -555,57 +563,54 @@ void battle(Dog *player)
 
             printf("Enemy used %s...\n", moveName);
 
+            printf("Attacking");
+            for (int i = 0; i < 3; i++)
+            {
+                printf(".");
+                fflush(stdout);
+                Sleep(150);
+            }
+            printf("\n");
+
             int dodgeChance = player->speed * 2;
             int finalAccuracy = enemy.accuracy - dodgeChance;
 
-            if (finalAccuracy < 70)
-                finalAccuracy = 70;
-            if (finalAccuracy > 95)
-                finalAccuracy = 95;
+            if (finalAccuracy < 70) finalAccuracy = 70;
+            if (finalAccuracy > 95) finalAccuracy = 95;
 
             int roll = rand() % 100;
 
             if (systemLog)
-            {
-                printf("\n[DEBUG] Roll: %d | Accuracy: %d\n", roll, finalAccuracy);
-            }
+                printf("[HIT  ] Roll: %-3d | Acc : %-3d\n", roll, finalAccuracy);
 
             if (roll < finalAccuracy)
             {
-                printf("Attacking");
-                for (int i = 0; i < 3; i++)
+                if (isCritical(enemy.hp, enemy.maxHP))
                 {
-                    printf(".");
-                    Sleep(150);
+                    enemyDamage *= 2;
+                    printf("Enemy CRITICAL HIT!\n");
                 }
 
                 player->hp -= enemyDamage;
                 player->hp = clamp(player->hp);
 
-                printf("\nEnemy dealt %d damage!\n", enemyDamage);
+                printf("Enemy dealt %d damage!\n", enemyDamage);
             }
             else
             {
-                printf("Enemy attacking");
-                for (int i = 0; i < 3; i++)
-                {
-                    printf(".");
-                    fflush(stdout);
-                    Sleep(150);
-                }
-
-                printf("\nEnemy missed! You dodged!\n");
+                printf("Enemy missed!\n");
             }
+        }
 
-            waitForEnter();
+        // 🔥 CRITICAL FIX: ALWAYS WAIT (kahit walang systemLog)
+        waitForEnter();
 
-            // ================= LOSE CHECK =================
-            if (player->hp <= 0)
-            {
-                loseSequence(player, &enemy);
-                pauseAndClear();
-                break;
-            }
+        // ================= LOSE CHECK =================
+        if (player->hp <= 0)
+        {
+            loseSequence(player, &enemy);
+            pauseAndClear();
+            break;
         }
     }
 }

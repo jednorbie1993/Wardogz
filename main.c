@@ -7,6 +7,7 @@
 int main()
 {
     srand(time(NULL));
+    setbuf(stdout, NULL);
 
     Dog player;
     int choice;
@@ -51,6 +52,7 @@ int main()
                 player.hp = player.maxHP;
 
             printf("You trained your dog!\n");
+            player.fatigue = clampFatigue(player.fatigue - 2);
             pauseAndClear();
         }
         else if (choice == 3)
@@ -58,6 +60,7 @@ int main()
             system("cls");
             battle(&player);
             restCount = 0;
+            player.fatigue = clampFatigue(player.fatigue - 10);
         }
         else if (choice == 4)
         {
@@ -85,6 +88,7 @@ int main()
 
                 int heal = 20;
                 player.hp += heal;
+                player.fatigue = clampFatigue(player.fatigue + 20);
 
                 if (player.hp > player.maxHP)
                     player.hp = player.maxHP;
@@ -155,3 +159,5 @@ int main()
 
 gcc main.c dog.c -o wardogz
 .\wardogz.exe
+
+*/

@@ -17,6 +17,8 @@ typedef struct {
     int accuracy;
     int intelligence;
 
+    int fatigue;
+
 } Dog;
 
 // prototypes (WALANG struct Dog dito!)
@@ -31,5 +33,7 @@ void loseSequence(Dog *player, Dog *enemy);
 void applyBattleStatGain(Dog *d);
 
 int clamp(int value);
+int clampFatigue(int value);
+int getFatiguePenalty(int fatigue);
 
 #endif
