@@ -1,5 +1,7 @@
 #ifndef DOG_H
 #define DOG_H
+#define MAX_STAT 999
+#define MIN_STAT 0
 
 extern int systemLog;
 extern int animationOn;
@@ -26,5 +28,8 @@ void waitForEnter();
 void showHPBarPlayer(int hp, int maxHp);
 void pauseAndClear();
 void loseSequence(Dog *player, Dog *enemy);
+void applyBattleStatGain(Dog *d);
+
+int clamp(int value);
 
 #endif

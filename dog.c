@@ -8,6 +8,15 @@
 int systemLog = 0;
 int animationOn = 1; //  NEW (default ON)
 
+int clamp(int value)
+{
+    if (value > MAX_STAT)
+        return MAX_STAT;
+    if (value < MIN_STAT)
+        return MIN_STAT;
+    return value;
+}
+
 void createDog(Dog *d)
 {
     printf("Enter your dog's name: ");
@@ -39,6 +48,65 @@ void createEnemy(Dog *e)
     e->intelligence = 5;
 }
 
+void applyStatGain(Dog *d, int atk, int hp, int def, int spd, int acc, int intel)
+{
+    d->attack = clamp(d->attack + atk);
+    d->hp = clamp(d->hp + hp);
+    d->defense = clamp(d->defense + def);
+    d->speed = clamp(d->speed + spd);
+    d->accuracy = clamp(d->accuracy + acc);
+    d->intelligence = clamp(d->intelligence + intel);
+}
+
+void applyBattleStatGain(Dog *d)
+{
+    int chosen[6] = {0}; // track kung alin na napili
+    int count = 0;
+
+    while (count < 3)
+    {
+        int stat = rand() % 6;
+
+        if (chosen[stat] == 0)
+        {
+            chosen[stat] = 1;
+            count++;
+
+            int gain = (rand() % 5) + 1; // +1 to +5
+
+            switch (stat)
+            {
+            case 0:
+                d->attack = clamp(d->attack + gain);
+                printf("ATK +%d\n", gain);
+                break;
+            case 1:
+                d->hp = clamp(d->hp + gain);
+                if (d->hp > d->maxHP)
+                    d->hp = d->maxHP;
+                printf("HP +%d\n", gain);
+                break;
+            case 2:
+                d->defense = clamp(d->defense + gain);
+                printf("DEF +%d\n", gain);
+                break;
+            case 3:
+                d->speed = clamp(d->speed + gain);
+                printf("SPD +%d\n", gain);
+                break;
+            case 4:
+                d->accuracy = clamp(d->accuracy + gain);
+                printf("ACC +%d\n", gain);
+                break;
+            case 5:
+                d->intelligence = clamp(d->intelligence + gain);
+                printf("INT +%d\n", gain);
+                break;
+            }
+        }
+    }
+}
+
 void printDog(Dog d)
 {
     printf("\n--- Dog Info ---\n");
@@ -59,21 +127,30 @@ void typeText(char *text, int speed)
     for (int i = 0; text[i] != '\0'; i++)
     {
         printf("%c", text[i]);
-        fflush(stdout);   // 👉 para real-time output
+        fflush(stdout); // 👉 para real-time output
         Sleep(speed);
     }
 }
 
 void showHPBarPlayer(int hp, int maxHp)
 {
-    static int lastHP = 100;
+    static int lastHP = -1;
 
-    // 👉 PAG OFF ANG ANIMATION (priority agad)
+    if (lastHP == -1)
+        lastHP = hp;
+
+    // 👉 Clamp safety (para di sumobra)
+    if (hp < 0)
+        hp = 0;
+    if (hp > maxHp)
+        hp = maxHp;
+
     if (!animationOn)
     {
         int bars = (hp * 10) / maxHp;
 
-        printf("PLAYER: [");
+        printf("\rPLAYER: [");
+
         for (int i = 0; i < 10; i++)
         {
             if (i < bars)
@@ -81,54 +158,52 @@ void showHPBarPlayer(int hp, int maxHp)
             else
                 printf("-");
         }
-        printf("] (%d/%d)\n", hp, maxHp);
+
+        // 👉 IMPORTANT: clear leftover characters
+        printf("] (%d/%d)        ", hp, maxHp);
+
+        fflush(stdout);
+
+        printf("\n"); // final line break so di sumunod ang next print
 
         lastHP = hp;
         return;
     }
 
-    // 👉 DAMAGE (HP pababa)
-    if (hp < lastHP)
+    // 👉 determine direction
+    int step = (hp > lastHP) ? 1 : -1;
+
+    for (int current = lastHP; current != hp; current += step)
     {
-        for (int current = lastHP; current >= hp; current--)
+        int bars = (current * 10) / maxHp;
+
+        printf("\rPLAYER: [");
+        for (int i = 0; i < 10; i++)
         {
-            int bars = (current * 10) / maxHp;
-
-            printf("\rPLAYER: [");
-            for (int i = 0; i < 10; i++)
-            {
-                if (i < bars)
-                    printf("#");
-                else
-                    printf("-");
-            }
-
-            printf("] (%d/%d)", current, maxHp);
-            Sleep(30);
+            if (i < bars)
+                printf("#");
+            else
+                printf("-");
         }
-    }
-    // 👉 HEAL (HP pataas)
-    else
-    {
-        for (int current = lastHP; current <= hp; current++)
-        {
-            int bars = (current * 10) / maxHp;
+        printf("] (%d/%d)   ", current, maxHp);
 
-            printf("\rPLAYER: [");
-            for (int i = 0; i < 10; i++)
-            {
-                if (i < bars)
-                    printf("#");
-                else
-                    printf("-");
-            }
-
-            printf("] (%d/%d)", current, maxHp);
-            Sleep(30);
-        }
+        fflush(stdout); // 🔥 IMPORTANT para smooth overwrite
+        Sleep(25);
     }
 
-    printf("\n");
+    // 👉 final state (para exact hp)
+    int bars = (hp * 10) / maxHp;
+
+    printf("\rPLAYER: [");
+    for (int i = 0; i < 10; i++)
+    {
+        if (i < bars)
+            printf("#");
+        else
+            printf("-");
+    }
+    printf("] (%d/%d)   \n", hp, maxHp);
+
     lastHP = hp;
 }
 
@@ -136,69 +211,61 @@ void showHPBarEnemy(int hp, int maxHp)
 {
     static int lastHP = -1;
 
+    if (lastHP == -1)
+        lastHP = hp;
+
+    if (hp < 0) hp = 0;
+    if (hp > maxHp) hp = maxHp;
+
+    // 👉 OFF animation (clean single print)
     if (!animationOn)
     {
         int bars = (hp * 10) / maxHp;
 
-        printf("ENEMY : [");
+        printf("\rENEMY : [");
         for (int i = 0; i < 10; i++)
         {
-            if (i < bars)
-                printf("#");
-            else
-                printf("-");
+            if (i < bars) printf("#");
+            else printf("-");
         }
-        printf("] (%d/%d)\n", hp, maxHp);
+
+        printf("] (%d/%d)        \n", hp, maxHp);
 
         lastHP = hp;
         return;
     }
 
-    if (lastHP == -1)
-    {
-        lastHP = hp;
-    }
+    int step = (hp > lastHP) ? 1 : -1;
 
-    if (hp < lastHP)
+    for (int current = lastHP; current != hp; current += step)
     {
-        for (int current = lastHP; current >= hp; current--)
+        int bars = (current * 10) / maxHp;
+
+        printf("\rENEMY : [");
+        for (int i = 0; i < 10; i++)
         {
-            int bars = (current * 10) / maxHp;
-
-            printf("\rENEMY : [");
-            for (int i = 0; i < 10; i++)
-            {
-                if (i < bars)
-                    printf("#");
-                else
-                    printf("-");
-            }
-
-            printf("] (%d/%d)", current, maxHp);
-            Sleep(30);
+            if (i < bars) printf("#");
+            else printf("-");
         }
+
+        printf("] (%d/%d)   ", current, maxHp);
+
+        fflush(stdout);
+        Sleep(25);
     }
-    else
+
+    // 👉 final exact state
+    int bars = (hp * 10) / maxHp;
+
+    printf("\rENEMY : [");
+    for (int i = 0; i < 10; i++)
     {
-        for (int current = lastHP; current <= hp; current++)
-        {
-            int bars = (current * 10) / maxHp;
-
-            printf("\rENEMY : [");
-            for (int i = 0; i < 10; i++)
-            {
-                if (i < bars)
-                    printf("#");
-                else
-                    printf("-");
-            }
-
-            printf("] (%d/%d)", current, maxHp);
-            Sleep(30);
-        }
+        if (i < bars) printf("#");
+        else printf("-");
     }
 
-    printf("\n");
+    printf("] (%d/%d)        \n", hp, maxHp);
+
     lastHP = hp;
 }
 
@@ -384,8 +451,10 @@ void battle(Dog *player)
                         damage = 1;
 
                     enemy.hp -= damage;
-                    if (enemy.hp < 0)
-                        enemy.hp = 0;
+                    if (enemy.hp > enemy.maxHP)
+                        enemy.hp = enemy.maxHP;
+
+                    enemy.hp = clamp(enemy.hp);
 
                     printf("It hit! You dealt %d damage!\n", damage);
                 }
@@ -410,8 +479,11 @@ void battle(Dog *player)
         else if (choice == 3)
         {
             player->hp += 20;
+
             if (player->hp > player->maxHP)
                 player->hp = player->maxHP;
+
+            player->hp = clamp(player->hp);
 
             printf("You healed +20 HP!\n");
             waitForEnter();
@@ -429,6 +501,10 @@ void battle(Dog *player)
         if (enemy.hp <= 0)
         {
             printf("\nYOU WIN!\n");
+
+            printf("\nStat Gains:\n");
+            applyBattleStatGain(player);
+
             pauseAndClear();
             break;
         }
@@ -504,8 +580,7 @@ void battle(Dog *player)
                 }
 
                 player->hp -= enemyDamage;
-                if (player->hp < 0)
-                    player->hp = 0;
+                player->hp = clamp(player->hp);
 
                 printf("\nEnemy dealt %d damage!\n", enemyDamage);
             }

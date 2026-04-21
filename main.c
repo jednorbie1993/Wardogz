@@ -40,12 +40,12 @@ int main()
         {
             system("cls");
 
-            player.attack += 5;
-            player.hp += 10;
-            player.defense += 2;
-            player.speed += 1;
-            player.accuracy += 2;
-            player.intelligence += 2;
+            player.attack = clamp(player.attack + 5);
+            player.hp = clamp(player.hp + 10);
+            player.defense = clamp(player.defense + 2);
+            player.speed = clamp(player.speed + 1);
+            player.accuracy = clamp(player.accuracy + 2);
+            player.intelligence = clamp(player.intelligence + 2);
 
             if (player.hp > player.maxHP)
                 player.hp = player.maxHP;
@@ -151,5 +151,7 @@ int main()
 
     return 0;
 }
-// gcc main.c dog.c -o wardogz
-//.\wardogz.exe
+/*
+
+gcc main.c dog.c -o wardogz
+.\wardogz.exe
