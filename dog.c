@@ -81,7 +81,7 @@ void createDog(Dog *d)
 
     d->defense = 5;
     d->accuracy = 80; // 80% hit chance
-    d->intelligence = 10;
+    d->intelligence = 20;
 
     d->fatigue = 100; // full energy
 }
@@ -435,12 +435,28 @@ void battle(Dog *player)
 
             int penalty = getFatiguePenalty(player->fatigue);
             int effectiveAttack = player->attack - penalty;
-            if (effectiveAttack < 1) effectiveAttack = 1;
+            if (effectiveAttack < 1)
+                effectiveAttack = 1;
 
-            if (move == 1) { damage = effectiveAttack + 5; moveName = "Bite"; }
-            else if (move == 2) { damage = effectiveAttack + 3; moveName = "Scratch"; }
-            else if (move == 3) { moveName = "Growl"; }
-            else if (move == 4) { damage = effectiveAttack + 8; moveName = "Lock Jaw"; }
+            if (move == 1)
+            {
+                damage = effectiveAttack + 5;
+                moveName = "Bite";
+            }
+            else if (move == 2)
+            {
+                damage = effectiveAttack + 3;
+                moveName = "Scratch";
+            }
+            else if (move == 3)
+            {
+                moveName = "Growl";
+            }
+            else if (move == 4)
+            {
+                damage = effectiveAttack + 8;
+                moveName = "Lock Jaw";
+            }
 
             printf("\nYou used %s...\n", moveName);
 
@@ -456,8 +472,10 @@ void battle(Dog *player)
             int dodgeChance = enemy.speed * 2;
             int finalAccuracy = player->accuracy - dodgeChance;
 
-            if (finalAccuracy < 70) finalAccuracy = 70;
-            if (finalAccuracy > 95) finalAccuracy = 95;
+            if (finalAccuracy < 70)
+                finalAccuracy = 70;
+            if (finalAccuracy > 95)
+                finalAccuracy = 95;
 
             int roll = rand() % 100;
 
@@ -482,7 +500,8 @@ void battle(Dog *player)
                     }
 
                     damage -= enemy.defense;
-                    if (damage < 1) damage = 1;
+                    if (damage < 1)
+                        damage = 1;
 
                     enemy.hp -= damage;
                     enemy.hp = clamp(enemy.hp);
@@ -550,15 +569,20 @@ void battle(Dog *player)
             int move = rand() % 3;
             char *moveName;
 
-            if (move == 0) { enemyDamage += 5; moveName = "Bite"; }
-            else if (move == 1) { enemyDamage += 3; moveName = "Scratch"; }
-            else { enemyDamage += 8; moveName = "Lock Jaw"; }
-
-            if (defending)
+            if (move == 0)
             {
-                enemyDamage /= 2;
-                defending = 0;
-                printf("You defended! Damage reduced!\n");
+                enemyDamage += 5;
+                moveName = "Bite";
+            }
+            else if (move == 1)
+            {
+                enemyDamage += 3;
+                moveName = "Scratch";
+            }
+            else
+            {
+                enemyDamage += 8;
+                moveName = "Lock Jaw";
             }
 
             printf("Enemy used %s...\n", moveName);
@@ -575,8 +599,10 @@ void battle(Dog *player)
             int dodgeChance = player->speed * 2;
             int finalAccuracy = enemy.accuracy - dodgeChance;
 
-            if (finalAccuracy < 70) finalAccuracy = 70;
-            if (finalAccuracy > 95) finalAccuracy = 95;
+            if (finalAccuracy < 70)
+                finalAccuracy = 70;
+            if (finalAccuracy > 95)
+                finalAccuracy = 95;
 
             int roll = rand() % 100;
 
@@ -585,16 +611,57 @@ void battle(Dog *player)
 
             if (roll < finalAccuracy)
             {
-                if (isCritical(enemy.hp, enemy.maxHP))
+                // 🔥 DEFEND + COUNTER FIX
+                if (defending)
                 {
-                    enemyDamage *= 2;
-                    printf("Enemy CRITICAL HIT!\n");
+                    int counterChance = player->intelligence / 2;
+                    if (counterChance > 60)
+                        counterChance = 60;
+
+                    int counterRoll = rand() % 100;
+
+                    if (counterRoll < counterChance)
+                    {
+                        int counterDamage = player->attack + (player->intelligence / 10);
+
+                        printf("You countered the attack!\n");
+                        printf("Counter Damage: %d\n", counterDamage);
+
+                        enemy.hp -= counterDamage;
+                        enemy.hp = clamp(enemy.hp);
+                    }
+                    else
+                    {
+                        enemyDamage /= 2;
+
+                        if (isCritical(enemy.hp, enemy.maxHP))
+                        {
+                            enemyDamage *= 2;
+                            printf("Enemy CRITICAL HIT!\n");
+                        }
+
+                        player->hp -= enemyDamage;
+                        player->hp = clamp(player->hp);
+
+                        printf("You defended! Damage reduced!\n");
+                        printf("Enemy dealt %d damage!\n", enemyDamage);
+                    }
+
+                    defending = 0;
                 }
+                else
+                {
+                    if (isCritical(enemy.hp, enemy.maxHP))
+                    {
+                        enemyDamage *= 2;
+                        printf("Enemy CRITICAL HIT!\n");
+                    }
 
-                player->hp -= enemyDamage;
-                player->hp = clamp(player->hp);
+                    player->hp -= enemyDamage;
+                    player->hp = clamp(player->hp);
 
-                printf("Enemy dealt %d damage!\n", enemyDamage);
+                    printf("Enemy dealt %d damage!\n", enemyDamage);
+                }
             }
             else
             {
@@ -602,7 +669,6 @@ void battle(Dog *player)
             }
         }
 
-        // 🔥 CRITICAL FIX: ALWAYS WAIT (kahit walang systemLog)
         waitForEnter();
 
         // ================= LOSE CHECK =================
@@ -613,4 +679,4 @@ void battle(Dog *player)
             break;
         }
     }
-}
+}    
