@@ -8,6 +8,25 @@
 int systemLog = 0;
 int animationOn = 1; //  NEW (default ON)
 
+int randRange(int min, int max)
+{
+    return (rand() % (max - min + 1)) + min;
+}
+
+// growth curve (higher stat = lower gain)
+int getGrowthGain(int stat)
+{
+    int base = randRange(3, 5); // 3–5
+
+    if (stat > 200) base -= 1;
+    if (stat > 400) base -= 1;
+    if (stat > 700) base -= 1;
+
+    if (base < 1) base = 1;
+
+    return base;
+}
+
 int clamp(int value)
 {
     if (value > MAX_STAT)
@@ -67,6 +86,114 @@ int isCritical(int currentHP, int maxHP)
     return roll < critChance;
 }
 
+void trainDog(Dog *d, int type)
+{
+    printf("\nTraining");
+
+    for (int i = 0; i < 3; i++)
+    {
+        printf(".");
+        fflush(stdout);
+        Sleep(200);
+    }
+    printf("\n");
+
+    // 🔻 FATIGUE CHECK (fail chance)
+    if (d->fatigue < 20)
+    {
+        printf("Too exhausted... Training failed!\n");
+        d->fatigue = clampFatigue(d->fatigue - 5);
+        return;
+    }
+
+    int greatChance = rand() % 100;
+
+    // ⭐ GREAT TRAINING
+    if (greatChance < 10)
+    {
+        printf("🔥 GREAT TRAINING!\n");
+
+        int bonus = 10;
+
+        if (type == 1) // Power
+        {
+            d->maxHP = clamp(d->maxHP + bonus);
+            d->attack = clamp(d->attack + bonus);
+            d->defense = clamp(d->defense + bonus);
+        }
+        else if (type == 2) // Speed
+        {
+            d->speed = clamp(d->speed + bonus);
+            d->accuracy = clamp(d->accuracy + bonus);
+            d->intelligence = clamp(d->intelligence + bonus);
+        }
+        else // Balance
+        {
+            d->maxHP = clamp(d->maxHP + bonus);
+            d->attack = clamp(d->attack + bonus);
+            d->defense = clamp(d->defense + bonus);
+            d->speed = clamp(d->speed + bonus);
+            d->intelligence = clamp(d->intelligence + bonus);
+        }
+
+        d->hp = d->maxHP;
+    }
+    else
+    {
+        // ⭐ NORMAL TRAINING
+
+        int g1, g2, g3;
+
+        if (type == 1) // POWER
+        {
+            g1 = getGrowthGain(d->maxHP);
+            g2 = getGrowthGain(d->attack);
+            g3 = getGrowthGain(d->defense);
+
+            d->maxHP = clamp(d->maxHP + g1);
+            d->attack = clamp(d->attack + g2);
+            d->defense = clamp(d->defense + g3);
+
+            printf("HP +%d | ATK +%d | DEF +%d\n", g1, g2, g3);
+        }
+        else if (type == 2) // SPEED
+        {
+            g1 = getGrowthGain(d->speed);
+            g2 = getGrowthGain(d->accuracy);
+            g3 = getGrowthGain(d->intelligence);
+
+            d->speed = clamp(d->speed + g1);
+            d->accuracy = clamp(d->accuracy + g2);
+            d->intelligence = clamp(d->intelligence + g3);
+
+            printf("SPD +%d | ACC +%d | INT +%d\n", g1, g2, g3);
+        }
+        else // BALANCE
+        {
+            g1 = getGrowthGain(d->maxHP);
+            g2 = getGrowthGain(d->attack);
+            g3 = getGrowthGain(d->defense);
+
+            int g4 = getGrowthGain(d->speed);
+            int g5 = getGrowthGain(d->intelligence);
+
+            d->maxHP = clamp(d->maxHP + g1);
+            d->attack = clamp(d->attack + g2);
+            d->defense = clamp(d->defense + g3);
+            d->speed = clamp(d->speed + g4);
+            d->intelligence = clamp(d->intelligence + g5);
+
+            printf("HP +%d ATK +%d DEF +%d SPD +%d INT +%d\n",
+                   g1, g2, g3, g4, g5);
+        }
+
+        d->hp = d->maxHP; // full heal after training
+    }
+
+    // 🔻 FATIGUE COST
+    d->fatigue = clampFatigue(d->fatigue - randRange(8, 15));
+}
+
 void createDog(Dog *d)
 {
     printf("Enter your dog's name: ");
@@ -103,7 +230,10 @@ void createEnemy(Dog *e)
 void applyStatGain(Dog *d, int atk, int hp, int def, int spd, int acc, int intel)
 {
     d->attack = clamp(d->attack + atk);
-    d->hp = clamp(d->hp + hp);
+    float ratio = (float)d->hp / d->maxHP;
+
+    d->maxHP = clamp(d->maxHP + hp);
+    d->hp = (int)(d->maxHP * ratio);
     d->defense = clamp(d->defense + def);
     d->speed = clamp(d->speed + spd);
     d->accuracy = clamp(d->accuracy + acc);
@@ -133,11 +263,15 @@ void applyBattleStatGain(Dog *d)
                 printf("ATK +%d\n", gain);
                 break;
             case 1:
-                d->hp = clamp(d->hp + gain);
-                if (d->hp > d->maxHP)
-                    d->hp = d->maxHP;
+            {
+                float ratio = (float)d->hp / d->maxHP;
+
+                d->maxHP = clamp(d->maxHP + gain);
+                d->hp = (int)(d->maxHP * ratio);
+
                 printf("HP +%d\n", gain);
                 break;
+            }    
             case 2:
                 d->defense = clamp(d->defense + gain);
                 printf("DEF +%d\n", gain);
@@ -572,6 +706,28 @@ void battle(Dog *player)
                           (enemy.attack + player->defense + 100);
 
         enemyDamage += rand() % 4;
+
+        if (strstr(enemy.name, "Alpha") && enemy.hp < enemy.maxHP / 2)
+        {
+            printf("Enemy is enraged!\n");
+            enemyDamage += 5;
+        }
+        if (strstr(enemy.name, "Iron Jaw"))
+        {
+            if (rand() % 100 < 30)
+            {
+                printf("Iron Jaw hardened its defense!\n");
+                enemyDamage = (int)(enemyDamage * 0.5);
+            }
+        }
+        if (strstr(enemy.name, "Street King"))
+        {
+            if (rand() % 100 < 25)
+            {
+                printf("Street King attacks twice!\n");
+                player->hp -= enemyDamage;
+            }
+        }
 
         if (enemy.hp <= 30 && action < 20)
         {
