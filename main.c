@@ -3,6 +3,7 @@
 #include <time.h>
 #include "dog.h"
 #include <windows.h>
+#include "stage.h"
 
 int main()
 {
@@ -41,24 +42,39 @@ int main()
         {
             system("cls");
 
-            player.attack = clamp(player.attack + 5);
-            player.hp = clamp(player.hp + 10);
-            player.defense = clamp(player.defense + 2);
-            player.speed = clamp(player.speed + 1);
-            player.accuracy = clamp(player.accuracy + 2);
-            player.intelligence = clamp(player.intelligence + 2);
+            printf("1. Power Training\n");
+            printf("2. Speed Training\n");
+            printf("3. Balance Training\n");
+            printf("4. Return\n");
+            printf("Choice: ");
 
-            if (player.hp > player.maxHP)
-                player.hp = player.maxHP;
+            char input[10];
+            fgets(input, sizeof(input), stdin);
+            int t = atoi(input);
 
-            printf("You trained your dog!\n");
-            player.fatigue = clampFatigue(player.fatigue - 2);
+            // 👉 RETURN OPTION
+            if (t == 4)
+            {
+                system("cls");
+                continue; // balik sa main menu
+            }
+
+            if (t < 1 || t > 3)
+            {
+                printf("Invalid choice!\n");
+                waitForEnter();
+                system("cls");
+                continue;
+            }
+
+            trainDog(&player, t);
+
             pauseAndClear();
         }
         else if (choice == 3)
         {
             system("cls");
-            battle(&player);
+            startStage(&player);
             restCount = 0;
             player.fatigue = clampFatigue(player.fatigue - 10);
         }
@@ -70,9 +86,9 @@ int main()
                 waitForEnter();
                 system("cls");
             }
-            else if (player.hp == player.maxHP)
+            else if (player.fatigue >= 100)
             {
-                printf("You're already at full HP!\n");
+                printf("You're already fully rested!\n");
                 waitForEnter();
                 system("cls");
             }
@@ -87,16 +103,25 @@ int main()
                 printf("\n");
 
                 int heal = 20;
-                player.hp += heal;
-                player.fatigue = clampFatigue(player.fatigue + 20);
 
-                if (player.hp > player.maxHP)
-                    player.hp = player.maxHP;
+                // 👉 heal HP (optional nalang)
+                if (player.hp < player.maxHP)
+                {
+                    player.hp += heal;
+                    if (player.hp > player.maxHP)
+                        player.hp = player.maxHP;
+                }
+
+                // ⭐ MAIN PURPOSE: fatigue recovery
+                player.fatigue = clampFatigue(player.fatigue + 20);
 
                 restCount++;
 
-                printf("You recovered +%d HP!\n", heal);
-                showHPBarPlayer(player.hp, player.maxHP);
+                printf("Recovered +20 Fatigue!\n");
+
+                if (player.hp < player.maxHP)
+                    printf("Recovered +%d HP!\n", heal);
+
                 waitForEnter();
                 system("cls");
             }
@@ -157,7 +182,7 @@ int main()
 }
 /*
 
-gcc main.c dog.c -o wardogz
+gcc main.c dog.c stage.c -o wardogz
 .\wardogz.exe
 
 */

@@ -31,6 +31,8 @@ void showHPBarPlayer(int hp, int maxHp);
 void pauseAndClear();
 void loseSequence(Dog *player, Dog *enemy);
 void applyBattleStatGain(Dog *d);
+void trainDog(Dog *d, int type);
+void createEnemy(Dog *e);
 
 int clamp(int value);
 int clampFatigue(int value);
