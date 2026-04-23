@@ -491,18 +491,31 @@ void battle(Dog *player)
                 }
                 else
                 {
-                    damage += rand() % 6;
+                    // ⭐ BASE DAMAGE (HP-based scaling)
+                int baseDamage = (effectiveAttack * enemy.maxHP) /
+                                (effectiveAttack + enemy.defense + 150);
 
-                    if (isCritical(player->hp, player->maxHP))
-                    {
-                        damage *= 2;
-                        printf("CRITICAL HIT!\n");
-                    }
+                // random variation (para hindi flat)
+                baseDamage += (rand() % (baseDamage / 4 + 1));
 
-                    damage -= enemy.defense;
-                    if (damage < 1)
-                        damage = 1;
+                // move bonus (controlled)
+                if (move == 1) baseDamage += 3; // Bite
+                if (move == 2) baseDamage += 2; // Scratch
+                if (move == 4) baseDamage += 5; // Lock Jaw
 
+                damage = baseDamage;
+
+                // CRIT (keep 1.5x)
+                if (isCritical(player->hp, player->maxHP))
+                {
+                    damage = (int)(damage * 1.5);
+                    printf("CRITICAL HIT!\n");
+                }
+
+                damage = damage * (player->fatigue / 100.0);
+
+                if (damage < 1) damage = 1;
+                    
                     enemy.hp -= damage;
                     enemy.hp = clamp(enemy.hp);
 
@@ -541,6 +554,7 @@ void battle(Dog *player)
         // ================= WIN CHECK =================
         if (enemy.hp <= 0)
         {
+            system("cls");
             printf("\nYOU WIN!\n");
             applyBattleStatGain(player);
             pauseAndClear();
@@ -554,7 +568,10 @@ void battle(Dog *player)
         printf("\n--- ENEMY TURN ---\n");
 
         int action = rand() % 100;
-        int enemyDamage = enemy.attack + (rand() % 6);
+        int enemyDamage = (enemy.attack * 100) /
+                          (enemy.attack + player->defense + 100);
+
+        enemyDamage += rand() % 4;
 
         if (enemy.hp <= 30 && action < 20)
         {
@@ -632,11 +649,11 @@ void battle(Dog *player)
                     }
                     else
                     {
-                        enemyDamage /= 2;
+                        enemyDamage = (int)(enemyDamage * 0.6);
 
                         if (isCritical(enemy.hp, enemy.maxHP))
                         {
-                            enemyDamage *= 2;
+                            enemyDamage = (int)(enemyDamage * 1.5);
                             printf("Enemy CRITICAL HIT!\n");
                         }
 
