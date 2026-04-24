@@ -91,7 +91,7 @@ void startStage(Dog *player)
                     }
                     else
                     {
-                        strcpy(enemy.name, "Alley Alpha 👑");
+                        strcpy(enemy.name, "Alley Alpha"); //"Alley Alpha 👑"
                         enemy.attack += 6;
                         enemy.defense += 4;
                         enemy.maxHP += 20;
