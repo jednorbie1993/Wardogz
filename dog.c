@@ -111,7 +111,7 @@ void trainDog(Dog *d, int type)
     // ⭐ GREAT TRAINING
     if (greatChance < 10)
     {
-        printf("🔥 GREAT TRAINING!\n");
+        printf("GREAT TRAINING!\n");
 
         int bonus = 10;
 
