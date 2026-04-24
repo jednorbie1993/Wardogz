@@ -203,11 +203,11 @@ void createDog(Dog *d)
 
     d->hp = 100;
     d->maxHP = 100;
-    d->attack = 20;
+    d->attack = 820;
     d->speed = 10;
 
     d->defense = 5;
-    d->accuracy = 80; // 80% hit chance
+    d->accuracy = 800; // 80% hit chance
     d->intelligence = 20;
 
     d->fatigue = 100; // full energy
@@ -502,7 +502,7 @@ void loseSequence(Dog *player, Dog *enemy)
 void waitForEnter()
 {
     printf("\nPress Enter to continue...");
-    getchar(); // works perfectly kapag fgets na lahat
+    while (getchar() != '\n'); // wait until Enter lang
 }
 
 void pauseAndClear()
