@@ -34,14 +34,16 @@ void startStage(Dog *player)
 
         if (stageChoice < 1 || stageChoice > 3)
         {
-            printf("Invalid choice! Select 1–3 only.\n");
+            printf("Invalid choice! Select 1-3 only.\n");
             waitForEnter();
             continue;
         }
 
         if (stageChoice == 3)
+        {
+            system("cls");
             return;
-
+        }
         if (stageChoice != 1)
         {
             printf("Stage locked!\n");
@@ -98,7 +100,7 @@ void startStage(Dog *player)
             // invalid range
             if (zoneChoice < 1 || zoneChoice > 4)
             {
-                printf("Invalid choice! Select 1–4 only.\n");
+                printf("Invalid choice! Select 1-4 only.\n");
                 waitForEnter();
                 continue;
             }

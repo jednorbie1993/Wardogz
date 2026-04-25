@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <conio.h>
 #include <string.h> // para sa strcspn
+#include <ctype.h>
 
 int systemLog = 0;
 int animationOn = 1; //  NEW (default ON)
@@ -18,11 +19,15 @@ int getGrowthGain(int stat)
 {
     int base = randRange(3, 5); // 3–5
 
-    if (stat > 200) base -= 1;
-    if (stat > 400) base -= 1;
-    if (stat > 700) base -= 1;
+    if (stat > 200)
+        base -= 1;
+    if (stat > 400)
+        base -= 1;
+    if (stat > 700)
+        base -= 1;
 
-    if (base < 1) base = 1;
+    if (base < 1)
+        base = 1;
 
     return base;
 }
@@ -111,29 +116,64 @@ void trainDog(Dog *d, int type)
     // ⭐ GREAT TRAINING
     if (greatChance < 10)
     {
-        printf("GREAT TRAINING!\n");
-
         int bonus = 10;
 
-        if (type == 1) // Power
+        printf("GREAT TRAINING!\n");
+
+        if (type == 1) // POWER
         {
-            d->maxHP = clamp(d->maxHP + bonus);
-            d->attack = clamp(d->attack + bonus);
-            d->defense = clamp(d->defense + bonus);
+            int g1 = getGrowthGain(d->maxHP);
+            int g2 = getGrowthGain(d->attack);
+            int g3 = getGrowthGain(d->defense);
+
+            int t1 = g1 + bonus;
+            int t2 = g2 + bonus;
+            int t3 = g3 + bonus;
+
+            d->maxHP = clamp(d->maxHP + t1);
+            d->attack = clamp(d->attack + t2);
+            d->defense = clamp(d->defense + t3);
+
+            printf("HP +%d | ATK +%d | DEF +%d\n", t1, t2, t3);
         }
-        else if (type == 2) // Speed
+        else if (type == 2) // SPEED
         {
-            d->speed = clamp(d->speed + bonus);
-            d->accuracy = clamp(d->accuracy + bonus);
-            d->intelligence = clamp(d->intelligence + bonus);
+            int g1 = getGrowthGain(d->speed);
+            int g2 = getGrowthGain(d->accuracy);
+            int g3 = getGrowthGain(d->intelligence);
+
+            int t1 = g1 + bonus;
+            int t2 = g2 + bonus;
+            int t3 = g3 + bonus;
+
+            d->speed = clamp(d->speed + t1);
+            d->accuracy = clamp(d->accuracy + t2);
+            d->intelligence = clamp(d->intelligence + t3);
+
+            printf("SPD +%d | ACC +%d | INT +%d\n", t1, t2, t3);
         }
-        else // Balance
+        else // BALANCE
         {
-            d->maxHP = clamp(d->maxHP + bonus);
-            d->attack = clamp(d->attack + bonus);
-            d->defense = clamp(d->defense + bonus);
-            d->speed = clamp(d->speed + bonus);
-            d->intelligence = clamp(d->intelligence + bonus);
+            int g1 = getGrowthGain(d->maxHP);
+            int g2 = getGrowthGain(d->attack);
+            int g3 = getGrowthGain(d->defense);
+            int g4 = getGrowthGain(d->speed);
+            int g5 = getGrowthGain(d->intelligence);
+
+            int t1 = g1 + bonus;
+            int t2 = g2 + bonus;
+            int t3 = g3 + bonus;
+            int t4 = g4 + bonus;
+            int t5 = g5 + bonus;
+
+            d->maxHP = clamp(d->maxHP + t1);
+            d->attack = clamp(d->attack + t2);
+            d->defense = clamp(d->defense + t3);
+            d->speed = clamp(d->speed + t4);
+            d->intelligence = clamp(d->intelligence + t5);
+
+            printf("HP +%d ATK +%d DEF +%d SPD +%d INT +%d\n",
+                   t1, t2, t3, t4, t5);
         }
 
         d->hp = d->maxHP;
@@ -187,7 +227,7 @@ void trainDog(Dog *d, int type)
                    g1, g2, g3, g4, g5);
         }
 
-        d->hp = d->maxHP; // full heal after training
+        d->hp = d->maxHP;
     }
 
     // 🔻 FATIGUE COST
@@ -203,12 +243,12 @@ void createDog(Dog *d)
 
     d->hp = 100;
     d->maxHP = 100;
-    d->attack = 820;
-    d->speed = 10;
+    d->attack = 120;
+    d->speed = 100;
 
-    d->defense = 5;
-    d->accuracy = 800; // 80% hit chance
-    d->intelligence = 20;
+    d->defense = 115;
+    d->accuracy = 118; // 80% hit chance
+    d->intelligence = 120;
 
     d->fatigue = 100; // full energy
 }
@@ -225,6 +265,14 @@ void createEnemy(Dog *e)
     e->speed = 10;    // dagdag mo rin para kumpleto
     e->accuracy = 90; // important sa hit system
     e->intelligence = 5;
+}
+
+void enemyAttack(Dog *player, Dog *enemy)
+{
+    int dmg = 10; // sample damage
+    player->hp -= dmg;
+
+    printf("Enemy attacks! You took %d damage!\n", dmg);
 }
 
 void applyStatGain(Dog *d, int atk, int hp, int def, int spd, int acc, int intel)
@@ -271,7 +319,7 @@ void applyBattleStatGain(Dog *d)
 
                 printf("HP +%d\n", gain);
                 break;
-            }    
+            }
             case 2:
                 d->defense = clamp(d->defense + gain);
                 printf("DEF +%d\n", gain);
@@ -502,7 +550,8 @@ void loseSequence(Dog *player, Dog *enemy)
 void waitForEnter()
 {
     printf("\nPress Enter to continue...");
-    while (getchar() != '\n'); // wait until Enter lang
+    while (getchar() != '\n')
+        ; // wait until Enter lang
 }
 
 void pauseAndClear()
@@ -516,6 +565,8 @@ void pauseAndClear()
 
 void battle(Dog *player)
 {
+    int invalidCount = 0;
+
     char input[10];
     Dog enemy;
 
@@ -543,10 +594,27 @@ void battle(Dog *player)
         printf("Choice: ");
 
         fgets(input, sizeof(input), stdin);
+
+        // Enter lang
+        if (input[0] == '\n')
+        {
+            printf("Please select a number.\n");
+            waitForEnter();
+            continue;
+        }
+
         choice = atoi(input);
 
+        // invalid range
+        if (choice < 1 || choice > 4)
+        {
+            printf("Invalid choice! Select 1-4 only.\n");
+            waitForEnter();
+            continue;
+        }
+
         // ================= PLAYER TURN =================
-        if (choice == 1)
+        if (choice == 1) // ================= ATTACK =================
         {
             system("cls");
             displayBattleStatus(*player, enemy);
@@ -555,42 +623,64 @@ void battle(Dog *player)
             printf("1. Bite\n2. Scratch\n3. Growl\n4. Lock Jaw\n");
 
             fgets(input, sizeof(input), stdin);
-            int move = atoi(input);
 
-            if (move < 1 || move > 4)
+            // ❗ INVALID INPUT HANDLER
+            if (input[0] == '\n' || !isdigit((unsigned char)input[0]))
             {
-                printf("Invalid move!\n");
+                invalidCount++;
+
+                system("cls");
+                displayBattleStatus(*player, enemy);
+
+                if (invalidCount == 1)
+                    printf("\nHey, focus on your battle!\n");
+                else if (invalidCount == 2)
+                    printf("\nHey! Hey! I told you to focus!\n");
+                else
+                    printf("\nCome on! Wake up! What's wrong with you?\n");
+
+                waitForEnter();
+
+                printf("\nEnemy takes advantage of your hesitation!\n");
+                enemyAttack(player, &enemy);
+
                 waitForEnter();
                 continue;
             }
 
-            int damage = 0;
-            char *moveName = "Unknown";
+            int move = atoi(input);
+
+            if (move < 1 || move > 4)
+            {
+                invalidCount++;
+
+                system("cls");
+                displayBattleStatus(*player, enemy);
+
+                printf("\nInvalid move!\n");
+                waitForEnter();
+
+                printf("\nEnemy takes advantage!\n");
+                enemyAttack(player, &enemy);
+
+                waitForEnter();
+                continue;
+            }
+
+            // ✅ VALID MOVE
+            invalidCount = 0;
 
             int penalty = getFatiguePenalty(player->fatigue);
             int effectiveAttack = player->attack - penalty;
-            if (effectiveAttack < 1)
-                effectiveAttack = 1;
+            if (effectiveAttack < 1) effectiveAttack = 1;
+            if (effectiveAttack > 999) effectiveAttack = 999;
 
-            if (move == 1)
-            {
-                damage = effectiveAttack + 5;
-                moveName = "Bite";
-            }
-            else if (move == 2)
-            {
-                damage = effectiveAttack + 3;
-                moveName = "Scratch";
-            }
-            else if (move == 3)
-            {
-                moveName = "Growl";
-            }
-            else if (move == 4)
-            {
-                damage = effectiveAttack + 8;
-                moveName = "Lock Jaw";
-            }
+            char *moveName = "Unknown";
+
+            if (move == 1) moveName = "Bite";
+            else if (move == 2) moveName = "Scratch";
+            else if (move == 3) moveName = "Growl";
+            else if (move == 4) moveName = "Lock Jaw";
 
             printf("\nYou used %s...\n", moveName);
 
@@ -603,73 +693,76 @@ void battle(Dog *player)
             }
             printf("\n");
 
+            // 🎯 ACCURACY
             int dodgeChance = enemy.speed * 2;
             int finalAccuracy = player->accuracy - dodgeChance;
 
-            if (finalAccuracy < 70)
-                finalAccuracy = 70;
-            if (finalAccuracy > 95)
-                finalAccuracy = 95;
+            if (finalAccuracy < 70) finalAccuracy = 70;
+            if (finalAccuracy > 95) finalAccuracy = 95;
 
             int roll = rand() % 100;
 
-            if (systemLog)
-                printf("[HIT  ] Roll: %-3d | Acc : %-3d\n", roll, finalAccuracy);
-
             if (roll < finalAccuracy)
             {
-                if (move == 3)
+                if (move == 3) // GROWL
                 {
                     enemy.attack -= 2;
+                    if (enemy.attack < 1) enemy.attack = 1;
+
                     printf("Enemy attack reduced!\n");
                 }
                 else
                 {
-                    // ⭐ BASE DAMAGE (HP-based scaling)
-                int baseDamage = (effectiveAttack * enemy.maxHP) /
-                                (effectiveAttack + enemy.defense + 150);
+                    int baseDamage = (effectiveAttack / 6) + 5;
 
-                // random variation (para hindi flat)
-                baseDamage += (rand() % (baseDamage / 4 + 1));
+                    // 🎲 randomness (balanced range)
+                    baseDamage += (rand() % 11) - 5; // -5 to +5
 
-                // move bonus (controlled)
-                if (move == 1) baseDamage += 3; // Bite
-                if (move == 2) baseDamage += 2; // Scratch
-                if (move == 4) baseDamage += 5; // Lock Jaw
+                    // ⚔️ move bonus
+                    if (move == 1) baseDamage += 5;  // Bite
+                    else if (move == 2) baseDamage += 3;  // Scratch
+                    else if (move == 4) baseDamage += 8;  // Lock Jaw
 
-                damage = baseDamage;
+                    // 🛡️ defense reduction (light lang)
+                    baseDamage -= enemy.defense / 20;
 
-                // CRIT (keep 1.5x)
-                if (isCritical(player->hp, player->maxHP))
-                {
-                    damage = (int)(damage * 1.5);
-                    printf("CRITICAL HIT!\n");
-                }
+                    // 💥 critical (optional pero maganda feel)
+                    if (isCritical(player->hp, player->maxHP))
+                    {
+                        baseDamage += 10;
+                        printf("CRITICAL HIT!\n");
+                    }
 
-                damage = damage * (player->fatigue / 100.0);
+                    // 😴 fatigue
+                    float fatigueFactor = 1.0 - (player->fatigue / 200.0);
+                    if (fatigueFactor < 0.6) fatigueFactor = 0.6;
 
-                if (damage < 1) damage = 1;
-                    
-                    enemy.hp -= damage;
+                    int finalDamage = (int)(baseDamage * fatigueFactor);
+
+                    // minimum safety
+                    if (finalDamage < 1)
+                        finalDamage = 1;
+
+                    enemy.hp -= finalDamage;
                     enemy.hp = clamp(enemy.hp);
 
-                    printf("You dealt %d damage!\n", damage);
+                    printf("You dealt %d damage!\n", finalDamage);
                 }
             }
             else
             {
-                printf("But it missed!\n");
+                printf("You missed!\n");
             }
 
             waitForEnter();
         }
-        else if (choice == 2)
+        else if (choice == 2) // ================= DEFEND =================
         {
             defending = 1;
             printf("You are defending!\n");
             waitForEnter();
         }
-        else if (choice == 3)
+        else if (choice == 3) // ================= HEAL =================
         {
             player->hp += 20;
             if (player->hp > player->maxHP)
@@ -678,7 +771,7 @@ void battle(Dog *player)
             printf("You healed +20 HP!\n");
             waitForEnter();
         }
-        else if (choice == 4)
+        else if (choice == 4) // ================= SURRENDER =================
         {
             printf("You surrendered...\n");
             pauseAndClear();
@@ -695,161 +788,164 @@ void battle(Dog *player)
             break;
         }
 
-        // ================= ENEMY TURN =================
-        system("cls");
-        displayBattleStatus(*player, enemy);
+                    // ================= ENEMY TURN =================
+                    system("cls");
+                    displayBattleStatus(*player, enemy);
 
-        printf("\n--- ENEMY TURN ---\n");
+                    printf("\n--- ENEMY TURN ---\n");
 
-        int action = rand() % 100;
-        int enemyDamage = (enemy.attack * 100) /
-                          (enemy.attack + player->defense + 100);
+                    int action = rand() % 100;
+                    int enemyDamage = (enemy.attack * 100) /
+                                      (enemy.attack + player->defense + 100);
 
-        enemyDamage += rand() % 4;
+                    enemyDamage += rand() % 4;
 
-        if (strstr(enemy.name, "Alpha") && enemy.hp < enemy.maxHP / 2)
-        {
-            printf("Enemy is enraged!\n");
-            enemyDamage += 5;
-        }
-        if (strstr(enemy.name, "Iron Jaw"))
-        {
-            if (rand() % 100 < 30)
-            {
-                printf("Iron Jaw hardened its defense!\n");
-                enemyDamage = (int)(enemyDamage * 0.5);
-            }
-        }
-        if (strstr(enemy.name, "Street King"))
-        {
-            if (rand() % 100 < 25)
-            {
-                printf("Street King attacks twice!\n");
-                player->hp -= enemyDamage;
-            }
-        }
-
-        if (enemy.hp <= 30 && action < 20)
-        {
-            enemy.hp += 15;
-            if (enemy.hp > enemy.maxHP)
-                enemy.hp = enemy.maxHP;
-
-            printf("Enemy used Heal! (+15 HP)\n");
-        }
-        else
-        {
-            int move = rand() % 3;
-            char *moveName;
-
-            if (move == 0)
-            {
-                enemyDamage += 5;
-                moveName = "Bite";
-            }
-            else if (move == 1)
-            {
-                enemyDamage += 3;
-                moveName = "Scratch";
-            }
-            else
-            {
-                enemyDamage += 8;
-                moveName = "Lock Jaw";
-            }
-
-            printf("Enemy used %s...\n", moveName);
-
-            printf("Attacking");
-            for (int i = 0; i < 3; i++)
-            {
-                printf(".");
-                fflush(stdout);
-                Sleep(150);
-            }
-            printf("\n");
-
-            int dodgeChance = player->speed * 2;
-            int finalAccuracy = enemy.accuracy - dodgeChance;
-
-            if (finalAccuracy < 70)
-                finalAccuracy = 70;
-            if (finalAccuracy > 95)
-                finalAccuracy = 95;
-
-            int roll = rand() % 100;
-
-            if (systemLog)
-                printf("[HIT  ] Roll: %-3d | Acc : %-3d\n", roll, finalAccuracy);
-
-            if (roll < finalAccuracy)
-            {
-                // 🔥 DEFEND + COUNTER FIX
-                if (defending)
-                {
-                    int counterChance = player->intelligence / 2;
-                    if (counterChance > 60)
-                        counterChance = 60;
-
-                    int counterRoll = rand() % 100;
-
-                    if (counterRoll < counterChance)
+                    if (strstr(enemy.name, "Alpha") && enemy.hp < enemy.maxHP / 2)
                     {
-                        int counterDamage = player->attack + (player->intelligence / 10);
+                        printf("Enemy is enraged!\n");
+                        enemyDamage += 5;
+                    }
+                    if (strstr(enemy.name, "Iron Jaw"))
+                    {
+                        if (rand() % 100 < 30)
+                        {
+                            printf("Iron Jaw hardened its defense!\n");
+                            enemyDamage = (int)(enemyDamage * 0.5);
+                        }
+                    }
+                    if (strstr(enemy.name, "Street King"))
+                    {
+                        if (rand() % 100 < 25)
+                        {
+                            printf("Street King attacks twice!\n");
+                            player->hp -= enemyDamage;
+                        }
+                    }
 
-                        printf("You countered the attack!\n");
-                        printf("Counter Damage: %d\n", counterDamage);
+                    if (enemy.hp <= 30 && action < 20)
+                    {
+                        enemy.hp += 15;
+                        if (enemy.hp > enemy.maxHP)
+                            enemy.hp = enemy.maxHP;
 
-                        enemy.hp -= counterDamage;
-                        enemy.hp = clamp(enemy.hp);
+                        printf("Enemy used Heal! (+15 HP)\n");
                     }
                     else
                     {
-                        enemyDamage = (int)(enemyDamage * 0.6);
+                        int move = rand() % 3;
+                        char *moveName;
 
-                        if (isCritical(enemy.hp, enemy.maxHP))
+                        if (move == 0)
                         {
-                            enemyDamage = (int)(enemyDamage * 1.5);
-                            printf("Enemy CRITICAL HIT!\n");
+                            enemyDamage += 5;
+                            moveName = "Bite";
+                        }
+                        else if (move == 1)
+                        {
+                            enemyDamage += 3;
+                            moveName = "Scratch";
+                        }
+                        else
+                        {
+                            enemyDamage += 8;
+                            moveName = "Lock Jaw";
                         }
 
-                        player->hp -= enemyDamage;
-                        player->hp = clamp(player->hp);
+                        printf("Enemy used %s...\n", moveName);
 
-                        printf("You defended! Damage reduced!\n");
-                        printf("Enemy dealt %d damage!\n", enemyDamage);
+                        printf("Attacking");
+                        for (int i = 0; i < 3; i++)
+                        {
+                            printf(".");
+                            fflush(stdout);
+                            Sleep(150);
+                        }
+                        printf("\n");
+
+                        int dodgeChance = player->speed * 2;
+                        int finalAccuracy = enemy.accuracy - dodgeChance;
+
+                        if (finalAccuracy < 70)
+                            finalAccuracy = 70;
+                        if (finalAccuracy > 95)
+                            finalAccuracy = 95;
+
+                        int roll = rand() % 100;
+
+                        if (systemLog)
+                            printf("[HIT  ] Roll: %-3d | Acc : %-3d\n", roll, finalAccuracy);
+
+                        if (roll < finalAccuracy)
+                        {
+                            // 🔥 DEFEND + COUNTER FIX
+                            if (defending)
+                            {
+                                int counterChance = player->intelligence / 2;
+                                if (counterChance > 60)
+                                    counterChance = 60;
+
+                                int counterRoll = rand() % 100;
+
+                                if (counterRoll < counterChance)
+                                {
+                                    int counterDamage = player->attack + (player->intelligence / 10);
+
+                                    printf("You countered the attack!\n");
+                                    printf("Counter Damage: %d\n", counterDamage);
+
+                                    enemy.hp -= counterDamage;
+                                    enemy.hp = clamp(enemy.hp);
+                                }
+                                else
+                                {
+                                    enemyDamage = (int)(enemyDamage * 0.6);
+
+                                    if (isCritical(enemy.hp, enemy.maxHP))
+                                    {
+                                        enemyDamage = (int)(enemyDamage * 1.5);
+                                        printf("Enemy CRITICAL HIT!\n");
+                                    }
+
+                                    player->hp -= enemyDamage;
+                                    player->hp = clamp(player->hp);
+
+                                    printf("You defended! Damage reduced!\n");
+                                    printf("Enemy dealt %d damage!\n", enemyDamage);
+                                }
+
+                                defending = 0;
+                            }
+                            else
+                            {
+                                if (isCritical(enemy.hp, enemy.maxHP))
+                                {
+                                    enemyDamage *= 2;
+                                    printf("Enemy CRITICAL HIT!\n");
+                                }
+
+                                player->hp -= enemyDamage;
+                                player->hp = clamp(player->hp);
+
+                                printf("Enemy dealt %d damage!\n", enemyDamage);
+                            }
+                        }
+                        else
+                        {
+                            printf("Enemy missed!\n");
+                        }
                     }
 
-                    defending = 0;
-                }
-                else
-                {
-                    if (isCritical(enemy.hp, enemy.maxHP))
+                    waitForEnter();
+
+                    // ================= LOSE CHECK =================
+                    if (player->hp <= 0)
                     {
-                        enemyDamage *= 2;
-                        printf("Enemy CRITICAL HIT!\n");
+                        loseSequence(player, &enemy);
+                        pauseAndClear();
+                        break;
                     }
-
-                    player->hp -= enemyDamage;
-                    player->hp = clamp(player->hp);
-
-                    printf("Enemy dealt %d damage!\n", enemyDamage);
                 }
             }
-            else
-            {
-                printf("Enemy missed!\n");
-            }
-        }
-
-        waitForEnter();
-
-        // ================= LOSE CHECK =================
-        if (player->hp <= 0)
-        {
-            loseSequence(player, &enemy);
-            pauseAndClear();
-            break;
-        }
-    }
-}    
+        
+    
+                

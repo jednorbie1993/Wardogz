@@ -33,6 +33,7 @@ void loseSequence(Dog *player, Dog *enemy);
 void applyBattleStatGain(Dog *d);
 void trainDog(Dog *d, int type);
 void createEnemy(Dog *e);
+void enemyAttack(Dog *player, Dog *enemy);
 
 int clamp(int value);
 int clampFatigue(int value);
