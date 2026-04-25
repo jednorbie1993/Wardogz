@@ -40,36 +40,39 @@ int main()
         }
         else if (choice == 2)
         {
-            system("cls");
-
-            printf("1. Power Training\n");
-            printf("2. Speed Training\n");
-            printf("3. Balance Training\n");
-            printf("4. Return\n");
-            printf("Choice: ");
-
-            char input[10];
-            fgets(input, sizeof(input), stdin);
-            int t = atoi(input);
-
-            // 👉 RETURN OPTION
-            if (t == 4)
+            while (1) // 🔁 loop para hindi umalis agad
             {
                 system("cls");
-                continue; // balik sa main menu
+
+                printf("1. Power Training\n");
+                printf("2. Speed Training\n");
+                printf("3. Balance Training\n");
+                printf("4. Return\n");
+                printf("Choice: ");
+
+                char input[10];
+                fgets(input, sizeof(input), stdin);
+                int t = atoi(input);
+
+                // 👉 RETURN OPTION
+                if (t == 4)
+                {
+                    system("cls");
+                    break; // ⬅️ EXIT training menu, balik sa main menu
+                }
+
+                if (t < 1 || t > 3)
+                {
+                    printf("Invalid choice!\n");
+                    waitForEnter();
+                    continue; // stay sa training menu
+                }
+
+                trainDog(&player, t);
+
+                printf("\nTraining complete!\n");
+                waitForEnter(); // mas safe kaysa pauseAndClear
             }
-
-            if (t < 1 || t > 3)
-            {
-                printf("Invalid choice!\n");
-                waitForEnter();
-                system("cls");
-                continue;
-            }
-
-            trainDog(&player, t);
-
-            pauseAndClear();
         }
         else if (choice == 3)
         {
@@ -185,6 +188,6 @@ int main()
 gcc main.c dog.c stage.c -o wardogz
 .\wardogz.exe
 
-
+gcc *.c -o wardogz
 played 4/25
 */
