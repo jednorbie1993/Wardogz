@@ -185,4 +185,6 @@ int main()
 gcc main.c dog.c stage.c -o wardogz
 .\wardogz.exe
 
+
+played 4/25
 */
