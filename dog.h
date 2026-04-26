@@ -31,6 +31,11 @@ void waitForEnter();
 void pauseAndClear();
 void loseSequence(Dog *player, Dog *enemy);
 
+// ================= PLAYER SYSTEM (🔥 ADD THIS) =================
+void playerTurn(Dog *player, Dog *enemy, int *defending);
+void playerAttack(Dog *player, Dog *enemy);
+void healPlayer(Dog *player);
+
 // ================= UI =================
 void showHPBarPlayer(int hp, int maxHp);
 
@@ -41,11 +46,13 @@ void trainDog(Dog *d, int type);
 // ================= ENEMY =================
 void createEnemy(Dog *e);
 void enemyAttack(Dog *player, Dog *enemy, int *defending);
-void setEnemyByZone(Dog *enemy, int zoneIndex, int i);  // ✅ FIXED
+void enemyQuickAttack(Dog *player, Dog *enemy);
+void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
 
 // ================= UTIL =================
 int clamp(int value);
 int clampFatigue(int value);
 int getFatiguePenalty(int fatigue);
+int isCritical(int hp, int maxHP);   // 🔥 ADD THIS (ginagamit mo na)
 
 #endif
