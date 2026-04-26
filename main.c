@@ -193,5 +193,7 @@ gcc *.c -o wardogz
 
 gcc *.c -o wardo -Wall -Wextra
 
+gcc *.c -o wardogz.exe; .\wardogz.exe
+
 played 4/25
 */

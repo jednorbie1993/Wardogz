@@ -754,6 +754,9 @@ void battle(Dog *player)
             else if (move == 3) moveName = "Growl";
             else if (move == 4) moveName = "Lock Jaw";
 
+            system("cls");
+            displayBattleStatus(*player, enemy);
+
             printf("\nYou used %s...\n", moveName);
 
             printf("Attacking");
@@ -845,8 +848,8 @@ void battle(Dog *player)
         }
         else if (choice == 4) // ================= SURRENDER =================
         {
+            system("cls");
             printf("You surrendered...\n");
-            pauseAndClear();
             break;
         }
 
@@ -856,7 +859,6 @@ void battle(Dog *player)
             system("cls");
             printf("\nYOU WIN!\n");
             applyBattleStatGain(player);
-            pauseAndClear();
             break;
         }
         // ================= ENEMY TURN =================
@@ -864,9 +866,6 @@ void battle(Dog *player)
         displayBattleStatus(*player, enemy);
 
         enemyAttack(player, &enemy, &defending);
-        printf("\nPress Enter to continue...");
-        fflush(stdout);
-        getchar();
 
         // ================= LOSE CHECK =================
         if (player->hp <= 0)
