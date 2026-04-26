@@ -1,5 +1,6 @@
 #ifndef DOG_H
 #define DOG_H
+
 #define MAX_STAT 999
 #define MIN_STAT 0
 
@@ -21,20 +22,28 @@ typedef struct {
 
 } Dog;
 
-// prototypes (WALANG struct Dog dito!)
+// ================= CORE =================
 void createDog(Dog *d);
 void printDog(Dog d);
 void battle(Dog *player);
 void displayBattleStatus(Dog player, Dog enemy);
 void waitForEnter();
-void showHPBarPlayer(int hp, int maxHp);
 void pauseAndClear();
 void loseSequence(Dog *player, Dog *enemy);
+
+// ================= UI =================
+void showHPBarPlayer(int hp, int maxHp);
+
+// ================= SYSTEM =================
 void applyBattleStatGain(Dog *d);
 void trainDog(Dog *d, int type);
-void createEnemy(Dog *e);
-void enemyAttack(Dog *player, Dog *enemy);
 
+// ================= ENEMY =================
+void createEnemy(Dog *e);
+void enemyAttack(Dog *player, Dog *enemy, int *defending);
+void setEnemyByZone(Dog *enemy, int zoneIndex, int i);  // ✅ FIXED
+
+// ================= UTIL =================
 int clamp(int value);
 int clampFatigue(int value);
 int getFatiguePenalty(int fatigue);
