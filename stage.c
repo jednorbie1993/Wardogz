@@ -129,7 +129,7 @@ void startStage(Dog *player)
             }
 
             // 🔥 IMPORTANT FIX HERE
-            battle(player, &enemy);
+            battle(player);
 
             // progress update
             if (progress[zoneIndex] < 3)
