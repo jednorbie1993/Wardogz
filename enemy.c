@@ -102,13 +102,15 @@ void enemyAttack(Dog *player, Dog *enemy, int *defending)
         if (*defending)
         {
             int counterChance = player->intelligence / 2;
-            if (counterChance > 60) counterChance = 60;
+            if (counterChance > 25) counterChance = 25;
 
             int counterRoll = rand() % 100;
 
             if (counterRoll < counterChance)
             {
-                int counterDamage = player->attack + (player->intelligence / 10);
+                int counterDamage =
+                (player->attack / 2) +
+                (player->intelligence / 4);
 
                 printf("You countered the attack!\n");
                 printf("Counter Damage: %d\n", counterDamage);
@@ -125,6 +127,7 @@ void enemyAttack(Dog *player, Dog *enemy, int *defending)
 
                 printf("You defended! Damage reduced!\n");
                 printf("Enemy dealt %d damage!\n", enemyDamage);
+                waitForEnter();
             }
 
             *defending = 0;
@@ -135,11 +138,13 @@ void enemyAttack(Dog *player, Dog *enemy, int *defending)
             player->hp = clamp(player->hp);
 
             printf("Enemy dealt %d damage!\n", enemyDamage);
+            waitForEnter();
         }
     }
     else
     {
         printf("Enemy missed!\n");
+        waitForEnter();
     }
 
     // ================= OPTIONAL DEBUG =================

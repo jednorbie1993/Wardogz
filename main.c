@@ -189,7 +189,9 @@ gcc main.c dog.c stage.c -o wardogz
 .\wardogz.exe
 
 gcc *.c -o wardogz
+.\wardogz.exe
 
+gcc *.c -o wardo -Wall -Wextra
 
 played 4/25
 */

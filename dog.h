@@ -32,9 +32,8 @@ void pauseAndClear();
 void loseSequence(Dog *player, Dog *enemy);
 
 // ================= PLAYER SYSTEM (🔥 ADD THIS) =================
-void playerTurn(Dog *player, Dog *enemy, int *defending);
+int playerTurn(Dog *player, Dog *enemy, int *defending);
 void playerAttack(Dog *player, Dog *enemy);
-void healPlayer(Dog *player);
 
 // ================= UI =================
 void showHPBarPlayer(int hp, int maxHp);
@@ -48,6 +47,7 @@ void createEnemy(Dog *e);
 void enemyAttack(Dog *player, Dog *enemy, int *defending);
 void enemyQuickAttack(Dog *player, Dog *enemy);
 void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
+void enemyTurn(Dog *player, Dog *enemy, int *defending);
 
 // ================= UTIL =================
 int clamp(int value);

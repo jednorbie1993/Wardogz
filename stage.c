@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> // ⭐ IMPORTANT
+#include <string.h>
 #include "stage.h"
 #include "dog.h"
 
@@ -21,7 +21,6 @@ void startStage(Dog *player)
         char input[10];
         fgets(input, sizeof(input), stdin);
 
-        // Enter lang
         if (input[0] == '\n')
         {
             printf("Please select a number.\n");
@@ -29,7 +28,6 @@ void startStage(Dog *player)
             continue;
         }
 
-        // convert
         stageChoice = atoi(input);
 
         if (stageChoice < 1 || stageChoice > 3)
@@ -44,6 +42,7 @@ void startStage(Dog *player)
             system("cls");
             return;
         }
+
         if (stageChoice != 1)
         {
             printf("Stage locked!\n");
@@ -51,43 +50,31 @@ void startStage(Dog *player)
             continue;
         }
 
-        // 👉 ZONE SELECT
-        static int progress[3] = {0, 0, 0}; // temporary progress
+        // PROGRESS SYSTEM
+        static int progress[3] = {0, 0, 0};
 
         while (1)
         {
             system("cls");
             printf("=== STAGE 1: Urban Strays ===\n");
 
-            // Zone 1 (always open)
             printf("1. Back Alley (%d/3)\n", progress[0]);
 
-            // Zone 2
             if (progress[0] >= 3)
-            {
                 printf("2. Junkyard (%d/3)\n", progress[1]);
-            }
             else
-            {
                 printf("2. Junkyard (Locked)\n");
-            }
 
-            // Zone 3
             if (progress[1] >= 3)
-            {
                 printf("3. Abandoned Block (%d/3)\n", progress[2]);
-            }
             else
-            {
                 printf("3. Abandoned Block (Locked)\n");
-            }
 
             printf("4. Back\n");
             printf("Choice: ");
 
             fgets(input, sizeof(input), stdin);
 
-            // Enter lang
             if (input[0] == '\n')
             {
                 printf("Please select a number.\n");
@@ -97,7 +84,6 @@ void startStage(Dog *player)
 
             zoneChoice = atoi(input);
 
-            // invalid range
             if (zoneChoice < 1 || zoneChoice > 4)
             {
                 printf("Invalid choice! Select 1-4 only.\n");
@@ -108,7 +94,7 @@ void startStage(Dog *player)
             if (zoneChoice == 4)
                 break;
 
-            // 🔒 LOCK CHECK
+            // LOCK CHECK
             if (zoneChoice == 2 && progress[0] < 3)
             {
                 printf("Finish Zone 1 first!\n");
@@ -130,33 +116,28 @@ void startStage(Dog *player)
 
             int i = progress[zoneIndex];
 
-            // 👉 cap for replay
             if (i >= 3)
-            {
                 i = 2;
-            }
 
-            // 🔥 REPLACEMENT
             setEnemyByZone(&enemy, zoneIndex, i);
 
             printf("\nFighting: %s\n", enemy.name);
 
-            // 👉 replay label
             if (progress[zoneIndex] >= 3)
             {
                 printf("(REPLAY MODE)\n");
             }
 
-            battle(player);
+            // 🔥 IMPORTANT FIX HERE
+            battle(player, &enemy);
 
-            // 👉 progress update (ONLY ONCE)
+            // progress update
             if (progress[zoneIndex] < 3)
             {
                 progress[zoneIndex]++;
             }
 
-            // 👉 pause para walang double enter / auto loop
-            
+            waitForEnter();
         }
     }
 }

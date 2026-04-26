@@ -1,3 +1,5 @@
+/*
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -5,7 +7,8 @@
 #include <windows.h>
 #include <ctype.h>
 
-void playerTurn(Dog *player, Dog *enemy, int *defending)
+// ================= PLAYER TURN =================
+int playerTurn(Dog *player, Dog *enemy, int *defending)
 {
     char input[10];
     int choice;
@@ -25,25 +28,27 @@ void playerTurn(Dog *player, Dog *enemy, int *defending)
     {
         printf("Please select a number.\n");
         waitForEnter();
-        return;
+        return 0;
     }
 
     if (choice < 1 || choice > 4)
     {
         printf("Invalid choice!\n");
         waitForEnter();
-        return;
+        return 0;
     }
 
     if (choice == 1)
     {
         playerAttack(player, enemy);
+        return 1; // valid action
     }
     else if (choice == 2)
     {
         *defending = 1;
         printf("You are defending!\n");
         waitForEnter();
+        return 1;
     }
     else if (choice == 3)
     {
@@ -53,15 +58,20 @@ void playerTurn(Dog *player, Dog *enemy, int *defending)
 
         printf("You healed +20 HP!\n");
         waitForEnter();
+        return 1;
     }
     else if (choice == 4)
     {
         printf("You surrendered...\n");
         player->hp = 0;
-        pauseAndClear();
+        waitForEnter();
+        return 4; // 🔴 IMPORTANT: surrender signal
     }
+
+    return 0;
 }
 
+// ================= PLAYER ATTACK =================
 void playerAttack(Dog *player, Dog *enemy)
 {
     char input[10];
@@ -76,7 +86,6 @@ void playerAttack(Dog *player, Dog *enemy)
 
     fgets(input, sizeof(input), stdin);
 
-    // ❗ INVALID INPUT HANDLER
     if (input[0] == '\n' || !isdigit((unsigned char)input[0]))
     {
         invalidCount++;
@@ -119,11 +128,14 @@ void playerAttack(Dog *player, Dog *enemy)
         return;
     }
 
-    // ================= VALID MOVE =================
+    system("cls");
+    displayBattleStatus(*player, *enemy);
+
     invalidCount = 0;
 
     int penalty = getFatiguePenalty(player->fatigue);
     int effectiveAttack = player->attack - penalty;
+
     if (effectiveAttack < 1) effectiveAttack = 1;
     if (effectiveAttack > 999) effectiveAttack = 999;
 
@@ -145,7 +157,6 @@ void playerAttack(Dog *player, Dog *enemy)
     }
     printf("\n");
 
-    // ================= ACCURACY =================
     int dodgeChance = enemy->speed * 2;
     int finalAccuracy = player->accuracy - dodgeChance;
 
@@ -156,7 +167,7 @@ void playerAttack(Dog *player, Dog *enemy)
 
     if (roll < finalAccuracy)
     {
-        if (move == 3) // GROWL
+        if (move == 3)
         {
             enemy->attack -= 2;
             if (enemy->attack < 1) enemy->attack = 1;
@@ -203,3 +214,4 @@ void playerAttack(Dog *player, Dog *enemy)
     waitForEnter();
 }
 
+*/
