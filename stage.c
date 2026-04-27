@@ -128,10 +128,10 @@ void startStage(Dog *player)
             waitForEnter();
 
             // After battle call, add this:
-            battle(player, zoneIndex, progress);
+            int surrendered = battle(player, zoneIndex, progress);
 
             // 🔥 OPTIONAL: Check if player surrendered (if you want special message)
-            if (player->hp > 0 && enemy.hp > 0) // Battle ended without KO
+            if (surrendered) // Battle ended without KO
             {
                 system("cls");
 

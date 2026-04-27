@@ -635,7 +635,7 @@ void pauseAndClear()
     system("cls");
 }
 
-void battle(Dog *player, int zoneIndex, int progress[])
+int battle(Dog *player, int zoneIndex, int progress[])
 {
     int invalidCount = 0;
     char input[10];
@@ -643,6 +643,7 @@ void battle(Dog *player, int zoneIndex, int progress[])
     int choice;
     int defending = 0;
     int move;
+    int surrendered = 0;
 
     createEnemy(&enemy);
 
@@ -898,6 +899,7 @@ void battle(Dog *player, int zoneIndex, int progress[])
             system("cls");
             printf("You surrendered...\n");
             printf("You ran away from battle!\n");
+            surrendered = 1; 
             waitForEnter();
             break;
         }
@@ -929,5 +931,7 @@ void battle(Dog *player, int zoneIndex, int progress[])
             pauseAndClear();
             break;
         }
+    
     }
+    return surrendered;
 }
