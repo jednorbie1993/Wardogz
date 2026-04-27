@@ -9,6 +9,9 @@ void startStage(Dog *player)
     int stageChoice;
     int zoneChoice;
 
+    // 🔥 FIXED: Global or persistent progress (choose one)
+    static int progress[3] = {0, 0, 0}; // Option 1: Static (survives function calls)
+
     while (1)
     {
         system("cls");
@@ -50,9 +53,7 @@ void startStage(Dog *player)
             continue;
         }
 
-        // PROGRESS SYSTEM
-        static int progress[3] = {0, 0, 0};
-
+        // ZONE SELECTION LOOP
         while (1)
         {
             system("cls");
@@ -111,33 +112,63 @@ void startStage(Dog *player)
 
             int zoneIndex = zoneChoice - 1;
 
+            // 🔥 FIXED: Create enemy BEFORE battle
             Dog enemy;
             createEnemy(&enemy);
-
             int i = progress[zoneIndex];
-
             if (i >= 3)
                 i = 2;
-
             setEnemyByZone(&enemy, zoneIndex, i);
 
-            printf("\nFighting: %s\n", enemy.name);
-
+            printf("\nFighting: %s", enemy.name);
             if (progress[zoneIndex] >= 3)
-            {
-                printf("(REPLAY MODE)\n");
-            }
-
-            // 🔥 IMPORTANT FIX HERE
-            battle(player);
-
-            // progress update
-            if (progress[zoneIndex] < 3)
-            {
-                progress[zoneIndex]++;
-            }
-
+                printf(" (REPLAY MODE)\n");
+            else
+                printf("\n");
             waitForEnter();
+
+            // After battle call, add this:
+            battle(player, zoneIndex, progress);
+
+            // 🔥 OPTIONAL: Check if player surrendered (if you want special message)
+            if (player->hp > 0 && enemy.hp > 0) // Battle ended without KO
+            {
+                system("cls");
+
+                int outro = rand() % 4;
+
+                printf("\n");
+
+                switch (outro)
+                {
+                case 0:
+                    typeText("...That was too close.\n", 25);
+                    typeText("Phew... lucky this time.\n", 25);
+                    typeText("I need to be stronger.\n", 25);
+                    break;
+
+                case 1:
+                    typeText("Tch... not enough.\n", 25);
+                    typeText("I'll be back.\n", 25);
+                    typeText("Next time, I finish this.\n", 25);
+                    break;
+
+                case 2:
+                    typeText("That dog... it's different.\n", 25);
+                    typeText("I felt the pressure.\n", 25);
+                    typeText("I need more training.\n", 25);
+                    break;
+
+                case 3:
+                    typeText("No way... that was intense.\n", 25);
+                    typeText("I barely made it out.\n", 25);
+                    typeText("Next time, I won't hesitate.\n", 25);
+                    break;
+                }
+
+                printf("\n");
+                waitForEnter();
+            }
         }
     }
 }

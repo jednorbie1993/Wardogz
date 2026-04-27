@@ -40,6 +40,9 @@ int main()
         }
         else if (choice == 2)
         {
+
+            int t;
+
             while (1) // 🔁 loop para hindi umalis agad
             {
                 system("cls");
@@ -49,10 +52,9 @@ int main()
                 printf("3. Balance Training\n");
                 printf("4. Return\n");
                 printf("Choice: ");
-
-                char input[10];
-                fgets(input, sizeof(input), stdin);
-                int t = atoi(input);
+                fflush(stdout);
+                scanf("%d", &t);  // ← SCANF
+                while(getchar() != '\n');
 
                 // 👉 RETURN OPTION
                 if (t == 4)
@@ -185,7 +187,7 @@ int main()
 }
 /*
 
-gcc main.c dog.c stage.c -o wardogz
+gcc main.c dog.c stage.c enemy.c -o wardogz
 .\wardogz.exe
 
 gcc *.c -o wardogz

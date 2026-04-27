@@ -13,25 +13,22 @@ typedef struct {
     int maxHP;
     int attack;
     int speed;
-
     int defense;
     int accuracy;
     int intelligence;
-
     int fatigue;
-
 } Dog;
 
 // ================= CORE =================
 void createDog(Dog *d);
 void printDog(Dog d);
-void battle(Dog *player);
+void battle(Dog *player, int zoneIndex, int progress[]);  // ✅ FIXED
 void displayBattleStatus(Dog player, Dog enemy);
 void waitForEnter();
 void pauseAndClear();
 void loseSequence(Dog *player, Dog *enemy);
 
-// ================= PLAYER SYSTEM (🔥 ADD THIS) =================
+// ================= PLAYER SYSTEM =================
 int playerTurn(Dog *player, Dog *enemy, int *defending);
 void playerAttack(Dog *player, Dog *enemy);
 
@@ -53,6 +50,6 @@ void enemyTurn(Dog *player, Dog *enemy, int *defending);
 int clamp(int value);
 int clampFatigue(int value);
 int getFatiguePenalty(int fatigue);
-int isCritical(int hp, int maxHP);   // 🔥 ADD THIS (ginagamit mo na)
+int isCritical(int hp, int maxHP);
 
 #endif
