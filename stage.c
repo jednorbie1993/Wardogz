@@ -127,6 +127,15 @@ void startStage(Dog *player)
                 printf("\n");
             waitForEnter();
 
+            // 🔥 ADD THIS CHECK
+            if (player->hp <= 0)
+            {
+                system("cls");
+                typeText("You must rest before you battle again!\n", 25);
+                waitForEnter();
+                continue; // balik sa menu
+            }
+
             // After battle call, add this:
             int surrendered = battle(player, zoneIndex, progress);
 
