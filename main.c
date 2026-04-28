@@ -198,4 +198,13 @@ gcc *.c -o wardo -Wall -Wextra
 gcc *.c -o wardogz.exe; .\wardogz.exe
 
 played 4/25
+
+                system("cls");
+
+                printf("\n=== YOU LOSE ===\n");
+                printf("Your dog collapsed...\n");
+
+                waitForEnter();
+
+                
 */
