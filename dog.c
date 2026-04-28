@@ -532,7 +532,7 @@ void showHPBarEnemy(int hp, int maxHp)
         hp = maxHp;
 
     // 👉 OFF animation (clean single print)
-    if (!animationOn)
+    if (!animationOn || hp == 0)
     {
         int bars = (hp * 10) / maxHp;
 
@@ -927,11 +927,14 @@ int battle(Dog *player, int zoneIndex, int progress[])
         // ================= LOSE CHECK =================
         if (player->hp <= 0)
         {
-            loseSequence(player, &enemy);
-            pauseAndClear();
-            break;
+            system("cls");
+            printf("\n=== YOU LOSE ===\n");
+            printf("Your dog collapsed...\n");
+            waitForEnter();
+
+            return 1; // or any value na sabihin "talo"
         }
-    
+            
     }
     return surrendered;
 }

@@ -137,10 +137,22 @@ void startStage(Dog *player)
             }
 
             // After battle call, add this:
-            int surrendered = battle(player, zoneIndex, progress);
+            int result = battle(player, zoneIndex, progress);
 
-            // 🔥 OPTIONAL: Check if player surrendered (if you want special message)
-            if (surrendered) // Battle ended without KO
+            // 💀 LOSE
+            if (result == 1)
+            {
+                system("cls");
+
+                printf("\n=== YOU LOSE ===\n");
+                printf("Your dog collapsed...\n");
+
+                waitForEnter();
+                continue;
+            }
+
+            // 🏳️ SURRENDER
+            if (result == 2)
             {
                 system("cls");
 
