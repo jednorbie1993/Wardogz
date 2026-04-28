@@ -728,10 +728,17 @@ int battle(Dog *player, int zoneIndex, int progress[])
         printf("1. Attack\n2. Defend\n3. Item (Heal)\n4. Surrender\n");
         printf("Choice: ");
 
-        fflush(stdout);
-        scanf("%d", &choice);
-        while(getchar() != '\n');
+        char buffer[10];
 
+        fflush(stdout);
+        fgets(buffer, sizeof(buffer), stdin);
+
+        if (buffer[0] == '\n' || sscanf(buffer, "%d", &choice) != 1)
+        {
+            printf("Invalid choice! Please enter a number.\n");
+            waitForEnter();
+            continue;
+        }
         if (choice < 1 || choice > 4)
         {
             printf("Invalid choice! Select 1-4 only.\n");
@@ -747,6 +754,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
             printf("\nChoose Attack:\n");
             printf("1. Bite\n2. Scratch\n3. Growl\n4. Lock Jaw\n");
+            printf("[Press SPACE then Enter to go back]\n");
             
             printf("> ");
             fflush(stdout);
@@ -756,7 +764,18 @@ int battle(Dog *player, int zoneIndex, int progress[])
             printf("> ");
             fgets(buffer, sizeof(buffer), stdin);
 
-            if (buffer[0] == '\n' || sscanf(buffer, "%d", &move) != 1)
+            // 🧠 SPACE = BACK
+            if (buffer[0] == ' ')
+            {
+                continue; // balik sa main battle menu
+            }
+
+            // ENTER lang (walang input)
+            if (buffer[0] == '\n')
+            {
+                move = 0;
+            }
+            else if (sscanf(buffer, "%d", &move) != 1)
             {
                 move = 0;
             }
@@ -799,9 +818,25 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 }
             }
             waitForEnter();
+
+            system("cls");
+            displayBattleStatus(*player, enemy);
             printf("\nEnemy takes advantage of your hesitation!\n");
+
             enemyQuickAttack(player, &enemy);
             waitForEnter();
+
+            // 💀 ADD THIS PART
+            if (player->hp <= 0)
+            {
+                system("cls");
+                printf("\n=== YOU LOSE ===\n");
+                printf("Your dog collapsed...\n");
+                waitForEnter();
+
+                return 1; // para bumalik sa stage menu
+            }
+
             continue;
             }
             // ✅ VALID ATTACK MOVE
@@ -899,9 +934,8 @@ int battle(Dog *player, int zoneIndex, int progress[])
             system("cls");
             printf("You surrendered...\n");
             printf("You ran away from battle!\n");
-            surrendered = 1; 
             waitForEnter();
-            break;
+            return 2;
         }
 
         // ================= WIN CHECK =================

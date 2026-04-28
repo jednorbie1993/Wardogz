@@ -142,12 +142,7 @@ void startStage(Dog *player)
             // 💀 LOSE
             if (result == 1)
             {
-                system("cls");
 
-                printf("\n=== YOU LOSE ===\n");
-                printf("Your dog collapsed...\n");
-
-                waitForEnter();
                 continue;
             }
 
