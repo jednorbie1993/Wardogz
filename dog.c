@@ -908,13 +908,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
                     enemy.hp = clamp(enemy.hp);
                     printf("You dealt %d damage!\n", finalDamage);
 
-                    // ✅ CHECK muna kung patay na enemy
-                    if (enemy.hp <= 0)
-                    {
-                        printf("Enemy defeated!\n");
-                        waitForEnter();
-                        return 1; // WIN
-                    }
+                    enemy.hp = clamp(enemy.hp);
 
                     // ================= ENEMY COUNTER =================
                     int enemyCounterChance = 10; // adjust mo lang
@@ -979,7 +973,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
             if (progress[zoneIndex] < 3)
                 progress[zoneIndex]++;
             waitForEnter();
-            break;
+            return 1;
         }
 
         // ================= ENEMY TURN =================
@@ -997,7 +991,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
             }
             else if (result == 1)
             {
-                enemy.hp = 0;
+                enemy.hp = 0; // ✔ IMPORTANT SYNC
                 break;
             }
         }
@@ -1020,7 +1014,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 progress[zoneIndex]++;
 
             waitForEnter();
-            return 1; // ✔ WIN
+            return 1;
         }
     }
 }        

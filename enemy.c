@@ -126,7 +126,8 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
                 {
                     printf("Enemy defeated by counter!\n");
                     waitForEnter();
-                    return 1; // WIN
+                    enemy->hp = 0;
+                    return 1;
                 }
             }
             else
