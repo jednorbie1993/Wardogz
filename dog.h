@@ -41,7 +41,7 @@ void trainDog(Dog *d, int type);
 
 // ================= ENEMY =================
 void createEnemy(Dog *e);
-void enemyAttack(Dog *player, Dog *enemy, int *defending);
+int enemyAttack(Dog *player, Dog *enemy, int *defending);
 void enemyQuickAttack(Dog *player, Dog *enemy);
 void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
 void enemyTurn(Dog *player, Dog *enemy, int *defending);

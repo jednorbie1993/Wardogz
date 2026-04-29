@@ -241,14 +241,14 @@ void createDog(Dog *d)
     fgets(d->name, 50, stdin);
     d->name[strcspn(d->name, "\n")] = 0;
 
-    d->hp = 10;
+    d->hp = 100;
     d->maxHP = 100;
     d->attack = 920;
     d->speed = 100;
 
     d->defense = 115;
     d->accuracy = 918; // 80% hit chance
-    d->intelligence = 120;
+    d->intelligence = 920;
 
     d->fatigue = 100; // full energy
 }
@@ -907,6 +907,38 @@ int battle(Dog *player, int zoneIndex, int progress[])
                     enemy.hp -= finalDamage;
                     enemy.hp = clamp(enemy.hp);
                     printf("You dealt %d damage!\n", finalDamage);
+
+                    // ✅ CHECK muna kung patay na enemy
+                    if (enemy.hp <= 0)
+                    {
+                        printf("Enemy defeated!\n");
+                        waitForEnter();
+                        return 1; // WIN
+                    }
+
+                    // ================= ENEMY COUNTER =================
+                    int enemyCounterChance = 10; // adjust mo lang
+
+                    int counterRoll = rand() % 100;
+
+                    if (counterRoll < enemyCounterChance)
+                    {
+                        int counterDamage = enemy.attack / 2;
+
+                        printf("Enemy countered your attack!\n");
+                        printf("You received %d damage!\n", counterDamage);
+
+                        player->hp -= counterDamage;
+                        player->hp = clamp(player->hp);
+
+                        // 💀 check if patay ka
+                        if (player->hp <= 0)
+                        {
+                            printf("You were defeated by counter!\n");
+                            waitForEnter();
+                            return 0; // LOSE
+                        }
+                    }
                 }
             }
             else
@@ -955,20 +987,40 @@ int battle(Dog *player, int zoneIndex, int progress[])
         {
             system("cls");
             displayBattleStatus(*player, enemy);
-            enemyAttack(player, &enemy, &defending);
-        }
 
-        // ================= LOSE CHECK =================
+            int result = enemyAttack(player, &enemy, &defending);
+
+            if (result == 0)
+            {
+                player->hp = 0;
+                break; // tapusin lang battle loop
+            }
+            else if (result == 1)
+            {
+                enemy.hp = 0;
+                break;
+            }
+        }
+        // ================= FINAL RESULT =================
         if (player->hp <= 0)
         {
             system("cls");
             printf("\n=== YOU LOSE ===\n");
             printf("Your dog collapsed...\n");
             waitForEnter();
-
-            return 1; // or any value na sabihin "talo"
+            return 0; // ✔ LOSE
         }
-            
+        else if (enemy.hp <= 0)
+        {
+            system("cls");
+            printf("\nYOU WIN!\n");
+            applyBattleStatGain(player);
+
+            if (progress[zoneIndex] < 3)
+                progress[zoneIndex]++;
+
+            waitForEnter();
+            return 1; // ✔ WIN
+        }
     }
-    return surrendered;
-}
+}        

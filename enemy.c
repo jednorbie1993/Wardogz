@@ -4,7 +4,7 @@
 #include "dog.h"
 #include <windows.h>
 
-void enemyAttack(Dog *player, Dog *enemy, int *defending)
+int enemyAttack(Dog *player, Dog *enemy, int *defending)
 {
     printf("\n--- ENEMY TURN ---\n");
 
@@ -91,8 +91,10 @@ void enemyAttack(Dog *player, Dog *enemy, int *defending)
     int dodgeChance = player->speed * 2;
     int finalAccuracy = enemy->accuracy - dodgeChance;
 
-    if (finalAccuracy < 70) finalAccuracy = 70;
-    if (finalAccuracy > 95) finalAccuracy = 95;
+    if (finalAccuracy < 70)
+        finalAccuracy = 70;
+    if (finalAccuracy > 95)
+        finalAccuracy = 95;
 
     int roll = rand() % 100;
 
@@ -102,21 +104,30 @@ void enemyAttack(Dog *player, Dog *enemy, int *defending)
         if (*defending)
         {
             int counterChance = player->intelligence / 2;
-            if (counterChance > 25) counterChance = 25;
+            if (counterChance > 25)
+                counterChance = 25;
 
             int counterRoll = rand() % 100;
 
             if (counterRoll < counterChance)
             {
                 int counterDamage =
-                (player->attack / 2) +
-                (player->intelligence / 4);
+                    (player->attack / 2) +
+                    (player->intelligence / 4);
 
                 printf("You countered the attack!\n");
                 printf("Counter Damage: %d\n", counterDamage);
 
                 enemy->hp -= counterDamage;
                 enemy->hp = clamp(enemy->hp);
+
+                // ✅ IMPORTANT: check enemy death
+                if (enemy->hp <= 0)
+                {
+                    printf("Enemy defeated by counter!\n");
+                    waitForEnter();
+                    return 1; // WIN
+                }
             }
             else
             {
@@ -127,6 +138,15 @@ void enemyAttack(Dog *player, Dog *enemy, int *defending)
 
                 printf("You defended! Damage reduced!\n");
                 printf("Enemy dealt %d damage!\n", enemyDamage);
+
+                // ✅ check player death
+                if (player->hp <= 0)
+                {
+                    printf("You were defeated...\n");
+                    waitForEnter();
+                    return 0; // LOSE
+                }
+
                 waitForEnter();
             }
 
@@ -138,6 +158,15 @@ void enemyAttack(Dog *player, Dog *enemy, int *defending)
             player->hp = clamp(player->hp);
 
             printf("Enemy dealt %d damage!\n", enemyDamage);
+
+            // ✅ check player death
+            if (player->hp <= 0)
+            {
+                printf("You were defeated...\n");
+                waitForEnter();
+                return 0; // LOSE
+            }
+
             waitForEnter();
         }
     }
@@ -152,4 +181,5 @@ void enemyAttack(Dog *player, Dog *enemy, int *defending)
     {
         printf("[ENEMY DMG DEBUG] %d\n", enemyDamage);
     }
+return -1; // ✅ ADD THIS LINE
 }

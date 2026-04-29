@@ -53,8 +53,9 @@ int main()
                 printf("4. Return\n");
                 printf("Choice: ");
                 fflush(stdout);
-                scanf("%d", &t);  // ← SCANF
-                while(getchar() != '\n');
+                scanf("%d", &t); // ← SCANF
+                while (getchar() != '\n')
+                    ;
 
                 // 👉 RETURN OPTION
                 if (t == 4)
@@ -91,7 +92,7 @@ int main()
                 waitForEnter();
                 system("cls");
             }
-            else if (player.fatigue >= 100)
+            else if (player.fatigue >= 100 && player.hp >= player.maxHP)
             {
                 printf("You're already fully rested!\n");
                 waitForEnter();
@@ -107,25 +108,40 @@ int main()
                 }
                 printf("\n");
 
-                int heal = 20;
+                int hpGain = (rand() % 11) + 15;
+                int fatigueGain = (rand() % 11) + 15;
 
-                // 👉 heal HP (optional nalang)
+                // 💚 Heal HP
                 if (player.hp < player.maxHP)
                 {
-                    player.hp += heal;
+                    player.hp += hpGain;
                     if (player.hp > player.maxHP)
                         player.hp = player.maxHP;
+
+                    printf("Recovered +%d HP!\n", hpGain);
                 }
 
-                // ⭐ MAIN PURPOSE: fatigue recovery
-                player.fatigue = clampFatigue(player.fatigue + 20);
+                // ⚡ Recover Fatigue
+                if (player.fatigue < 100)
+                {
+                    player.fatigue = clampFatigue(player.fatigue + fatigueGain);
+                    printf("Recovered +%d Fatigue!\n", fatigueGain);
+                }
+
+                // 💬 Random message
+                const char *restMessages[] = {
+                    "You're fully conditioned!",
+                    "Fully rested and ready!",
+                    "Ready to fight again!",
+                    "Energy restored!",
+                    "Back in top shape!",
+                    "Refreshed and alert!",
+                    "You feel great!"};
+
+                int msgIndex = rand() % 7;
+                printf("%s\n", restMessages[msgIndex]);
 
                 restCount++;
-
-                printf("Recovered +20 Fatigue!\n");
-
-                if (player.hp < player.maxHP)
-                    printf("Recovered +%d HP!\n", heal);
 
                 waitForEnter();
                 system("cls");
@@ -206,5 +222,5 @@ played 4/25
 
                 waitForEnter();
 
-                
+
 */
