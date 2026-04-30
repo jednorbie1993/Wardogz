@@ -140,7 +140,7 @@ void startStage(Dog *player)
             int result = battle(player, zoneIndex, progress);
 
             // 💀 LOSE
-            if (result == 1)
+            if (result == 0)
             {
 
                 continue;

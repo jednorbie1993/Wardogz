@@ -22,7 +22,7 @@ typedef struct {
 // ================= CORE =================
 void createDog(Dog *d);
 void printDog(Dog d);
-int battle(Dog *player, int zoneIndex, int progress[]);  // ✅ FIXED
+int battle(Dog *player, int zoneIndex, int progress[]);
 void displayBattleStatus(Dog player, Dog enemy);
 void waitForEnter();
 void pauseAndClear();

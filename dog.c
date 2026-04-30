@@ -638,376 +638,132 @@ void pauseAndClear()
 int battle(Dog *player, int zoneIndex, int progress[])
 {
     int invalidCount = 0;
-    char input[10];
-    Dog enemy;
     int choice;
     int defending = 0;
     int move;
-    int surrendered = 0;
 
+    // 🔥 IMPORTANT: local enemy
+    Dog enemy;
     createEnemy(&enemy);
+    setEnemyByZone(&enemy, zoneIndex, progress[zoneIndex]);
 
     system("cls");
 
-    int intro = rand() % 4;
-
     const char *captions[] = {
-    "=== STREET RULES APPLY ===",
-    "=== NO MERCY HERE ===",
-    "=== ONLY THE STRONG WALK AWAY ===",
-    "=== THIS IS THEIR TERRITORY ===",
-    "=== YOU'RE NOT SAFE HERE ==="
-};
+        "=== STREET RULES APPLY ===",
+        "=== NO MERCY HERE ===",
+        "=== ONLY THE STRONG WALK AWAY ===",
+        "=== THIS IS THEIR TERRITORY ===",
+        "=== YOU'RE NOT SAFE HERE ==="};
 
-    int count = sizeof(captions) / sizeof(captions[0]);
-    int pick = rand() % count;
+    int pick = rand() % 5;
 
     printf("\n%s\n\n", captions[pick]);
     Sleep(400);
 
-    switch (intro)
-    {
-        case 0:
-            typeText("...Something feels off.\n", 25);
-            Sleep(300);
-            typeText("Stay focused.\n", 25);
-            Sleep(300);
-            typeText("This isn't training anymore.\n", 25);
-            Sleep(400);
-            typeText("One mistake... and it's over.\n", 25);
-            break;
-
-        case 1:
-            typeText("Hey...\n", 30);
-            Sleep(400);
-            typeText("Keep your head in the game.\n", 25);
-            Sleep(300);
-            typeText("This is not a drill.\n", 25);
-            Sleep(300);
-            typeText("They won't go easy on you.\n", 25);
-            break;
-
-        case 2:
-            typeText("You feel that?\n", 25);
-            Sleep(400);
-            typeText("That pressure...\n", 25);
-            Sleep(300);
-            typeText("Don't panic.\n", 25);
-            Sleep(300);
-            typeText("Use it.\n", 30);
-            Sleep(300);
-            typeText("Turn it into strength.\n", 25);
-            break;
-
-        case 3:
-            typeText("This is where it gets real.\n", 25);
-            Sleep(400);
-            typeText("No room for hesitation.\n", 25);
-            Sleep(300);
-            typeText("Every move matters now.\n", 25);
-            Sleep(300);
-            typeText("Show them what you've got.\n", 25);
-            break;
-    }
-
-    printf("\n");
     waitForEnter();
 
+    // 🔥 FIX: enemy.hp (NOT enemy->hp)
     while (player->hp > 0 && enemy.hp > 0)
     {
         system("cls");
-        displayBattleStatus(*player, enemy);
+        displayBattleStatus(*player, enemy); // ✔ no *
 
         printf("\n--- YOUR TURN ---\n");
 
-        if (player->fatigue <= 20)
-        {
-            printf("Your dog is exhausted!\n");
-        }
-
-        printf("1. Attack\n2. Defend\n3. Item (Heal)\n4. Surrender\n");
+        printf("1. Attack\n2. Defend\n3. Heal\n4. Surrender\n");
         printf("Choice: ");
 
         char buffer[10];
-
-        fflush(stdout);
         fgets(buffer, sizeof(buffer), stdin);
 
-        if (buffer[0] == '\n' || sscanf(buffer, "%d", &choice) != 1)
-        {
-            printf("Invalid choice! Please enter a number.\n");
-            waitForEnter();
+        if (sscanf(buffer, "%d", &choice) != 1)
             continue;
-        }
-        if (choice < 1 || choice > 4)
-        {
-            printf("Invalid choice! Select 1-4 only.\n");
-            waitForEnter();
-            continue;
-        }
 
         // ================= PLAYER TURN =================
-        if (choice == 1) // ATTACK
+        if (choice == 1)
         {
             system("cls");
             displayBattleStatus(*player, enemy);
 
             printf("\nChoose Attack:\n");
-            printf("1. Bite\n2. Scratch\n3. Growl\n4. Lock Jaw\n");
-            printf("[Press SPACE then Enter to go back]\n");
-            
-            printf("> ");
-            fflush(stdout);
+            printf("1. Bite\n2. Scratch\n3. Growl\n4. Lock Jaw\n> ");
 
-            char buffer[10];
-
-            printf("> ");
             fgets(buffer, sizeof(buffer), stdin);
 
-            // 🧠 SPACE = BACK
-            if (buffer[0] == ' ')
-            {
-                continue; // balik sa main battle menu
-            }
+            if (sscanf(buffer, "%d", &move) != 1)
+                continue;
 
-            // ENTER lang (walang input)
-            if (buffer[0] == '\n')
-            {
-                move = 0;
-            }
-            else if (sscanf(buffer, "%d", &move) != 1)
-            {
-                move = 0;
-            }
+            int damage = (player->attack / 6) + 5;
 
-            printf("DEBUG: move = %d\n", move);  // ← SEE RESULT!
+            if (move == 1)
+                damage += 5;
+            else if (move == 2)
+                damage += 3;
+            else if (move == 4)
+                damage += 8;
 
-            if (move == 0 || move < 1 || move > 4)
-            {
-                printf("DEBUG: INVALID!\n");
-                invalidCount++;
-            system("cls");
-            displayBattleStatus(*player, enemy);
+            // 🔥 FIX
+            damage -= enemy.defense / 20;
+            if (damage < 1)
+                damage = 1;
 
-            if (invalidCount == 1)
-            {
-                printf("\nHey, focus on your battle!\n");
-            }
-            else if (invalidCount == 2)
-            {
-                printf("\nHey! Hey! I told you to focus!\n");
-            }
-            else
-            {
-                int r = rand() % 4;
+            enemy.hp -= damage;
+            enemy.hp = clamp(enemy.hp);
 
-                switch (r)
-                {
-                    case 0:
-                        printf("\nCome on! Wake up! What's wrong with you?\n");
-                        break;
-                    case 1:
-                        printf("\nYou're spacing out! Stay in the fight!\n");
-                        break;
-                    case 2:
-                        printf("\nThe enemy is watching you hesitate!\n");
-                        break;
-                    case 3:
-                        printf("\nMove already! You're giving them free hits!\n");
-                        break;
-                }
-            }
-            waitForEnter();
-
-            system("cls");
-            displayBattleStatus(*player, enemy);
-            printf("\nEnemy takes advantage of your hesitation!\n");
-
-            enemyQuickAttack(player, &enemy);
-            waitForEnter();
-
-            // 💀 ADD THIS PART
-            if (player->hp <= 0)
-            {
-                system("cls");
-                printf("\n=== YOU LOSE ===\n");
-                printf("Your dog collapsed...\n");
-                waitForEnter();
-
-                return 1; // para bumalik sa stage menu
-            }
-
-            continue;
-            }
-            // ✅ VALID ATTACK MOVE
-            invalidCount = 0;
-
-            int penalty = getFatiguePenalty(player->fatigue);
-            int effectiveAttack = player->attack - penalty;
-            if (effectiveAttack < 1) effectiveAttack = 1;
-            if (effectiveAttack > 999) effectiveAttack = 999;
-
-            char *moveName = "Unknown";
-            if (move == 1) moveName = "Bite";
-            else if (move == 2) moveName = "Scratch";
-            else if (move == 3) moveName = "Growl";
-            else if (move == 4) moveName = "Lock Jaw";
-
-            system("cls");
-            displayBattleStatus(*player, enemy);
-            printf("\nYou used %s...\n", moveName);
-
-            printf("Attacking");
-            for (int i = 0; i < 3; i++)
-            {
-                printf(".");
-                fflush(stdout);
-                Sleep(200);
-            }
-            printf("\n");
-
-            // ACCURACY CHECK
-            int dodgeChance = enemy.speed * 2;
-            int finalAccuracy = player->accuracy - dodgeChance;
-            if (finalAccuracy < 70) finalAccuracy = 70;
-            if (finalAccuracy > 95) finalAccuracy = 95;
-
-            int roll = rand() % 100;
-            if (roll < finalAccuracy)
-            {
-                if (move == 3) // GROWL
-                {
-                    enemy.attack -= 2;
-                    if (enemy.attack < 1) enemy.attack = 1;
-                    printf("Enemy attack reduced!\n");
-                }
-                else
-                {
-                    int baseDamage = (effectiveAttack / 6) + 5;
-                    baseDamage += (rand() % 11) - 5;
-                    
-                    if (move == 1) baseDamage += 5;
-                    else if (move == 2) baseDamage += 3;
-                    else if (move == 4) baseDamage += 8;
-                    
-                    baseDamage -= enemy.defense / 20;
-                    
-                    if (isCritical(player->hp, player->maxHP))
-                    {
-                        baseDamage += 10;
-                        printf("CRITICAL HIT!\n");
-                    }
-                    
-                    float fatigueFactor = 1.0 - (player->fatigue / 200.0);
-                    if (fatigueFactor < 0.6) fatigueFactor = 0.6;
-                    
-                    int finalDamage = (int)(baseDamage * fatigueFactor);
-                    if (finalDamage < 1) finalDamage = 1;
-                    
-                    enemy.hp -= finalDamage;
-                    enemy.hp = clamp(enemy.hp);
-                    printf("You dealt %d damage!\n", finalDamage);
-
-                    enemy.hp = clamp(enemy.hp);
-
-                    // ================= ENEMY COUNTER =================
-                    int enemyCounterChance = 10; // adjust mo lang
-
-                    int counterRoll = rand() % 100;
-
-                    if (counterRoll < enemyCounterChance)
-                    {
-                        int counterDamage = enemy.attack / 2;
-
-                        printf("Enemy countered your attack!\n");
-                        printf("You received %d damage!\n", counterDamage);
-
-                        player->hp -= counterDamage;
-                        player->hp = clamp(player->hp);
-
-                        // 💀 check if patay ka
-                        if (player->hp <= 0)
-                        {
-                            printf("You were defeated by counter!\n");
-                            waitForEnter();
-                            return 0; // LOSE
-                        }
-                    }
-                }
-            }
-            else
-            {
-                printf("You missed!\n");
-            }
+            printf("You dealt %d damage!\n", damage);
             waitForEnter();
         }
-        else if (choice == 2) // DEFEND
+        else if (choice == 2)
         {
             defending = 1;
             printf("You are defending!\n");
             waitForEnter();
         }
-        else if (choice == 3) // HEAL
+        else if (choice == 3)
         {
             player->hp += 20;
             if (player->hp > player->maxHP)
                 player->hp = player->maxHP;
+
             printf("You healed +20 HP!\n");
             waitForEnter();
         }
-        else if (choice == 4) // SURRENDER
+        else if (choice == 4)
         {
-            system("cls");
             printf("You surrendered...\n");
-            printf("You ran away from battle!\n");
             waitForEnter();
             return 2;
         }
 
-        // ================= WIN CHECK =================
-        if (enemy.hp <= 0)
-        {
-            system("cls");
-            printf("\nYOU WIN!\n");
-            applyBattleStatGain(player);
-            if (progress[zoneIndex] < 3)
-                progress[zoneIndex]++;
-            waitForEnter();
-            return 1;
-        }
-
         // ================= ENEMY TURN =================
-        if (player->hp > 0)
+        if (player->hp > 0 && enemy.hp > 0)
         {
-            system("cls");
-            displayBattleStatus(*player, enemy);
-
+            // 🔥 IMPORTANT: &enemy (pointer ipapasa)
             int result = enemyAttack(player, &enemy, &defending);
 
             if (result == 0)
             {
                 player->hp = 0;
-                break; // tapusin lang battle loop
             }
             else if (result == 1)
             {
-                enemy.hp = 0; // ✔ IMPORTANT SYNC
-                break;
+                enemy.hp = 0; // sync kill
             }
         }
+
         // ================= FINAL RESULT =================
         if (player->hp <= 0)
         {
-            system("cls");
             printf("\n=== YOU LOSE ===\n");
-            printf("Your dog collapsed...\n");
             waitForEnter();
-            return 0; // ✔ LOSE
+            return 0;
         }
-        else if (enemy.hp <= 0)
+
+        if (enemy.hp <= 0)
         {
-            system("cls");
             printf("\nYOU WIN!\n");
+
             applyBattleStatGain(player);
 
             if (progress[zoneIndex] < 3)
@@ -1017,4 +773,6 @@ int battle(Dog *player, int zoneIndex, int progress[])
             return 1;
         }
     }
-}        
+
+    return 0;
+}
