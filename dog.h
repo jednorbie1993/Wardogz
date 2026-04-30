@@ -1,22 +1,33 @@
 #ifndef DOG_H
 #define DOG_H
 
+#define MAX_SKILLS 10
 #define MAX_STAT 999
 #define MIN_STAT 0
 
 extern int systemLog;
 extern int animationOn;
 
+// 🔥 SKILL STRUCT
+typedef struct {
+    char name[30];
+    int power;
+    int cost;
+} Skill;
+
+// 🔥 FINAL DOG STRUCT (WITH SKILLS NA)
 typedef struct {
     char name[50];
-    int hp;
-    int maxHP;
-    int attack;
-    int speed;
-    int defense;
-    int accuracy;
-    int intelligence;
+
+    int hp, maxHP;
+    int attack, defense, speed;
+    int accuracy, intelligence;
     int fatigue;
+
+    Skill skills[MAX_SKILLS];
+    int skillCount;
+
+    int equipped[4]; // 4 slots only
 } Dog;
 
 // ================= CORE =================
@@ -31,6 +42,7 @@ void loseSequence(Dog *player, Dog *enemy);
 // ================= PLAYER SYSTEM =================
 int playerTurn(Dog *player, Dog *enemy, int *defending);
 void playerAttack(Dog *player, Dog *enemy);
+void skillMenu(Dog *d);
 
 // ================= UI =================
 void showHPBarPlayer(int hp, int maxHp);

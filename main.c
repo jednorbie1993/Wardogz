@@ -25,7 +25,8 @@ int main()
         printf("3. Battle\n");
         printf("4. Rest (%d/3)\n", restCount);
         printf("5. Options\n");
-        printf("6. Exit\n");
+        printf("6. Skills\n");
+        printf("7. Exit\n");
         printf("Enter choice: ");
 
         char input[10];
@@ -40,10 +41,9 @@ int main()
         }
         else if (choice == 2)
         {
-
             int t;
 
-            while (1) // 🔁 loop para hindi umalis agad
+            while (1)
             {
                 system("cls");
 
@@ -52,29 +52,27 @@ int main()
                 printf("3. Balance Training\n");
                 printf("4. Return\n");
                 printf("Choice: ");
-                fflush(stdout);
-                scanf("%d", &t); // ← SCANF
-                while (getchar() != '\n')
-                    ;
 
-                // 👉 RETURN OPTION
+                scanf("%d", &t);
+                while (getchar() != '\n');
+
                 if (t == 4)
                 {
                     system("cls");
-                    break; // ⬅️ EXIT training menu, balik sa main menu
+                    break;
                 }
 
                 if (t < 1 || t > 3)
                 {
                     printf("Invalid choice!\n");
                     waitForEnter();
-                    continue; // stay sa training menu
+                    continue;
                 }
 
                 trainDog(&player, t);
 
                 printf("\nTraining complete!\n");
-                waitForEnter(); // mas safe kaysa pauseAndClear
+                waitForEnter();
             }
         }
         else if (choice == 3)
@@ -90,13 +88,11 @@ int main()
             {
                 printf("You're too tired to rest anymore!\n");
                 waitForEnter();
-                system("cls");
             }
             else if (player.fatigue >= 100 && player.hp >= player.maxHP)
             {
                 printf("You're already fully rested!\n");
                 waitForEnter();
-                system("cls");
             }
             else
             {
@@ -111,7 +107,6 @@ int main()
                 int hpGain = (rand() % 11) + 15;
                 int fatigueGain = (rand() % 11) + 15;
 
-                // 💚 Heal HP
                 if (player.hp < player.maxHP)
                 {
                     player.hp += hpGain;
@@ -121,30 +116,16 @@ int main()
                     printf("Recovered +%d HP!\n", hpGain);
                 }
 
-                // ⚡ Recover Fatigue
                 if (player.fatigue < 100)
                 {
                     player.fatigue = clampFatigue(player.fatigue + fatigueGain);
                     printf("Recovered +%d Fatigue!\n", fatigueGain);
                 }
 
-                // 💬 Random message
-                const char *restMessages[] = {
-                    "You're fully conditioned!",
-                    "Fully rested and ready!",
-                    "Ready to fight again!",
-                    "Energy restored!",
-                    "Back in top shape!",
-                    "Refreshed and alert!",
-                    "You feel great!"};
-
-                int msgIndex = rand() % 7;
-                printf("%s\n", restMessages[msgIndex]);
+                printf("You feel refreshed!\n");
 
                 restCount++;
-
                 waitForEnter();
-                system("cls");
             }
         }
         else if (choice == 5)
@@ -154,6 +135,7 @@ int main()
             while (1)
             {
                 system("cls");
+
                 printf("\n===== OPTIONS =====\n");
                 printf("1. System Log (%s)\n", systemLog ? "ON" : "OFF");
                 printf("2. Animation (%s)\n", animationOn ? "ON" : "OFF");
@@ -178,7 +160,6 @@ int main()
                 }
                 else if (optChoice == 3)
                 {
-                    system("cls");
                     break;
                 }
                 else
@@ -189,6 +170,10 @@ int main()
             }
         }
         else if (choice == 6)
+        {
+            skillMenu(&player);
+        }
+        else if (choice == 7)
         {
             printf("Exiting game...\n");
             break;
