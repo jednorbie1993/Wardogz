@@ -6,6 +6,7 @@
 
 int enemyAttack(Dog *player, Dog *enemy, int *defending)
 {
+    system("cls");
     printf("\n--- ENEMY TURN ---\n");
 
     // ================= BASE DAMAGE =================
@@ -104,6 +105,11 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         if (*defending)
         {
             int counterChance = player->intelligence / 2;
+
+            if (player->fatigue <= 20)
+            {
+                counterChance = 0;
+            }
             if (counterChance > 25)
                 counterChance = 25;
 

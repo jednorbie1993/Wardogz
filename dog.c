@@ -241,7 +241,7 @@ void createDog(Dog *d)
     fgets(d->name, 50, stdin);
     d->name[strcspn(d->name, "\n")] = 0;
 
-    d->hp = 100;
+    d->hp = 10;
     d->maxHP = 100;
     d->attack = 920;
     d->speed = 100;
@@ -250,7 +250,7 @@ void createDog(Dog *d)
     d->accuracy = 918; // 80% hit chance
     d->intelligence = 920;
 
-    d->fatigue = 100; // full energy
+    d->fatigue = 101; // full energy
 }
 
 void createEnemy(Dog *e)
@@ -267,13 +267,12 @@ void createEnemy(Dog *e)
     e->intelligence = 55;
 }
 
-
-
 void enemyQuickAttack(Dog *player, Dog *enemy)
 {
     int dmg = (enemy->attack / 8) + 3;
 
-    if (dmg < 1) dmg = 1;
+    if (dmg < 1)
+        dmg = 1;
 
     player->hp -= dmg;
     player->hp = clamp(player->hp);
@@ -637,6 +636,12 @@ void pauseAndClear()
 
 int battle(Dog *player, int zoneIndex, int progress[])
 {
+    // 🔒 BLOCK kapag patay na
+    if (player->hp <= 0)
+    {
+        printf("You must rest before you battle again!\n");
+        return -1; // importante may return value
+    }
     int invalidCount = 0;
     int choice;
     int defending = 0;
@@ -661,6 +666,36 @@ int battle(Dog *player, int zoneIndex, int progress[])
     printf("\n%s\n\n", captions[pick]);
     Sleep(400);
 
+    int intro = rand() % 4;
+
+    switch (intro)
+    {
+    case 0:
+        typeText("...Something feels off.\n", 25);
+        Sleep(300);
+        typeText("Stay focused.\n", 25);
+        break;
+
+    case 1:
+        typeText("Hey...\n", 25);
+        Sleep(300);
+        typeText("This is not a drill.\n", 25);
+        break;
+
+    case 2:
+        typeText("You feel that pressure?\n", 25);
+        Sleep(300);
+        typeText("Don't panic.\n", 25);
+        break;
+
+    case 3:
+        typeText("This is where it gets real.\n", 25);
+        Sleep(300);
+        typeText("No room for hesitation.\n", 25);
+        break;
+    }
+
+    printf("\n");
     waitForEnter();
 
     // 🔥 FIX: enemy.hp (NOT enemy->hp)
@@ -671,15 +706,23 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
         printf("\n--- YOUR TURN ---\n");
 
+        if (player->fatigue <= 20)
+        {
+            printf("Your dog is exhausted!\n");
+        }
+
         printf("1. Attack\n2. Defend\n3. Heal\n4. Surrender\n");
         printf("Choice: ");
 
         char buffer[10];
         fgets(buffer, sizeof(buffer), stdin);
 
-        if (sscanf(buffer, "%d", &choice) != 1)
+        if (sscanf(buffer, "%d", &choice) != 1 || choice < 1 || choice > 4)
+        {
+            printf("Invalid choice! Try again.\n");
+            waitForEnter();
             continue;
-
+        }
         // ================= PLAYER TURN =================
         if (choice == 1)
         {
@@ -690,12 +733,32 @@ int battle(Dog *player, int zoneIndex, int progress[])
             printf("1. Bite\n2. Scratch\n3. Growl\n4. Lock Jaw\n> ");
 
             fgets(buffer, sizeof(buffer), stdin);
-
-            if (sscanf(buffer, "%d", &move) != 1)
+            
+            if (sscanf(buffer, "%d", &move) != 1 || move < 1 || move > 4)
+            {
+                printf("Invalid attack! Try again.\n");
+                waitForEnter();
                 continue;
+            }
 
-            int damage = (player->attack / 6) + 5;
+            // 🔥 FATIGUE WARNING
+            if (player->fatigue <= 20)
+            {
+                printf("You're exhausted! Your movements feel sluggish...\n");
+            }
 
+            // ================= DAMAGE SYSTEM =================
+            int penalty = getFatiguePenalty(player->fatigue);
+
+            // normalize attack (0.0 to 1.0)
+            float atkRatio = (float)(player->attack - penalty) / 999.0f;
+            if (atkRatio < 0.1f)
+                atkRatio = 0.1f;
+
+            // base damage around 80–100
+            int damage = (int)(atkRatio * 80) + 20;
+
+            // move bonus (small nalang para di sumabog)
             if (move == 1)
                 damage += 5;
             else if (move == 2)
@@ -703,20 +766,78 @@ int battle(Dog *player, int zoneIndex, int progress[])
             else if (move == 4)
                 damage += 8;
 
-            // 🔥 FIX
-            damage -= enemy.defense / 20;
+            // defense scaling (percentage din)
+            float defRatio = (float)enemy.defense / 999.0f;
+            damage -= (int)(defRatio * 30);
+
+            // crit
+            if (isCritical(player->hp, player->maxHP))
+            {
+                damage += 10;
+                printf("CRITICAL HIT!\n");
+            }
+
+            // randomness (controlled)
+            damage += (rand() % 11) - 5;
+
+            // clamp
             if (damage < 1)
                 damage = 1;
+            if (damage > 120)
+                damage = 120;
 
-            enemy.hp -= damage;
-            enemy.hp = clamp(enemy.hp);
+            // ================= ACCURACY SYSTEM =================
+            int effectiveSpeed = player->speed;
 
-            printf("You dealt %d damage!\n", damage);
+            if (player->fatigue <= 50)
+                effectiveSpeed -= 10;
+            if (player->fatigue <= 20)
+                effectiveSpeed -= 20;
+
+            if (effectiveSpeed < 1)
+                effectiveSpeed = 1;
+
+            int dodgeChance = enemy.speed * 2;
+            int finalAccuracy = player->accuracy - dodgeChance;
+
+            // fatigue penalty sa accuracy
+            if (player->fatigue <= 50)
+                finalAccuracy -= 10;
+            if (player->fatigue <= 20)
+                finalAccuracy -= 20;
+
+            if (finalAccuracy < 50)
+                finalAccuracy = 50;
+            if (finalAccuracy > 95)
+                finalAccuracy = 95;
+
+            int roll = rand() % 100;
+
+            if (roll < finalAccuracy)
+            {
+                enemy.hp -= damage;
+                enemy.hp = clamp(enemy.hp);
+
+                printf("You dealt %d damage!\n", damage);
+            }
+            else
+            {
+                printf("You missed!\n");
+            }
+
+            // 🔥 FATIGUE COST
+            player->fatigue -= randRange(5, 10);
+            player->fatigue = clampFatigue(player->fatigue);
+
             waitForEnter();
         }
         else if (choice == 2)
         {
             defending = 1;
+
+            player->fatigue -= randRange(2, 5);
+            player->fatigue = clampFatigue(player->fatigue);
+
             printf("You are defending!\n");
             waitForEnter();
         }
