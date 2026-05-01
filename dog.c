@@ -302,19 +302,21 @@ void skillMenu(Dog *d)
         system("cls");
 
         printf("===== SKILL MENU =====\n");
-        printf("1. View Skills\n");
-        printf("2. Equip Skills\n");
-        printf("3. Back\n");
+        printf("1. View All Skills\n");
+        printf("2. Current Skills\n");
+        printf("3. Equip Skills\n");
+        printf("4. Back\n");
         printf("Choice: ");
 
         scanf("%d", &choice);
         while (getchar() != '\n')
             ;
 
+        // ================= VIEW ALL =================
         if (choice == 1)
         {
             system("cls");
-            printf("--- SKILLS ---\n");
+            printf("--- ALL SKILLS ---\n");
 
             for (int i = 0; i < d->skillCount; i++)
             {
@@ -327,23 +329,76 @@ void skillMenu(Dog *d)
 
             waitForEnter();
         }
+
+        // ================= CURRENT EQUIPPED =================
         else if (choice == 2)
+        {
+            system("cls");
+            printf("--- CURRENT SKILLS ---\n");
+
+            for (int i = 0; i < 4; i++)
+            {
+                if (d->equipped[i] != -1)
+                {
+                    int idx = d->equipped[i];
+                    printf("Slot %d: %s (P:%d C:%d)\n",
+                           i + 1,
+                           d->skills[idx].name,
+                           d->skills[idx].power,
+                           d->skills[idx].cost);
+                }
+                else
+                {
+                    printf("Slot %d: [EMPTY]\n", i + 1);
+                }
+            }
+
+            waitForEnter();
+        }
+
+        // ================= EQUIP =================
+        else if (choice == 3)
         {
             int slot, pick;
 
-            printf("Choose slot (1-4): ");
+            system("cls");
+
+            // 👉 show current first (very important UX)
+            printf("--- CURRENT SKILLS ---\n");
+            for (int i = 0; i < 4; i++)
+            {
+                if (d->equipped[i] != -1)
+                {
+                    int idx = d->equipped[i];
+                    printf("Slot %d: %s\n", i + 1, d->skills[idx].name);
+                }
+                else
+                {
+                    printf("Slot %d: [EMPTY]\n", i + 1);
+                }
+            }
+
+            printf("\nChoose slot (1-4): ");
             scanf("%d", &slot);
             while (getchar() != '\n')
                 ;
 
             if (slot < 1 || slot > 4)
+            {
+                printf("Invalid slot!\n");
+                waitForEnter();
                 continue;
+            }
 
-            printf("\nSelect skill:\n");
+            printf("\n--- AVAILABLE SKILLS ---\n");
 
             for (int i = 0; i < d->skillCount; i++)
             {
-                printf("%d. %s\n", i + 1, d->skills[i].name);
+                printf("%d. %s (P:%d C:%d)\n",
+                       i + 1,
+                       d->skills[i].name,
+                       d->skills[i].power,
+                       d->skills[i].cost);
             }
 
             printf("Choice: ");
@@ -352,16 +407,28 @@ void skillMenu(Dog *d)
                 ;
 
             if (pick < 1 || pick > d->skillCount)
+            {
+                printf("Invalid skill!\n");
+                waitForEnter();
                 continue;
+            }
 
             d->equipped[slot - 1] = pick - 1;
 
-            printf("Equipped!\n");
+            printf("Skill equipped to Slot %d!\n", slot);
             waitForEnter();
         }
-        else if (choice == 3)
+
+        // ================= BACK =================
+        else if (choice == 4)
         {
             break;
+        }
+
+        else
+        {
+            printf("Invalid choice!\n");
+            waitForEnter();
         }
     }
 }
@@ -936,7 +1003,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
             printf("\nYOU WIN!\n");
 
             applyBattleStatGain(player);
-            
+
             checkSkillUnlock(player);
 
             if (progress[zoneIndex] < 3)
@@ -946,4 +1013,4 @@ int battle(Dog *player, int zoneIndex, int progress[])
             return 1;
         }
     }
-}    
+}
