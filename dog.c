@@ -313,7 +313,8 @@ void skillMenu(Dog *d)
 
         if (choice == 1)
         {
-            printf("\n--- SKILLS ---\n");
+            system("cls");
+            printf("--- SKILLS ---\n");
 
             for (int i = 0; i < d->skillCount; i++)
             {
@@ -526,7 +527,7 @@ void applyBattleStatGain(Dog *d)
 
 void printDog(Dog d)
 {
-    printf("\n--- Dog Info ---\n");
+    printf("--- Dog Info ---\n");
     printf("Name: %s\n", d.name);
     printf("HP: %d\n", d.hp);
     printf("Attack: %d\n", d.attack);

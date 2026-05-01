@@ -19,26 +19,61 @@ int main()
 
     while (1)
     {
-        printf("\n===== WARDOGZ MENU =====\n");
-        printf("1. View Stats\n");
+        system("cls");
+        printf("===== WARDOGZ MENU =====\n");
+        printf("1. Wardogz\n");
         printf("2. Train Dog\n");
         printf("3. Battle\n");
         printf("4. Rest (%d/3)\n", restCount);
         printf("5. Options\n");
-        printf("6. Skills\n");
-        printf("7. Exit\n");
+        printf("6. Exit\n");
         printf("Enter choice: ");
 
         char input[10];
         fgets(input, sizeof(input), stdin);
         choice = atoi(input);
 
+        // ================= WARDOGZ MENU =================
         if (choice == 1)
         {
-            system("cls");
-            printDog(player);
-            pauseAndClear();
+            int sub;
+
+            while (1)
+            {
+                system("cls");
+
+                printf("===== WARDOGZ =====\n");
+                printf("1. View Stats\n");
+                printf("2. Skills\n");
+                printf("3. Back\n");
+                printf("Choice: ");
+
+                fgets(input, sizeof(input), stdin);
+                sub = atoi(input);
+
+                if (sub == 1)
+                {
+                    system("cls");
+                    printDog(player);
+                    waitForEnter();
+                }
+                else if (sub == 2)
+                {
+                    skillMenu(&player);
+                }
+                else if (sub == 3)
+                {
+                    break;
+                }
+                else
+                {
+                    printf("Invalid choice!\n");
+                    waitForEnter();
+                }
+            }
         }
+
+        // ================= TRAIN =================
         else if (choice == 2)
         {
             int t;
@@ -54,7 +89,8 @@ int main()
                 printf("Choice: ");
 
                 scanf("%d", &t);
-                while (getchar() != '\n');
+                while (getchar() != '\n')
+                    ;
 
                 if (t == 4)
                 {
@@ -75,6 +111,8 @@ int main()
                 waitForEnter();
             }
         }
+
+        // ================= BATTLE =================
         else if (choice == 3)
         {
             system("cls");
@@ -82,6 +120,8 @@ int main()
             restCount = 0;
             player.fatigue = clampFatigue(player.fatigue - 10);
         }
+
+        // ================= REST =================
         else if (choice == 4)
         {
             if (restCount >= 3)
@@ -128,6 +168,8 @@ int main()
                 waitForEnter();
             }
         }
+
+        // ================= OPTIONS =================
         else if (choice == 5)
         {
             int optChoice;
@@ -142,7 +184,6 @@ int main()
                 printf("3. Back\n");
                 printf("Enter choice: ");
 
-                char input[10];
                 fgets(input, sizeof(input), stdin);
                 optChoice = atoi(input);
 
@@ -169,37 +210,34 @@ int main()
                 }
             }
         }
+
+        // ================= EXIT =================
         else if (choice == 6)
-        {
-            skillMenu(&player);
-        }
-        else if (choice == 7)
         {
             printf("Exiting game...\n");
             break;
         }
+
         else
         {
             printf("Invalid choice!\n");
         }
     }
+}    
+    /*
 
-    return 0;
-}
-/*
+    gcc main.c dog.c stage.c enemy.c -o wardogz
+    .\wardogz.exe
 
-gcc main.c dog.c stage.c enemy.c -o wardogz
-.\wardogz.exe
+    gcc *.c -o wardogz
+    .\wardogz.exe
 
-gcc *.c -o wardogz
-.\wardogz.exe
+    gcc *.c -o wardo -Wall -Wextra
 
-gcc *.c -o wardo -Wall -Wextra
+    gcc *.c -o wardogz.exe; .\wardogz.exe
 
-gcc *.c -o wardogz.exe; .\wardogz.exe
+    played 4/25
 
-played 4/25
+                   9111
 
-               9111
-
-*/
+    */
