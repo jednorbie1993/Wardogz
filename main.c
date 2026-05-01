@@ -49,6 +49,17 @@ int main()
                 printf("Choice: ");
 
                 fgets(input, sizeof(input), stdin);
+
+                input[strcspn(input, "\n")] = 0;
+                
+
+                if (input[0] == '\0')
+                {
+                    printf("Invalid choice!\n");
+                    waitForEnter();
+                    continue;
+                }
+
                 sub = atoi(input);
 
                 if (sub == 1)
@@ -221,6 +232,7 @@ int main()
         else
         {
             printf("Invalid choice!\n");
+            waitForEnter();
         }
     }
 }    

@@ -4,6 +4,8 @@
 #include "dog.h"
 #include <windows.h>
 
+extern int systemLog; // ✔ fix multiple definition
+
 int enemyAttack(Dog *player, Dog *enemy, int *defending)
 {
     system("cls");
@@ -84,7 +86,6 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     enemyDamage += rand() % 6;
     enemyDamage -= player->defense / 25;
 
-    // 🔥 IMPORTANT SAFETY CLAMP (CRITICAL FIX)
     if (enemyDamage < 1)
         enemyDamage = 1;
 
@@ -107,9 +108,8 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             int counterChance = player->intelligence / 2;
 
             if (player->fatigue <= 20)
-            {
                 counterChance = 0;
-            }
+
             if (counterChance > 25)
                 counterChance = 25;
 
@@ -127,7 +127,6 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
                 enemy->hp -= counterDamage;
                 enemy->hp = clamp(enemy->hp);
 
-                // ✅ IMPORTANT: check enemy death
                 if (enemy->hp <= 0)
                 {
                     printf("Enemy defeated by counter!\n");
@@ -146,12 +145,11 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
                 printf("You defended! Damage reduced!\n");
                 printf("Enemy dealt %d damage!\n", enemyDamage);
 
-                // ✅ check player death
                 if (player->hp <= 0)
                 {
                     printf("You were defeated...\n");
                     waitForEnter();
-                    return 0; // LOSE
+                    return 0;
                 }
 
                 waitForEnter();
@@ -166,12 +164,11 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
             printf("Enemy dealt %d damage!\n", enemyDamage);
 
-            // ✅ check player death
             if (player->hp <= 0)
             {
                 printf("You were defeated...\n");
                 waitForEnter();
-                return 0; // LOSE
+                return 0;
             }
 
             waitForEnter();
@@ -188,5 +185,6 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     {
         printf("[ENEMY DMG DEBUG] %d\n", enemyDamage);
     }
-return -1; // ✅ ADD THIS LINE
+
+    return -1;
 }

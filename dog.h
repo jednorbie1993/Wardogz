@@ -23,6 +23,7 @@ typedef struct {
     int attack, defense, speed;
     int accuracy, intelligence;
     int fatigue;
+    int maxFatigue;
 
     Skill skills[MAX_SKILLS];
     int skillCount;

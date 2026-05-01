@@ -241,7 +241,7 @@ void createDog(Dog *d)
     fgets(d->name, 50, stdin);
     d->name[strcspn(d->name, "\n")] = 0;
 
-    d->hp = 10;
+    d->hp = 100;
     d->maxHP = 100;
     d->attack = 920;
     d->speed = 100;
@@ -250,7 +250,7 @@ void createDog(Dog *d)
     d->accuracy = 918; // 80% hit chance
     d->intelligence = 920;
 
-    d->fatigue = 101; // full energy
+    d->fatigue = 10; // full energy
 
     d->skillCount = 2;
 
@@ -308,9 +308,20 @@ void skillMenu(Dog *d)
         printf("4. Back\n");
         printf("Choice: ");
 
-        scanf("%d", &choice);
-        while (getchar() != '\n')
-            ;
+        char input[20];
+        int choice;
+
+        fgets(input, sizeof(input), stdin);
+        input[strcspn(input, "\n")] = 0;
+
+        if (input[0] == '\0')
+        {
+            printf("Invalid choice!\n");
+            waitForEnter();
+            continue;
+        }
+
+        choice = atoi(input);
 
         // ================= VIEW ALL =================
         if (choice == 1)
@@ -390,6 +401,7 @@ void skillMenu(Dog *d)
                 continue;
             }
 
+            system("cls");
             printf("\n--- AVAILABLE SKILLS ---\n");
 
             for (int i = 0; i < d->skillCount; i++)
@@ -865,21 +877,24 @@ int battle(Dog *player, int zoneIndex, int progress[])
             system("cls");
             displayBattleStatus(*player, enemy);
 
-            printf("\nChoose Skill:\n");
+            printf("Choose Skill:\n");
 
             for (int i = 0; i < 4; i++)
             {
                 if (player->equipped[i] != -1)
                 {
                     int idx = player->equipped[i];
-                    printf("%d. %s\n", i + 1, player->skills[idx].name);
+                    printf("%d. %s (P:%d C:%d)\n",
+                        i + 1,
+                        player->skills[idx].name,
+                        player->skills[idx].power,
+                        player->skills[idx].cost);
                 }
                 else
                 {
                     printf("%d. ---\n", i + 1);
                 }
             }
-
             fgets(buffer, sizeof(buffer), stdin);
 
             if (sscanf(buffer, "%d", &move) != 1 || move < 1 || move > 4)
@@ -902,9 +917,17 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
             if (player->fatigue < s.cost)
             {
-                printf("Too exhausted to use %s!\n", s.name);
+                printf("Not enough energy! Using weak attack instead...\n");
+
+                int damage = player->attack / 2;
+                enemy.hp -= damage;
+
+                if (enemy.hp < 0)
+                enemy.hp = 0;
+
+                player->fatigue = 0;
                 waitForEnter();
-                continue;
+                
             }
 
             printf("You used %s!\n", s.name);
@@ -946,6 +969,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 printf("You missed!\n");
             }
 
+            // ✔️ ONLY COST (no regen here)
             player->fatigue -= s.cost;
             player->fatigue = clampFatigue(player->fatigue);
 
@@ -989,6 +1013,12 @@ int battle(Dog *player, int zoneIndex, int progress[])
             if (result == 1)
                 enemy.hp = 0;
         }
+
+        // 🔥 FATIGUE REGEN (DITO LANG)
+        player->fatigue += 2;
+
+        if (player->fatigue > player->maxFatigue)
+            player->fatigue = player->maxFatigue;
 
         // ================= RESULT =================
         if (player->hp <= 0)
