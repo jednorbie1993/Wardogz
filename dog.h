@@ -46,6 +46,7 @@ void playerAttack(Dog *player, Dog *enemy);
 void skillMenu(Dog *d);
 void checkSkillUnlock(Dog *d);
 int hasSkill(Dog *d, char name[]);
+int clampFatigue(int f, int max);
 
 // ================= UI =================
 void showHPBarPlayer(int hp, int maxHp);
@@ -64,7 +65,6 @@ void enemyTurn(Dog *player, Dog *enemy, int *defending);
 
 // ================= UTIL =================
 int clamp(int value);
-int clampFatigue(int value);
 int getFatiguePenalty(int fatigue);
 int isCritical(int hp, int maxHP);
 

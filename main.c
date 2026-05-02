@@ -129,7 +129,7 @@ int main()
             system("cls");
             startStage(&player);
             restCount = 0;
-            player.fatigue = clampFatigue(player.fatigue - 10);
+            player.fatigue = clampFatigue(player.fatigue - 10, player.maxFatigue);
         }
 
         // ================= REST =================
@@ -169,7 +169,7 @@ int main()
 
                 if (player.fatigue < 100)
                 {
-                    player.fatigue = clampFatigue(player.fatigue + fatigueGain);
+                    player.fatigue = clampFatigue(player.fatigue + fatigueGain, player.maxFatigue);
                     printf("Recovered +%d Fatigue!\n", fatigueGain);
                 }
 
