@@ -90,7 +90,35 @@ int isCritical(int currentHP, int maxHP)
 
     return roll < critChance;
 }
+void preBattleScene()
+{
+    const char *messages[] = {
+        "Stay focused...",
+        "You hear footsteps nearby...",
+        "A sudden noise echoes...",
+        "Something is watching you...",
+        "Car passing... be careful!",
+        "The air feels tense..."
+    };
 
+    int count = sizeof(messages) / sizeof(messages[0]);
+
+    system("cls");
+
+    // 🔥 random message
+    int r = rand() % count;
+
+    printf("\n");
+    for (int i = 0; messages[r][i] != '\0'; i++)
+    {
+        printf("%c", messages[r][i]);
+        fflush(stdout);
+        Sleep(40); // animation speed
+    }
+
+    printf("\n\nPress Enter to continue...");
+    getchar();
+}
 void trainDog(Dog *d, int type)
 {
     printf("\nTraining");
@@ -103,7 +131,7 @@ void trainDog(Dog *d, int type)
     }
     printf("\n");
 
-    // 🔻 FATIGUE CHECK (fail chance)
+    //  FATIGUE CHECK (fail chance)
     if (d->fatigue < 20)
     {
         printf("Too exhausted... Training failed!\n");
@@ -843,7 +871,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
     system("cls");
 
-    // intro text dito...
+    preBattleScene();
 
     waitForEnter();
 

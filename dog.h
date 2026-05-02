@@ -51,6 +51,7 @@ void showHPBarPlayer(int hp, int maxHp);
 // ================= SYSTEM =================
 void applyBattleStatGain(Dog *d);
 void trainDog(Dog *d, int type);
+void preBattleScene();
 
 // ================= ENEMY =================
 void createEnemy(Dog *e);
