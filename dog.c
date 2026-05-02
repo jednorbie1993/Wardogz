@@ -98,8 +98,7 @@ void preBattleScene()
         "A sudden noise echoes...",
         "Something is watching you...",
         "Car passing... be careful!",
-        "The air feels tense..."
-    };
+        "The air feels tense..."};
 
     int count = sizeof(messages) / sizeof(messages[0]);
 
@@ -258,7 +257,7 @@ void trainDog(Dog *d, int type)
         d->hp = d->maxHP;
     }
 
-    // 🔻 FATIGUE COST
+    //  FATIGUE COST
     d->fatigue = clampFatigue(d->fatigue - randRange(8, 15));
 }
 
@@ -298,7 +297,7 @@ void createDog(Dog *d)
 
 void checkSkillUnlock(Dog *d)
 {
-    if (d->speed >= 100 && d->skillCount < MAX_SKILLS)
+    if (d->speed >= 100 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Quick Dash"))
     {
         strcpy(d->skills[d->skillCount].name, "Quick Dash");
         d->skills[d->skillCount].power = 7;
@@ -309,7 +308,7 @@ void checkSkillUnlock(Dog *d)
         d->skillCount++;
     }
 
-    if (d->attack >= 150 && d->skillCount < MAX_SKILLS)
+    if (d->attack >= 150 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Heavy Bite"))
     {
         strcpy(d->skills[d->skillCount].name, "Heavy Bite");
         d->skills[d->skillCount].power = 10;
@@ -319,6 +318,18 @@ void checkSkillUnlock(Dog *d)
 
         d->skillCount++;
     }
+}
+
+int hasSkill(Dog *d, char name[])
+{
+    for (int i = 0; i < d->skillCount; i++)
+    {
+        if (strcmp(d->skills[i].name, name) == 0)
+        {
+            return 1; // meron na
+        }
+    }
+    return 0; // wala pa
 }
 
 void skillMenu(Dog *d)
@@ -870,9 +881,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
     setEnemyByZone(&enemy, zoneIndex, progress[zoneIndex]);
 
     system("cls");
-
     preBattleScene();
-
     waitForEnter();
 
     // 🔥 MAIN BATTLE LOOP
@@ -913,16 +922,17 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 {
                     int idx = player->equipped[i];
                     printf("%d. %s (P:%d C:%d)\n",
-                        i + 1,
-                        player->skills[idx].name,
-                        player->skills[idx].power,
-                        player->skills[idx].cost);
+                           i + 1,
+                           player->skills[idx].name,
+                           player->skills[idx].power,
+                           player->skills[idx].cost);
                 }
                 else
                 {
                     printf("%d. ---\n", i + 1);
                 }
             }
+
             fgets(buffer, sizeof(buffer), stdin);
 
             if (sscanf(buffer, "%d", &move) != 1 || move < 1 || move > 4)
@@ -943,49 +953,46 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
             Skill s = player->skills[skillIndex];
 
+            int damage;
+
             if (player->fatigue < s.cost)
             {
                 printf("Not enough energy! Using weak attack instead...\n");
-
-                int damage = player->attack / 2;
-                enemy.hp -= damage;
-
-                if (enemy.hp < 0)
-                enemy.hp = 0;
-
+                damage = player->attack / 2;
                 player->fatigue = 0;
-                waitForEnter();
-                
             }
-
-            printf("You used %s!\n", s.name);
-
-            // ===== DAMAGE =====
-            int penalty = getFatiguePenalty(player->fatigue);
-
-            float atkRatio = (float)(player->attack - penalty) / 999.0f;
-            if (atkRatio < 0.1f)
-                atkRatio = 0.1f;
-
-            int damage = (int)(atkRatio * 80) + 20;
-            damage += s.power;
-
-            float defRatio = (float)enemy.defense / 999.0f;
-            damage -= (int)(defRatio * 30);
-
-            if (isCritical(player->hp, player->maxHP))
+            else
             {
-                damage += 10;
-                printf("CRITICAL HIT!\n");
+                printf("You used %s!\n", s.name);
+
+                int penalty = getFatiguePenalty(player->fatigue);
+
+                float atkRatio = (float)(player->attack - penalty) / 999.0f;
+                if (atkRatio < 0.1f)
+                    atkRatio = 0.1f;
+
+                damage = (int)(atkRatio * 80) + 20;
+                damage += s.power;
+
+                float defRatio = (float)enemy.defense / 999.0f;
+                damage -= (int)(defRatio * 30);
+
+                if (isCritical(player->hp, player->maxHP))
+                {
+                    damage += 10;
+                    printf("CRITICAL HIT!\n");
+                }
+
+                damage += (rand() % 11) - 5;
+
+                if (damage < 1) damage = 1;
+                if (damage > 120) damage = 120;
+
+                player->fatigue -= s.cost;
+                player->fatigue = clampFatigue(player->fatigue);
             }
 
-            damage += (rand() % 11) - 5;
-
-            if (damage < 1)
-                damage = 1;
-            if (damage > 120)
-                damage = 120;
-
+            // APPLY DAMAGE
             if ((rand() % 100) < player->accuracy)
             {
                 enemy.hp -= damage;
@@ -997,12 +1004,8 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 printf("You missed!\n");
             }
 
-            // ✔️ ONLY COST (no regen here)
-            player->fatigue -= s.cost;
-            player->fatigue = clampFatigue(player->fatigue);
-
             waitForEnter();
-        }
+        } // 🔥 CLOSE NG ATTACK
 
         // ================= DEFEND =================
         else if (choice == 2)
@@ -1036,15 +1039,12 @@ int battle(Dog *player, int zoneIndex, int progress[])
         {
             int result = enemyAttack(player, &enemy, &defending);
 
-            if (result == 0)
-                player->hp = 0;
-            if (result == 1)
-                enemy.hp = 0;
+            if (result == 0) player->hp = 0;
+            if (result == 1) enemy.hp = 0;
         }
 
-        // 🔥 FATIGUE REGEN (DITO LANG)
+        // FATIGUE REGEN
         player->fatigue += 2;
-
         if (player->fatigue > player->maxFatigue)
             player->fatigue = player->maxFatigue;
 
@@ -1061,7 +1061,6 @@ int battle(Dog *player, int zoneIndex, int progress[])
             printf("\nYOU WIN!\n");
 
             applyBattleStatGain(player);
-
             checkSkillUnlock(player);
 
             if (progress[zoneIndex] < 3)

@@ -44,6 +44,8 @@ void loseSequence(Dog *player, Dog *enemy);
 int playerTurn(Dog *player, Dog *enemy, int *defending);
 void playerAttack(Dog *player, Dog *enemy);
 void skillMenu(Dog *d);
+void checkSkillUnlock(Dog *d);
+int hasSkill(Dog *d, char name[]);
 
 // ================= UI =================
 void showHPBarPlayer(int hp, int maxHp);
