@@ -4,6 +4,7 @@
 #include "dog.h"
 #include <windows.h>
 #include "stage.h"
+#include <ctype.h>
 
 int main()
 {
@@ -99,9 +100,29 @@ int main()
                 printf("4. Return\n");
                 printf("Choice: ");
 
-                scanf("%d", &t);
-                while (getchar() != '\n')
-                    ;
+                char input[10];
+                fgets(input, sizeof(input), stdin);
+
+                // remove newline
+                input[strcspn(input, "\n")] = 0;
+
+                // ================= EMPTY INPUT BLOCK =================
+                if (input[0] == '\0')
+                {
+                    printf("Invalid input! Please enter a number.\n");
+                    waitForEnter();
+                    continue;
+                }
+
+                // ================= NOT A NUMBER BLOCK =================
+                if (!isdigit(input[0]))
+                {
+                    printf("Invalid input! Numbers only.\n");
+                    waitForEnter();
+                    continue;
+                }
+
+                t = atoi(input);
 
                 if (t == 4)
                 {
@@ -117,9 +138,6 @@ int main()
                 }
 
                 trainDog(&player, t);
-
-                printf("\nTraining complete!\n");
-                waitForEnter();
             }
         }
 

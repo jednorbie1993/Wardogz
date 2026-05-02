@@ -134,92 +134,51 @@ void trainDog(Dog *d, int type)
     }
     printf("\n");
 
-    //  FATIGUE CHECK (fail chance)
-    if (d->fatigue < 20)
+    // ================= HARD BLOCK: NO ENERGY =================
+    if (d->fatigue <= 0)
+    {
+        printf("Your dog is completely exhausted!\n");
+        printf("You must REST before training again.\n");
+
+        d->fatigue = 0;
+        waitForEnter();
+        return;
+    }
+
+    // ================= FATIGUE FAILURE SYSTEM =================
+    int failChance;
+
+    if (d->fatigue <= 30)
+        failChance = 25;
+    else if (d->fatigue <= 50)
+        failChance = 15;
+    else
+        failChance = 5;
+
+    int rollFail = rand() % 100;
+
+    if (rollFail < failChance)
     {
         printf("Too exhausted... Training failed!\n");
+
         d->fatigue = clampFatigue(d->fatigue - 5, d->maxFatigue);
+
+        waitForEnter();
         return;
     }
 
     int greatChance = rand() % 100;
 
-    // ⭐ GREAT TRAINING
+    // ================= TRAINING SUCCESS =================
     if (greatChance < 10)
     {
-        int bonus = 10;
-
         printf("GREAT TRAINING!\n");
 
-        if (type == 1) // POWER
+        if (type == 1)
         {
-            int g1 = getGrowthGain(d->maxHP);
-            int g2 = getGrowthGain(d->attack);
-            int g3 = getGrowthGain(d->defense);
-
-            int t1 = g1 + bonus;
-            int t2 = g2 + bonus;
-            int t3 = g3 + bonus;
-
-            d->maxHP = clamp(d->maxHP + t1);
-            d->attack = clamp(d->attack + t2);
-            d->defense = clamp(d->defense + t3);
-
-            printf("HP +%d | ATK +%d | DEF +%d\n", t1, t2, t3);
-        }
-        else if (type == 2) // SPEED
-        {
-            int g1 = getGrowthGain(d->speed);
-            int g2 = getGrowthGain(d->accuracy);
-            int g3 = getGrowthGain(d->intelligence);
-
-            int t1 = g1 + bonus;
-            int t2 = g2 + bonus;
-            int t3 = g3 + bonus;
-
-            d->speed = clamp(d->speed + t1);
-            d->accuracy = clamp(d->accuracy + t2);
-            d->intelligence = clamp(d->intelligence + t3);
-
-            printf("SPD +%d | ACC +%d | INT +%d\n", t1, t2, t3);
-        }
-        else // BALANCE
-        {
-            int g1 = getGrowthGain(d->maxHP);
-            int g2 = getGrowthGain(d->attack);
-            int g3 = getGrowthGain(d->defense);
-            int g4 = getGrowthGain(d->speed);
-            int g5 = getGrowthGain(d->intelligence);
-
-            int t1 = g1 + bonus;
-            int t2 = g2 + bonus;
-            int t3 = g3 + bonus;
-            int t4 = g4 + bonus;
-            int t5 = g5 + bonus;
-
-            d->maxHP = clamp(d->maxHP + t1);
-            d->attack = clamp(d->attack + t2);
-            d->defense = clamp(d->defense + t3);
-            d->speed = clamp(d->speed + t4);
-            d->intelligence = clamp(d->intelligence + t5);
-
-            printf("HP +%d ATK +%d DEF +%d SPD +%d INT +%d\n",
-                   t1, t2, t3, t4, t5);
-        }
-
-        d->hp = d->maxHP;
-    }
-    else
-    {
-        // ⭐ NORMAL TRAINING
-
-        int g1, g2, g3;
-
-        if (type == 1) // POWER
-        {
-            g1 = getGrowthGain(d->maxHP);
-            g2 = getGrowthGain(d->attack);
-            g3 = getGrowthGain(d->defense);
+            int g1 = randRange(11, 20);
+            int g2 = randRange(11, 20);
+            int g3 = randRange(11, 20);
 
             d->maxHP = clamp(d->maxHP + g1);
             d->attack = clamp(d->attack + g2);
@@ -227,11 +186,11 @@ void trainDog(Dog *d, int type)
 
             printf("HP +%d | ATK +%d | DEF +%d\n", g1, g2, g3);
         }
-        else if (type == 2) // SPEED
+        else if (type == 2)
         {
-            g1 = getGrowthGain(d->speed);
-            g2 = getGrowthGain(d->accuracy);
-            g3 = getGrowthGain(d->intelligence);
+            int g1 = randRange(11, 20);
+            int g2 = randRange(11, 20);
+            int g3 = randRange(11, 20);
 
             d->speed = clamp(d->speed + g1);
             d->accuracy = clamp(d->accuracy + g2);
@@ -239,14 +198,74 @@ void trainDog(Dog *d, int type)
 
             printf("SPD +%d | ACC +%d | INT +%d\n", g1, g2, g3);
         }
-        else // BALANCE
+        else
         {
-            g1 = getGrowthGain(d->maxHP);
-            g2 = getGrowthGain(d->attack);
-            g3 = getGrowthGain(d->defense);
+            int g1 = randRange(11, 20);
+            int g2 = randRange(11, 20);
+            int g3 = randRange(11, 20);
+            int g4 = randRange(11, 20);
+            int g5 = randRange(11, 20);
 
-            int g4 = getGrowthGain(d->speed);
-            int g5 = getGrowthGain(d->intelligence);
+            d->maxHP = clamp(d->maxHP + g1);
+            d->attack = clamp(d->attack + g2);
+            d->defense = clamp(d->defense + g3);
+            d->speed = clamp(d->speed + g4);
+            d->intelligence = clamp(d->intelligence + g5);
+
+            printf("HP +%d ATK +%d DEF +%d SPD +%d INT +%d\n",
+                   g1, g2, g3, g4, g5);
+        }
+
+        d->hp = d->maxHP;
+    }
+    else
+    {
+        printf("Training successful!\n");
+
+        int minGain, maxGain;
+
+        if (d->fatigue <= 30)
+        {
+            minGain = 1;
+            maxGain = 10;
+        }
+        else
+        {
+            minGain = 5;
+            maxGain = 10;
+        }
+
+        if (type == 1)
+        {
+            int g1 = randRange(minGain, maxGain);
+            int g2 = randRange(minGain, maxGain);
+            int g3 = randRange(minGain, maxGain);
+
+            d->maxHP = clamp(d->maxHP + g1);
+            d->attack = clamp(d->attack + g2);
+            d->defense = clamp(d->defense + g3);
+
+            printf("HP +%d | ATK +%d | DEF +%d\n", g1, g2, g3);
+        }
+        else if (type == 2)
+        {
+            int g1 = randRange(minGain, maxGain);
+            int g2 = randRange(minGain, maxGain);
+            int g3 = randRange(minGain, maxGain);
+
+            d->speed = clamp(d->speed + g1);
+            d->accuracy = clamp(d->accuracy + g2);
+            d->intelligence = clamp(d->intelligence + g3);
+
+            printf("SPD +%d | ACC +%d | INT +%d\n", g1, g2, g3);
+        }
+        else
+        {
+            int g1 = randRange(minGain, maxGain);
+            int g2 = randRange(minGain, maxGain);
+            int g3 = randRange(minGain, maxGain);
+            int g4 = randRange(minGain, maxGain);
+            int g5 = randRange(minGain, maxGain);
 
             d->maxHP = clamp(d->maxHP + g1);
             d->attack = clamp(d->attack + g2);
@@ -261,8 +280,10 @@ void trainDog(Dog *d, int type)
         d->hp = d->maxHP;
     }
 
-    //  FATIGUE COST
-    d->fatigue = clampFatigue(d->fatigue - randRange(8, 15), d->maxFatigue);
+    // ================= FATIGUE COST =================
+    d->fatigue = clampFatigue(d->fatigue - randRange(5, 12), d->maxFatigue);
+
+    waitForEnter();
 }
 
 void createDog(Dog *d)
@@ -281,7 +302,7 @@ void createDog(Dog *d)
     d->accuracy = 918; // 80% hit chance
     d->intelligence = 920;
 
-    d->fatigue = 100; // full energy
+    d->fatigue = 20; // full energy
     d->maxFatigue = 100;
 
     d->skillCount = 2;
