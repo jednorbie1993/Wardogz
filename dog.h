@@ -5,6 +5,10 @@
 #define MAX_STAT 999
 #define MIN_STAT 0
 
+#define SKILL_ATTACK 1
+#define SKILL_BUFF 2
+#define SKILL_HEAL 3
+
 extern int systemLog;
 extern int animationOn;
 

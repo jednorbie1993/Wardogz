@@ -303,7 +303,7 @@ void createDog(Dog *d)
     d->accuracy = 918; // 80% hit chance
     d->intelligence = 920;
 
-    d->fatigue = 20; // full energy
+    d->fatigue = 100; // full energy
     d->maxFatigue = 100;
 
     d->skillCount = 2;
@@ -311,10 +311,12 @@ void createDog(Dog *d)
     strcpy(d->skills[0].name, "Bite");
     d->skills[0].power = 5;
     d->skills[0].cost = 5;
+    d->skills[0].type = SKILL_ATTACK;
 
     strcpy(d->skills[1].name, "Scratch");
     d->skills[1].power = 3;
     d->skills[1].cost = 3;
+    d->skills[1].type = SKILL_ATTACK;
 
     d->equipped[0] = 0;
     d->equipped[1] = 1;
@@ -324,12 +326,13 @@ void createDog(Dog *d)
 
 void checkSkillUnlock(Dog *d)
 {
-    // SPEED
+    // ================= SPEED =================
     if (d->speed >= 100 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Quick Dash"))
     {
         strcpy(d->skills[d->skillCount].name, "Quick Dash");
         d->skills[d->skillCount].power = 7;
         d->skills[d->skillCount].cost = 6;
+        d->skills[d->skillCount].type = SKILL_BUFF;
 
         printf("NEW SKILL UNLOCKED: Quick Dash!\n");
         d->skillCount++;
@@ -340,17 +343,19 @@ void checkSkillUnlock(Dog *d)
         strcpy(d->skills[d->skillCount].name, "Flash Step");
         d->skills[d->skillCount].power = 9;
         d->skills[d->skillCount].cost = 7;
+        d->skills[d->skillCount].type = SKILL_BUFF;
 
         printf("NEW SKILL UNLOCKED: Flash Step!\n");
         d->skillCount++;
     }
 
-    // ATTACK
+    // ================= ATTACK =================
     if (d->attack >= 150 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Heavy Bite"))
     {
         strcpy(d->skills[d->skillCount].name, "Heavy Bite");
         d->skills[d->skillCount].power = 10;
         d->skills[d->skillCount].cost = 8;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
 
         printf("NEW SKILL UNLOCKED: Heavy Bite!\n");
         d->skillCount++;
@@ -361,39 +366,43 @@ void checkSkillUnlock(Dog *d)
         strcpy(d->skills[d->skillCount].name, "Savage Fang");
         d->skills[d->skillCount].power = 14;
         d->skills[d->skillCount].cost = 10;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
 
         printf("NEW SKILL UNLOCKED: Savage Fang!\n");
         d->skillCount++;
     }
 
-    // DEFENSE
+    // ================= DEFENSE =================
     if (d->defense >= 120 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Iron Guard"))
     {
         strcpy(d->skills[d->skillCount].name, "Iron Guard");
-        d->skills[d->skillCount].power = 5;
+        d->skills[d->skillCount].power = 0;
         d->skills[d->skillCount].cost = 5;
+        d->skills[d->skillCount].type = SKILL_BUFF;
 
         printf("NEW SKILL UNLOCKED: Iron Guard!\n");
         d->skillCount++;
     }
 
-    // ACCURACY
+    // ================= ACCURACY =================
     if (d->accuracy >= 130 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Sure Strike"))
     {
         strcpy(d->skills[d->skillCount].name, "Sure Strike");
         d->skills[d->skillCount].power = 8;
         d->skills[d->skillCount].cost = 6;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
 
         printf("NEW SKILL UNLOCKED: Sure Strike!\n");
         d->skillCount++;
     }
 
-    // HP (tank type)
+    // ================= HP (TANK / SURVIVAL) =================
     if (d->maxHP >= 200 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Last Stand"))
     {
         strcpy(d->skills[d->skillCount].name, "Last Stand");
         d->skills[d->skillCount].power = 12;
         d->skills[d->skillCount].cost = 9;
+        d->skills[d->skillCount].type = SKILL_HEAL;
 
         printf("NEW SKILL UNLOCKED: Last Stand!\n");
         d->skillCount++;
@@ -962,9 +971,8 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
     system("cls");
     preBattleScene();
-    waitForEnter();
 
-    // 🔥 MAIN BATTLE LOOP
+    // ================= MAIN BATTLE LOOP =================
     while (player->hp > 0 && enemy.hp > 0)
     {
         system("cls");
@@ -1033,20 +1041,21 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
             Skill s = player->skills[skillIndex];
 
-            int damage;
+            int damage = 0;
 
-            if (player->fatigue < s.cost)
+            // ================= SKILL TYPE LOGIC (FIXED PART) =================
+            if (s.type == SKILL_ATTACK)
             {
-                printf("Not enough energy! Using weak attack instead...\n");
-                float atkRatio = (float)player->attack / 999.0f;
-                damage = (int)(atkRatio * 40) + 10;
-                player->fatigue -= s.cost / 2;
-                if (player->fatigue < 0)
-                    player->fatigue = 0;
-            }
-            else
-            {
-                printf("You used %s!\n", s.name);
+                printf("You used %s...\n", s.name);
+
+                printf("Attacking");
+                for (int i = 0; i < 3; i++)
+                {
+                    printf(".");
+                    fflush(stdout);
+                    Sleep(120);
+                }
+                printf("\n");
 
                 int penalty = getFatiguePenalty(player->fatigue);
 
@@ -1054,8 +1063,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 if (atkRatio < 0.1f)
                     atkRatio = 0.1f;
 
-                damage = (int)(atkRatio * 80) + 20;
-                damage += s.power;
+                damage = (int)(atkRatio * 80) + 20 + s.power;
 
                 float defRatio = (float)enemy.defense / 999.0f;
                 damage -= (int)(defRatio * 30);
@@ -1067,32 +1075,63 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 }
 
                 damage += (rand() % 11) - 5;
+            }
+            else if (s.type == SKILL_BUFF)
+            {
+                printf("You used %s (BUFF)!\n", s.name);
 
-                if (damage < 1)
-                    damage = 1;
-                if (damage > 120)
-                    damage = 120;
+                player->defense += 5;
+                player->speed += 3;
 
+                printf("DEF +5 | SPD +3 temporarily!\n");
+                damage = 0;
+            }
+            else if (s.type == SKILL_HEAL)
+            {
+                printf("You used %s (HEAL)!\n", s.name);
+
+                player->hp += 25;
+                if (player->hp > player->maxHP)
+                    player->hp = player->maxHP;
+
+                printf("Healed +25 HP!\n");
+                damage = 0;
+            }
+
+            // ================= FATIGUE =================
+            if (player->fatigue < s.cost)
+            {
+                printf("Not enough energy! Weak action...\n");
+                damage = (damage / 2);
+                player->fatigue = 0;
+            }
+            else
+            {
                 player->fatigue -= s.cost;
                 player->fatigue = clampFatigue(player->fatigue, player->maxFatigue);
             }
 
-            // APPLY DAMAGE
-            if ((rand() % 100) < player->accuracy)
+            // ================= APPLY DAMAGE =================
+            if (s.type == SKILL_ATTACK)
             {
-                enemy.hp -= damage;
-                enemy.hp = clamp(enemy.hp);
-                printf("You dealt %d damage!\n", damage);
-                printf("Fatigue before: %d\n", player->fatigue);
-                printf("Cost: %d\n", s.cost);
-            }
-            else
-            {
-                printf("You missed!\n");
+                if ((rand() % 100) < player->accuracy)
+                {
+                    if (damage < 1) damage = 1;
+                    if (damage > 120) damage = 120;
+
+                    enemy.hp -= damage;
+                    enemy.hp = clamp(enemy.hp);
+
+                    printf("You dealt %d damage!\n", damage);
+                }
+                else
+                {
+                    printf("You missed!\n");
+                }
             }
 
             waitForEnter();
-        } // 🔥 CLOSE NG ATTACK
+        }
 
         // ================= DEFEND =================
         else if (choice == 2)
@@ -1102,7 +1141,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
             waitForEnter();
         }
 
-        // ================= HEAL =================
+        // ================= HEAL (basic) =================
         else if (choice == 3)
         {
             player->hp += 20;
@@ -1132,17 +1171,16 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 enemy.hp = 0;
         }
 
-        // FATIGUE REGEN
+        // ================= FATIGUE REGEN =================
         player->fatigue += 2;
         if (player->fatigue > player->maxFatigue)
             player->fatigue = player->maxFatigue;
 
-        // ================= RESULT =================
+        // ================= RESULT CHECK =================
         if (player->hp <= 0)
         {
             printf("\n=== YOU LOSE ===\n");
 
-            // 🔥 FATIGUE RECOVERY
             player->fatigue += 20;
             if (player->fatigue > player->maxFatigue)
                 player->fatigue = player->maxFatigue;
@@ -1158,7 +1196,6 @@ int battle(Dog *player, int zoneIndex, int progress[])
             applyBattleStatGain(player);
             checkSkillUnlock(player);
 
-            // 🔥 FATIGUE RECOVERY
             player->fatigue += 20;
             if (player->fatigue > player->maxFatigue)
                 player->fatigue = player->maxFatigue;
@@ -1170,4 +1207,6 @@ int battle(Dog *player, int zoneIndex, int progress[])
             return 1;
         }
     }
-}    
+
+    return -1;
+}
