@@ -958,7 +958,8 @@ int battle(Dog *player, int zoneIndex, int progress[])
             if (player->fatigue < s.cost)
             {
                 printf("Not enough energy! Using weak attack instead...\n");
-                damage = player->attack / 2;
+                float atkRatio = (float)player->attack / 999.0f;
+                damage = (int)(atkRatio * 40) + 10;
                 player->fatigue = 0;
             }
             else
