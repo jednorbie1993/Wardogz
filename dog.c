@@ -286,6 +286,7 @@ void trainDog(Dog *d, int type)
     waitForEnter();
 }
 
+
 void createDog(Dog *d)
 {
     printf("Enter your dog's name: ");

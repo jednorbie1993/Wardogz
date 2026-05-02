@@ -13,6 +13,7 @@ typedef struct {
     char name[30];
     int power;
     int cost;
+    int type;
 } Skill;
 
 // 🔥 FINAL DOG STRUCT (WITH SKILLS NA)
