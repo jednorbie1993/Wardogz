@@ -5,16 +5,21 @@
 #define MAX_STAT 999
 #define MIN_STAT 0
 
-#define SKILL_ATTACK 1
-#define SKILL_BUFF 2
-#define SKILL_HEAL 3
 
 extern int systemLog;
 extern int animationOn;
 
-// 🔥 ADD THIS (Skill IDs)
+// ================= SKILL TYPES =================
+typedef enum {
+    SKILL_DAMAGE,
+    SKILL_HEAL,
+    SKILL_BUFF,
+    SKILL_DEBUFF
+} SkillType;
+
 typedef enum {
     SKILL_NONE = -1,
+    SKILL_ATTACK,   // ✅ FIX FOR dog.c ERROR
     SKILL_BITE,
     SKILL_SCRATCH,
     SKILL_QUICK_DASH,
@@ -25,17 +30,17 @@ typedef enum {
     SKILL_SURE_STRIKE,
     SKILL_LAST_STAND
 } SkillID;
-
-// 🔥 SKILL STRUCT (ADD id ONLY — no structure change)
+// ================= SKILL STRUCT =================
 typedef struct {
     char name[30];
     int power;
     int cost;
-    int type;
-    int id;   // ✅ NEW (safe addition)
+    SkillType type;
+    int accuracy;   // 🔥 FIX: REQUIRED
+    int id;
 } Skill;
 
-// 🔥 FINAL DOG STRUCT (UNCHANGED)
+// ================= DOG STRUCT =================
 typedef struct {
     char name[50];
 
@@ -48,11 +53,13 @@ typedef struct {
     int confuseTurns;
     int isBleeding;
     int bleedTurns;
+    int isStunned;
+    int stunTurns;
 
     Skill skills[MAX_SKILLS];
     int skillCount;
 
-    int equipped[4]; // 4 slots only
+    int equipped[4];
 } Dog;
 
 // ================= CORE =================
