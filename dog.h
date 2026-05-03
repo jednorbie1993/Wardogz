@@ -93,4 +93,8 @@ int clamp(int value);
 int getFatiguePenalty(int fatigue);
 int isCritical(int hp, int maxHP);
 
+int sparringBattle(Dog *player, int type);
+void createSparPartner(Dog *e, int type);
+void sparringDog(Dog *player, int type);
+void sparringMenu(Dog *player);
 #endif

@@ -97,16 +97,16 @@ int main()
                 printf("1. Power Training\n");
                 printf("2. Speed Training\n");
                 printf("3. Balance Training\n");
-                printf("4. Return\n");
+                printf("4. Sparring Training\n");
+                printf("5. Return\n");
                 printf("Choice: ");
 
                 char input[10];
                 fgets(input, sizeof(input), stdin);
 
-                // remove newline
                 input[strcspn(input, "\n")] = 0;
 
-                // ================= EMPTY INPUT BLOCK =================
+                // ================= EMPTY INPUT =================
                 if (input[0] == '\0')
                 {
                     printf("Invalid input! Please enter a number.\n");
@@ -114,7 +114,7 @@ int main()
                     continue;
                 }
 
-                // ================= NOT A NUMBER BLOCK =================
+                // ================= NOT A NUMBER =================
                 if (!isdigit(input[0]))
                 {
                     printf("Invalid input! Numbers only.\n");
@@ -124,12 +124,21 @@ int main()
 
                 t = atoi(input);
 
-                if (t == 4)
+                // ================= RETURN =================
+                if (t == 5)
                 {
                     system("cls");
                     break;
                 }
 
+                // ================= SPARRING =================
+                if (t == 4)
+                {
+                    sparringMenu(&player);  // or sparringBattle loop menu mo
+                    continue;
+                }
+
+                // ================= TRAINING VALIDATION =================
                 if (t < 1 || t > 3)
                 {
                     printf("Invalid choice!\n");
