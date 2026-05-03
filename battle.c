@@ -242,6 +242,34 @@ void battle(Dog *player)
             }
         }
     }
-        
+        Ossas:
+- Wild Bite
+- Rush Claw
+- Headbutt
+- Rage Leap
+
+Chubby:
+- Body Block
+- Slow Slam
+- Guard Bash
+- Heavy Sit
+
+Jewar:
+- Precision Bite
+- Eye Strike
+- Counter Snap
+- Focus Jab
+
+Tiny:
+- Mind Feint
+- Quick Dodge Bite
+- Confuse Peck
+- Smart Counter
+
+Snoopy:
+- Speed Dash
+- Triple Bite
+- Wind Kick
+- Flash Dodge
     */
                 

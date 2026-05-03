@@ -95,6 +95,9 @@ int isCritical(int hp, int maxHP);
 
 int sparringBattle(Dog *player, int type);
 void createSparPartner(Dog *e, int type);
-void sparringDog(Dog *player, int type);
 void sparringMenu(Dog *player);
+int enemyAI(Dog *enemy, Dog *player, int type);
+void applySparReward(Dog *player, int type);
+void sparringDog(Dog *player, int type);
+
 #endif
