@@ -43,7 +43,8 @@ int clamp(int value)
 
 int clampFatigue(int f, int max)
 {
-    if (max <= 0) return 0;   // safety: kung wala pang maxFatigue
+    if (max <= 0)
+        return 0; // safety: kung wala pang maxFatigue
 
     if (f < 0)
         return 0;
@@ -286,7 +287,6 @@ void trainDog(Dog *d, int type)
     waitForEnter();
 }
 
-
 void createDog(Dog *d)
 {
     printf("Enter your dog's name: ");
@@ -294,12 +294,12 @@ void createDog(Dog *d)
     fgets(d->name, 50, stdin);
     d->name[strcspn(d->name, "\n")] = 0;
 
-    d->hp = 900;
-    d->maxHP = 900;
-    d->attack = 920;
-    d->speed = 900;
+    d->hp = 100;
+    d->maxHP = 100;
+    d->attack = 320;
+    d->speed = 300;
 
-    d->defense = 915;
+    d->defense = 315;
     d->accuracy = 918; // 80% hit chance
     d->intelligence = 920;
 
@@ -323,7 +323,459 @@ void createDog(Dog *d)
     d->equipped[2] = -1;
     d->equipped[3] = -1;
 }
+void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage)
+{
+    // ================= ATTACK =================
+    if (s.type == SKILL_ATTACK)
+    {
+        printf("You used %s!\n", s.name);
 
+        int penalty = getFatiguePenalty(player->fatigue);
+
+        float atkRatio = (float)(player->attack - penalty) / 999.0f;
+        if (atkRatio < 0.1f)
+            atkRatio = 0.1f;
+
+        *damage = (int)(atkRatio * 80) + 20 + s.power;
+
+        float defRatio = (float)enemy->defense / 999.0f;
+        *damage -= (int)(defRatio * 30);
+
+        if (isCritical(player->hp, player->maxHP))
+        {
+            *damage += 10;
+            printf("CRITICAL HIT!\n");
+        }
+
+        *damage += (rand() % 11) - 5;
+
+        if (*damage < 1)
+            *damage = 1;
+        if (*damage > 120)
+            *damage = 120;
+
+        // 🔥 SPECIAL EFFECTS (dito lang dapat lahat)
+        if (strcmp(s.name, "Flash Step") == 0)
+        {
+            printf("A blinding strike!\n");
+
+            if (rand() % 100 < 30)
+            {
+                enemy->isConfused = 1;
+                enemy->confuseTurns = 2 + rand() % 2;
+                printf("Enemy is CONFUSED!\n");
+            }
+        }
+        else if (strcmp(s.name, "Quick Dash") == 0)
+        {
+            printf("A fast strike!\n");
+        }
+        // 🩸 Savage Fang effect
+        else if (strcmp(s.name, "Savage Fang") == 0)
+        {
+            printf("A vicious tearing attack!\n");
+
+            if (rand() % 100 < 40) // 40% bleed chance
+            {
+                enemy->isBleeding = 1;
+                enemy->bleedTurns = 3; // fixed turns
+
+                printf("Enemy is BLEEDING!\n");
+            }
+        }
+        else if (strcmp(s.name, "Heavy Bite") == 0)
+        {
+            printf("Armor breaking bite!\n");
+
+            enemy->defense -= 5;
+            if (enemy->defense < 0)
+                enemy->defense = 0;
+
+            printf("Enemy DEF reduced!\n");
+        }
+        else if (strcmp(s.name, "Sure Strike") == 0)
+        {
+            printf("An unavoidable attack!\n");
+
+            *damage += 5; // optional bonus
+
+            // 🔥 FORCE HIT SYSTEM
+            enemy->accuracy = 1000; // para siguradong tatama logic mo
+        }
+        else if (strcmp(s.name, "Blood Frenzy") == 0)
+        {
+            printf("You enter a BLOOD FRENZY!\n");
+
+            // extra damage boost
+            *damage += 15;
+
+            // guaranteed bleed
+            enemy->isBleeding = 1;
+            enemy->bleedTurns = 4;
+
+            printf("Enemy is BLEEDING heavily!\n");
+
+            // downside (self damage)
+            int recoil = 10;
+            player->hp -= recoil;
+
+            printf("You hurt yourself for %d recoil!\n", recoil);
+        }
+        else if (strcmp(s.name, "Phantom Rush") == 0)
+        {
+            printf("You vanish and strike multiple times!\n");
+
+            // 🔥 2-hit burst
+            int hit1 = (*damage);
+            int hit2 = (*damage) / 2;
+
+            int totalDamage = hit1 + hit2;
+
+            // small randomness (speed chaos)
+            totalDamage += (rand() % 6); // +0 to +5
+
+            *damage = totalDamage;
+
+            printf("First strike: %d\n", hit1);
+            printf("Second strike: %d\n", hit2);
+
+            // 🌀 evasion bonus chance (flavor effect)
+            if (rand() % 100 < 25)
+            {
+                printf("You became untouchable during Phantom Rush!\n");
+                // optional: could reduce enemy counter damage later
+            }
+        }
+        else if (strcmp(s.name, "Shadow Blitz") == 0)
+        {
+            printf("You melt into the shadows and strike instantly!\n");
+
+            // 🔥 base burst (stronger than Phantom Rush)
+            int base = *damage;
+
+            // 3-hit chain
+            int hit1 = base;
+            int hit2 = (int)(base * 0.7);
+            int hit3 = (int)(base * 0.5);
+
+            int total = hit1 + hit2 + hit3;
+
+            // ⚡ speed bonus damage
+            total += 10 + (rand() % 11); // 10–20 extra
+
+            // 🎯 crit chance boost
+            if (rand() % 100 < 50)
+            {
+                printf("SHADOW CRITICAL STRIKE!\n");
+                total += 20;
+            }
+
+            *damage = total;
+
+            printf("Hit 1: %d\n", hit1);
+            printf("Hit 2: %d\n", hit2);
+            printf("Hit 3: %d\n", hit3);
+        }
+        else if (strcmp(s.name, "Dead Eye") == 0)
+        {
+            printf("You focus and lock onto the target...\n");
+
+            // 🎯 precise strike (remove randomness feel)
+            int preciseDamage = *damage + 15;
+
+            // 🔥 bonus crit chance
+            if (rand() % 100 < 35)
+            {
+                printf("CRITICAL DEAD EYE SHOT!\n");
+                preciseDamage += 20;
+            }
+
+            // 🧠 accuracy mastery bonus
+            preciseDamage += (player->accuracy / 50);
+
+            *damage = preciseDamage;
+
+            printf("Dead Eye hits cleanly!\n");
+        }
+        else if (strcmp(s.name, "Fatal Aim") == 0)
+        {
+            printf("You lock in a fatal trajectory...\n");
+
+            // 🎯 strong precision hit
+            int dmg = *damage + 20;
+
+            // 💥 armor break effect
+            int defBreak = 15;
+            enemy->defense -= defBreak;
+
+            if (enemy->defense < 0)
+                enemy->defense = 0;
+
+            printf("Enemy DEF reduced by %d!\n", defBreak);
+
+            // 💀 execute bonus if low HP
+            if (enemy->hp < enemy->maxHP * 0.3)
+            {
+                dmg += 25;
+                printf("EXECUTION BONUS!\n");
+            }
+
+            // ⚡ crit chance
+            if (rand() % 100 < 40)
+            {
+                printf("FATAL CRITICAL HIT!\n");
+                dmg += 20;
+            }
+
+            *damage = dmg;
+
+            printf("Fatal Aim strikes deep!\n");
+        }
+        else if (strcmp(s.name, "Ragnarok Fang") == 0)
+        {
+            printf("THE WORLD TREMBLES UNDER RAGNAROK FANG!\n");
+
+            // 🔥 base destruction boost
+            int base = *damage + 30;
+
+            // ⚔️ multi-hit annihilation
+            int hit1 = base;
+            int hit2 = (int)(base * 0.8);
+            int hit3 = (int)(base * 0.6);
+
+            int total = hit1 + hit2 + hit3;
+
+            printf("Hit 1: %d\n", hit1);
+            printf("Hit 2: %d\n", hit2);
+            printf("Hit 3: %d\n", hit3);
+
+            // 🩸 guaranteed bleed (endgame pressure)
+            enemy->isBleeding = 1;
+            enemy->bleedTurns = 4;
+
+            printf("Enemy is BLEEDING from destruction!\n");
+
+            // 💀 execute bonus
+            if (enemy->hp < enemy->maxHP * 0.4)
+            {
+                total += 30;
+                printf("RAGNAROK EXECUTION BONUS!\n");
+            }
+
+            // ⚡ raw chaos modifier
+            total += rand() % 15;
+
+            // 🔥 recoil (power has cost)
+            int recoil = 12;
+            player->hp -= recoil;
+            player->hp = clamp(player->hp);
+
+            printf("You suffer %d recoil from Ragnarok power!\n", recoil);
+
+            *damage = total;
+        }
+        else if (strcmp(s.name, "Judgement Eye") == 0)
+        {
+            printf("You gaze into the enemy's fate...\n");
+
+            // 🎯 precise execution hit
+            int dmg = *damage + 25;
+
+            // 🛡️ DEF BREAK (judgement cracks armor)
+            int defBreak = 20;
+            enemy->defense -= defBreak;
+
+            if (enemy->defense < 0)
+                enemy->defense = 0;
+
+            printf("Enemy DEF shattered by %d!\n", defBreak);
+
+            // 🧠 CONFUSION (mental collapse)
+            if (rand() % 100 < 35)
+            {
+                enemy->isConfused = 1;
+                enemy->confuseTurns = 2 + rand() % 2;
+
+                printf("Enemy's mind breaks under JUDGEMENT!\n");
+            }
+
+            // 💀 execute pressure
+            if (enemy->hp < enemy->maxHP * 0.4)
+            {
+                dmg += 30;
+                printf("JUDGEMENT EXECUTION BONUS!\n");
+            }
+
+            // ⚡ crit chance
+            if (rand() % 100 < 45)
+            {
+                dmg += 20;
+                printf("CRITICAL JUDGEMENT STRIKE!\n");
+            }
+
+            *damage = dmg;
+
+            printf("Judgement Eye pierces the soul!\n");
+        }
+        else if (strcmp(s.name, "Zero Phantom") == 0)
+        {
+            printf("You disappear from existence...\n");
+            printf("ZERO PHANTOM ACTIVATED!\n");
+
+            // ⚡ speed scaling damage
+            int base = *damage + (player->speed / 20);
+
+            // 👤 multi-hit phantom strikes
+            int hit1 = base;
+            int hit2 = (int)(base * 0.7);
+            int hit3 = (int)(base * 0.5);
+            int hit4 = (rand() % 10); // extra chaos hit
+
+            int total = hit1 + hit2 + hit3 + hit4;
+
+            printf("Phantom Hit 1: %d\n", hit1);
+            printf("Phantom Hit 2: %d\n", hit2);
+            printf("Phantom Hit 3: %d\n", hit3);
+            printf("Phantom Hit 4: %d\n", hit4);
+
+            // 🛡️ partial defense ignore
+            int ignoreDef = enemy->defense / 3;
+            enemy->defense -= ignoreDef;
+
+            if (enemy->defense < 0)
+                enemy->defense = 0;
+
+            printf("Enemy DEF partially bypassed!\n");
+
+            // 💀 assassin bonus if low HP
+            if (enemy->hp < enemy->maxHP * 0.4)
+            {
+                total += 25;
+                printf("ZERO PHANTOM EXECUTION BONUS!\n");
+            }
+
+            // ⚡ burnout cost (balance)
+            int fatigueCost = 15;
+            player->fatigue -= fatigueCost;
+
+            if (player->fatigue < 0)
+                player->fatigue = 0;
+
+            printf("Fatigue drained by %d!\n", fatigueCost);
+
+            *damage = total;
+        }
+        else if (s.type == SKILL_BUFF)
+        {
+            printf("You used %s!\n", s.name);
+
+            if (strcmp(s.name, "Titan Aegis") == 0)
+            {
+                printf("🛡️ Titan Aegis activated!\n");
+
+                // 🔥 Massive defense boost
+                player->defense += 40;
+
+                // ❤️ small heal sustain
+                player->hp += 15;
+                if (player->hp > player->maxHP)
+                    player->hp = player->maxHP;
+
+                // 🧱 optional: reduce fatigue cost pressure
+                player->fatigue -= 10;
+                if (player->fatigue < 0)
+                    player->fatigue = 0;
+
+                printf("DEF increased massively! Damage reduced for next hits!\n");
+            }
+
+            *damage = 0;
+        }
+    }
+
+    // ================= BUFF =================
+    else if (s.type == SKILL_BUFF)
+    {
+        printf("You used %s!\n", s.name);
+
+        if (strcmp(s.name, "Iron Guard") == 0)
+        {
+            player->defense = clamp(player->defense + 5);
+            printf("DEF +5!\n");
+        }
+        if (strcmp(s.name, "Steel Wall") == 0)
+        {
+            printf("You brace your body like unbreakable steel!\n");
+
+            // 🔥 big defense boost (temporary style)
+            player->defense += 20;
+            if (player->defense > MAX_STAT)
+                player->defense = MAX_STAT;
+
+            printf("DEF +20!\n");
+
+            // 🛡️ optional: reduce fatigue slightly (tank recovery feel)
+            player->fatigue += 5;
+            if (player->fatigue > player->maxFatigue)
+                player->fatigue = player->maxFatigue;
+
+            printf("You stabilized your stance!\n");
+        }
+        else if (strcmp(s.name, "Fortress Stance") == 0)
+        {
+            printf("You become an unbreakable fortress!\n");
+
+            // 🛡️ massive defense boost
+            player->defense += 40;
+            if (player->defense > MAX_STAT)
+                player->defense = MAX_STAT;
+
+            printf("DEF +40!\n");
+
+            // 🐢 trade-off: slower movement (heavy stance)
+            player->speed -= 20;
+            if (player->speed < MIN_STAT)
+                player->speed = MIN_STAT;
+
+            printf("Speed reduced due to heavy stance!\n");
+
+            // 🔥 optional sustain
+            player->fatigue += 10;
+            if (player->fatigue > player->maxFatigue)
+                player->fatigue = player->maxFatigue;
+
+            printf("You are in FORTRESS MODE!\n");
+
+        }
+
+        *damage = 0; // importante para hindi pumasok sa hit system
+    }
+
+    // ================= HEAL =================
+    else if (s.type == SKILL_HEAL)
+    {
+        printf("You used %s!\n", s.name);
+
+        if (strcmp(s.name, "Last Stand") == 0)
+        {
+            printf("You refuse to fall!\n");
+
+            player->hp = player->maxHP;
+
+            printf("FULL RECOVERY!\n");
+        }
+        else
+        {
+            player->hp += 25;
+            if (player->hp > player->maxHP)
+                player->hp = player->maxHP;
+
+            printf("Healed +25 HP!\n");
+        }
+
+        *damage = 0;
+    }
+}    
 void checkSkillUnlock(Dog *d)
 {
     // ================= SPEED =================
@@ -332,7 +784,7 @@ void checkSkillUnlock(Dog *d)
         strcpy(d->skills[d->skillCount].name, "Quick Dash");
         d->skills[d->skillCount].power = 7;
         d->skills[d->skillCount].cost = 6;
-        d->skills[d->skillCount].type = SKILL_BUFF;
+        d->skills[d->skillCount].type = SKILL_ATTACK; // ✅ FIX
 
         printf("NEW SKILL UNLOCKED: Quick Dash!\n");
         d->skillCount++;
@@ -343,9 +795,41 @@ void checkSkillUnlock(Dog *d)
         strcpy(d->skills[d->skillCount].name, "Flash Step");
         d->skills[d->skillCount].power = 9;
         d->skills[d->skillCount].cost = 7;
-        d->skills[d->skillCount].type = SKILL_BUFF;
+        d->skills[d->skillCount].type = SKILL_ATTACK; // ✅ FIX
 
         printf("NEW SKILL UNLOCKED: Flash Step!\n");
+        d->skillCount++;
+    }
+    // ================= SPEED (MID GAME) =================
+    if (d->speed >= 250 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Phantom Rush"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Phantom Rush");
+        d->skills[d->skillCount].power = 12;
+        d->skills[d->skillCount].cost = 9;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+
+        printf("NEW SKILL UNLOCKED: Phantom Rush!\n");
+        d->skillCount++;
+    }
+
+    if (d->speed >= 350 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Shadow Blitz"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Shadow Blitz");
+        d->skills[d->skillCount].power = 15;
+        d->skills[d->skillCount].cost = 11;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+
+        printf("NEW SKILL UNLOCKED: Shadow Blitz!\n");
+        d->skillCount++;
+    }
+    if (d->speed >= 500 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Zero Phantom"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Zero Phantom");
+        d->skills[d->skillCount].power = 24;
+        d->skills[d->skillCount].cost = 14;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+
+        printf("NEW SKILL UNLOCKED: Zero Phantom!\n");
         d->skillCount++;
     }
 
@@ -372,6 +856,27 @@ void checkSkillUnlock(Dog *d)
         d->skillCount++;
     }
 
+    if (d->attack >= 320 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Blood Frenzy"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Blood Frenzy");
+        d->skills[d->skillCount].power = 18;
+        d->skills[d->skillCount].cost = 12;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+
+        printf("NEW SKILL UNLOCKED: Blood Frenzy!\n");
+        d->skillCount++;
+    }
+    if (d->attack >= 500 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Ragnarok Fang"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Ragnarok Fang");
+        d->skills[d->skillCount].power = 25;
+        d->skills[d->skillCount].cost = 15;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+
+        printf("NEW SKILL UNLOCKED: Ragnarok Fang!\n");
+        d->skillCount++;
+    }
+
     // ================= DEFENSE =================
     if (d->defense >= 120 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Iron Guard"))
     {
@@ -381,6 +886,38 @@ void checkSkillUnlock(Dog *d)
         d->skills[d->skillCount].type = SKILL_BUFF;
 
         printf("NEW SKILL UNLOCKED: Iron Guard!\n");
+        d->skillCount++;
+    }
+    // ================= DEFENSE (MID GAME) =================
+    if (d->defense >= 250 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Steel Wall"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Steel Wall");
+        d->skills[d->skillCount].power = 0;
+        d->skills[d->skillCount].cost = 8;
+        d->skills[d->skillCount].type = SKILL_BUFF;
+
+        printf("NEW SKILL UNLOCKED: Steel Wall!\n");
+        d->skillCount++;
+    }
+
+    if (d->defense >= 350 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Fortress Stance"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Fortress Stance");
+        d->skills[d->skillCount].power = 0;
+        d->skills[d->skillCount].cost = 10;
+        d->skills[d->skillCount].type = SKILL_BUFF;
+
+        printf("NEW SKILL UNLOCKED: Fortress Stance!\n");
+        d->skillCount++;
+    }
+    if (d->defense >= 500 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Titan Aegis"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Titan Aegis");
+        d->skills[d->skillCount].power = 0;
+        d->skills[d->skillCount].cost = 15;
+        d->skills[d->skillCount].type = SKILL_BUFF;
+
+        printf("NEW SKILL UNLOCKED: Titan Aegis!\n");
         d->skillCount++;
     }
 
@@ -395,8 +932,40 @@ void checkSkillUnlock(Dog *d)
         printf("NEW SKILL UNLOCKED: Sure Strike!\n");
         d->skillCount++;
     }
+    // ================= ACCURACY (MID GAME) =================
+    if (d->accuracy >= 250 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Dead Eye"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Dead Eye");
+        d->skills[d->skillCount].power = 11;
+        d->skills[d->skillCount].cost = 8;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
 
-    // ================= HP (TANK / SURVIVAL) =================
+        printf("NEW SKILL UNLOCKED: Dead Eye!\n");
+        d->skillCount++;
+    }
+
+    if (d->accuracy >= 350 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Fatal Aim"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Fatal Aim");
+        d->skills[d->skillCount].power = 14;
+        d->skills[d->skillCount].cost = 10;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+
+        printf("NEW SKILL UNLOCKED: Fatal Aim!\n");
+        d->skillCount++;
+    }
+    if (d->accuracy >= 500 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Judgement Eye"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Judgement Eye");
+        d->skills[d->skillCount].power = 22;
+        d->skills[d->skillCount].cost = 14;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+
+        printf("NEW SKILL UNLOCKED: Judgement Eye!\n");
+        d->skillCount++;
+    }
+
+    // ================= HP =================
     if (d->maxHP >= 200 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Last Stand"))
     {
         strcpy(d->skills[d->skillCount].name, "Last Stand");
@@ -579,12 +1148,18 @@ void createEnemy(Dog *e)
 
     e->hp = 100;
     e->maxHP = 100;
-    e->attack = 80;
-    e->defense = 65;
+    e->attack = 10;
+    e->defense = 965;
 
     e->speed = 90;    // dagdag mo rin para kumpleto
     e->accuracy = 95; // important sa hit system
     e->intelligence = 55;
+
+    e->isConfused = 0;
+    e->confuseTurns = 0;
+
+    e->isBleeding = 0;
+    e->bleedTurns = 0;
 }
 
 void enemyQuickAttack(Dog *player, Dog *enemy)
@@ -965,6 +1540,9 @@ int battle(Dog *player, int zoneIndex, int progress[])
     int defending = 0;
     int move;
 
+    int baseDef = player->defense;
+    int baseSpd = player->speed;
+
     Dog enemy;
     createEnemy(&enemy);
     setEnemyByZone(&enemy, zoneIndex, progress[zoneIndex]);
@@ -1040,85 +1618,31 @@ int battle(Dog *player, int zoneIndex, int progress[])
             }
 
             Skill s = player->skills[skillIndex];
-
             int damage = 0;
 
-            // ================= SKILL TYPE LOGIC (FIXED PART) =================
-            if (s.type == SKILL_ATTACK)
-            {
-                printf("You used %s...\n", s.name);
-
-                printf("Attacking");
-                for (int i = 0; i < 3; i++)
-                {
-                    printf(".");
-                    fflush(stdout);
-                    Sleep(120);
-                }
-                printf("\n");
-
-                int penalty = getFatiguePenalty(player->fatigue);
-
-                float atkRatio = (float)(player->attack - penalty) / 999.0f;
-                if (atkRatio < 0.1f)
-                    atkRatio = 0.1f;
-
-                damage = (int)(atkRatio * 80) + 20 + s.power;
-
-                float defRatio = (float)enemy.defense / 999.0f;
-                damage -= (int)(defRatio * 30);
-
-                if (isCritical(player->hp, player->maxHP))
-                {
-                    damage += 10;
-                    printf("CRITICAL HIT!\n");
-                }
-
-                damage += (rand() % 11) - 5;
-            }
-            else if (s.type == SKILL_BUFF)
-            {
-                printf("You used %s (BUFF)!\n", s.name);
-
-                player->defense += 5;
-                player->speed += 3;
-
-                printf("DEF +5 | SPD +3 temporarily!\n");
-                damage = 0;
-            }
-            else if (s.type == SKILL_HEAL)
-            {
-                printf("You used %s (HEAL)!\n", s.name);
-
-                player->hp += 25;
-                if (player->hp > player->maxHP)
-                    player->hp = player->maxHP;
-
-                printf("Healed +25 HP!\n");
-                damage = 0;
-            }
-
-            // ================= FATIGUE =================
+            // ================= FATIGUE CHECK =================
             if (player->fatigue < s.cost)
             {
                 printf("Not enough energy! Weak action...\n");
-                damage = (damage / 2);
+
+                applySkillEffect(player, &enemy, s, &damage);
+                damage /= 2; // hina pag kulang energy
+
                 player->fatigue = 0;
             }
             else
             {
+                applySkillEffect(player, &enemy, s, &damage);
+
                 player->fatigue -= s.cost;
                 player->fatigue = clampFatigue(player->fatigue, player->maxFatigue);
             }
 
-            // ================= APPLY DAMAGE =================
-            if (s.type == SKILL_ATTACK)
+            // ================= HIT SYSTEM =================
+            if (damage > 0) // attack lang may hit/miss
             {
                 if ((rand() % 100) < player->accuracy)
                 {
-                    if (damage < 1) damage = 1;
-                    if (damage > 120) damage = 120;
-
                     enemy.hp -= damage;
                     enemy.hp = clamp(enemy.hp);
 
@@ -1157,6 +1681,10 @@ int battle(Dog *player, int zoneIndex, int progress[])
         {
             printf("You surrendered...\n");
             waitForEnter();
+            
+            player->defense = baseDef;
+            player->speed   = baseSpd;
+
             return 2;
         }
 
@@ -1185,6 +1713,9 @@ int battle(Dog *player, int zoneIndex, int progress[])
             if (player->fatigue > player->maxFatigue)
                 player->fatigue = player->maxFatigue;
 
+                player->defense = baseDef;
+                player->speed   = baseSpd;
+
             waitForEnter();
             return 0;
         }
@@ -1202,6 +1733,9 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
             if (progress[zoneIndex] < 3)
                 progress[zoneIndex]++;
+
+                player->defense = baseDef;
+                player->speed   = baseSpd;
 
             waitForEnter();
             return 1;

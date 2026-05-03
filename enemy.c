@@ -98,6 +98,64 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     if (finalAccuracy > 95)
         finalAccuracy = 95;
 
+    // ================= BLEED DAMAGE =================
+    if (enemy->isBleeding && enemy->bleedTurns > 0)
+    {
+        int bleedDmg = (rand() % 5) + 3; // 3–7 damage
+
+        printf("Enemy is bleeding!\n");
+        printf("Bleed damage: %d\n", bleedDmg);
+
+        enemy->hp -= bleedDmg;
+        enemy->hp = clamp(enemy->hp);
+
+        enemy->bleedTurns--;
+
+        if (enemy->bleedTurns <= 0)
+        {
+            enemy->isBleeding = 0;
+            printf("Bleeding stopped.\n");
+        }
+
+        waitForEnter();
+
+        if (enemy->hp <= 0)
+        {
+            printf("Enemy collapsed from bleeding!\n");
+            return 1; // enemy dead
+        }
+    }
+    // ================= CONFUSED DAMAGE =================
+    if (enemy->isConfused && enemy->confuseTurns > 0)
+    {
+        printf("Enemy is confused!\n");
+
+        if (rand() % 100 < 50) // 50% miss chance
+        {
+            printf("Enemy missed due to confusion!\n");
+            enemy->confuseTurns--;
+
+            if (enemy->confuseTurns <= 0)
+            {
+                enemy->isConfused = 0;
+                printf("Enemy recovered from confusion!\n");
+                waitForEnter();
+            }
+
+            return -1; // ✅ only return if MISS
+        }
+
+        // ✅ continue attack if hindi nag-miss
+        enemy->confuseTurns--;
+
+        if (enemy->confuseTurns <= 0)
+        {
+            enemy->isConfused = 0;
+            printf("Enemy recovered from confusion!\n");
+            waitForEnter();
+        }
+    }
+
     int roll = rand() % 100;
 
     if (roll < finalAccuracy)

@@ -12,15 +12,30 @@
 extern int systemLog;
 extern int animationOn;
 
-// 🔥 SKILL STRUCT
+// 🔥 ADD THIS (Skill IDs)
+typedef enum {
+    SKILL_NONE = -1,
+    SKILL_BITE,
+    SKILL_SCRATCH,
+    SKILL_QUICK_DASH,
+    SKILL_FLASH_STEP,
+    SKILL_HEAVY_BITE,
+    SKILL_SAVAGE_FANG,
+    SKILL_IRON_GUARD,
+    SKILL_SURE_STRIKE,
+    SKILL_LAST_STAND
+} SkillID;
+
+// 🔥 SKILL STRUCT (ADD id ONLY — no structure change)
 typedef struct {
     char name[30];
     int power;
     int cost;
     int type;
+    int id;   // ✅ NEW (safe addition)
 } Skill;
 
-// 🔥 FINAL DOG STRUCT (WITH SKILLS NA)
+// 🔥 FINAL DOG STRUCT (UNCHANGED)
 typedef struct {
     char name[50];
 
@@ -29,6 +44,10 @@ typedef struct {
     int accuracy, intelligence;
     int fatigue;
     int maxFatigue;
+    int isConfused;
+    int confuseTurns;
+    int isBleeding;
+    int bleedTurns;
 
     Skill skills[MAX_SKILLS];
     int skillCount;
@@ -52,6 +71,7 @@ void skillMenu(Dog *d);
 void checkSkillUnlock(Dog *d);
 int hasSkill(Dog *d, char name[]);
 int clampFatigue(int f, int max);
+void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage);
 
 // ================= UI =================
 void showHPBarPlayer(int hp, int maxHp);
