@@ -25,5 +25,8 @@ void assignSkills(Dog *d, int type);
 int chooseEnemyMove(Dog *enemy, Dog *player, int type);
 void createSparPlayer(Dog *orig, Dog *spar);
 void updateDebuffs(Dog *d);
+void checkSparringUnlock(Dog *d);
+void updateSparringProgress(Dog *d, int enemyIndex, int win);
+void initSparringProgress(Dog *d);
 
 #endif

@@ -4,6 +4,46 @@
 #include <string.h>
 #include <ctype.h>
 
+
+void initSparringProgress(Dog *d) {
+    for (int i = 0; i < 5; i++) {
+        d->sparringProgress[i] = 0;
+    }
+}
+
+void updateSparringProgress(Dog *d, int enemyIndex, int win) {
+    system("cls");
+    
+    // 🔥 HARDCODE THE NAMES ARRAY HERE
+    const char* sparringEnemies[5] = {"Ossas", "Chubby", "Jewar", "Tiny", "Snoopy"};
+    
+    printf("=== SPARRING RESULTS ===\n");
+    
+    if (win) {
+        d->sparringProgress[enemyIndex]++;
+        printf("✅ WIN! %s progress: %d/10", sparringEnemies[enemyIndex], d->sparringProgress[enemyIndex]);
+        
+        if (d->sparringProgress[enemyIndex] == 10) {
+            printf(" → TECHNIQUE UNLOCKED!\n");
+        } else {
+            printf("\n");
+        }
+    } else {
+        printf("❌ LOSS! %s progress: %d/10 (no gain)\n", sparringEnemies[enemyIndex], d->sparringProgress[enemyIndex]);
+    }
+    
+    // Show all progress
+    printf("\n--- ALL PROGRESS ---\n");
+    for (int i = 0; i < 5; i++) {
+        printf("%s: %d/10", sparringEnemies[i], d->sparringProgress[i]);
+        if (d->sparringProgress[i] == 10) printf(" ✅");
+        printf("\n");
+    }
+    
+    checkSparringUnlock(d);
+    waitForEnter();
+}
+
 void updateCooldowns(Dog *d)
 {
     for (int i = 0; i < d->skillCount; i++)
@@ -28,6 +68,54 @@ void applySparReward(Dog *player, int type)
 
     printf("Spar reward applied!\n");
     waitForEnter();
+}
+
+void checkSparringUnlock(Dog *d) {
+    // Check each sparring enemy
+    if (d->sparringProgress[0] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Ossas Counter")) {
+        strcpy(d->skills[d->skillCount].name, "Ossas Counter");
+        d->skills[d->skillCount].power = 18;
+        d->skills[d->skillCount].cost = 12;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+        printf("🎉 OSSAS DEFEATED 10/10! UNLOCKED: Ossas Counter!\n");
+        d->skillCount++;
+    }
+    
+    if (d->sparringProgress[1] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Chubby Bulldozer")) {
+        strcpy(d->skills[d->skillCount].name, "Chubby Bulldozer");
+        d->skills[d->skillCount].power = 22;
+        d->skills[d->skillCount].cost = 14;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+        printf("🎉 CHUBBY DEFEATED 10/10! UNLOCKED: Chubby Bulldozer!\n");
+        d->skillCount++;
+    }
+    
+    if (d->sparringProgress[2] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Tiny Blitz")) {
+        strcpy(d->skills[d->skillCount].name, "Tiny Blitz");
+        d->skills[d->skillCount].power = 20;
+        d->skills[d->skillCount].cost = 13;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+        printf("🎉 TINY DEFEATED 10/10! UNLOCKED: Tiny Blitz!\n");
+        d->skillCount++;
+    }
+    
+    if (d->sparringProgress[3] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Jeward Precision")) {
+        strcpy(d->skills[d->skillCount].name, "Jeward Precision");
+        d->skills[d->skillCount].power = 25;
+        d->skills[d->skillCount].cost = 15;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+        printf("🎉 JEWARD DEFEATED 10/10! UNLOCKED: Jeward Precision!\n");
+        d->skillCount++;
+    }
+    
+    if (d->sparringProgress[4] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Snoop Phantom")) {
+        strcpy(d->skills[d->skillCount].name, "Snoop Phantom");
+        d->skills[d->skillCount].power = 28;
+        d->skills[d->skillCount].cost = 16;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+        printf("🎉 SNOOP DEFEATED 10/10! UNLOCKED: Snoop Phantom! 🔥\n");
+        d->skillCount++;
+    }
 }
 
 void createSparPartner(Dog *e, int type)
@@ -135,31 +223,38 @@ void sparringMenu(Dog *player)
         system("cls");
 
         printf("==== SPARRING TRAINING ====\n");
-        printf("1. Ossas (Attack Training)\n");
-        printf("2. Chubby (Defense Training)\n");
-        printf("3. Jewar (Accuracy Training)\n");
-        printf("4. Tiny (Intelligence Training)\n");
-        printf("5. Snoopy (Speed Training)\n");
+        
+        // 🔥 SHOW PROGRESS (KEEP THIS - perfect!)
+        printf("1. Ossas     (%d/10)", player->sparringProgress[0]);
+        if (player->sparringProgress[0] == 10) printf(" ✅");
+        printf(" (Attack Training)\n");
+        
+        printf("2. Chubby    (%d/10)", player->sparringProgress[1]);
+        if (player->sparringProgress[1] == 10) printf(" ✅");
+        printf(" (Defense Training)\n");
+        
+        printf("3. Jewar     (%d/10)", player->sparringProgress[2]);
+        if (player->sparringProgress[2] == 10) printf(" ✅");
+        printf(" (Accuracy Training)\n");
+        
+        printf("4. Tiny      (%d/10)", player->sparringProgress[3]);
+        if (player->sparringProgress[3] == 10) printf(" ✅");
+        printf(" (Intelligence Training)\n");
+        
+        printf("5. Snoopy    (%d/10)", player->sparringProgress[4]);
+        if (player->sparringProgress[4] == 10) printf(" ✅");
+        printf(" (Speed Training)\n");
+        
         printf("6. Return\n");
         printf("Choice: ");
 
         char input[10];
         fgets(input, sizeof(input), stdin);
-
         input[strcspn(input, "\n")] = 0;
 
-        // ================= EMPTY INPUT =================
-        if (input[0] == '\0')
+        if (input[0] == '\0' || !isdigit(input[0]))
         {
-            printf("Invalid input! Please enter a number.\n");
-            waitForEnter();
-            continue;
-        }
-
-        // ================= NOT A NUMBER =================
-        if (!isdigit(input[0]))
-        {
-            printf("Invalid input! Numbers only.\n");
+            printf("Invalid input!\n");
             waitForEnter();
             continue;
         }
@@ -179,8 +274,17 @@ void sparringMenu(Dog *player)
             continue;
         }
 
-        // 🥊 START SPARRING BATTLE
+        // 🔥 SIMPLE: HARDCODED NAMES ARRAY (NO FUNCTION NEEDED)
+        const char* names[5] = {"Ossas", "Chubby", "Jewar", "Tiny", "Snoopy"};
+        int enemyIndex = t - 1;
+        
+        printf("\nSparring %s! Let's go!\n", names[enemyIndex]);
+        waitForEnter();
+        
+        // 🥊 BATTLE (progress handled INSIDE sparringBattle now)
         sparringBattle(player, t);
+        
+        // NO NEED for updateSparringProgress here anymore!
     }
 }
 
@@ -491,7 +595,7 @@ void createSparPlayer(Dog *orig, Dog *spar)
     spar->maxHP = 100;
     spar->hp = 100;
 
-    spar->attack = 100;
+    spar->attack = 900;
     spar->defense = 100;
     spar->speed = 100;
     spar->accuracy = 100;
@@ -815,13 +919,20 @@ int sparringBattle(Dog *player, int type)
     if (sparPlayer.hp > 0 && enemy.hp <= 0)
     {
         printf("🎉 YOU WIN SPARRING!\n");
+        
+        // 🥊 SPARRING PROGRESS SYSTEM
+        int enemyIndex = type - 1; // 1→0(Ossas), 2→1(Chubby), etc.
+        updateSparringProgress(player, enemyIndex, 1); // WIN = +1 progress
+        
         applySparReward(player, type);
         waitForEnter();
-        return 1;
+        return 1; // WIN
     }
     else
     {
         printf("💥 YOU LOST SPARRING...\n");
+        int enemyIndex = type - 1;
+        updateSparringProgress(player, enemyIndex, 0); // LOSE
         waitForEnter();
         return 0;
     }

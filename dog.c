@@ -10,6 +10,7 @@
 int systemLog = 0;
 int animationOn = 1; //  NEW (default ON)
 
+
 int randRange(int min, int max)
 {
     return (rand() % (max - min + 1)) + min;
@@ -323,6 +324,9 @@ void createDog(Dog *d)
     d->equipped[1] = 1;
     d->equipped[2] = -1;
     d->equipped[3] = -1;
+
+
+    initSparringProgress(d);
 }
 void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage)
 {
@@ -665,6 +669,73 @@ void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage)
             printf("Fatigue drained by %d!\n", fatigueCost);
 
             *damage = total;
+        }
+
+        // ================= SPARRING TECHNIQUES =================
+        // OSSAS TECHNIQUE (after beating Ossas 10/10)
+        else if (strcmp(s.name, "Ossas Counter") == 0) {
+            printf("OSSAS COUNTER TECHNIQUE!\n");
+            *damage += 18;
+            
+            // 40% counter chance + reflect damage
+            if (rand() % 100 < 40) {
+                printf("PERFECT COUNTER!\n");
+                *damage += 15;
+                // Could add enemy damage reflect in battle logic
+            }
+        }
+
+        // CHUBBY TECHNIQUE
+        else if (strcmp(s.name, "Chubby Bulldozer") == 0) {
+            printf("CHUBBY BULLDOZER!\n");
+            *damage += 22;
+            
+            // Heavy DEF shred
+            enemy->defense -= 15;
+            if (enemy->defense < 0) enemy->defense = 0;
+            printf("Enemy DEF crushed -15!\n");
+        }
+
+        // TINY TECHNIQUE
+        else if (strcmp(s.name, "Tiny Blitz") == 0) {
+            printf("TINY BLITZ!\n");
+            
+            // 3-hit speed burst
+            int hit1 = *damage;
+            int hit2 = (*damage * 7) / 10;
+            int hit3 = (*damage * 5) / 10;
+            *damage = hit1 + hit2 + hit3;
+            
+            printf("Triple blitz hits!\n");
+        }
+
+        // JEWARD TECHNIQUE
+        else if (strcmp(s.name, "Jeward Precision") == 0) {
+            printf("JEWARD PRECISION!\n");
+            *damage += 25;
+            
+            // Ignore 50% enemy defense + accuracy boost
+            int defIgnore = enemy->defense / 2;
+            *damage += defIgnore;
+            player->accuracy += 30;
+            
+            printf("DEFENSE PENETRATED!\n");
+        }
+
+        // SNOOP TECHNIQUE (Ultimate)
+        else if (strcmp(s.name, "Snoop Phantom") == 0) {
+            printf("SNOOP PHANTOM TECHNIQUE!\n");
+            
+            // 4-hit + guaranteed status
+            int base = *damage + 20;
+            *damage = base * 2; // Double strike
+            
+            enemy->isConfused = 1;
+            enemy->confuseTurns = 4;
+            enemy->isBleeding = 1;
+            enemy->bleedTurns = 3;
+            
+            printf("DOUBLE PHANTOM + FULL STATUS!\n");
         }
         else if (s.type == SKILL_BUFF)
         {

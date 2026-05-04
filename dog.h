@@ -41,6 +41,8 @@ typedef struct {
     int cooldown;       // max cooldown
     int cdLeft;         // current cooldown
     int aiScore; 
+
+
 } Skill;
 
 // ================= DOG STRUCT =================
@@ -60,6 +62,8 @@ typedef struct {
     int stunTurns;
     int accTemp;
     int accDebuffTurns;
+
+    int sparringProgress[5];
 
     Skill skills[MAX_SKILLS];
     int skillCount;
