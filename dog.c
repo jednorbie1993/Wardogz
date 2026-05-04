@@ -5,6 +5,7 @@
 #include <conio.h>
 #include <string.h> // para sa strcspn
 #include <ctype.h>
+#include "sparring.h"
 
 int systemLog = 0;
 int animationOn = 1; //  NEW (default ON)

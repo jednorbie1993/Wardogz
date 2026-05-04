@@ -5,6 +5,7 @@
 #include <windows.h>
 #include "stage.h"
 #include <ctype.h>
+#include "sparring.h"
 
 int main()
 {
@@ -274,6 +275,8 @@ int main()
     gcc *.c -o wardo -Wall -Wextra
 
     gcc *.c -o wardogz.exe; .\wardogz.exe
+
+    gcc main.c dog.c sparring.c enemy.c stage.c -o wardogz.exe
 
     played 4/25
 

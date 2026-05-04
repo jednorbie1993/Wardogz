@@ -18,5 +18,7 @@ void sparringMenu(Dog *player);
 int useSkill(Dog *user, Dog *enemy, Skill skill);
 void applySparReward(Dog *player, int type);
 void assignSkills(Dog *d, int type);
+int chooseEnemyMove(Dog *enemy, Dog *player, int type);
+void createSparPlayer(Dog *orig, Dog *spar);
 
 #endif

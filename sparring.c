@@ -1,25 +1,8 @@
-#include "dog.h"
+#include "sparring.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-
-int enemyAI(Dog *enemy, Dog *player, int type)
-{
-    int move = rand() % 4;
-
-    if (type == 1) // Ossas aggressive
-        return (enemy->attack / 10) + rand() % 6;
-
-    if (type == 2) // Chubby tank
-        return (enemy->attack / 14) + rand() % 3;
-
-    if (type == 5) // Snoopy speed
-        return (enemy->attack / 11) + rand() % 5;
-
-    // default
-    return (enemy->attack / 12) + rand() % 4;
-}
 
 void applySparReward(Dog *player, int type)
 {
@@ -38,61 +21,6 @@ void applySparReward(Dog *player, int type)
     waitForEnter();
 }
 
-void sparringDog(Dog *player, int type)
-{
-    Dog spar;
-
-    // create sparring partner
-    createSparPartner(&spar, type);
-
-    printf("\n Sparring Match Started!\n");
-    printf("Opponent: %s\n", spar.name);
-
-    int playerHP = player->maxHP;
-    int sparHP = spar.maxHP;
-
-    while (playerHP > 0 && sparHP > 0)
-    {
-        // PLAYER TURN
-        int dmg = (player->attack / 10) + rand() % 3;
-        sparHP -= dmg;
-
-        printf("You dealt %d damage!\n", dmg);
-
-        if (sparHP <= 0)
-            break;
-
-        // SPAR TURN
-        int enemyDmg = (spar.attack / 10) + rand() % 3;
-        playerHP -= enemyDmg;
-
-        printf("%s dealt %d damage!\n", spar.name, enemyDmg);
-    }
-
-    // RESULT
-    if (playerHP > 0)
-    {
-        printf("\nYou won sparring!\n");
-
-        // small stat gain ONLY
-        if (type == 1)
-            player->attack += rand() % 3 + 1;
-        if (type == 2)
-            player->defense += rand() % 3 + 1;
-        if (type == 3)
-            player->accuracy += rand() % 3 + 1;
-        if (type == 4)
-            player->intelligence += rand() % 3 + 1;
-        if (type == 5)
-            player->speed += rand() % 3 + 1;
-    }
-    else
-    {
-        printf("\nYou lost sparring...\n");
-    }
-
-    waitForEnter();
-}
 void createSparPartner(Dog *e, int type)
 {
     // reset basic stats first
@@ -188,6 +116,7 @@ void createSparPartner(Dog *e, int type)
     }
     pauseAndClear();
 }
+
 void sparringMenu(Dog *player)
 {
     int t;
@@ -248,20 +177,55 @@ void sparringMenu(Dog *player)
 
 int useSkill(Dog *user, Dog *enemy, Skill skill)
 {
-    int roll = rand() % 100;
+    printf("DEBUG: %s using %s\n", user->name, skill.name);
 
-    if (roll > skill.accuracy)
+    int roll = rand() % 100;
+    int dmg = 0;
+
+    int hitChance = skill.accuracy + (user->accuracy / 5) - (enemy->speed / 6);
+
+    // clamp hitChance
+    if (hitChance < 20)
+        hitChance = 20;
+    if (hitChance > 95)
+        hitChance = 95;
+
+    // ================= DODGE FIRST =================
+    int dodgeChance = enemy->speed / 8;
+
+    if (dodgeChance > 40)
+        dodgeChance = 40; // cap para di broken
+
+    int dodgeRoll = rand() % 100;
+
+    if (dodgeRoll < dodgeChance)
     {
-        printf("%s missed!\n", skill.name);
+        printf("%s dodged the attack!\n",
+               strlen(enemy->name) > 0 ? enemy->name : "Enemy");
         return 0;
     }
 
-    int dmg = 0;
+    // ================= HIT CHECK =================
+    // DODGE
+    if (dodgeRoll < dodgeChance)
+    {
+        printf("%s used %s but %s dodged!\n",
+               user->name,
+               skill.name,
+               strlen(enemy->name) > 0 ? enemy->name : "Enemy");
+        return 0;
+    }
 
     // ================= DAMAGE =================
     if (skill.type == SKILL_DAMAGE)
     {
-        dmg = skill.power + (rand() % 6);
+        int base = skill.power + (user->attack / 10);
+        int reduce = enemy->defense / 12;
+
+        dmg = base - reduce + (rand() % 4);
+
+        if (dmg < 1)
+            dmg = 1;
 
         if (rand() % 100 < 10)
         {
@@ -333,7 +297,7 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
             printf("%s took %d recoil!\n", user->name, recoil);
         }
 
-        // ================= JEWAR =================
+        // ================= JEWARD =================
         if (strcmp(skill.name, "Counter Snap") == 0)
         {
             if (rand() % 100 < 30)
@@ -425,15 +389,116 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
     }
 
     return 1;
-}  
+}
 
-void assignSkills(Dog *d, int type)
+int chooseEnemyMove(Dog *enemy, Dog *player, int type)
+{
+    // LOW HP → defensive
+    if (enemy->hp < enemy->maxHP * 0.35)
+    {
+        for (int i = 0; i < enemy->skillCount; i++)
+        {
+            if (enemy->skills[i].type == SKILL_HEAL ||
+                enemy->skills[i].type == SKILL_BUFF)
+            {
+                return i;
+            }
+        }
+    }
+
+    // PLAYER LOW → finish
+    if (player->hp < player->maxHP * 0.25)
+    {
+        int best = 0;
+        int maxPower = 0;
+
+        for (int i = 0; i < enemy->skillCount; i++)
+        {
+            if (enemy->skills[i].type == SKILL_DAMAGE &&
+                enemy->skills[i].power > maxPower)
+            {
+                maxPower = enemy->skills[i].power;
+                best = i;
+            }
+        }
+        return best;
+    }
+
+    // CHUBBY (tank AI)
+    if (type == 2)
+    {
+        if (rand() % 100 < 50)
+        {
+            for (int i = 0; i < enemy->skillCount; i++)
+            {
+                if (enemy->skills[i].type == SKILL_BUFF)
+                    return i;
+            }
+        }
+    }
+
+    // OSSAS (aggressive)
+    if (type == 1) // OSSAS
+    {
+        if (rand() % 100 < 70)
+        {
+            int best = 0;
+            int maxPower = 0;
+
+            for (int i = 0; i < enemy->skillCount; i++)
+            {
+                if (enemy->skills[i].type == SKILL_DAMAGE &&
+                    enemy->skills[i].power > maxPower)
+                {
+                    maxPower = enemy->skills[i].power;
+                    best = i;
+                }
+            }
+            return best;
+        }
+        else
+        {
+            return rand() % enemy->skillCount;
+        }
+    }
+
+    return 0;
+}
+
+void createSparPlayer(Dog *orig, Dog *spar)
+{
+    // copy basic info (name, etc.)
+    strcpy(spar->name, orig->name);
+
+    spar->maxHP = 100;
+    spar->hp = 100;
+
+    spar->attack = 100;
+    spar->defense = 100;
+    spar->speed = 100;
+    spar->accuracy = 100;
+    spar->intelligence = 100;
+
+    spar->isStunned = 0;
+    spar->stunTurns = 0;
+    spar->isBleeding = 0;
+    spar->bleedTurns = 0;
+    spar->isConfused = 0;
+    spar->confuseTurns = 0;
+
+    spar->skillCount = orig->skillCount;
+    for (int i = 0; i < spar->skillCount; i++)
+    {
+        spar->skills[i] = orig->skills[i];
+    }
+}
+
+void assignSkills(Dog * d, int type)
 {
     d->skillCount = 4;
 
     if (type == 1) // OSSAS
     {
-
         strcpy(d->skills[0].name, "Wild Bite");
         d->skills[0].type = SKILL_DAMAGE;
         d->skills[0].power = 12;
@@ -457,7 +522,6 @@ void assignSkills(Dog *d, int type)
 
     else if (type == 2) // CHUBBY
     {
-
         strcpy(d->skills[0].name, "Body Block");
         d->skills[0].type = SKILL_BUFF;
         d->skills[0].power = 5;
@@ -481,7 +545,6 @@ void assignSkills(Dog *d, int type)
 
     else if (type == 3) // JEWAR
     {
-
         strcpy(d->skills[0].name, "Precision Bite");
         d->skills[0].type = SKILL_DAMAGE;
         d->skills[0].power = 14;
@@ -505,7 +568,6 @@ void assignSkills(Dog *d, int type)
 
     else if (type == 4) // TINY
     {
-
         strcpy(d->skills[0].name, "Mind Feint");
         d->skills[0].type = SKILL_DEBUFF;
         d->skills[0].power = 6;
@@ -529,7 +591,6 @@ void assignSkills(Dog *d, int type)
 
     else if (type == 5) // SNOOPY
     {
-
         strcpy(d->skills[0].name, "Speed Dash");
         d->skills[0].type = SKILL_DAMAGE;
         d->skills[0].power = 9;
@@ -555,20 +616,22 @@ void assignSkills(Dog *d, int type)
 int sparringBattle(Dog *player, int type)
 {
     Dog enemy;
-    createSparPartner(&enemy, type);
+    Dog sparPlayer;
 
+    createSparPlayer(player, &sparPlayer); // FAIR STATS
+    createSparPartner(&enemy, type);
     assignSkills(&enemy, type);
 
-    player->hp = player->maxHP;
+    sparPlayer.hp = sparPlayer.maxHP;
     enemy.hp = enemy.maxHP;
 
     printf("\n SPARRING START: %s\n\n", enemy.name);
     pauseAndClear();
 
-    while (player->hp > 0 && enemy.hp > 0)
+    while (sparPlayer.hp > 0 && enemy.hp > 0)
     {
-        printf("\nYOU:    [%d/%d]\n", player->hp, player->maxHP);
-        printf("ENEMY:  [%d/%d]\n\n", enemy.hp, enemy.maxHP);
+        printf("YOU: [%d/%d]\n", sparPlayer.hp, sparPlayer.maxHP);
+        printf("ENEMY: [%d/%d]\n\n", enemy.hp, enemy.maxHP);
 
         printf("\nChoose Move:\n");
         printf("1. Bite\n");
@@ -616,15 +679,21 @@ int sparringBattle(Dog *player, int type)
             continue;
         }
 
-        useSkill(player, &enemy, tempSkill);
+        // PLAYER TURN
+        printf("\n--- PLAYER TURN ---\n");
+        useSkill(&sparPlayer, &enemy, tempSkill);
 
         if (enemy.hp <= 0)
             break;
 
-        int enemyMove = rand() % enemy.skillCount;
-        useSkill(&enemy, player, enemy.skills[enemyMove]);
+        // ENEMY AI
+        int enemyMove = chooseEnemyMove(&enemy, &sparPlayer, type);
 
-        if (player->hp <= 0)
+        // ENEMY TURN
+        printf("\n--- ENEMY TURN ---\n");
+        useSkill(&enemy, &sparPlayer, enemy.skills[enemyMove]);
+
+        if (sparPlayer.hp <= 0)
             break;
 
         printf("\nPress Enter to continue...");
@@ -632,11 +701,11 @@ int sparringBattle(Dog *player, int type)
         system("cls");
     }
 
-    // ✅ RESULT CHECK (NASA LABAS NA)
-    if (player->hp > 0)
+    // RESULT
+    if (sparPlayer.hp > 0)
     {
         printf("\n YOU WIN SPARRING!\n");
-        applySparReward(player, type);
+        applySparReward(player, type); // REAL PLAYER ang rewarded
         return 1;
     }
     else
