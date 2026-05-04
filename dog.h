@@ -5,7 +5,6 @@
 #define MAX_STAT 999
 #define MIN_STAT 0
 
-
 extern int systemLog;
 extern int animationOn;
 
@@ -17,9 +16,10 @@ typedef enum {
     SKILL_DEBUFF
 } SkillType;
 
+// ================= SKILL IDs =================
 typedef enum {
     SKILL_NONE = -1,
-    SKILL_ATTACK,   // ✅ FIX FOR dog.c ERROR
+    SKILL_ATTACK,
     SKILL_BITE,
     SKILL_SCRATCH,
     SKILL_QUICK_DASH,
@@ -28,29 +28,32 @@ typedef enum {
     SKILL_SAVAGE_FANG,
     SKILL_IRON_GUARD,
     SKILL_SURE_STRIKE,
-    SKILL_LAST_STAND
+    SKILL_LAST_STAND,
+    SKILL_PACK_ATTACK = 20,    // 🆕 Wild skills
+    SKILL_AMBUSH,
+    SKILL_HOWL_DEBUFF,
+    SKILL_FERAL_RUSH
 } SkillID;
+
 // ================= SKILL STRUCT =================
 typedef struct {
     char name[30];
     int power;
     int cost;
     SkillType type;
-    int accuracy;   // 🔥 FIX: REQUIRED
-    int id;
-    int cooldown;       // max cooldown
-    int cdLeft;         // current cooldown
-    int aiScore; 
-
-
+    int accuracy;
+    SkillID id;        // 🔥 CHANGED: Use SkillID instead of int
+    int cooldown;
+    int cdLeft;
+    int aiScore;
 } Skill;
 
-// ================= DOG STRUCT =================
+// ================= DOG STRUCT - FIXED DUPLICATES =================
 typedef struct {
     char name[50];
 
     int hp, maxHP;
-    int attack, defense, speed;
+    int attack, defense, speed;  // 🔥 FIXED: Proper names
     int accuracy, intelligence;
     int fatigue;
     int maxFatigue;
@@ -58,14 +61,18 @@ typedef struct {
     int confuseTurns;
     int isBleeding;
     int bleedTurns;
+    int bleedDamage;         // Damage per bleed tick
     int isStunned;
     int stunTurns;
     int accTemp;
     int accDebuffTurns;
-    int isCountering;     // 0=off, 1=on
+    int accuracyModifier;    // For debuffs
+    int numSkills;           // Number of active skills
+    int isCountering;
     int counterDamage;
 
-    int sparringProgress[5];
+    // 🔥 FIXED: REMOVED DUPLICATES - ONE OF EACH FIELD ONLY
+    int sparringProgress[5]; // Sparring progress tracker
 
     Skill skills[MAX_SKILLS];
     int skillCount;
@@ -73,7 +80,7 @@ typedef struct {
     int equipped[4];
 } Dog;
 
-// ================= CORE =================
+// ================= ALL YOUR FUNCTIONS (UNCHANGED) =================
 void createDog(Dog *d);
 void printDog(Dog d);
 int battle(Dog *player, int zoneIndex, int progress[]);
@@ -82,7 +89,6 @@ void waitForEnter();
 void pauseAndClear();
 void loseSequence(Dog *player, Dog *enemy);
 
-// ================= PLAYER SYSTEM =================
 int playerTurn(Dog *player, Dog *enemy, int *defending);
 void playerAttack(Dog *player, Dog *enemy);
 void skillMenu(Dog *d);
@@ -91,22 +97,18 @@ int hasSkill(Dog *d, char name[]);
 int clampFatigue(int f, int max);
 void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage);
 
-// ================= UI =================
 void showHPBarPlayer(int hp, int maxHp);
 
-// ================= SYSTEM =================
 void applyBattleStatGain(Dog *d);
 void trainDog(Dog *d, int type);
 void preBattleScene();
 
-// ================= ENEMY =================
 void createEnemy(Dog *e);
 int enemyAttack(Dog *player, Dog *enemy, int *defending);
 void enemyQuickAttack(Dog *player, Dog *enemy);
 void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
 void enemyTurn(Dog *player, Dog *enemy, int *defending);
 
-// ================= UTIL =================
 int clamp(int value);
 int getFatiguePenalty(int fatigue);
 int isCritical(int hp, int maxHP);
@@ -117,5 +119,12 @@ void sparringMenu(Dog *player);
 int enemyAI(Dog *enemy, Dog *player, int type);
 void applySparReward(Dog *player, int type);
 void sparringDog(Dog *player, int type);
+
+// ================= WILD SKILLS =================
+void setEnemySkillsWild(Dog *enemy, int zoneIndex, int enemyLevel);
+int usePackAttack(Dog *user, Dog *target);
+int useAmbush(Dog *user, Dog *target);
+int useHowlDebuff(Dog *user, Dog *target);
+int useFeralRush(Dog *user, Dog *target);
 
 #endif
