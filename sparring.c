@@ -4,6 +4,15 @@
 #include <string.h>
 #include <ctype.h>
 
+void updateCooldowns(Dog *d)
+{
+    for (int i = 0; i < d->skillCount; i++)
+    {
+        if (d->skills[i].cdLeft > 0)
+            d->skills[i].cdLeft--;
+    }
+}
+
 void applySparReward(Dog *player, int type)
 {
     if (type == 1)
@@ -219,27 +228,39 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
     // ================= DAMAGE =================
     if (skill.type == SKILL_DAMAGE)
     {
-        int base = skill.power + (user->attack / 10);
-        int reduce = enemy->defense / 12;
+        int base = skill.power + (user->attack / 15);
+        int reduce = enemy->defense / 18;
 
-        dmg = base - reduce + (rand() % 4);
+        int variance = rand() % 6;
 
-        if (dmg < 1)
-            dmg = 1;
+        int dmg = base - reduce + variance;
+
+        // soft cap instead of hard cap
+        if (dmg < 5)
+            dmg = 5;
+        // clamp range
+        if (dmg < 10)
+            dmg = 10;
+
+        enemy->hp -= dmg;
 
         if (rand() % 100 < 10)
         {
             dmg += 5;
-            printf("Critical hit!\n");
+            printf("CRITICAL HIT!\n");
         }
-
-        if (dmg > 20)
-            dmg = 20;
-
-        enemy->hp -= dmg;
 
         printf("%s used %s and dealt %d damage!\n",
                user->name, skill.name, dmg);
+
+        for (int i = 0; i < user->skillCount; i++)
+        {
+            if (strcmp(user->skills[i].name, skill.name) == 0)
+            {
+                user->skills[i].cdLeft = user->skills[i].cooldown;
+                break;
+            }
+        }
 
         // ===== BASIC PLAYER SKILLS =====
         if (strcmp(skill.name, "Hip Check") == 0)
@@ -362,107 +383,137 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
     // ================= DEBUFF =================
     else if (skill.type == SKILL_DEBUFF)
     {
+        // ================= GENERIC DEBUFF =================
         enemy->attack -= skill.power;
         if (enemy->attack < 1)
             enemy->attack = 1;
 
         printf("%s attack reduced!\n", enemy->name);
 
-        if (strcmp(skill.name, "Eye Strike") == 0)
-        {
-            enemy->accuracy -= 10;
-            if (enemy->accuracy < 50)
-                enemy->accuracy = 50;
+        // ================= EXCEPTIONS (skill-specific overrides) =================
 
-            printf("%s accuracy dropped!\n", enemy->name);
-        }
-
-        if (strcmp(skill.name, "Mind Feint") == 0)
+        if (strcmp(skill.name, "Headbutt") == 0)
         {
-            if (rand() % 100 < 40)
+            int roll = rand() % 100;
+
+            // 30% STUN (HALF ACCURACY + 2 TURNS)
+            if (roll < 30)
             {
-                enemy->isConfused = 1;
-                enemy->confuseTurns = 2;
-                printf("%s is CONFUSED!\n", enemy->name);
+                enemy->isStunned = 1;
+                enemy->stunTurns = 2;
+                enemy->accTemp = enemy->accuracy / 2; // 50% ACCURACY
+                enemy->accDebuffTurns = 2;
+
+                printf("💥 %s is **STUNNED**! (Accuracy halved)\n", enemy->name);
+                return 1;
+            }
+            // 50% DAZE (-30 ACCURACY + 2 TURNS)
+            else if (roll < 80)
+            {
+                enemy->accTemp = enemy->accuracy - 30; // -30 ACCURACY
+                if (enemy->accTemp < 20)
+                    enemy->accTemp = 20; // MINIMUM 20%
+                enemy->accDebuffTurns = 2;
+
+                printf("😵 %s is **DAZED**! (Accuracy -30)\n", enemy->name);
+                return 1;
+            }
+            else
+            {
+                printf("❌ %s's Headbutt had no effect!\n", user->name);
+                return 1;
+            }
+
+            if (strcmp(skill.name, "Eye Strike") == 0)
+            {
+                enemy->accuracy -= 10;
+                if (enemy->accuracy < 50)
+                    enemy->accuracy = 50;
+
+                printf("%s accuracy dropped!\n", enemy->name);
+            }
+
+            if (strcmp(skill.name, "Mind Feint") == 0)
+            {
+                if (rand() % 100 < 40)
+                {
+                    enemy->isConfused = 1;
+                    enemy->confuseTurns = 2;
+                    printf("%s is CONFUSED!\n", enemy->name);
+                }
             }
         }
-    }
 
-    return 1;
+        return 1;
+    }
 }
 
 int chooseEnemyMove(Dog *enemy, Dog *player, int type)
 {
-    // LOW HP → defensive
+    int candidates[10];
+    int count = 0;
+
+    int mode;
+
+    // ================= MODE DECISION =================
     if (enemy->hp < enemy->maxHP * 0.35)
+        mode = CAUTIOUS;
+    else if (player->hp < player->maxHP * 0.30)
+        mode = AGGRESSIVE;
+    else
+        mode = BALANCED;
+
+    // ================= PICK SKILLS =================
+    for (int i = 0; i < enemy->skillCount; i++)
     {
-        for (int i = 0; i < enemy->skillCount; i++)
+        if (enemy->skills[i].cdLeft > 0)
+            continue;
+
+        int score = enemy->skills[i].power;
+
+        // MODE BEHAVIOR
+        if (mode == AGGRESSIVE)
+        {
+            score += 20; // push damage skills
+        }
+        else if (mode == BALANCED)
+        {
+            score += rand() % 15; // mix randomness
+        }
+        else if (mode == CAUTIOUS)
         {
             if (enemy->skills[i].type == SKILL_HEAL ||
                 enemy->skills[i].type == SKILL_BUFF)
             {
-                return i;
+                score += 25;
             }
         }
+
+        // store candidate
+        candidates[count] = i;
+        enemy->skills[i].aiScore = score; // optional debug
+        count++;
     }
 
-    // PLAYER LOW → finish
-    if (player->hp < player->maxHP * 0.25)
+    if (count == 0)
+        return 0;
+
+    // ================= PICK BEST SCORE =================
+    int best = candidates[0];
+    int bestScore = enemy->skills[best].aiScore;
+
+    for (int i = 1; i < count; i++)
     {
-        int best = 0;
-        int maxPower = 0;
+        int idx = candidates[i];
 
-        for (int i = 0; i < enemy->skillCount; i++)
+        if (enemy->skills[idx].aiScore > bestScore)
         {
-            if (enemy->skills[i].type == SKILL_DAMAGE &&
-                enemy->skills[i].power > maxPower)
-            {
-                maxPower = enemy->skills[i].power;
-                best = i;
-            }
-        }
-        return best;
-    }
-
-    // CHUBBY (tank AI)
-    if (type == 2)
-    {
-        if (rand() % 100 < 50)
-        {
-            for (int i = 0; i < enemy->skillCount; i++)
-            {
-                if (enemy->skills[i].type == SKILL_BUFF)
-                    return i;
-            }
+            best = idx;
+            bestScore = enemy->skills[idx].aiScore;
         }
     }
 
-    // OSSAS (aggressive)
-    if (type == 1) // OSSAS
-    {
-        if (rand() % 100 < 70)
-        {
-            int best = 0;
-            int maxPower = 0;
-
-            for (int i = 0; i < enemy->skillCount; i++)
-            {
-                if (enemy->skills[i].type == SKILL_DAMAGE &&
-                    enemy->skills[i].power > maxPower)
-                {
-                    maxPower = enemy->skills[i].power;
-                    best = i;
-                }
-            }
-            return best;
-        }
-        else
-        {
-            return rand() % enemy->skillCount;
-        }
-    }
-
-    return 0;
+    return best;
 }
 
 void createSparPlayer(Dog *orig, Dog *spar)
@@ -493,31 +544,33 @@ void createSparPlayer(Dog *orig, Dog *spar)
     }
 }
 
-void assignSkills(Dog * d, int type)
+void assignSkills(Dog *d, int type)
 {
     d->skillCount = 4;
 
     if (type == 1) // OSSAS
     {
-        strcpy(d->skills[0].name, "Wild Bite");
+        /*strcpy(d->skills[0].name, "Wild Bite");
         d->skills[0].type = SKILL_DAMAGE;
         d->skills[0].power = 12;
         d->skills[0].accuracy = 90;
 
         strcpy(d->skills[1].name, "Rush Claw");
         d->skills[1].type = SKILL_DAMAGE;
-        d->skills[1].power = 10;
-        d->skills[1].accuracy = 95;
+        d->skills[1].power = 11;
+        d->skills[1].accuracy = 95;*/
 
         strcpy(d->skills[2].name, "Headbutt");
         d->skills[2].type = SKILL_DEBUFF;
-        d->skills[2].power = 5;
+        d->skills[2].power = 13;
         d->skills[2].accuracy = 80;
 
-        strcpy(d->skills[3].name, "Rage Leap");
+        /*strcpy(d->skills[3].name, "Rage Leap");
         d->skills[3].type = SKILL_DAMAGE;
-        d->skills[3].power = 18;
+        d->skills[3].power = 10;
         d->skills[3].accuracy = 65;
+        d->skills[3].cooldown = 3;   // max cooldown
+        d->skills[3].cdLeft = 0;     // ready to use*/
     }
 
     else if (type == 2) // CHUBBY
@@ -613,6 +666,32 @@ void assignSkills(Dog * d, int type)
     }
 }
 
+// 🔥 NEW FUNCTION - LAGYAN MO SA TOP NG FILE
+void updateDebuffs(Dog *d)
+{
+    // DEBUFF TIMER
+    if (d->accDebuffTurns > 0)
+    {
+        d->accDebuffTurns--;
+        if (d->accDebuffTurns == 0)
+        {
+            d->accTemp = d->accuracy;
+            printf("✅ %s recovered from daze/stun!\n", d->name);
+        }
+    }
+
+    // STUN TIMER
+    if (d->isStunned && d->stunTurns > 0)
+    {
+        d->stunTurns--;
+        if (d->stunTurns == 0)
+        {
+            d->isStunned = 0;
+            printf("✅ %s recovered from stun!\n", d->name);
+        }
+    }
+}
+
 int sparringBattle(Dog *player, int type)
 {
     Dog enemy;
@@ -630,68 +709,123 @@ int sparringBattle(Dog *player, int type)
 
     while (sparPlayer.hp > 0 && enemy.hp > 0)
     {
-        printf("YOU: [%d/%d]\n", sparPlayer.hp, sparPlayer.maxHP);
-        printf("ENEMY: [%d/%d]\n\n", enemy.hp, enemy.maxHP);
-
-        printf("\nChoose Move:\n");
-        printf("1. Bite\n");
-        printf("2. Scratch\n");
-        printf("3. Charge\n");
-        printf("4. Hip Check\n");
-
-        int choice;
-        scanf("%d", &choice);
-        getchar();
-
-        Skill tempSkill;
-
-        if (choice == 1)
+        // 🔥 NEW: UPDATE DEBUFFS FIRST
+        if (enemy.accDebuffTurns > 0)
         {
-            strcpy(tempSkill.name, "Bite");
-            tempSkill.type = SKILL_DAMAGE;
-            tempSkill.power = 10;
-            tempSkill.accuracy = 90;
+            enemy.accDebuffTurns--;
+            if (enemy.accDebuffTurns == 0)
+            {
+                enemy.accTemp = enemy.accuracy;
+                printf("%s recovered accuracy!\n", enemy.name);
+            }
         }
-        else if (choice == 2)
+        if (sparPlayer.accDebuffTurns > 0)
         {
-            strcpy(tempSkill.name, "Scratch");
-            tempSkill.type = SKILL_DAMAGE;
-            tempSkill.power = 8;
-            tempSkill.accuracy = 95;
+            sparPlayer.accDebuffTurns--;
+            if (sparPlayer.accDebuffTurns == 0)
+            {
+                sparPlayer.accTemp = sparPlayer.accuracy;
+                printf("You recovered accuracy!\n");
+            }
         }
-        else if (choice == 3)
+
+        updateCooldowns(&sparPlayer);
+        updateCooldowns(&enemy);
+
+        // 🔥 BETTER STATUS WITH DEBUFFS
+        printf("YOU: [%d/%d]", sparPlayer.hp, sparPlayer.maxHP);
+        if (sparPlayer.accDebuffTurns > 0)
+            printf(" (DAZED %d)", sparPlayer.accDebuffTurns);
+        if (sparPlayer.isStunned && sparPlayer.stunTurns > 0)
+            printf(" (STUN %d)", sparPlayer.stunTurns);
+        printf("\n");
+
+        printf("ENEMY: [%d/%d]", enemy.hp, enemy.maxHP);
+        if (enemy.accDebuffTurns > 0)
+            printf(" (DAZED %d)", enemy.accDebuffTurns);
+        if (enemy.isStunned && enemy.stunTurns > 0)
+            printf(" (STUN %d)", enemy.stunTurns);
+        printf("\n\n");
+
+        // 🔥 CHECK PLAYER STUN
+        if (sparPlayer.isStunned && sparPlayer.stunTurns > 0)
         {
-            strcpy(tempSkill.name, "Charge");
-            tempSkill.type = SKILL_DAMAGE;
-            tempSkill.power = 12;
-            tempSkill.accuracy = 80;
-        }
-        else if (choice == 4)
-        {
-            strcpy(tempSkill.name, "Hip Check");
-            tempSkill.type = SKILL_DAMAGE;
-            tempSkill.power = 9;
-            tempSkill.accuracy = 85;
+            printf("😵 YOU ARE STUNNED! Turn skipped!\n");
+            sparPlayer.stunTurns--;
+            if (sparPlayer.stunTurns == 0)
+                sparPlayer.isStunned = 0;
         }
         else
         {
-            printf("Invalid move!\n");
-            continue;
-        }
+            printf("\nChoose Move:\n");
+            printf("1. Bite\n");
+            printf("2. Scratch\n");
+            printf("3. Charge\n");
+            printf("4. Hip Check\n");
 
-        // PLAYER TURN
-        printf("\n--- PLAYER TURN ---\n");
-        useSkill(&sparPlayer, &enemy, tempSkill);
+            int choice;
+            scanf("%d", &choice);
+            getchar();
+
+            Skill tempSkill;
+
+            if (choice == 1)
+            {
+                strcpy(tempSkill.name, "Bite");
+                tempSkill.type = SKILL_DAMAGE;
+                tempSkill.power = 10;
+                tempSkill.accuracy = 90;
+            }
+            else if (choice == 2)
+            {
+                strcpy(tempSkill.name, "Scratch");
+                tempSkill.type = SKILL_DAMAGE;
+                tempSkill.power = 8;
+                tempSkill.accuracy = 95;
+            }
+            else if (choice == 3)
+            {
+                strcpy(tempSkill.name, "Charge");
+                tempSkill.type = SKILL_DAMAGE;
+                tempSkill.power = 12;
+                tempSkill.accuracy = 80;
+            }
+            else if (choice == 4)
+            {
+                strcpy(tempSkill.name, "Hip Check");
+                tempSkill.type = SKILL_DAMAGE;
+                tempSkill.power = 9;
+                tempSkill.accuracy = 85;
+            }
+            else
+            {
+                printf("Invalid move!\n");
+                continue;
+            }
+
+            // ================= PLAYER TURN =================
+            printf("\n--- PLAYER TURN ---\n");
+            useSkill(&sparPlayer, &enemy, tempSkill);
+        }
 
         if (enemy.hp <= 0)
             break;
 
-        // ENEMY AI
-        int enemyMove = chooseEnemyMove(&enemy, &sparPlayer, type);
-
-        // ENEMY TURN
-        printf("\n--- ENEMY TURN ---\n");
-        useSkill(&enemy, &sparPlayer, enemy.skills[enemyMove]);
+        // ================= ENEMY TURN =================
+        if (enemy.isStunned && enemy.stunTurns > 0)
+        {
+            printf("\n--- ENEMY TURN ---\n");
+            printf("😵 %s is STUNNED! Enemy turn skipped!\n", enemy.name);
+            enemy.stunTurns--;
+            if (enemy.stunTurns == 0)
+                enemy.isStunned = 0;
+        }
+        else
+        {
+            int enemyMove = chooseEnemyMove(&enemy, &sparPlayer, type);
+            printf("\n--- ENEMY TURN ---\n");
+            useSkill(&enemy, &sparPlayer, enemy.skills[enemyMove]);
+        }
 
         if (sparPlayer.hp <= 0)
             break;

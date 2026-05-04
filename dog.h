@@ -38,6 +38,9 @@ typedef struct {
     SkillType type;
     int accuracy;   // 🔥 FIX: REQUIRED
     int id;
+    int cooldown;       // max cooldown
+    int cdLeft;         // current cooldown
+    int aiScore; 
 } Skill;
 
 // ================= DOG STRUCT =================
@@ -55,6 +58,8 @@ typedef struct {
     int bleedTurns;
     int isStunned;
     int stunTurns;
+    int accTemp;
+    int accDebuffTurns;
 
     Skill skills[MAX_SKILLS];
     int skillCount;
