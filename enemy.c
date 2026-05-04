@@ -18,7 +18,6 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     if (strstr(enemy->name, "Alpha") || strstr(enemy->name, "King"))
     {
         enemyDamage += 6;
-
         if (rand() % 100 < 20)
         {
             printf("Enemy is enraged!\n");
@@ -29,7 +28,6 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     if (strstr(enemy->name, "Iron") || strstr(enemy->name, "Guard"))
     {
         enemyDamage -= 2;
-
         if (rand() % 100 < 30)
         {
             printf("Enemy hardened!\n");
@@ -101,8 +99,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     // ================= BLEED DAMAGE =================
     if (enemy->isBleeding && enemy->bleedTurns > 0)
     {
-        int bleedDmg = (rand() % 5) + 3; // 3–7 damage
-
+        int bleedDmg = (rand() % 5) + 3;
         printf("Enemy is bleeding!\n");
         printf("Bleed damage: %d\n", bleedDmg);
 
@@ -122,15 +119,16 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         if (enemy->hp <= 0)
         {
             printf("Enemy collapsed from bleeding!\n");
-            return 1; // enemy dead
+            return 1;
         }
     }
+
     // ================= CONFUSED DAMAGE =================
     if (enemy->isConfused && enemy->confuseTurns > 0)
     {
         printf("Enemy is confused!\n");
 
-        if (rand() % 100 < 50) // 50% miss chance
+        if (rand() % 100 < 50)
         {
             printf("Enemy missed due to confusion!\n");
             enemy->confuseTurns--;
@@ -142,10 +140,9 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
                 waitForEnter();
             }
 
-            return -1; // ✅ only return if MISS
+            return -1;
         }
 
-        // ✅ continue attack if hindi nag-miss
         enemy->confuseTurns--;
 
         if (enemy->confuseTurns <= 0)
@@ -175,9 +172,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
             if (counterRoll < counterChance)
             {
-                int counterDamage =
-                    (player->attack / 2) +
-                    (player->intelligence / 4);
+                int counterDamage = (player->attack / 2) + (player->intelligence / 4);
 
                 printf("You countered the attack!\n");
                 printf("Counter Damage: %d\n", counterDamage);
@@ -215,13 +210,45 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
             *defending = 0;
         }
-        else
+        else  // 🔥 NON-DEFENDING ATTACKS GO HERE
         {
+            // 🔥 OSSAS COUNTER FIRST (TRAP TRIGGER!)
+            if (player->isCountering == 1 && player->counterDamage > 0) 
+            {
+                int counterChance = 65 + (player->intelligence / 20);
+                if (counterChance > 85) counterChance = 85;
+                
+                if (rand() % 100 < counterChance)
+                {
+                    printf("🛡️ OSSAS COUNTER TRIGGERED!\n");
+                    
+                    int reflectDmg = player->counterDamage;
+                    if (reflectDmg > enemy->hp) reflectDmg = enemy->hp;
+                    
+                    enemy->hp -= reflectDmg;
+                    enemy->hp = clamp(enemy->hp);
+                    printf("Enemy reflected %d damage!\n", reflectDmg);
+                    
+                    enemyDamage = enemyDamage / 2;
+                    printf("Enemy damage halved by counter! (%d→%d)\n", enemyDamage*2, enemyDamage);
+                }
+                else
+                {
+                    printf("🛡️ Ossas Counter FAILED to trigger!\n");
+                    printf("Enemy bypassed your counter stance!\n");
+                }
+                
+                // ALWAYS RESET
+                player->isCountering = 0;
+                player->counterDamage = 0;
+            }
+            
+            // NORMAL DAMAGE (after counter check)
             player->hp -= enemyDamage;
             player->hp = clamp(player->hp);
-
+            
             printf("Enemy dealt %d damage!\n", enemyDamage);
-
+            
             if (player->hp <= 0)
             {
                 printf("You were defeated...\n");
@@ -238,11 +265,15 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         waitForEnter();
     }
 
-    // ================= OPTIONAL DEBUG =================
+    // ================= DEBUG =================
     if (systemLog)
     {
         printf("[ENEMY DMG DEBUG] %d\n", enemyDamage);
     }
+
+    // Safety reset
+    player->isCountering = 0;
+    player->counterDamage = 0;
 
     return -1;
 }

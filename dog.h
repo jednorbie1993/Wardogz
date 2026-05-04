@@ -62,6 +62,8 @@ typedef struct {
     int stunTurns;
     int accTemp;
     int accDebuffTurns;
+    int isCountering;     // 0=off, 1=on
+    int counterDamage;
 
     int sparringProgress[5];
 

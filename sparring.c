@@ -223,7 +223,7 @@ void sparringMenu(Dog *player)
         system("cls");
 
         printf("==== SPARRING TRAINING ====\n");
-        
+        player->sparringProgress[0] = 9;
         // 🔥 SHOW PROGRESS (KEEP THIS - perfect!)
         printf("1. Ossas     (%d/10)", player->sparringProgress[0]);
         if (player->sparringProgress[0] == 10) printf(" ✅");

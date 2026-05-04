@@ -310,6 +310,9 @@ void createDog(Dog *d)
 
     d->skillCount = 2;
 
+    d->isCountering = 0;
+    d->counterDamage = 0;
+
     strcpy(d->skills[0].name, "Bite");
     d->skills[0].power = 5;
     d->skills[0].cost = 5;
@@ -359,11 +362,10 @@ void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage)
         if (*damage > 120)
             *damage = 120;
 
-        // 🔥 SPECIAL EFFECTS (dito lang dapat lahat)
+        // 🔥 ALL SPECIAL EFFECTS HERE (single block)
         if (strcmp(s.name, "Flash Step") == 0)
         {
             printf("A blinding strike!\n");
-
             if (rand() % 100 < 30)
             {
                 enemy->isConfused = 1;
@@ -375,108 +377,67 @@ void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage)
         {
             printf("A fast strike!\n");
         }
-        // 🩸 Savage Fang effect
         else if (strcmp(s.name, "Savage Fang") == 0)
         {
             printf("A vicious tearing attack!\n");
-
-            if (rand() % 100 < 40) // 40% bleed chance
+            if (rand() % 100 < 40)
             {
                 enemy->isBleeding = 1;
-                enemy->bleedTurns = 3; // fixed turns
-
+                enemy->bleedTurns = 3;
                 printf("Enemy is BLEEDING!\n");
             }
         }
         else if (strcmp(s.name, "Heavy Bite") == 0)
         {
             printf("Armor breaking bite!\n");
-
             enemy->defense -= 5;
             if (enemy->defense < 0)
                 enemy->defense = 0;
-
             printf("Enemy DEF reduced!\n");
         }
         else if (strcmp(s.name, "Sure Strike") == 0)
         {
             printf("An unavoidable attack!\n");
-
-            *damage += 5; // optional bonus
-
-            // 🔥 FORCE HIT SYSTEM
-            enemy->accuracy = 1000; // para siguradong tatama logic mo
+            *damage += 5;
+            enemy->accuracy = 1000; // force hit
         }
         else if (strcmp(s.name, "Blood Frenzy") == 0)
         {
             printf("You enter a BLOOD FRENZY!\n");
-
-            // extra damage boost
             *damage += 15;
-
-            // guaranteed bleed
             enemy->isBleeding = 1;
             enemy->bleedTurns = 4;
-
             printf("Enemy is BLEEDING heavily!\n");
-
-            // downside (self damage)
             int recoil = 10;
             player->hp -= recoil;
-
             printf("You hurt yourself for %d recoil!\n", recoil);
         }
         else if (strcmp(s.name, "Phantom Rush") == 0)
         {
             printf("You vanish and strike multiple times!\n");
-
-            // 🔥 2-hit burst
             int hit1 = (*damage);
             int hit2 = (*damage) / 2;
-
             int totalDamage = hit1 + hit2;
-
-            // small randomness (speed chaos)
-            totalDamage += (rand() % 6); // +0 to +5
-
+            totalDamage += (rand() % 6);
             *damage = totalDamage;
-
             printf("First strike: %d\n", hit1);
             printf("Second strike: %d\n", hit2);
-
-            // 🌀 evasion bonus chance (flavor effect)
-            if (rand() % 100 < 25)
-            {
-                printf("You became untouchable during Phantom Rush!\n");
-                // optional: could reduce enemy counter damage later
-            }
         }
         else if (strcmp(s.name, "Shadow Blitz") == 0)
         {
             printf("You melt into the shadows and strike instantly!\n");
-
-            // 🔥 base burst (stronger than Phantom Rush)
             int base = *damage;
-
-            // 3-hit chain
             int hit1 = base;
             int hit2 = (int)(base * 0.7);
             int hit3 = (int)(base * 0.5);
-
             int total = hit1 + hit2 + hit3;
-
-            // ⚡ speed bonus damage
-            total += 10 + (rand() % 11); // 10–20 extra
-
-            // 🎯 crit chance boost
+            total += 10 + (rand() % 11);
             if (rand() % 100 < 50)
             {
                 printf("SHADOW CRITICAL STRIKE!\n");
                 total += 20;
             }
-
             *damage = total;
-
             printf("Hit 1: %d\n", hit1);
             printf("Hit 2: %d\n", hit2);
             printf("Hit 3: %d\n", hit3);
@@ -484,345 +445,226 @@ void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage)
         else if (strcmp(s.name, "Dead Eye") == 0)
         {
             printf("You focus and lock onto the target...\n");
-
-            // 🎯 precise strike (remove randomness feel)
             int preciseDamage = *damage + 15;
-
-            // 🔥 bonus crit chance
             if (rand() % 100 < 35)
             {
                 printf("CRITICAL DEAD EYE SHOT!\n");
                 preciseDamage += 20;
             }
-
-            // 🧠 accuracy mastery bonus
             preciseDamage += (player->accuracy / 50);
-
             *damage = preciseDamage;
-
             printf("Dead Eye hits cleanly!\n");
         }
         else if (strcmp(s.name, "Fatal Aim") == 0)
         {
             printf("You lock in a fatal trajectory...\n");
-
-            // 🎯 strong precision hit
             int dmg = *damage + 20;
-
-            // 💥 armor break effect
             int defBreak = 15;
             enemy->defense -= defBreak;
-
             if (enemy->defense < 0)
                 enemy->defense = 0;
-
             printf("Enemy DEF reduced by %d!\n", defBreak);
-
-            // 💀 execute bonus if low HP
             if (enemy->hp < enemy->maxHP * 0.3)
             {
                 dmg += 25;
                 printf("EXECUTION BONUS!\n");
             }
-
-            // ⚡ crit chance
             if (rand() % 100 < 40)
             {
                 printf("FATAL CRITICAL HIT!\n");
                 dmg += 20;
             }
-
             *damage = dmg;
-
             printf("Fatal Aim strikes deep!\n");
         }
         else if (strcmp(s.name, "Ragnarok Fang") == 0)
         {
             printf("THE WORLD TREMBLES UNDER RAGNAROK FANG!\n");
-
-            // 🔥 base destruction boost
             int base = *damage + 30;
-
-            // ⚔️ multi-hit annihilation
             int hit1 = base;
             int hit2 = (int)(base * 0.8);
             int hit3 = (int)(base * 0.6);
-
             int total = hit1 + hit2 + hit3;
-
             printf("Hit 1: %d\n", hit1);
             printf("Hit 2: %d\n", hit2);
             printf("Hit 3: %d\n", hit3);
-
-            // 🩸 guaranteed bleed (endgame pressure)
             enemy->isBleeding = 1;
             enemy->bleedTurns = 4;
-
             printf("Enemy is BLEEDING from destruction!\n");
-
-            // 💀 execute bonus
             if (enemy->hp < enemy->maxHP * 0.4)
             {
                 total += 30;
                 printf("RAGNAROK EXECUTION BONUS!\n");
             }
-
-            // ⚡ raw chaos modifier
             total += rand() % 15;
-
-            // 🔥 recoil (power has cost)
             int recoil = 12;
             player->hp -= recoil;
             player->hp = clamp(player->hp);
-
             printf("You suffer %d recoil from Ragnarok power!\n", recoil);
-
             *damage = total;
         }
         else if (strcmp(s.name, "Judgement Eye") == 0)
         {
             printf("You gaze into the enemy's fate...\n");
-
-            // 🎯 precise execution hit
             int dmg = *damage + 25;
-
-            // 🛡️ DEF BREAK (judgement cracks armor)
             int defBreak = 20;
             enemy->defense -= defBreak;
-
             if (enemy->defense < 0)
                 enemy->defense = 0;
-
             printf("Enemy DEF shattered by %d!\n", defBreak);
-
-            // 🧠 CONFUSION (mental collapse)
             if (rand() % 100 < 35)
             {
                 enemy->isConfused = 1;
                 enemy->confuseTurns = 2 + rand() % 2;
-
                 printf("Enemy's mind breaks under JUDGEMENT!\n");
             }
-
-            // 💀 execute pressure
             if (enemy->hp < enemy->maxHP * 0.4)
             {
                 dmg += 30;
                 printf("JUDGEMENT EXECUTION BONUS!\n");
             }
-
-            // ⚡ crit chance
             if (rand() % 100 < 45)
             {
                 dmg += 20;
                 printf("CRITICAL JUDGEMENT STRIKE!\n");
             }
-
             *damage = dmg;
-
             printf("Judgement Eye pierces the soul!\n");
         }
         else if (strcmp(s.name, "Zero Phantom") == 0)
         {
             printf("You disappear from existence...\n");
             printf("ZERO PHANTOM ACTIVATED!\n");
-
-            // ⚡ speed scaling damage
             int base = *damage + (player->speed / 20);
-
-            // 👤 multi-hit phantom strikes
             int hit1 = base;
             int hit2 = (int)(base * 0.7);
             int hit3 = (int)(base * 0.5);
-            int hit4 = (rand() % 10); // extra chaos hit
-
+            int hit4 = (rand() % 10);
             int total = hit1 + hit2 + hit3 + hit4;
-
             printf("Phantom Hit 1: %d\n", hit1);
             printf("Phantom Hit 2: %d\n", hit2);
             printf("Phantom Hit 3: %d\n", hit3);
             printf("Phantom Hit 4: %d\n", hit4);
-
-            // 🛡️ partial defense ignore
             int ignoreDef = enemy->defense / 3;
             enemy->defense -= ignoreDef;
-
             if (enemy->defense < 0)
                 enemy->defense = 0;
-
             printf("Enemy DEF partially bypassed!\n");
-
-            // 💀 assassin bonus if low HP
             if (enemy->hp < enemy->maxHP * 0.4)
             {
                 total += 25;
                 printf("ZERO PHANTOM EXECUTION BONUS!\n");
             }
-
-            // ⚡ burnout cost (balance)
             int fatigueCost = 15;
             player->fatigue -= fatigueCost;
-
             if (player->fatigue < 0)
                 player->fatigue = 0;
-
             printf("Fatigue drained by %d!\n", fatigueCost);
-
             *damage = total;
         }
-
         // ================= SPARRING TECHNIQUES =================
-        // OSSAS TECHNIQUE (after beating Ossas 10/10)
-        else if (strcmp(s.name, "Ossas Counter") == 0) {
-            printf("OSSAS COUNTER TECHNIQUE!\n");
-            *damage += 18;
+        else if (strcmp(s.name, "Ossas Counter") == 0) 
+        {
+            printf("🔄 OSSAS COUNTER STANCE!\n");
+            *damage = 0;  // NO DAMAGE - pure setup
             
-            // 40% counter chance + reflect damage
-            if (rand() % 100 < 40) {
-                printf("PERFECT COUNTER!\n");
-                *damage += 15;
-                // Could add enemy damage reflect in battle logic
-            }
+            player->isCountering = 1;
+            player->counterDamage = (player->attack / 3) + 10;
+            if (player->counterDamage > 40) player->counterDamage = 40;
+            
+            printf("✅ Counter trap set! (65-85% trigger)\n");
         }
-
-        // CHUBBY TECHNIQUE
-        else if (strcmp(s.name, "Chubby Bulldozer") == 0) {
+        else if (strcmp(s.name, "Chubby Bulldozer") == 0) 
+        {
             printf("CHUBBY BULLDOZER!\n");
             *damage += 22;
-            
-            // Heavy DEF shred
             enemy->defense -= 15;
             if (enemy->defense < 0) enemy->defense = 0;
             printf("Enemy DEF crushed -15!\n");
         }
-
-        // TINY TECHNIQUE
-        else if (strcmp(s.name, "Tiny Blitz") == 0) {
+        else if (strcmp(s.name, "Tiny Blitz") == 0) 
+        {
             printf("TINY BLITZ!\n");
-            
-            // 3-hit speed burst
             int hit1 = *damage;
             int hit2 = (*damage * 7) / 10;
             int hit3 = (*damage * 5) / 10;
             *damage = hit1 + hit2 + hit3;
-            
             printf("Triple blitz hits!\n");
         }
-
-        // JEWARD TECHNIQUE
-        else if (strcmp(s.name, "Jeward Precision") == 0) {
+        else if (strcmp(s.name, "Jeward Precision") == 0) 
+        {
             printf("JEWARD PRECISION!\n");
             *damage += 25;
-            
-            // Ignore 50% enemy defense + accuracy boost
             int defIgnore = enemy->defense / 2;
             *damage += defIgnore;
             player->accuracy += 30;
-            
             printf("DEFENSE PENETRATED!\n");
         }
-
-        // SNOOP TECHNIQUE (Ultimate)
-        else if (strcmp(s.name, "Snoop Phantom") == 0) {
+        else if (strcmp(s.name, "Snoop Phantom") == 0) 
+        {
             printf("SNOOP PHANTOM TECHNIQUE!\n");
-            
-            // 4-hit + guaranteed status
             int base = *damage + 20;
-            *damage = base * 2; // Double strike
-            
+            *damage = base * 2;
             enemy->isConfused = 1;
             enemy->confuseTurns = 4;
             enemy->isBleeding = 1;
             enemy->bleedTurns = 3;
-            
             printf("DOUBLE PHANTOM + FULL STATUS!\n");
         }
-        else if (s.type == SKILL_BUFF)
-        {
-            printf("You used %s!\n", s.name);
-
-            if (strcmp(s.name, "Titan Aegis") == 0)
-            {
-                printf("🛡️ Titan Aegis activated!\n");
-
-                // 🔥 Massive defense boost
-                player->defense += 40;
-
-                // ❤️ small heal sustain
-                player->hp += 15;
-                if (player->hp > player->maxHP)
-                    player->hp = player->maxHP;
-
-                // 🧱 optional: reduce fatigue cost pressure
-                player->fatigue -= 10;
-                if (player->fatigue < 0)
-                    player->fatigue = 0;
-
-                printf("DEF increased massively! Damage reduced for next hits!\n");
-            }
-
-            *damage = 0;
-        }
     }
-
     // ================= BUFF =================
     else if (s.type == SKILL_BUFF)
     {
         printf("You used %s!\n", s.name);
 
-        if (strcmp(s.name, "Iron Guard") == 0)
+        if (strcmp(s.name, "Titan Aegis") == 0)
+        {
+            printf("🛡️ Titan Aegis activated!\n");
+            player->defense += 40;
+            player->hp += 15;
+            if (player->hp > player->maxHP)
+                player->hp = player->maxHP;
+            player->fatigue -= 10;
+            if (player->fatigue < 0)
+                player->fatigue = 0;
+            printf("DEF increased massively! Damage reduced for next hits!\n");
+        }
+        else if (strcmp(s.name, "Iron Guard") == 0)
         {
             player->defense = clamp(player->defense + 5);
             printf("DEF +5!\n");
         }
-        if (strcmp(s.name, "Steel Wall") == 0)
+        else if (strcmp(s.name, "Steel Wall") == 0)
         {
             printf("You brace your body like unbreakable steel!\n");
-
-            // 🔥 big defense boost (temporary style)
             player->defense += 20;
             if (player->defense > MAX_STAT)
                 player->defense = MAX_STAT;
-
             printf("DEF +20!\n");
-
-            // 🛡️ optional: reduce fatigue slightly (tank recovery feel)
             player->fatigue += 5;
             if (player->fatigue > player->maxFatigue)
                 player->fatigue = player->maxFatigue;
-
             printf("You stabilized your stance!\n");
         }
         else if (strcmp(s.name, "Fortress Stance") == 0)
         {
             printf("You become an unbreakable fortress!\n");
-
-            // 🛡️ massive defense boost
             player->defense += 40;
             if (player->defense > MAX_STAT)
                 player->defense = MAX_STAT;
-
             printf("DEF +40!\n");
-
-            // 🐢 trade-off: slower movement (heavy stance)
             player->speed -= 20;
             if (player->speed < MIN_STAT)
                 player->speed = MIN_STAT;
-
             printf("Speed reduced due to heavy stance!\n");
-
-            // 🔥 optional sustain
             player->fatigue += 10;
             if (player->fatigue > player->maxFatigue)
                 player->fatigue = player->maxFatigue;
-
             printf("You are in FORTRESS MODE!\n");
-
         }
 
-        *damage = 0; // importante para hindi pumasok sa hit system
+        *damage = 0;
     }
-
     // ================= HEAL =================
     else if (s.type == SKILL_HEAL)
     {
@@ -831,9 +673,7 @@ void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage)
         if (strcmp(s.name, "Last Stand") == 0)
         {
             printf("You refuse to fall!\n");
-
             player->hp = player->maxHP;
-
             printf("FULL RECOVERY!\n");
         }
         else
@@ -841,13 +681,12 @@ void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage)
             player->hp += 25;
             if (player->hp > player->maxHP)
                 player->hp = player->maxHP;
-
             printf("Healed +25 HP!\n");
         }
 
         *damage = 0;
     }
-}    
+}
 void checkSkillUnlock(Dog *d)
 {
     // ================= SPEED =================
