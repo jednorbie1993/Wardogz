@@ -29,10 +29,13 @@ typedef enum {
     SKILL_IRON_GUARD,
     SKILL_SURE_STRIKE,
     SKILL_LAST_STAND,
-    SKILL_PACK_ATTACK = 20,    // 🆕 Wild skills
+
+    // 🔥 WILD SKILLS (IBINALIK)
+    SKILL_PACK_ATTACK = 20,
     SKILL_AMBUSH,
     SKILL_HOWL_DEBUFF,
     SKILL_FERAL_RUSH
+
 } SkillID;
 
 // ================= SKILL STRUCT =================
@@ -42,86 +45,79 @@ typedef struct {
     int cost;
     SkillType type;
     int accuracy;
-    SkillID id;        // 🔥 CHANGED: Use SkillID instead of int
+    SkillID id;
     int cooldown;
     int cdLeft;
     int aiScore;
 } Skill;
 
-// ================= DOG STRUCT - FIXED DUPLICATES =================
+// ================= DOG STRUCT =================
 typedef struct {
     char name[50];
 
     int hp, maxHP;
-    int attack, defense, speed;  // 🔥 FIXED: Proper names
+    int attack, defense, speed;
     int accuracy, intelligence;
+
     int fatigue;
     int maxFatigue;
+
     int isConfused;
     int confuseTurns;
+
     int isBleeding;
     int bleedTurns;
-    int bleedDamage;         // Damage per bleed tick
+    int bleedDamage;
+
     int isStunned;
     int stunTurns;
+
     int accTemp;
     int accDebuffTurns;
-    int accuracyModifier;    // For debuffs
-    int numSkills;           // Number of active skills
+    int accuracyModifier;
+
+    int numSkills;                // 🔥 IBINALIK
     int isCountering;
     int counterDamage;
 
-    // 🔥 FIXED: REMOVED DUPLICATES - ONE OF EACH FIELD ONLY
-    int sparringProgress[5]; // Sparring progress tracker
+    int sparringProgress[5];      // 🔥 IBINALIK
 
     Skill skills[MAX_SKILLS];
     int skillCount;
 
-    int equipped[4];
+    int equipped[4];              // 🔥 IBINALIK
+
 } Dog;
 
-// ================= ALL YOUR FUNCTIONS (UNCHANGED) =================
+// ================= CORE FUNCTIONS =================
 void createDog(Dog *d);
 void printDog(Dog d);
 int battle(Dog *player, int zoneIndex, int progress[]);
 void displayBattleStatus(Dog player, Dog enemy);
-void waitForEnter();
-void pauseAndClear();
-void loseSequence(Dog *player, Dog *enemy);
-
-int playerTurn(Dog *player, Dog *enemy, int *defending);
-void playerAttack(Dog *player, Dog *enemy);
-void skillMenu(Dog *d);
-void checkSkillUnlock(Dog *d);
-int hasSkill(Dog *d, char name[]);
-int clampFatigue(int f, int max);
-void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage);
-
-void showHPBarPlayer(int hp, int maxHp);
-
-void applyBattleStatGain(Dog *d);
 void trainDog(Dog *d, int type);
-void preBattleScene();
 
-void createEnemy(Dog *e);
-int enemyAttack(Dog *player, Dog *enemy, int *defending);
-void enemyQuickAttack(Dog *player, Dog *enemy);
-void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
-void enemyTurn(Dog *player, Dog *enemy, int *defending);
+void waitForEnter();              // 🔥 IBINALIK
+void pauseAndClear();             // 🔥 IBINALIK
+
+void playerAttack(Dog *player, Dog *enemy);
+int playerTurn(Dog *player, Dog *enemy, int *defending);
+void skillMenu(Dog *d);
 
 int clamp(int value);
+int clampFatigue(int f, int max);
 int getFatiguePenalty(int fatigue);
 int isCritical(int hp, int maxHP);
 
-int sparringBattle(Dog *player, int type);
-void createSparPartner(Dog *e, int type);
-void sparringMenu(Dog *player);
-int enemyAI(Dog *enemy, Dog *player, int type);
-void applySparReward(Dog *player, int type);
-void sparringDog(Dog *player, int type);
+// ================= SKILL SYSTEM =================
+int hasSkill(Dog *d, char name[]);
+void checkSkillUnlock(Dog *d);
+void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage);
+
+// ================= ENEMY =================
+void createEnemy(Dog *e);
+void enemyTurn(Dog *player, Dog *enemy, int *defending);
 
 // ================= WILD SKILLS =================
-void setEnemySkillsWild(Dog *enemy, int zoneIndex, int enemyLevel);
 int usePackAttack(Dog *user, Dog *target);
 int useAmbush(Dog *user, Dog *target);
 int useHowlDebuff(Dog *user, Dog *target);
