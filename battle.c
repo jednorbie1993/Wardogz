@@ -218,16 +218,31 @@ int battle(Dog *player, int zoneIndex, int progress[])
     // 🔥 ENEMY SETUP - CLEAN & SIMPLE
     int i = progress[zoneIndex];
     if (zoneIndex >= 3) { // Stage 2: Wild Territory
-        if (zoneIndex == 5) if (i >= 4) i = 3;
-        else if (i >= 3) i = 2;
+        if (zoneIndex == 5) // Ravine (0/2)
+        {
+            if (i >= 2) i = 1;
+        }
+        else if (zoneIndex == 6 || zoneIndex == 7) // Trial + Mountain (0/4)
+        {
+            if (i >= 4) i = 3;
+        }
+        else if (zoneIndex >= 3) // other wild zones (0/3)
+        {
+            if (i >= 3) i = 2;
+        }
         
         setEnemyByZone(&enemy, zoneIndex, i);
-        setEnemySkillsWild(&enemy, zoneIndex, i);
         
         system("cls");
         printf("\n🐺 [WILD TERRITORY ENEMY]\n");
         printf("Enemy: %s\n", enemy.name);
-        printf("Skills: Pack Attack | Ambush | Howl/Feral\n");
+        printf("Skills: ");
+        for (int s = 0; s < enemy.numSkills; s++)
+        {
+            printf("%s", enemy.skills[s].name);
+            if (s < enemy.numSkills - 1) printf(" | ");
+        }
+        printf("\n");
         waitForEnter();
     } 
     else { // Stage 1: Urban Strays
@@ -349,9 +364,10 @@ int battle(Dog *player, int zoneIndex, int progress[])
             int result = enemyAttack(player, &enemy, &defending);
             if (result == 0) player->hp = 0;
             if (result == 1) enemy.hp = 0;
+            
+            defending = 0;
         }
         // 👉 RESET DEFENSE AFTER TURN
-        defending = 0;
         // 🔥 FATIGUE REGEN
         player->fatigue += 2;
         if (player->fatigue > player->maxFatigue) player->fatigue = player->maxFatigue;
@@ -359,7 +375,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
         // 🔥 WIN/LOSE CHECK
         if (player->hp <= 0)
         {
-            printf("\n💀 YOU LOSE 💀\n");
+            printf("\n YOU LOSE \n");
             player->fatigue = clampFatigue(player->fatigue + 20, player->maxFatigue);
             player->defense = baseDef; player->speed = baseSpd;
             waitForEnter(); return 0;
@@ -367,14 +383,25 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
         if (enemy.hp <= 0)
         {
-            printf("\n🎉 YOU WIN! 🎉\n");
+            printf("\n YOU WIN! \n");
             applyBattleStatGain(player);
             checkSkillUnlock(player);
             
             /// 🔥 FIXED PROGRESS SYSTEM
-            if (zoneIndex == 5) { // Mountain Den max 4
+            if (zoneIndex == 7) // Mountain Den
+            {
                 if (progress[zoneIndex] < 4) progress[zoneIndex]++;
-            } else { // All others max 3
+            }
+            else if (zoneIndex == 5) // Ravine
+            {
+                if (progress[zoneIndex] < 2) progress[zoneIndex]++;
+            }
+            else if (zoneIndex == 6) // Trial
+            {
+                if (progress[zoneIndex] < 4) progress[zoneIndex]++;
+            }
+            else
+            {
                 if (progress[zoneIndex] < 3) progress[zoneIndex]++;
             }
 

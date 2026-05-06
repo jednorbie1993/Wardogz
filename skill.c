@@ -5,35 +5,38 @@
 #include <windows.h>
 #include "skill.h"
 
-int damage;
+int computeBaseDamage(Dog *player, Dog *enemy, Skill s)
+{
+    int penalty = getFatiguePenalty(player->fatigue);
+
+    float atkRatio = (float)(player->attack - penalty) / 999.0f;
+    if (atkRatio < 0.1f)
+        atkRatio = 0.1f;
+
+    int dmg = (int)(atkRatio * 80) + 20 + s.power;
+
+    float defRatio = (float)enemy->defense / 999.0f;
+    dmg -= (int)(defRatio * 30);
+
+    if (isCritical(player->hp, player->maxHP))
+    {
+        dmg += 10;
+        printf("CRITICAL HIT!\n");
+    }
+
+    dmg += (rand() % 11) - 5;
+
+    if (dmg < 1) dmg = 1;
+    if (dmg > 120) dmg = 120;
+
+    return dmg;
+}
 
 void applyAttackSkill(Dog *player, Dog *enemy, Skill s, int *damage)
 {
     printf("You used %s!\n", s.name);
 
-    int penalty = getFatiguePenalty(player->fatigue);
-
-    float atkRatio = (float)(player->attack - penalty) / 999.0f;
-    if (atkRatio < 0.1f) atkRatio = 0.1f;
-
-    *damage = (int)(atkRatio * 80) + 20 + s.power;
-
-    float defRatio = (float)enemy->defense / 999.0f;
-    *damage -= (int)(defRatio * 30);
-
-    if (isCritical(player->hp, player->maxHP))
-    {
-        *damage += 10;
-        printf("CRITICAL HIT!\n");
-    }
-
-    *damage += (rand() % 11) - 5;
-
-    if (*damage < 1) *damage = 1;
-    if (*damage > 120) *damage = 120;
-
-    // 🔥 DITO MO ILAGAY LAHAT NG strcmp MO (UNCHANGED)
-    // copy paste mo lang buong block mo dito
+    *damage = computeBaseDamage(player, enemy, s);
 }
 
 void applyBuffSkill(Dog *player, Dog *enemy, Skill s)
@@ -311,33 +314,6 @@ void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage)
         applyHealSkill(player, s);
         *damage = 0;
     }
-}
-
-int computeBaseDamage(Dog *player, Dog *enemy, Skill s)
-{
-    int penalty = getFatiguePenalty(player->fatigue);
-
-    float atkRatio = (float)(player->attack - penalty) / 999.0f;
-    if (atkRatio < 0.1f)
-        atkRatio = 0.1f;
-
-    int dmg = (int)(atkRatio * 80) + 20 + s.power;
-
-    float defRatio = (float)enemy->defense / 999.0f;
-    dmg -= (int)(defRatio * 30);
-
-    if (isCritical(player->hp, player->maxHP))
-    {
-        dmg += 10;
-        printf("CRITICAL HIT!\n");
-    }
-
-    dmg += (rand() % 11) - 5;
-
-    if (dmg < 1) dmg = 1;
-    if (dmg > 120) dmg = 120;
-
-    return dmg;
 }
 
 void applySpecialEffects(Dog *player, Dog *enemy, Skill s, int *damage)

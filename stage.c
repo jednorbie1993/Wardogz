@@ -10,7 +10,7 @@ void startStage(Dog *player)
     int zoneChoice;
 
     // 🔥 FIXED: Global or persistent progress (choose one)
-    static int progress[6] = {3, 0, 0, 0, 0, 0}; // Expanded for Stage 2: indices 3,4,5
+    static int progress[8] = {3, 3, 3, 3, 3, 3, 4, 4}; // Expanded for Stage 2: indices 3,4,5
 
     while (1)
     {
@@ -185,18 +185,28 @@ void startStage(Dog *player)
 
                 printf("1. River Pack Hideout (%d/3)\n", progress[3]);
 
-                if (progress[3] >= 3)
-                    printf("2. Forest Ambush Grounds (%d/3)\n", progress[4]);
-                else
-                    printf("2. Forest Ambush Grounds (Locked)\n");
+            if (progress[3] >= 3)
+                printf("2. Forest Ambush Grounds (%d/3)\n", progress[4]);
+            else
+                printf("2. Forest Ambush Grounds (Locked)\n");
 
-                if (progress[4] >= 3)
-                    printf("3. Mountain Pack Den (%d/4)\n", progress[5]);
-                else
-                    printf("3. Mountain Pack Den (Locked)\n");
+            if (progress[4] >= 3)
+                printf("3. Bloodfang Ravine (%d/2)\n", progress[5]);
+            else
+                printf("3. Bloodfang Ravine (Locked)\n");
 
-                printf("4. Back\n");
-                printf("Choice: ");
+            if (progress[5] >= 2)
+                printf("4. Alpha's Trial Grounds (%d/4)\n", progress[6]);
+            else
+                printf("4. Alpha's Trial Grounds (Locked)\n");
+
+            if (progress[6] >= 4)
+                printf("5. Mountain Pack Den (%d/4)\n", progress[7]);
+            else
+                printf("5. Mountain Pack Den (Locked)\n");
+
+            printf("6. Back\n");
+            printf("Choice: ");
 
                 fgets(input, sizeof(input), stdin);
 
@@ -209,14 +219,14 @@ void startStage(Dog *player)
 
                 zoneChoice = atoi(input);
 
-                if (zoneChoice < 1 || zoneChoice > 4)
+                if (zoneChoice < 1 || zoneChoice > 6)
                 {
-                    printf("Invalid choice! Select 1-4 only.\n");
+                    printf("Invalid choice! Select 1-6 only.\n");
                     waitForEnter();
                     continue;
                 }
 
-                if (zoneChoice == 4)
+                if (zoneChoice == 6)
                     break;
 
                 // LOCK CHECK FOR STAGE 2
@@ -234,18 +244,39 @@ void startStage(Dog *player)
                     continue;
                 }
 
+                if (zoneChoice == 4 && progress[5] < 2)
+                {
+                    printf("Finish Zone 3 first!\n");
+                    waitForEnter();
+                    continue;
+                }
+
+                if (zoneChoice == 5 && progress[6] < 4)
+                {
+                    printf("Finish Zone 4 first!\n");
+                    waitForEnter();
+                    continue;
+                }
+
                 int zoneIndex = zoneChoice + 2; // Stage 2 zones: 3,4,5
 
                 // Create enemy BEFORE battle (same enemies but with new skills)
                 Dog enemy;
                 createEnemy(&enemy);
                 int i = progress[zoneIndex];
-                if (zoneIndex == 5) // Mountain Pack Den max 4
+
+                // Zone-specific caps
+                if (zoneIndex == 5) // Bloodfang Ravine (0/2)
+                {
+                    if (i >= 2)
+                        i = 1;
+                }
+                else if (zoneIndex == 6 || zoneIndex == 7) // Alpha Trial + Mountain Den (0/4)
                 {
                     if (i >= 4)
                         i = 3;
                 }
-                else
+                else // normal zones (0/3)
                 {
                     if (i >= 3)
                         i = 2;
@@ -253,12 +284,13 @@ void startStage(Dog *player)
                 setEnemyByZone(&enemy, zoneIndex, i);
 
                 printf("\nFighting: %s", enemy.name);
-                if ((zoneIndex == 5 && progress[zoneIndex] >= 4) || 
-                    (zoneIndex != 5 && progress[zoneIndex] >= 3))
-                    printf(" (REPLAY MODE)\n");
+                if ((zoneIndex == 5 && progress[zoneIndex] >= 2) || 
+                    ((zoneIndex == 6 || zoneIndex == 7) && progress[zoneIndex] >= 4) ||
+                    (zoneIndex <= 4 && progress[zoneIndex] >= 3))
+                printf(" (REPLAY MODE)\n");
                 else
                     printf("\n");
-                waitForEnter();
+                    waitForEnter();
 
                 if (player->hp <= 0)
                 {
