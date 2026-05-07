@@ -161,7 +161,6 @@ void trainDog(Dog *d, int type)
                    g1, g2, g3, g4, g5);
         }
 
-        d->hp = d->maxHP;
     }
     else
     {
@@ -222,7 +221,6 @@ void trainDog(Dog *d, int type)
                    g1, g2, g3, g4, g5);
         }
 
-        d->hp = d->maxHP;
     }
 
     // ================= FATIGUE COST =================

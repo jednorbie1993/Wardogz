@@ -176,28 +176,52 @@ int main()
             else
             {
                 printf("%s is resting", player.name);
+
                 for (int i = 0; i < 3; i++)
                 {
                     printf(".");
                     Sleep(300);
                 }
+
                 printf("\n");
 
-                int hpGain = (rand() % 11) + 15;
-                int fatigueGain = (rand() % 11) + 15;
+                // ================= HP RECOVERY =================
+                int hpGain;
+
+                if (restCount == 0)
+                {
+                    // first rest = recover half missing HP
+                    int missingHP = player.maxHP - player.hp;
+                    hpGain = missingHP / 2;
+
+                    if (hpGain < 1)
+                        hpGain = 1;
+                }
+                else
+                {
+                    // second & third rest
+                    hpGain = 20;
+                }
 
                 if (player.hp < player.maxHP)
                 {
                     player.hp += hpGain;
+
                     if (player.hp > player.maxHP)
                         player.hp = player.maxHP;
 
                     printf("Recovered +%d HP!\n", hpGain);
                 }
 
-                if (player.fatigue < 100)
+                // ================= FATIGUE RECOVERY =================
+                int fatigueGain = 20;
+
+                if (player.fatigue < player.maxFatigue)
                 {
-                    player.fatigue = clampFatigue(player.fatigue + fatigueGain, player.maxFatigue);
+                    player.fatigue = clampFatigue(
+                        player.fatigue + fatigueGain,
+                        player.maxFatigue);
+
                     printf("Recovered +%d Fatigue!\n", fatigueGain);
                 }
 
