@@ -45,10 +45,10 @@ int useHowlDebuff(Dog *user, Dog *target)
 
 int useFeralRush(Dog *user, Dog *target)
 {
-    int dmg = (user->attack * 1.6) + (rand() % 15);
+    int dmg = (user->attack * 1.1) + (rand() % 6);
     target->hp -= dmg;
     target->bleedTurns += 2;
-    target->bleedDamage = 10;
+    target->bleedDamage = 4;
     printf("%s FERAL RUSH! -%d +BLEED!\n", user->name, dmg);
     return dmg;
 }
@@ -58,11 +58,11 @@ void setEnemySkillsWild(Dog *enemy, int zoneIndex, int enemyLevel)
 {
     enemy->skills[0].id = SKILL_PACK_ATTACK;
     strcpy(enemy->skills[0].name, "Pack Attack");
-    enemy->skills[0].power = 25;
+    enemy->skills[0].power = 12;
 
     enemy->skills[1].id = SKILL_AMBUSH;
     strcpy(enemy->skills[1].name, "Ambush");
-    enemy->skills[1].power = 35;
+    enemy->skills[1].power = 17;
 
     if (zoneIndex == 3 || zoneIndex == 5)
     {
@@ -74,11 +74,13 @@ void setEnemySkillsWild(Dog *enemy, int zoneIndex, int enemyLevel)
         enemy->skills[2].id = SKILL_FERAL_RUSH;
         strcpy(enemy->skills[2].name, "Feral Rush");
     }
-    enemy->skills[2].power = 28;
+
+    enemy->skills[2].power = 14;
 
     enemy->numSkills = 3;
-    enemy->attack = (int)(enemy->attack * 1.2);
-    enemy->speed = (int)(enemy->speed * 1.1);
+
+    enemy->attack = (int)(enemy->attack * 1.1);
+    enemy->speed = (int)(enemy->speed * 1.05);
 }
 
 void createEnemy(Dog *e)
