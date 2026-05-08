@@ -259,27 +259,27 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Trial Challenger");
-            enemy->attack += 18;
-            enemy->speed += 10;
+            enemy->attack += 15;
+            enemy->speed += 13;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Trial Hunter");
-            enemy->attack += 22;
-            enemy->speed += 12;
-            enemy->accuracy += 10;
+            enemy->attack += 16;
+            enemy->speed += 14;
+            enemy->accuracy += 11;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Trial Alpha");
-            enemy->attack += 28;
-            enemy->speed += 15;
-            enemy->maxHP += 30;
+            enemy->attack += 19;
+            enemy->speed += 16;
+            enemy->maxHP += 20;
         }
         else
         {
             strcpy(enemy->name, "Trial Beast");
-            enemy->attack += 35;
+            enemy->attack += 20;
             enemy->speed += 20;
             enemy->maxHP += 50;
             enemy->defense += 10;
