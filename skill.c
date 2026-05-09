@@ -4,6 +4,7 @@
 #include "dog.h"
 #include <windows.h>
 #include "skill.h"
+#include "cinematic.h"
 
 int computeBaseDamage(Dog *player, Dog *enemy, Skill s)
 {
@@ -34,9 +35,15 @@ int computeBaseDamage(Dog *player, Dog *enemy, Skill s)
 
 void applyAttackSkill(Dog *player, Dog *enemy, Skill s, int *damage)
 {
-    printf("You used %s!\n", s.name);
+    printf("\nYou used %s!\n", s.name);
+
+    cinematicPause(250);
 
     *damage = computeBaseDamage(player, enemy, s);
+
+    printf("Damage: -%d HP\n", *damage);
+
+    cinematicPause(400);
 }
 
 void applyBuffSkill(Dog *player, Dog *enemy, Skill s)

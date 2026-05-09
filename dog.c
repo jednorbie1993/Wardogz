@@ -238,12 +238,12 @@ void createDog(Dog *d)
 
     d->hp = 100;
     d->maxHP = 100;
-    d->attack = 920;
-    d->speed = 300;
+    d->attack = 120;
+    d->speed = 100;
 
     d->defense = 315;
-    d->accuracy = 918; // 80% hit chance
-    d->intelligence = 920;
+    d->accuracy = 118; // 80% hit chance
+    d->intelligence = 120;
 
     d->fatigue = 100; // full energy
     d->maxFatigue = 100;

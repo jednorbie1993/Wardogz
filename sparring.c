@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include "dog.h"
+#include "cinematic.h"
 
 
 void initSparringProgress(Dog *d) {
@@ -290,7 +292,6 @@ void sparringMenu(Dog *player)
 
 int useSkill(Dog *user, Dog *enemy, Skill skill)
 {
-    printf("DEBUG: %s using %s\n", user->name, skill.name);
 
     // ================= HIT CHANCE CALC =================
     int hitChance = skill.accuracy + (user->accuracy / 5) - (enemy->speed / 6);

@@ -4,18 +4,19 @@
 #include "dog.h"
 #include <windows.h>
 #include "enemy.h"
+#include "cinematic.h"
 
 extern int systemLog;
 
 int usePackAttack(Dog *user, Dog *target)
 {
-    int hits = 2 + (rand() % 2);
+    int hits = 2;
     int total = 0;
     printf("%s calls pack! ", user->name);
 
     for (int i = 0; i < hits; i++)
     {
-        int dmg = (user->attack * 0.7) + (rand() % 15);
+        int dmg = (user->attack * 0.35) + (rand() % 4); // nerfed: 0.45->0.35, rand()%6->%4
         target->hp -= dmg;
         total += dmg;
         printf("Hit%d:-%d ", i + 1, dmg);
@@ -26,18 +27,18 @@ int usePackAttack(Dog *user, Dog *target)
 
 int useAmbush(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 2 + (rand() % 20);
+    int dmg = user->attack * 1.2 + (rand() % 6); // nerfed: 1.3->1.2, rand()%8->%6
     target->hp -= dmg;
     printf("%s ambushes from shadows! CRIT! -%d\n", user->name, dmg);
-    user->speed += 8;
+    user->speed += 5; // nerfed: 8->5
     return dmg;
 }
 
 int useHowlDebuff(Dog *user, Dog *target)
 {
-    target->accuracyModifier -= 25;
+    target->accuracyModifier -= 20; // nerfed: 25->20
     target->accDebuffTurns = 3;
-    int dmg = user->attack / 4;
+    int dmg = user->attack / 5; // nerfed: /4->/5
     target->hp -= dmg;
     printf("%s HOWLS! Accuracy DOWN! Echo:-%d\n", user->name, dmg);
     return dmg;
@@ -45,24 +46,24 @@ int useHowlDebuff(Dog *user, Dog *target)
 
 int useFeralRush(Dog *user, Dog *target)
 {
-    int dmg = (user->attack * 1.1) + (rand() % 6);
+    int dmg = (user->attack * 1.05) + (rand() % 4); // nerfed: 1.1->1.05, rand()%6->%4
     target->hp -= dmg;
     target->bleedTurns += 2;
-    target->bleedDamage = 4;
+    target->bleedDamage = 1; // nerfed: 2->1
     printf("%s FERAL RUSH! -%d +BLEED!\n", user->name, dmg);
     return dmg;
 }
 
-// 🔥 WILD SKILL FUNCTIONS - ADD TO dog.c
+// WILD SKILL FUNCTIONS - nerfed stats
 void setEnemySkillsWild(Dog *enemy, int zoneIndex, int enemyLevel)
 {
     enemy->skills[0].id = SKILL_PACK_ATTACK;
     strcpy(enemy->skills[0].name, "Pack Attack");
-    enemy->skills[0].power = 12;
+    enemy->skills[0].power = 10; // nerfed: 12->10
 
     enemy->skills[1].id = SKILL_AMBUSH;
     strcpy(enemy->skills[1].name, "Ambush");
-    enemy->skills[1].power = 17;
+    enemy->skills[1].power = 14; // nerfed: 17->14
 
     if (zoneIndex == 3 || zoneIndex == 5)
     {
@@ -75,12 +76,12 @@ void setEnemySkillsWild(Dog *enemy, int zoneIndex, int enemyLevel)
         strcpy(enemy->skills[2].name, "Feral Rush");
     }
 
-    enemy->skills[2].power = 14;
+    enemy->skills[2].power = 12; // nerfed: 14->12
 
     enemy->numSkills = 3;
 
-    enemy->attack = (int)(enemy->attack * 1.1);
-    enemy->speed = (int)(enemy->speed * 1.05);
+    enemy->attack += 1; // nerfed: 2->1
+    enemy->speed += 1;
 }
 
 void createEnemy(Dog *e)
@@ -92,8 +93,8 @@ void createEnemy(Dog *e)
     e->attack = 10;
     e->defense = 65;
 
-    e->speed = 90;    // dagdag mo rin para kumpleto
-    e->accuracy = 95; // important sa hit system
+    e->speed = 90;
+    e->accuracy = 95;
     e->intelligence = 55;
 
     e->isConfused = 0;
@@ -127,7 +128,7 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
     // reset base stats muna (important!)
     createEnemy(enemy);
 
-    if (zoneIndex == 0) // 🔥 STAGE 1: Back Alley
+    if (zoneIndex == 0) // STAGE 1: Back Alley
     {
         if (i == 0)
             strcpy(enemy->name, "Skinny Stray");
@@ -145,7 +146,7 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
             enemy->maxHP += 20;
         }
     }
-    else if (zoneIndex == 1) // 🔥 STAGE 1: Junkyard
+    else if (zoneIndex == 1) // STAGE 1: Junkyard
     {
         if (i == 0)
         {
@@ -164,7 +165,7 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
             enemy->maxHP += 25;
         }
     }
-    else if (zoneIndex == 2) // 🔥 STAGE 1: Abandoned Block
+    else if (zoneIndex == 2) // STAGE 1: Abandoned Block
     {
         if (i == 0)
         {
@@ -183,142 +184,140 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
             enemy->attack += 5;
         }
     }
-    // 🔥 STAGE 2: Wild Territory - NEW!
+    // STAGE 2: Wild Territory - nerfed to be only slightly stronger
     else if (zoneIndex == 3) // River Pack Hideout
     {
         if (i == 0)
         {
             strcpy(enemy->name, "River Scout");
-            enemy->attack += 8;
-            enemy->speed += 4;
+            enemy->attack += 4; // nerfed: 8->4
+            enemy->speed += 2;  // nerfed: 4->2
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Pack Hunter");
-            enemy->attack += 12;
-            enemy->speed += 6;
-            enemy->maxHP += 15;
+            enemy->attack += 6; // nerfed: 12->6
+            enemy->speed += 3;  // nerfed: 6->3
+            enemy->maxHP += 10; // nerfed: 15->10
         }
         else
         {
             strcpy(enemy->name, "River Alpha");
-            enemy->attack += 18;
-            enemy->speed += 10;
-            enemy->maxHP += 30;
-            enemy->defense += 5;
+            enemy->attack += 7; // nerfed: 10->7
+            enemy->speed += 3;  // nerfed: 5->3
+            enemy->maxHP += 12; // nerfed: 15->12
+            enemy->defense += 3; // nerfed: 5->3
         }
-        setEnemySkillsWild(enemy, zoneIndex, i); // 🔥 enable wild skills
+        setEnemySkillsWild(enemy, zoneIndex, i);
     }
     else if (zoneIndex == 4) // Forest Ambush Grounds
     {
         if (i == 0)
         {
             strcpy(enemy->name, "Forest Stalker");
-            enemy->speed += 8;
-            enemy->accuracy += 10;
+            enemy->speed += 4;  // nerfed: 8->4
+            enemy->accuracy += 5; // nerfed: 10->5
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Ambush Leader");
-            enemy->speed += 12;
-            enemy->accuracy += 15;
-            enemy->attack += 5;
+            enemy->speed += 6;  // nerfed: 12->6
+            enemy->accuracy += 8; // nerfed: 15->8
+            enemy->attack += 3;  // nerfed: 5->3
         }
         else
         {
             strcpy(enemy->name, "Shadow Pack");
-            enemy->speed += 18;
-            enemy->accuracy += 25;
-            enemy->attack += 10;
-            enemy->maxHP += 20;
+            enemy->speed += 4;  // nerfed: 8->4
+            enemy->accuracy += 5; // nerfed: 10->5
+            enemy->attack += 3;  // nerfed: 5->3
+            enemy->maxHP += 8;   // nerfed: 10->8
         }
-        setEnemySkillsWild(enemy, zoneIndex, i); // 
+        setEnemySkillsWild(enemy, zoneIndex, i);
     }
-    else if (zoneIndex == 5) // 🔥 Bloodfang Ravine (0/2)
+    else if (zoneIndex == 5) // Bloodfang Ravine
     {
         if (i == 0)
         {
             strcpy(enemy->name, "Bloodfang Scout");
-            enemy->attack += 14;
-            enemy->speed += 12;
-            enemy->accuracy += 10;
+            enemy->attack += 7;  // nerfed: 14->7
+            enemy->speed += 6;   // nerfed: 12->6
+            enemy->accuracy += 5; // nerfed: 10->5
         }
-        else // i == 1
+        else
         {
             strcpy(enemy->name, "Ravine Stalker");
-            enemy->attack += 20;
-            enemy->speed += 18;
-            enemy->accuracy += 15;
-            enemy->maxHP += 25;
+            enemy->attack += 6;  // nerfed: 12->6
+            enemy->speed += 4;   // nerfed: 8->4
+            enemy->accuracy += 8; // nerfed: 15->8
+            enemy->maxHP += 15;  // nerfed: 20->15
         }
-
-        setEnemySkillsWild(enemy, zoneIndex, i); // 🔥 enable wild skills
+        setEnemySkillsWild(enemy, zoneIndex, i);
     }
-    else if (zoneIndex == 6) // 🔥 Alpha’s Trial Grounds (0/4)
+    else if (zoneIndex == 6) // Alpha's Trial Grounds
     {
         if (i == 0)
         {
             strcpy(enemy->name, "Trial Challenger");
-            enemy->attack += 15;
-            enemy->speed += 13;
+            enemy->attack += 8;  // nerfed: 15->8
+            enemy->speed += 7;   // nerfed: 13->7
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Trial Hunter");
-            enemy->attack += 16;
-            enemy->speed += 14;
-            enemy->accuracy += 11;
+            enemy->attack += 9;  // nerfed: 16->9
+            enemy->speed += 8;   // nerfed: 14->8
+            enemy->accuracy += 6; // nerfed: 11->6
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Trial Alpha");
-            enemy->attack += 19;
-            enemy->speed += 16;
-            enemy->maxHP += 20;
+            enemy->attack += 10; // nerfed: 19->10
+            enemy->speed += 9;   // nerfed: 16->9
+            enemy->maxHP += 15;  // nerfed: 20->15
         }
         else
         {
             strcpy(enemy->name, "Trial Beast");
-            enemy->attack += 20;
-            enemy->speed += 20;
-            enemy->maxHP += 50;
-            enemy->defense += 10;
+            enemy->attack += 12; // nerfed: 20->12
+            enemy->speed += 11;  // nerfed: 20->11
+            enemy->maxHP += 35;  // nerfed: 50->35
+            enemy->defense += 7; // nerfed: 10->7
         }
-
-        setEnemySkillsWild(enemy, zoneIndex, i); // 🔥 important
+        setEnemySkillsWild(enemy, zoneIndex, i);
     }
-    else if (zoneIndex == 7) // Mountain Pack Den (HARDER - max 4)
+    else if (zoneIndex == 7) // Mountain Pack Den
     {
         if (i == 0)
         {
             strcpy(enemy->name, "Mountain Guard");
-            enemy->defense += 10;
-            enemy->maxHP += 25;
+            enemy->defense += 7; // nerfed: 10->7
+            enemy->maxHP += 18;  // nerfed: 25->18
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Peak Warrior");
-            enemy->defense += 15;
-            enemy->maxHP += 35;
-            enemy->attack += 8;
+            enemy->defense += 10; // nerfed: 15->10
+            enemy->maxHP += 25;   // nerfed: 35->25
+            enemy->attack += 5;   // nerfed: 8->5
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Summit Enforcer");
-            enemy->defense += 22;
-            enemy->maxHP += 50;
-            enemy->attack += 12;
-            enemy->speed += 5;
+            enemy->defense += 15; // nerfed: 22->15
+            enemy->maxHP += 35;   // nerfed: 50->35
+            enemy->attack += 8;   // nerfed: 12->8
+            enemy->speed += 3;    // nerfed: 5->3
         }
-        else // i == 3 (replay)
+        else
         {
             strcpy(enemy->name, "Mountain King");
-            enemy->defense += 30;
-            enemy->maxHP += 70;
-            enemy->attack += 20;
-            enemy->speed += 10;
+            enemy->defense += 20; // nerfed: 30->20
+            enemy->maxHP += 50;   // nerfed: 70->50
+            enemy->attack += 12;  // nerfed: 20->12
+            enemy->speed += 6;    // nerfed: 10->6
         }
-        setEnemySkillsWild(enemy, zoneIndex, i); // 🔥 enable wild skills
+        setEnemySkillsWild(enemy, zoneIndex, i);
     }
 
     // sync HP
@@ -328,40 +327,55 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
 int enemyAttack(Dog *player, Dog *enemy, int *defending)
 {
     system("cls");
+    printf("====================================");
     printf("\n--- ENEMY TURN ---\n");
+    printf("====================================\n");
 
-    // 🔥 WILD SKILLS - SAFE CHECK (Stage 1 has numSkills=0)
+    // WILD SKILLS - SAFE CHECK (Stage 1 has numSkills=0)
     if (enemy->numSkills >= 3)
     {
-        // 🔥 ZONE PASSIVES (TRIGGER ON TURN START)
-
-        // Ravine Ambush (chance-based speed boost)
-        if (strstr(enemy->name, "Ravine") && rand() % 100 < 25)
+        // ZONE PASSIVES (nerfed chances)
+        if (strstr(enemy->name, "Ravine") && rand() % 100 < 15) // nerfed: 25->15
         {
-            printf("⚡ Ambush bonus! Speed increased!\n");
-            enemy->speed += 5;
+            printf("Ambush bonus! Speed increased!\n");
+            enemy->speed += 3; // nerfed: 5->3
         }
 
-        // Trial Rage (low HP boost)
         if (strstr(enemy->name, "Trial") && enemy->hp < enemy->maxHP / 2)
         {
-            printf("🔥 Trial Rage activated!\n");
-            enemy->attack += 10;
+            printf("Trial Rage activated!\n");
+            enemy->attack += 3; // nerfed: 5->3
         }
 
         int skillChoice;
 
-        // 🔥 Zone-based AI
+        // Zone-based AI (nerfed aggression)
         if (strstr(enemy->name, "Ravine"))
-            skillChoice = rand() % 2; // aggressive (pack/ambush only)
+        {
+            if (rand() % 100 < 50) // nerfed: 60->50
+                skillChoice = 0;
+            else
+                skillChoice = rand() % 2;
+        }
         else if (strstr(enemy->name, "Trial"))
-            skillChoice = rand() % 3; // full combo
+        {
+            if (enemy->hp < enemy->maxHP / 2)
+                skillChoice = 1;
+            else if (rand() % 100 < 45) // nerfed: 50->45
+                skillChoice = 0;
+            else
+                skillChoice = rand() % 3;
+        }
         else
-            skillChoice = rand() % enemy->numSkills;
-            
-        printf(" %s snarls viciously...\n", enemy->name);
+        {
+            if (rand() % 100 < 65) // nerfed: 70->65
+                skillChoice = 0;
+            else
+                skillChoice = rand() % enemy->numSkills;
+        }
 
-        
+        printf("%s snarls viciously...\n", enemy->name);
+
         SkillID skillId = enemy->skills[skillChoice].id;
 
         switch (skillId)
@@ -383,10 +397,10 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             break;
         }
 
-        // 🔥 STATUS EFFECTS
+        // STATUS EFFECTS
         if (player->accuracyModifier < 0)
         {
-            player->accuracy += 25;
+            player->accuracy += 20; // nerfed recovery: 25->20
             player->accuracyModifier = 0;
             printf("Accuracy recovering...\n");
         }
@@ -395,7 +409,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         {
             player->hp -= player->bleedDamage;
             player->hp = clamp(player->hp);
-            printf("🩸 Bleed: -%d HP\n", player->bleedDamage);
+            printf("Bleed: -%d HP\n", player->bleedDamage);
             player->bleedTurns--;
             if (player->bleedTurns <= 0)
             {
@@ -408,10 +422,10 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         return -1;
     }
 
-    // 🔥 REGULAR ENEMY ATTACK
+    // REGULAR ENEMY ATTACK (unchanged - Stage 1)
     int enemyDamage = (enemy->attack / 6) + 4;
 
-    // ================= ENEMY PERSONALITY =================
+    // ENEMY PERSONALITY
     if (strstr(enemy->name, "Alpha") || strstr(enemy->name, "King"))
     {
         enemyDamage += 6;
@@ -443,7 +457,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         enemyDamage -= 2;
     }
 
-    // ================= ATTACK MOVE =================
+    // ATTACK MOVE
     int moveType = rand() % 3;
     char *moveName = "Attack";
 
@@ -463,30 +477,27 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         moveName = "Lock Jaw";
     }
 
-    printf("%s used **%s**!\n", enemy->name, moveName);
-
-    // 🔥 ATTACK ANIMATION
-    printf("Attacking");
-    for (int i = 0; i < 3; i++)
-    {
-        printf(".");
-        fflush(stdout);
-        Sleep(120);
-    }
     printf("\n");
+    typeText(enemy->name, 30);
+    printf(" used ");
+    typeText(moveName, 40);
+    printf("!\n");
 
-    // ================= DAMAGE CALC =================
+    // ATTACK ANIMATION
+    cinematicDots("Enemy attacking");
+
+    // DAMAGE CALC
     enemyDamage += rand() % 6;
     enemyDamage -= player->defense / 25;
     if (enemyDamage < 1)
         enemyDamage = 1;
 
-    // ================= HIT CHANCE =================
+    // HIT CHANCE
     int dodgeChance = player->speed * 2;
     int hitChance = enemy->accuracy - dodgeChance;
     hitChance = (hitChance < 70) ? 70 : (hitChance > 95 ? 95 : hitChance);
 
-    // 🔥 ENEMY BLEED FIRST
+    // ENEMY BLEED FIRST
     if (enemy->isBleeding && enemy->bleedTurns > 0)
     {
         int bleedDmg = (rand() % 5) + 3;
@@ -509,7 +520,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         }
     }
 
-    // 🔥 ENEMY CONFUSION
+    // ENEMY CONFUSION
     if (enemy->isConfused && enemy->confuseTurns > 0)
     {
         printf("%s is CONFUSED!\n", enemy->name);
@@ -530,7 +541,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             enemy->isConfused = 0;
     }
 
-    // 🔥 HIT OR MISS
+    // HIT OR MISS
     int roll = rand() % 100;
     if (roll >= hitChance)
     {
@@ -539,7 +550,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         return -1;
     }
 
-    // 🔥 DEFEND/COUNTER SYSTEM
+    // DEFEND/COUNTER SYSTEM
     if (*defending)
     {
         int counterChance = player->intelligence / 2;
@@ -551,7 +562,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         if (rand() % 100 < counterChance)
         {
             int counterDmg = (player->attack / 2) + (player->intelligence / 4);
-            printf("✅ COUNTER ATTACK!\n");
+            printf("COUNTER ATTACK!\n");
             printf("Counter: %d damage!\n", counterDmg);
 
             enemy->hp -= counterDmg;
@@ -568,11 +579,11 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             enemyDamage = (enemyDamage * 60) / 100;
             player->hp -= enemyDamage;
             player->hp = clamp(player->hp);
-            printf("🛡️ Defended! Took %d damage\n", enemyDamage);
+            printf("Defended! Took %d damage\n", enemyDamage);
         }
         *defending = 0;
     }
-    else // 🔥 NORMAL HIT
+    else
     {
         // OSSAS COUNTER TRAP
         if (player->isCountering && player->counterDamage > 0)
@@ -583,7 +594,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
             if (rand() % 100 < triggerChance)
             {
-                printf("🛡️ OSSAS COUNTER TRIGGERS!\n");
+                printf("OSSAS COUNTER TRIGGERS!\n");
                 int reflect = player->counterDamage;
                 if (reflect > enemy->hp)
                     reflect = enemy->hp;
@@ -595,7 +606,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             }
             else
             {
-                printf("❌ Ossas Counter failed!\n");
+                printf("Ossas Counter failed!\n");
             }
             player->isCountering = 0;
             player->counterDamage = 0;
@@ -604,7 +615,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         // FINAL DAMAGE
         player->hp -= enemyDamage;
         player->hp = clamp(player->hp);
-        printf("💥 %s dealt %d damage!\n", enemy->name, enemyDamage);
+        printf("%s dealt %d damage!\n", enemy->name, enemyDamage);
     }
 
     if (player->hp <= 0)

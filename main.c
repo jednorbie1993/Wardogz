@@ -6,6 +6,7 @@
 #include "stage.h"
 #include <ctype.h>
 #include "sparring.h"
+#include "cinematic.h"
 
 int main()
 {

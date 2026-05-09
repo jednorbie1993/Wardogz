@@ -3,6 +3,7 @@
 #include <string.h>
 #include "stage.h"
 #include "dog.h"
+#include "cinematic.h"
 
 void startStage(Dog *player)
 {

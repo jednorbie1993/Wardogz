@@ -7,10 +7,42 @@
 #include "skill.h"
 #include "sparring.h"
 #include "dog_utils.h"
+#include "cinematic.h"
 
 // extern globals from dog.c
 extern int animationOn;
+int cinematicMode = 1;
 
+void cinematicPause(int ms)
+{
+    if (cinematicMode)
+        Sleep(ms);
+}
+
+void cinematicDots(const char *text)
+{
+    printf("\n%s", text);
+
+    if (!cinematicMode)
+    {
+        printf("...\n");
+        return;
+    }
+
+    for (int i = 0; i < 3; i++)
+    {
+        printf(".");
+        fflush(stdout);
+        Sleep(180);
+    }
+
+    printf("\n");
+}
+
+void battleDivider()
+{
+    printf("====================================\n");
+}
 
 void showHPBarPlayer(int hp, int maxHp)
 {
@@ -24,8 +56,10 @@ void showHPBarPlayer(int hp, int maxHp)
     }
 
     // 👉 Clamp safety
-    if (hp < 0) hp = 0;
-    if (hp > maxHp) hp = maxHp;
+    if (hp < 0)
+        hp = 0;
+    if (hp > maxHp)
+        hp = maxHp;
 
     // 👉 FIRST DRAW (instant, no animation)
     if (lastHP == -1)
@@ -99,8 +133,10 @@ void showHPBarEnemy(int hp, int maxHp)
     }
 
     // 👉 Clamp safety
-    if (hp < 0) hp = 0;
-    if (hp > maxHp) hp = maxHp;
+    if (hp < 0)
+        hp = 0;
+    if (hp > maxHp)
+        hp = maxHp;
 
     // 👉 FIRST DRAW (no animation, instant)
     if (lastHP == -1)
@@ -164,15 +200,30 @@ void showHPBarEnemy(int hp, int maxHp)
 // ================= DISPLAY =================
 void displayBattleStatus(Dog player, Dog enemy)
 {
-    printf("\n--- BATTLE STATUS ---\n");
-
-    printf("PLAYER: ");
+    printf("====================================\n");
     showHPBarPlayer(player.hp, player.maxHP);
-
-    printf("ENEMY : ");
     showHPBarEnemy(enemy.hp, enemy.maxHP);
+    printf("====================================\n");
 }
 
+void criticalHPScene(Dog *player)
+{
+    if (player->hp > 20)
+        return;
+
+    int msg = rand() % 3;
+
+    battleDivider();
+
+    if (msg == 0)
+        printf("\n%s is barely standing...\n", player->name);
+    else if (msg == 1)
+        printf("\nBlood drips onto the ground...\n");
+    else
+        printf("\n%s struggles to keep fighting...\n", player->name);
+
+    cinematicPause(900);
+}
 // ================= LOSE =================
 
 void loseSequence(Dog *player, Dog *enemy)
@@ -212,41 +263,48 @@ int battle(Dog *player, int zoneIndex, int progress[])
     enemy.bleedDamage = 0;
     enemy.accuracyModifier = 0;
     enemy.numSkills = 0;
-    player->bleedDamage = 0;  // Player safety too
+    player->bleedDamage = 0; // Player safety too
     player->accuracyModifier = 0;
-    
+
     // 🔥 ENEMY SETUP - CLEAN & SIMPLE
     int i = progress[zoneIndex];
-    if (zoneIndex >= 3) { // Stage 2: Wild Territory
+    if (zoneIndex >= 3)
+    {                       // Stage 2: Wild Territory
         if (zoneIndex == 5) // Ravine (0/2)
         {
-            if (i >= 2) i = 1;
+            if (i >= 2)
+                i = 1;
         }
         else if (zoneIndex == 6 || zoneIndex == 7) // Trial + Mountain (0/4)
         {
-            if (i >= 4) i = 3;
+            if (i >= 4)
+                i = 3;
         }
         else if (zoneIndex >= 3) // other wild zones (0/3)
         {
-            if (i >= 3) i = 2;
+            if (i >= 3)
+                i = 2;
         }
-        
+
         setEnemyByZone(&enemy, zoneIndex, i);
-        
+
         system("cls");
-        printf("\n🐺 [WILD TERRITORY ENEMY]\n");
+        printf("\n[WILD TERRITORY ENEMY]\n");
         printf("Enemy: %s\n", enemy.name);
         printf("Skills: ");
         for (int s = 0; s < enemy.numSkills; s++)
         {
             printf("%s", enemy.skills[s].name);
-            if (s < enemy.numSkills - 1) printf(" | ");
+            if (s < enemy.numSkills - 1)
+                printf(" | ");
         }
         printf("\n");
         waitForEnter();
-    } 
-    else { // Stage 1: Urban Strays
-        if (i >= 3) i = 2;
+    }
+    else
+    { // Stage 1: Urban Strays
+        if (i >= 3)
+            i = 2;
         setEnemyByZone(&enemy, zoneIndex, i);
         enemy.numSkills = 0; // No wild skills
     }
@@ -264,8 +322,14 @@ int battle(Dog *player, int zoneIndex, int progress[])
         system("cls");
         displayBattleStatus(*player, enemy);
 
+        if (player->hp <= 20)
+        {
+            printf("\n [DANGER] Critical HP!\n");
+        }
+
         printf("\n--- YOUR TURN ---\n");
-        if (player->fatigue <= 20) printf("⚠️  Exhausted!\n");
+        if (player->fatigue <= 20)
+            printf("Exhausted!\n");
 
         printf("1. Attack  2. Defend  3. Heal  4. Surrender\n");
         printf("Choice: ");
@@ -275,13 +339,16 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
         if (sscanf(buffer, "%d", &choice) != 1 || choice < 1 || choice > 4)
         {
-            printf("Invalid!\n"); waitForEnter(); continue;
+            printf("Invalid!\n");
+            waitForEnter();
+            continue;
         }
 
         // 🔥 PLAYER ACTIONS
         if (choice == 1) // Attack
         {
-            system("cls"); 
+
+            system("cls");
             displayBattleStatus(*player, enemy);
 
             printf("Skills:\n");
@@ -291,69 +358,109 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 if (player->equipped[j] != -1)
                 {
                     int idx = player->equipped[j];
-                    printf("%d. %s (P:%d C:%d)\n", j+1, 
-                        player->skills[idx].name, 
-                        player->skills[idx].power, 
-                        player->skills[idx].cost);
+                    printf("%d. %s (P:%d C:%d)\n", j + 1,
+                           player->skills[idx].name,
+                           player->skills[idx].power,
+                           player->skills[idx].cost);
                 }
-                else printf("%d. ---\n", j+1);
+                else
+                    printf("%d. ---\n", j + 1);
             }
 
             fgets(buffer, sizeof(buffer), stdin);
             if (sscanf(buffer, "%d", &move) != 1 || move < 1 || move > 4)
-            { 
-                printf("Invalid skill!\n"); 
-                waitForEnter(); 
-                continue; 
+            {
+                printf("Invalid skill!\n");
+                waitForEnter();
+                continue;
             }
+            system("cls");
+            displayBattleStatus(*player, enemy);
 
             int skillIdx = player->equipped[move - 1];
-            if (skillIdx == -1) 
-            { 
-                printf("No skill!\n"); 
-                waitForEnter(); 
-                continue; 
+            if (skillIdx == -1)
+            {
+                printf("No skill!\n");
+                waitForEnter();
+                continue;
             }
 
             Skill s = player->skills[skillIdx];
 
             if (player->fatigue < s.cost)
             {
-                printf("Low energy! Weak attack...\n");
+                printf("\nLow energy! Weak attack!\n");
+                cinematicPause(500);
+
+                system("cls");
+                displayBattleStatus(*player, enemy);
+
+                cinematicDots("Player attacking");
+
                 useSkill(player, &enemy, s);
+
+                waitForEnter();
+
+                if (enemy.hp < 0)
+                    enemy.hp = 0;
+
+                system("cls");
+                displayBattleStatus(*player, enemy);
+
+                criticalHPScene(player);
+                criticalHPScene(&enemy);
+
                 player->fatigue = 0;
             }
             else
             {
+                system("cls");
+                displayBattleStatus(*player, enemy);
+
+                cinematicDots("Player attacking");
+
                 useSkill(player, &enemy, s);
+
+                waitForEnter();
+
+                if (enemy.hp < 0)
+                    enemy.hp = 0;
+
+                system("cls");
+                displayBattleStatus(*player, enemy);
+
+                criticalHPScene(player);
+                criticalHPScene(&enemy);
+
                 player->fatigue -= s.cost;
-                player->fatigue = clampFatigue(player->fatigue, player->maxFatigue);
+                player->fatigue =
+                    clampFatigue(player->fatigue,
+                                 player->maxFatigue);
             }
 
-            waitForEnter();
         } // ✅ IMPORTANT: ito yung kulang mo
 
         else if (choice == 2) // Defend
         {
             defending = 1;
-            printf("Defending!\n"); 
+            printf("Defending!\n");
             waitForEnter();
         }
         else if (choice == 3) // Heal
         {
             player->hp += 20;
-            if (player->hp > player->maxHP) 
+            if (player->hp > player->maxHP)
                 player->hp = player->maxHP;
 
-            printf("Healed +20 HP!\n"); 
+            printf("Healed +20 HP!\n");
             waitForEnter();
         }
         else if (choice == 4) // Surrender
         {
-            printf("Surrendered...\n"); 
+            printf("Surrendered...\n");
             waitForEnter();
 
-            player->defense = baseDef; 
+            player->defense = baseDef;
             player->speed = baseSpd;
             return 2;
         }
@@ -361,56 +468,118 @@ int battle(Dog *player, int zoneIndex, int progress[])
         // 🔥 ENEMY TURN
         if (player->hp > 0 && enemy.hp > 0)
         {
+            Sleep(500);
             int result = enemyAttack(player, &enemy, &defending);
-            if (result == 0) player->hp = 0;
-            if (result == 1) enemy.hp = 0;
-            
+            if (result == 0)
+                player->hp = 0;
+            if (result == 1)
+                enemy.hp = 0;
+
             defending = 0;
         }
         // 👉 RESET DEFENSE AFTER TURN
         // 🔥 FATIGUE REGEN
         player->fatigue += 2;
-        if (player->fatigue > player->maxFatigue) player->fatigue = player->maxFatigue;
+        if (player->fatigue > player->maxFatigue)
+            player->fatigue = player->maxFatigue;
 
         // 🔥 WIN/LOSE CHECK
         if (player->hp <= 0)
         {
+            player->hp = 0;
+
+            system("cls");
+            displayBattleStatus(*player, enemy);
+
+            // 🔥 Random defeat dialogue
+            int loseMsg = rand() % 3;
+
+            if (loseMsg == 0)
+            {
+                printf("\nYou collapse from exhaustion...\n");
+            }
+            else if (loseMsg == 1)
+            {
+                printf("\nYour vision starts to fade...\n");
+            }
+            else
+            {
+                printf("\nYou can no longer continue fighting...\n");
+            }
+
+            Sleep(900);
+
             printf("\n YOU LOSE \n");
+
             player->fatigue = clampFatigue(player->fatigue + 20, player->maxFatigue);
-            player->defense = baseDef; player->speed = baseSpd;
-            waitForEnter(); return 0;
+
+            player->defense = baseDef;
+            player->speed = baseSpd;
+
+            waitForEnter();
+            return 0;
         }
 
         if (enemy.hp <= 0)
         {
-            printf("\n YOU WIN! \n");
-            applyBattleStatGain(player);
-            checkSkillUnlock(player);
-            
-            /// 🔥 FIXED PROGRESS SYSTEM
-            if (zoneIndex == 7) // Mountain Den
+            enemy.hp = 0;
+
+            system("cls");
+            displayBattleStatus(*player, enemy);
+
+            // 🔥 Random defeat message
+            int defeatMsg = rand() % 3;
+
+            if (defeatMsg == 0)
             {
-                if (progress[zoneIndex] < 4) progress[zoneIndex]++;
+                printf("\nFinishing blow!\n");
             }
-            else if (zoneIndex == 5) // Ravine
+            else if (defeatMsg == 1)
             {
-                if (progress[zoneIndex] < 2) progress[zoneIndex]++;
-            }
-            else if (zoneIndex == 6) // Trial
-            {
-                if (progress[zoneIndex] < 4) progress[zoneIndex]++;
+                printf("\n%s can no longer fight...\n", enemy.name);
             }
             else
             {
-                if (progress[zoneIndex] < 3) progress[zoneIndex]++;
+                printf("\n%s collapsed...\n", enemy.name);
+            }
+
+            Sleep(700);
+
+            printf("\n YOU WIN! \n");
+            applyBattleStatGain(player);
+            checkSkillUnlock(player);
+
+            /// 🔥 FIXED PROGRESS SYSTEM
+            if (zoneIndex == 7) // Mountain Den
+            {
+                if (progress[zoneIndex] < 4)
+                    progress[zoneIndex]++;
+            }
+            else if (zoneIndex == 5) // Ravine
+            {
+                if (progress[zoneIndex] < 2)
+                    progress[zoneIndex]++;
+            }
+            else if (zoneIndex == 6) // Trial
+            {
+                if (progress[zoneIndex] < 4)
+                    progress[zoneIndex]++;
+            }
+            else
+            {
+                if (progress[zoneIndex] < 3)
+                    progress[zoneIndex]++;
             }
 
             player->fatigue = clampFatigue(player->fatigue + 20, player->maxFatigue);
-            player->defense = baseDef; player->speed = baseSpd;
-            waitForEnter(); return 1;
+            player->defense = baseDef;
+            player->speed = baseSpd;
+            waitForEnter();
+            return 1;
         }
     }
 
-    player->defense = baseDef; player->speed = baseSpd;
+    player->defense = baseDef;
+    player->speed = baseSpd;
     return -1;
 }
