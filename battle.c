@@ -404,9 +404,6 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 if (enemy.hp < 0)
                     enemy.hp = 0;
 
-                system("cls");
-                displayBattleStatus(*player, enemy);
-
                 criticalHPScene(player);
                 criticalHPScene(&enemy);
 
@@ -428,6 +425,51 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
                 system("cls");
                 displayBattleStatus(*player, enemy);
+
+                printf("\n");
+
+                char *backAlleyLines[] = {
+                    "Not bad...",
+                    "You're tougher than I expected.",
+                    "That attack almost got me.",
+                    "Heh... this is getting fun.",
+                    "You fight pretty well.",
+                    "Let's end this.",
+                    "I won't hold back anymore.",
+                    "You're still standing?",
+                    "Tch... annoying.",
+                    "This fight is mine."};
+
+                char *wildLines[] = {
+                    "GRRRR...",
+                    "The wild shows no mercy.",
+                    "You entered the wrong territory.",
+                    "Only the strong survive here.",
+                    "I'll tear you apart.",
+                    "You can smell the blood in the air.",
+                    "This land belongs to us.",
+                    "Your fear is showing.",
+                    "Run while you still can.",
+                    "You're prey now."};
+
+                int randomLine = rand() % 10;
+
+                if (zoneIndex >= 3)
+                {
+                    typeText(enemy.name, 25);
+                    printf(": ");
+                    typeText(wildLines[randomLine], 20);
+                }
+                else
+                {
+                    typeText(enemy.name, 25);
+                    printf(": ");
+                    typeText(backAlleyLines[randomLine], 20);
+                }
+
+                printf("\n\n");
+
+                waitForEnter();
 
                 criticalHPScene(player);
                 criticalHPScene(&enemy);

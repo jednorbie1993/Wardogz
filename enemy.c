@@ -203,9 +203,9 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
         else
         {
             strcpy(enemy->name, "River Alpha");
-            enemy->attack += 7; // nerfed: 10->7
-            enemy->speed += 3;  // nerfed: 5->3
-            enemy->maxHP += 12; // nerfed: 15->12
+            enemy->attack += 7;  // nerfed: 10->7
+            enemy->speed += 3;   // nerfed: 5->3
+            enemy->maxHP += 12;  // nerfed: 15->12
             enemy->defense += 3; // nerfed: 5->3
         }
         setEnemySkillsWild(enemy, zoneIndex, i);
@@ -215,23 +215,23 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Forest Stalker");
-            enemy->speed += 4;  // nerfed: 8->4
+            enemy->speed += 4;    // nerfed: 8->4
             enemy->accuracy += 5; // nerfed: 10->5
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Ambush Leader");
-            enemy->speed += 6;  // nerfed: 12->6
+            enemy->speed += 6;    // nerfed: 12->6
             enemy->accuracy += 8; // nerfed: 15->8
-            enemy->attack += 3;  // nerfed: 5->3
+            enemy->attack += 3;   // nerfed: 5->3
         }
         else
         {
             strcpy(enemy->name, "Shadow Pack");
-            enemy->speed += 4;  // nerfed: 8->4
+            enemy->speed += 4;    // nerfed: 8->4
             enemy->accuracy += 5; // nerfed: 10->5
-            enemy->attack += 3;  // nerfed: 5->3
-            enemy->maxHP += 8;   // nerfed: 10->8
+            enemy->attack += 3;   // nerfed: 5->3
+            enemy->maxHP += 8;    // nerfed: 10->8
         }
         setEnemySkillsWild(enemy, zoneIndex, i);
     }
@@ -240,17 +240,17 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Bloodfang Scout");
-            enemy->attack += 7;  // nerfed: 14->7
-            enemy->speed += 6;   // nerfed: 12->6
+            enemy->attack += 7;   // nerfed: 14->7
+            enemy->speed += 6;    // nerfed: 12->6
             enemy->accuracy += 5; // nerfed: 10->5
         }
         else
         {
             strcpy(enemy->name, "Ravine Stalker");
-            enemy->attack += 6;  // nerfed: 12->6
-            enemy->speed += 4;   // nerfed: 8->4
+            enemy->attack += 6;   // nerfed: 12->6
+            enemy->speed += 4;    // nerfed: 8->4
             enemy->accuracy += 8; // nerfed: 15->8
-            enemy->maxHP += 15;  // nerfed: 20->15
+            enemy->maxHP += 15;   // nerfed: 20->15
         }
         setEnemySkillsWild(enemy, zoneIndex, i);
     }
@@ -259,14 +259,14 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Trial Challenger");
-            enemy->attack += 8;  // nerfed: 15->8
-            enemy->speed += 7;   // nerfed: 13->7
+            enemy->attack += 8; // nerfed: 15->8
+            enemy->speed += 7;  // nerfed: 13->7
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Trial Hunter");
-            enemy->attack += 9;  // nerfed: 16->9
-            enemy->speed += 8;   // nerfed: 14->8
+            enemy->attack += 9;   // nerfed: 16->9
+            enemy->speed += 8;    // nerfed: 14->8
             enemy->accuracy += 6; // nerfed: 11->6
         }
         else if (i == 2)
@@ -326,11 +326,6 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
 
 int enemyAttack(Dog *player, Dog *enemy, int *defending)
 {
-    system("cls");
-    printf("====================================");
-    printf("\n--- ENEMY TURN ---\n");
-    printf("====================================\n");
-
     // WILD SKILLS - SAFE CHECK (Stage 1 has numSkills=0)
     if (enemy->numSkills >= 3)
     {
@@ -422,26 +417,56 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         return -1;
     }
 
-    // REGULAR ENEMY ATTACK (unchanged - Stage 1)
+    // =========================
+    // CINEMATIC ENEMY TURN
+    // =========================
+
+    system("cls");
+
+    displayBattleStatus(*player, *enemy);
+
+    printf("\n--- ENEMY TURN ---\n");
+
     int enemyDamage = (enemy->attack / 6) + 4;
 
+    // =========================
     // ENEMY PERSONALITY
+    // =========================
+
     if (strstr(enemy->name, "Alpha") || strstr(enemy->name, "King"))
     {
         enemyDamage += 6;
+
         if (rand() % 100 < 20)
         {
-            printf("Enemy is ENRAGED!\n");
+            printf("\n");
+
+            typeText(enemy->name, 30);
+            typeText(" is ENRAGED!\n", 30);
+
             enemyDamage += 8;
+
+            waitForEnter();
+
+            // CUT FRAME
+            system("cls");
+            displayBattleStatus(*player, *enemy);
         }
     }
     else if (strstr(enemy->name, "Iron") || strstr(enemy->name, "Guard"))
     {
         enemyDamage -= 2;
+
         if (rand() % 100 < 30)
         {
-            printf("Enemy HARDENED!\n");
+            printf("\nEnemy HARDENED!\n");
+
             enemyDamage = (enemyDamage * 70) / 100;
+
+            waitForEnter();
+
+            system("cls");
+            displayBattleStatus(*player, *enemy);
         }
     }
     else if (strstr(enemy->name, "Scrap") || strstr(enemy->name, "Fighter"))
@@ -449,7 +474,13 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         if (enemy->hp < enemy->maxHP / 2)
         {
             enemyDamage += 5;
-            printf("Enemy is DESPERATE!\n");
+
+            printf("\nEnemy is DESPERATE!\n");
+
+            waitForEnter();
+
+            system("cls");
+            displayBattleStatus(*player, *enemy);
         }
     }
     else if (strstr(enemy->name, "Skinny") || strstr(enemy->name, "Stray"))
@@ -457,7 +488,10 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         enemyDamage -= 2;
     }
 
-    // ATTACK MOVE
+    // =========================
+    // MOVE SELECTION
+    // =========================
+
     int moveType = rand() % 3;
     char *moveName = "Attack";
 
@@ -477,20 +511,24 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         moveName = "Lock Jaw";
     }
 
+    // =========================
+    // ATTACK FRAME
+    // =========================
+
     printf("\n");
-    typeText(enemy->name, 30);
-    printf(" used ");
-    typeText(moveName, 40);
+
+    typeText(enemy->name, 25);
+    typeText(" used ", 20);
+    typeText(moveName, 35);
     printf("!\n");
 
-    // ATTACK ANIMATION
     cinematicDots("Enemy attacking");
 
     // DAMAGE CALC
-    enemyDamage += rand() % 6;
-    enemyDamage -= player->defense / 25;
-    if (enemyDamage < 1)
-        enemyDamage = 1;
+    enemyDamage += rand() % 5;
+    enemyDamage -= player->defense / 40;
+    if (enemyDamage < 3)
+        enemyDamage = 3;
 
     // HIT CHANCE
     int dodgeChance = player->speed * 2;
