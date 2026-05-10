@@ -75,7 +75,7 @@ void zoneStoryIntro(int zoneIndex, int progress)
     }
 
     printf("\n");
-    waitForEnter();
+ 
 }
 
 void preBattleScene(int zoneIndex)
@@ -117,8 +117,6 @@ void preBattleScene(int zoneIndex)
     }
 
     int count = 6;
-
-    system("cls");
 
     int r = rand() % count;
 
