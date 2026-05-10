@@ -318,6 +318,13 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
             enemy->speed += 6;    // nerfed: 10->6
         }
         setEnemySkillsWild(enemy, zoneIndex, i);
+        else
+        {
+            strcpy(enemy->name, "Unknown Stray");
+            enemy->attack += 20;
+            enemy->speed += 20;
+            enemy->maxHP += 50;
+        }
     }
 
     // sync HP
