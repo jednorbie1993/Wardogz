@@ -501,7 +501,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
         }
         else if (choice == 4) // Surrender
         {
-            printf("Surrendered...\n");
+            printf("\nSurrendered...\n");
             waitForEnter();
 
             player->defense = baseDef;

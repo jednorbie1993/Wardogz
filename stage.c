@@ -124,6 +124,69 @@ void startStage(Dog *player)
 
                 if (progress[zoneIndex] >= maxEnemies)
                 {
+                    // 🔥 NEW: Random enemy from zone + verb system
+                    printf("\n");
+
+                    // 🔥 RANDOM ENEMY FROM ZONE
+                    int enemyType = rand() % maxEnemies;
+                    Dog tempEnemy;
+                    createEnemy(&tempEnemy);
+                    setEnemyByZone(&tempEnemy, zoneIndex, enemyType);
+
+                    // 🔥 RANDOM APPEAR VERB
+                    char *verbs[] = {"showed", "appeared", "arrived", "emerged"};
+                    int verb = rand() % 4;
+
+                    printf("%s %s\n\n", tempEnemy.name, verbs[verb]);
+
+                    int replayLine = rand() % 4;
+
+                    // QUOTES (no enemy name prefix)
+                    if (zoneIndex <= 2)
+                    {
+                        switch(replayLine)
+                        {
+                            case 0:
+                                printf("\"Territory never stays quiet.\"\n");
+                                break;
+                            case 1:
+                                printf("\"New strays always appear.\"\n");
+                                break;
+                            case 2:
+                                printf("\"The streets always want blood.\"\n");
+                                break;
+                            case 3:
+                                printf("\"Another dog steps into the alley...\"\n");
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        // Wild quotes...
+                        switch(replayLine)
+                        {
+                            case 0:
+                                printf("\"The wild never forgets.\"\n");
+                                break;
+                            case 1:
+                                printf("\"Another pack rises from the shadows.\"\n");
+                                break;
+                            case 2:
+                                printf("\"The forest still hungers.\"\n");
+                                break;
+                            case 3:
+                                printf("\"Only the strong survive here.\"\n");
+                                break;
+                        }
+                    }
+
+                    if (systemLog)
+                    {
+                        printf(" (REPLAY MODE)\n");
+                    }
+                    
+                    waitForEnter();
+
                     // optional elite chance
                     if (rand() % 100 < 25)
                         i = maxEnemies; // elite slot
@@ -146,61 +209,11 @@ void startStage(Dog *player)
                     enemy.hp = enemy.maxHP;
                 }
 
-                if (progress[zoneIndex] >= maxEnemies)
+                if (progress[zoneIndex] < 3)
                 {
-                    printf("\n");
-
-                    int replayLine = rand() % 4;
-
-                    // URBAN STRAYS
-                    if (zoneIndex <= 2)
-                    {
-                        switch(replayLine)
-                        {
-                            case 0:
-                                printf("\"Territory never stays quiet.\"\n");
-                                break;
-
-                            case 1:
-                                printf("\"New strays always appear.\"\n");
-                                break;
-
-                            case 2:
-                                printf("\"The streets always want blood.\"\n");
-                                break;
-
-                            case 3:
-                                printf("\"Another dog steps into the alley...\"\n");
-                                break;
-                        }
-                    }
-                    else // WILD TERRITORY
-                    {
-                        switch(replayLine)
-                        {
-                            case 0:
-                                printf("\"The wild never forgets.\"\n");
-                                break;
-
-                            case 1:
-                                printf("\"Another pack rises from the shadows.\"\n");
-                                break;
-
-                            case 2:
-                                printf("\"The forest still hungers.\"\n");
-                                break;
-
-                            case 3:
-                                printf("\"Only the strong survive here.\"\n");
-                                break;
-                        }
-                    }
+                    printf("\nFighting: %s\n", enemy.name);
+                    waitForEnter();
                 }
-                if (progress[zoneIndex] >= 3)
-                    printf(" (REPLAY MODE)\n");
-                else
-                    printf("\n");
-                waitForEnter();
 
                 if (player->hp <= 0)
                 {
@@ -390,14 +403,55 @@ void startStage(Dog *player)
                 if (zoneIndex == 5) maxEnemies = 2;
                 if (zoneIndex == 6 || zoneIndex == 7) maxEnemies = 4;
 
-                int isBossFight = (progress[zoneIndex] == maxEnemies - 1);
-
                 int i;
 
                 if (progress[zoneIndex] >= maxEnemies)
                 {
-                    // ✅ FIXED: Correct rand() range
-                    i = rand() % maxEnemies;
+                    // 🔥 NEW: Random enemy from zone + verb system for Stage 2
+                    printf("\n");
+
+                    // 🔥 RANDOM ENEMY FROM ZONE
+                    int enemyType = rand() % maxEnemies;
+                    Dog tempEnemy;
+                    createEnemy(&tempEnemy);
+                    setEnemyByZone(&tempEnemy, zoneIndex, enemyType);
+
+                    // 🔥 RANDOM APPEAR VERB
+                    char *verbs[] = {"showed", "appeared", "arrived", "emerged"};
+                    int verb = rand() % 4;
+
+                    printf("%s %s\n", tempEnemy.name, verbs[verb]);
+
+                    int replayLine = rand() % 4;
+
+                    // WILD TERRITORY QUOTES
+                    switch(replayLine)
+                    {
+                        case 0:
+                            printf("\"The wild never forgets.\"\n");
+                            break;
+                        case 1:
+                            printf("\"Another pack rises from the shadows.\"\n");
+                            break;
+                        case 2:
+                            printf("\"The forest still hungers.\"\n");
+                            break;
+                        case 3:
+                            printf("\"Only the strong survive here.\"\n");
+                            break;
+                    }
+                    if (systemLog)
+                    {
+                        printf(" (REPLAY MODE)\n");
+                    }
+                                    
+                    waitForEnter();
+
+                    // optional elite chance
+                    if (rand() % 100 < 25)
+                        i = maxEnemies; // elite slot
+                    else
+                        i = rand() % maxEnemies;
                 }
                 else
                 {
@@ -416,19 +470,11 @@ void startStage(Dog *player)
                     enemy.hp = enemy.maxHP;
                 }
 
-                printf("\nFighting: %s", enemy.name);
-                // ✅ FIXED: Proper braces for replay mode
-                if ((zoneIndex == 5 && progress[zoneIndex] >= 2) || 
-                    ((zoneIndex == 6 || zoneIndex == 7) && progress[zoneIndex] >= 4) ||
-                    (zoneIndex <= 4 && progress[zoneIndex] >= 3))
+                if (progress[zoneIndex] < maxEnemies)
                 {
-                    printf(" (REPLAY MODE)\n");
+                    printf("\nFighting: %s\n", enemy.name);
+                    waitForEnter();
                 }
-                else
-                {
-                    printf("\n");
-                }
-                waitForEnter();
 
                 if (player->hp <= 0)
                 {
@@ -438,7 +484,7 @@ void startStage(Dog *player)
                     continue;
                 }
 
-
+                int isBossFight = (progress[zoneIndex] == maxEnemies - 1);
                 
                 if (zoneIndex == 5 && isBossFight)
                 {
