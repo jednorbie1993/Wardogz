@@ -115,14 +115,83 @@ void startStage(Dog *player)
                 int zoneIndex = zoneChoice - 1;
 
                 // Create enemy BEFORE battle
+                // Create enemy BEFORE battle
                 Dog enemy;
                 createEnemy(&enemy);
-                int i = progress[zoneIndex];
-                if (i >= 3)
-                    i = 2;
+
+                int maxEnemies = 3;
+                int i;
+
+                if (progress[zoneIndex] >= maxEnemies)
+                {
+                    i = rand() % (maxEnemies + 1);
+                }
+                else
+                {
+                    i = progress[zoneIndex];
+                }
+
                 setEnemyByZone(&enemy, zoneIndex, i);
 
-                printf("\nFighting: %s", enemy.name);
+                if (i == 3)
+                {
+                    strcpy(enemy.name, "Elite Stray");
+                    enemy.attack += 10;
+                    enemy.speed += 10;
+                    enemy.maxHP += 30;
+                    enemy.hp = enemy.maxHP;
+                }
+
+                if (progress[zoneIndex] >= maxEnemies)
+                {
+                    printf("\n");
+
+                    int replayLine = rand() % 4;
+
+                    // URBAN STRAYS
+                    if (zoneIndex <= 2)
+                    {
+                        switch(replayLine)
+                        {
+                            case 0:
+                                printf("\"Territory never stays quiet.\"\n");
+                                break;
+
+                            case 1:
+                                printf("\"New strays always appear.\"\n");
+                                break;
+
+                            case 2:
+                                printf("\"The streets always want blood.\"\n");
+                                break;
+
+                            case 3:
+                                printf("\"Another dog steps into the alley...\"\n");
+                                break;
+                        }
+                    }
+                    else // WILD TERRITORY
+                    {
+                        switch(replayLine)
+                        {
+                            case 0:
+                                printf("\"The wild never forgets.\"\n");
+                                break;
+
+                            case 1:
+                                printf("\"Another pack rises from the shadows.\"\n");
+                                break;
+
+                            case 2:
+                                printf("\"The forest still hungers.\"\n");
+                                break;
+
+                            case 3:
+                                printf("\"Only the strong survive here.\"\n");
+                                break;
+                        }
+                    }
+                }
                 if (progress[zoneIndex] >= 3)
                     printf(" (REPLAY MODE)\n");
                 else
@@ -264,25 +333,36 @@ void startStage(Dog *player)
                 // Create enemy BEFORE battle (same enemies but with new skills)
                 Dog enemy;
                 createEnemy(&enemy);
-                int i = progress[zoneIndex];
+                int maxEnemies = 3;
 
-                // Zone-specific caps
-                if (zoneIndex == 5) // Bloodfang Ravine (0/2)
+                if (zoneIndex == 5)
+                    maxEnemies = 2;
+
+                if (zoneIndex == 6 || zoneIndex == 7)
+                    maxEnemies = 4;
+
+                int i;
+
+                if (progress[zoneIndex] >= maxEnemies)
                 {
-                    if (i >= 2)
-                        i = 1;
+                    i = rand() % (maxEnemies + 1);
                 }
-                else if (zoneIndex == 6 || zoneIndex == 7) // Alpha Trial + Mountain Den (0/4)
+                else
                 {
-                    if (i >= 4)
-                        i = 3;
+                    i = progress[zoneIndex];
                 }
-                else // normal zones (0/3)
-                {
-                    if (i >= 3)
-                        i = 2;
-                }
+
                 setEnemyByZone(&enemy, zoneIndex, i);
+
+                if (i == maxEnemies)
+                {
+                    strcpy(enemy.name, "Elite Predator");
+
+                    enemy.attack += 15;
+                    enemy.speed += 15;
+                    enemy.maxHP += 40;
+                    enemy.hp = enemy.maxHP;
+                }
 
                 printf("\nFighting: %s", enemy.name);
                 if ((zoneIndex == 5 && progress[zoneIndex] >= 2) || 
