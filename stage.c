@@ -117,6 +117,8 @@ void startStage(Dog *player)
                 // Create enemy BEFORE battle
                 Dog enemy;
                 createEnemy(&enemy);
+                
+                int maxEnemies = 3;
 
                 int i;
 
@@ -345,7 +347,8 @@ void startStage(Dog *player)
                 if (zoneChoice == 6)
                     break;
 
-                int zoneIndex = zoneChoice - 2;
+                // ✅ FIXED: Correct zoneIndex mapping for Stage 2 (starts at index 3)
+                int zoneIndex = zoneChoice + 2;
 
                 // LOCK CHECK FOR STAGE 2
                 if (zoneChoice == 2 && progress[3] < 3)
@@ -393,7 +396,8 @@ void startStage(Dog *player)
 
                 if (progress[zoneIndex] >= maxEnemies)
                 {
-                    i = rand() % (maxEnemies + 1);
+                    // ✅ FIXED: Correct rand() range
+                    i = rand() % maxEnemies;
                 }
                 else
                 {
@@ -413,13 +417,18 @@ void startStage(Dog *player)
                 }
 
                 printf("\nFighting: %s", enemy.name);
+                // ✅ FIXED: Proper braces for replay mode
                 if ((zoneIndex == 5 && progress[zoneIndex] >= 2) || 
                     ((zoneIndex == 6 || zoneIndex == 7) && progress[zoneIndex] >= 4) ||
                     (zoneIndex <= 4 && progress[zoneIndex] >= 3))
-                printf(" (REPLAY MODE)\n");
+                {
+                    printf(" (REPLAY MODE)\n");
+                }
                 else
+                {
                     printf("\n");
-                    waitForEnter();
+                }
+                waitForEnter();
 
                 if (player->hp <= 0)
                 {
@@ -431,7 +440,7 @@ void startStage(Dog *player)
 
 
                 
-                if (zoneIndex == 3 && isBossFight)
+                if (zoneIndex == 5 && isBossFight)
                 {
                     system("cls");
 
