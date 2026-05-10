@@ -8,6 +8,7 @@
 #include "sparring.h"
 #include "dog_utils.h"
 #include "cinematic.h"
+#include "battle.h"
 
 // extern globals from dog.c
 extern int animationOn;
@@ -310,7 +311,8 @@ int battle(Dog *player, int zoneIndex, int progress[])
     }
 
     system("cls");
-    preBattleScene();
+    zoneStoryIntro(zoneIndex, progress[zoneIndex]);
+    preBattleScene(zoneIndex);
 
     // 🔥 RESET HP BAR STATES (DITO MO ILALAGAY)
     showHPBarPlayer(-1, 1);

@@ -125,10 +125,10 @@ void enemyQuickAttack(Dog *player, Dog *enemy)
 
 void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
 {
-    // reset base stats muna (important!)
+    // reset base stats muna
     createEnemy(enemy);
 
-    if (zoneIndex == 0) // STAGE 1: Back Alley
+    if (zoneIndex == 0) // Back Alley
     {
         if (i == 0)
             strcpy(enemy->name, "Skinny Stray");
@@ -146,7 +146,7 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
             enemy->maxHP += 20;
         }
     }
-    else if (zoneIndex == 1) // STAGE 1: Junkyard
+    else if (zoneIndex == 1) // Junkyard
     {
         if (i == 0)
         {
@@ -165,7 +165,7 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
             enemy->maxHP += 25;
         }
     }
-    else if (zoneIndex == 2) // STAGE 1: Abandoned Block
+    else if (zoneIndex == 2) // Abandoned Block
     {
         if (i == 0)
         {
@@ -184,147 +184,156 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i)
             enemy->attack += 5;
         }
     }
-    // STAGE 2: Wild Territory - nerfed to be only slightly stronger
-    else if (zoneIndex == 3) // River Pack Hideout
+
+    // =========================
+    // WILD TERRITORY
+    // =========================
+
+    else if (zoneIndex == 3)
     {
         if (i == 0)
         {
             strcpy(enemy->name, "River Scout");
-            enemy->attack += 4; // nerfed: 8->4
-            enemy->speed += 2;  // nerfed: 4->2
+            enemy->attack += 4;
+            enemy->speed += 2;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Pack Hunter");
-            enemy->attack += 6; // nerfed: 12->6
-            enemy->speed += 3;  // nerfed: 6->3
-            enemy->maxHP += 10; // nerfed: 15->10
+            enemy->attack += 6;
+            enemy->speed += 3;
+            enemy->maxHP += 10;
         }
         else
         {
             strcpy(enemy->name, "River Alpha");
-            enemy->attack += 7;  // nerfed: 10->7
-            enemy->speed += 3;   // nerfed: 5->3
-            enemy->maxHP += 12;  // nerfed: 15->12
-            enemy->defense += 3; // nerfed: 5->3
+            enemy->attack += 7;
+            enemy->speed += 3;
+            enemy->maxHP += 12;
+            enemy->defense += 3;
         }
+
         setEnemySkillsWild(enemy, zoneIndex, i);
     }
-    else if (zoneIndex == 4) // Forest Ambush Grounds
+    else if (zoneIndex == 4)
     {
         if (i == 0)
         {
             strcpy(enemy->name, "Forest Stalker");
-            enemy->speed += 4;    // nerfed: 8->4
-            enemy->accuracy += 5; // nerfed: 10->5
+            enemy->speed += 4;
+            enemy->accuracy += 5;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Ambush Leader");
-            enemy->speed += 6;    // nerfed: 12->6
-            enemy->accuracy += 8; // nerfed: 15->8
-            enemy->attack += 3;   // nerfed: 5->3
+            enemy->speed += 6;
+            enemy->accuracy += 8;
+            enemy->attack += 3;
         }
         else
         {
             strcpy(enemy->name, "Shadow Pack");
-            enemy->speed += 4;    // nerfed: 8->4
-            enemy->accuracy += 5; // nerfed: 10->5
-            enemy->attack += 3;   // nerfed: 5->3
-            enemy->maxHP += 8;    // nerfed: 10->8
+            enemy->speed += 4;
+            enemy->accuracy += 5;
+            enemy->attack += 3;
+            enemy->maxHP += 8;
         }
+
         setEnemySkillsWild(enemy, zoneIndex, i);
     }
-    else if (zoneIndex == 5) // Bloodfang Ravine
+    else if (zoneIndex == 5)
     {
         if (i == 0)
         {
             strcpy(enemy->name, "Bloodfang Scout");
-            enemy->attack += 7;   // nerfed: 14->7
-            enemy->speed += 6;    // nerfed: 12->6
-            enemy->accuracy += 5; // nerfed: 10->5
+            enemy->attack += 7;
+            enemy->speed += 6;
+            enemy->accuracy += 5;
         }
         else
         {
             strcpy(enemy->name, "Ravine Stalker");
-            enemy->attack += 6;   // nerfed: 12->6
-            enemy->speed += 4;    // nerfed: 8->4
-            enemy->accuracy += 8; // nerfed: 15->8
-            enemy->maxHP += 15;   // nerfed: 20->15
+            enemy->attack += 6;
+            enemy->speed += 4;
+            enemy->accuracy += 8;
+            enemy->maxHP += 15;
         }
+
         setEnemySkillsWild(enemy, zoneIndex, i);
     }
-    else if (zoneIndex == 6) // Alpha's Trial Grounds
+    else if (zoneIndex == 6)
     {
         if (i == 0)
         {
             strcpy(enemy->name, "Trial Challenger");
-            enemy->attack += 8; // nerfed: 15->8
-            enemy->speed += 7;  // nerfed: 13->7
+            enemy->attack += 8;
+            enemy->speed += 7;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Trial Hunter");
-            enemy->attack += 9;   // nerfed: 16->9
-            enemy->speed += 8;    // nerfed: 14->8
-            enemy->accuracy += 6; // nerfed: 11->6
+            enemy->attack += 9;
+            enemy->speed += 8;
+            enemy->accuracy += 6;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Trial Alpha");
-            enemy->attack += 10; // nerfed: 19->10
-            enemy->speed += 9;   // nerfed: 16->9
-            enemy->maxHP += 15;  // nerfed: 20->15
+            enemy->attack += 10;
+            enemy->speed += 9;
+            enemy->maxHP += 15;
         }
         else
         {
             strcpy(enemy->name, "Trial Beast");
-            enemy->attack += 12; // nerfed: 20->12
-            enemy->speed += 11;  // nerfed: 20->11
-            enemy->maxHP += 35;  // nerfed: 50->35
-            enemy->defense += 7; // nerfed: 10->7
+            enemy->attack += 12;
+            enemy->speed += 11;
+            enemy->maxHP += 35;
+            enemy->defense += 7;
         }
+
         setEnemySkillsWild(enemy, zoneIndex, i);
     }
-    else if (zoneIndex == 7) // Mountain Pack Den
+    else if (zoneIndex == 7)
     {
         if (i == 0)
         {
             strcpy(enemy->name, "Mountain Guard");
-            enemy->defense += 7; // nerfed: 10->7
-            enemy->maxHP += 18;  // nerfed: 25->18
+            enemy->defense += 7;
+            enemy->maxHP += 18;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Peak Warrior");
-            enemy->defense += 10; // nerfed: 15->10
-            enemy->maxHP += 25;   // nerfed: 35->25
-            enemy->attack += 5;   // nerfed: 8->5
+            enemy->defense += 10;
+            enemy->maxHP += 25;
+            enemy->attack += 5;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Summit Enforcer");
-            enemy->defense += 15; // nerfed: 22->15
-            enemy->maxHP += 35;   // nerfed: 50->35
-            enemy->attack += 8;   // nerfed: 12->8
-            enemy->speed += 3;    // nerfed: 5->3
+            enemy->defense += 15;
+            enemy->maxHP += 35;
+            enemy->attack += 8;
+            enemy->speed += 3;
         }
         else
         {
             strcpy(enemy->name, "Mountain King");
-            enemy->defense += 20; // nerfed: 30->20
-            enemy->maxHP += 50;   // nerfed: 70->50
-            enemy->attack += 12;  // nerfed: 20->12
-            enemy->speed += 6;    // nerfed: 10->6
-        }
-        setEnemySkillsWild(enemy, zoneIndex, i);
-        else
-        {
-            strcpy(enemy->name, "Unknown Stray");
-            enemy->attack += 20;
-            enemy->speed += 20;
+            enemy->defense += 20;
             enemy->maxHP += 50;
+            enemy->attack += 12;
+            enemy->speed += 6;
         }
+
+        setEnemySkillsWild(enemy, zoneIndex, i);
+    }
+    else
+    {
+        strcpy(enemy->name, "Unknown Stray");
+        enemy->attack += 20;
+        enemy->speed += 20;
+        enemy->maxHP += 50;
     }
 
     // sync HP

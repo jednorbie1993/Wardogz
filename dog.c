@@ -10,6 +10,7 @@
 #include "dog.h"
 #include "battle.h"
 #include "stat.h"
+#include "cinematic.h"
 
 int systemLog = 0;
 int animationOn = 1; //  NEW (default ON)
@@ -39,29 +40,95 @@ int isCritical(int currentHP, int maxHP)
 
     return roll < critChance;
 }
-void preBattleScene()
-{
-    const char *messages[] = {
-        "Stay focused...",
-        "You hear footsteps nearby...",
-        "A sudden noise echoes...",
-        "Something is watching you...",
-        "Car passing... be careful!",
-        "The air feels tense..."};
 
-    int count = sizeof(messages) / sizeof(messages[0]);
+void zoneStoryIntro(int zoneIndex, int progress)
+{
+    system("cls");
+
+    // BACK ALLEY
+    if (zoneIndex == 0 && progress == 0)
+    {
+        typeText("The alley reeks of rust and old blood.\n", 25);
+        typeText("Weak strays wander these streets...\n", 25);
+        typeText("But something stronger lurks deeper inside.\n", 25);
+    }
+
+    // JUNKYARD
+    else if (zoneIndex == 1 && progress == 0)
+    {
+        typeText("Mountains of scrap tower around you.\n", 25);
+        typeText("The junkyard dogs fight without fear.\n", 25);
+    }
+
+    // ABANDONED BLOCK
+    else if (zoneIndex == 2 && progress == 0)
+    {
+        typeText("The abandoned block feels lifeless.\n", 25);
+        typeText("But hidden eyes follow your every step.\n", 25);
+    }
+
+    // RIVER PACK HIDEOUT
+    else if (zoneIndex == 3 && progress == 0)
+    {
+        typeText("The river carries the scent of wild packs.\n", 25);
+        typeText("You are far from the city now.\n", 25);
+    }
+
+    printf("\n");
+    waitForEnter();
+}
+
+void preBattleScene(int zoneIndex)
+{
+    const char *messages[6];
+
+    // STAGE 1 - URBAN STRAYS
+    if (zoneIndex <= 2)
+    {
+        static const char *urbanMessages[] = {
+            "The alley reeks of rust and old blood...",
+            "You hear barking somewhere beyond the dark streets...",
+            "Broken bottles crack beneath your paws...",
+            "Something watches from the shadows nearby...",
+            "A speeding car passes outside the alley...",
+            "The deeper streets feel strangely quiet..."
+        };
+
+        for (int i = 0; i < 6; i++)
+        {
+            messages[i] = urbanMessages[i];
+        }
+    }
+    else // STAGE 2 - WILD TERRITORY
+    {
+        static const char *wildMessages[] = {
+            "The forest air feels heavy with danger...",
+            "Growls echo somewhere in the wild...",
+            "Fresh claw marks cover the ground...",
+            "Something moves between the trees...",
+            "The wild territory feels unforgiving...",
+            "Every step deeper feels dangerous..."
+        };
+
+        for (int i = 0; i < 6; i++)
+        {
+            messages[i] = wildMessages[i];
+        }
+    }
+
+    int count = 6;
 
     system("cls");
 
-    // 🔥 random message
     int r = rand() % count;
 
     printf("\n");
+
     for (int i = 0; messages[r][i] != '\0'; i++)
     {
         printf("%c", messages[r][i]);
         fflush(stdout);
-        Sleep(40); // animation speed
+        Sleep(40);
     }
 
     printf("\n\nPress Enter to continue...");
@@ -460,19 +527,13 @@ void printDog(Dog d)
     printf("Fatigue: %d/100\n", d.fatigue); // ✅ DITO LANG
 }
 
-void typeText(char *text, int speed)
+void typeText(const char *text, int delay)
 {
-    if (!animationOn)
-    {
-        printf("%s", text);
-        return;
-    }
-
     for (int i = 0; text[i] != '\0'; i++)
     {
         printf("%c", text[i]);
-        fflush(stdout); // 👉 para real-time output
-        Sleep(speed);
+        fflush(stdout);
+        Sleep(delay);
     }
 }
 void waitForEnter()

@@ -5,5 +5,6 @@
 
 int battle(Dog *player, int zoneIndex, int progress[]);
 void displayBattleStatus(Dog player, Dog enemy);
+void zoneStoryIntro(int zoneIndex, int progress);
 
 #endif

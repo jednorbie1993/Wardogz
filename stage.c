@@ -115,16 +115,18 @@ void startStage(Dog *player)
                 int zoneIndex = zoneChoice - 1;
 
                 // Create enemy BEFORE battle
-                // Create enemy BEFORE battle
                 Dog enemy;
                 createEnemy(&enemy);
 
-                int maxEnemies = 3;
                 int i;
 
                 if (progress[zoneIndex] >= maxEnemies)
                 {
-                    i = rand() % (maxEnemies + 1);
+                    // optional elite chance
+                    if (rand() % 100 < 25)
+                        i = maxEnemies; // elite slot
+                    else
+                        i = rand() % maxEnemies;
                 }
                 else
                 {
@@ -133,7 +135,7 @@ void startStage(Dog *player)
 
                 setEnemyByZone(&enemy, zoneIndex, i);
 
-                if (i == 3)
+                if (i == maxEnemies)
                 {
                     strcpy(enemy.name, "Elite Stray");
                     enemy.attack += 10;
@@ -206,7 +208,51 @@ void startStage(Dog *player)
                     continue;
                 }
 
+                // =========================
+                // BOSS INTRO SCENES
+                // =========================
+
+                if (zoneIndex == 0 && progress[zoneIndex] == 2)
+                {
+                    system("cls");
+
+                    typeText("Heavy footsteps echo through the alley.\n", 25);
+                    typeText("The Alley Alpha finally appears.\n\n", 25);
+
+                    typeText("Alley Alpha:\n", 30);
+                    typeText("\"This territory belongs to ME.\"\n", 30);
+
+                    waitForEnter();
+                }
+
+                else if (zoneIndex == 1 && progress[zoneIndex] == 2)
+                {
+                    system("cls");
+
+                    typeText("Metal scraps rattle in the darkness.\n", 25);
+                    typeText("A massive dog steps out from the junkyard.\n\n", 25);
+
+                    typeText("Iron Jaw:\n", 30);
+                    typeText("\"Scrap or flesh... everything breaks.\"\n", 30);
+
+                    waitForEnter();
+                }
+
+                else if (zoneIndex == 2 && progress[zoneIndex] == 2)
+                {
+                    system("cls");
+
+                    typeText("The abandoned block falls completely silent.\n", 25);
+                    typeText("A terrifying presence approaches slowly.\n\n", 25);
+
+                    typeText("Street King:\n", 30);
+                    typeText("\"Only one king rules these streets.\"\n", 30);
+
+                    waitForEnter();
+                }
+
                 int result = battle(player, zoneIndex, progress);
+
 
                 if (result == 0)
                     continue;
@@ -299,6 +345,8 @@ void startStage(Dog *player)
                 if (zoneChoice == 6)
                     break;
 
+                int zoneIndex = zoneChoice - 2;
+
                 // LOCK CHECK FOR STAGE 2
                 if (zoneChoice == 2 && progress[3] < 3)
                 {
@@ -328,18 +376,18 @@ void startStage(Dog *player)
                     continue;
                 }
 
-                int zoneIndex = zoneChoice + 2; // Stage 2 zones: 3,4,5
+                
 
-                // Create enemy BEFORE battle (same enemies but with new skills)
+                // then continue
                 Dog enemy;
                 createEnemy(&enemy);
+
                 int maxEnemies = 3;
 
-                if (zoneIndex == 5)
-                    maxEnemies = 2;
+                if (zoneIndex == 5) maxEnemies = 2;
+                if (zoneIndex == 6 || zoneIndex == 7) maxEnemies = 4;
 
-                if (zoneIndex == 6 || zoneIndex == 7)
-                    maxEnemies = 4;
+                int isBossFight = (progress[zoneIndex] == maxEnemies - 1);
 
                 int i;
 
@@ -379,6 +427,21 @@ void startStage(Dog *player)
                     typeText("You must rest before you battle again!\n", 25);
                     waitForEnter();
                     continue;
+                }
+
+
+                
+                if (zoneIndex == 3 && isBossFight)
+                {
+                    system("cls");
+
+                    typeText("The river current suddenly grows violent.\n", 25);
+                    typeText("The leader of the wild pack emerges.\n\n", 25);
+
+                    typeText("River Alpha:\n", 30);
+                    typeText("\"The weak drown here.\"\n", 30);
+
+                    waitForEnter();
                 }
 
                 int result = battle(player, zoneIndex, progress);
