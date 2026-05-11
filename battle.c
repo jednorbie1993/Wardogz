@@ -223,7 +223,7 @@ void criticalHPScene(Dog *player)
     else
         printf("\n%s struggles to keep fighting...\n", player->name);
 
-    cinematicPause(900);
+    cinematicPause(150);
 }
 // ================= LOSE =================
 
