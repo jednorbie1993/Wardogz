@@ -214,16 +214,13 @@ void criticalHPScene(Dog *player)
 
     int msg = rand() % 3;
 
-    battleDivider();
-
     if (msg == 0)
-        printf("\n%s is barely standing...\n", player->name);
+        printf("%s is barely standing...\n", player->name);
     else if (msg == 1)
-        printf("\nBlood drips onto the ground...\n");
+        printf("Blood drips onto the ground...\n");
     else
-        printf("\n%s struggles to keep fighting...\n", player->name);
+        printf("%s struggles to keep fighting...\n", player->name);
 
-    cinematicPause(150);
 }
 // ================= LOSE =================
 
@@ -409,6 +406,8 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 criticalHPScene(player);
                 criticalHPScene(&enemy);
 
+                waitForEnter();
+
                 player->fatigue = 0;
             }
             else
@@ -471,10 +470,11 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
                 printf("\n\n");
 
-                waitForEnter();
 
                 criticalHPScene(player);
                 criticalHPScene(&enemy);
+
+                waitForEnter();
 
                 player->fatigue -= s.cost;
                 player->fatigue =

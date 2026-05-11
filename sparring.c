@@ -5,6 +5,7 @@
 #include <ctype.h>
 #include "dog.h"
 #include "cinematic.h"
+#include "battle.h"
 
 
 void initSparringProgress(Dog *d) {

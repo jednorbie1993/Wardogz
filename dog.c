@@ -126,7 +126,7 @@ void preBattleScene(int zoneIndex)
     {
         printf("%c", messages[r][i]);
         fflush(stdout);
-        Sleep(40);
+        Sleep(25);
     }
 
     printf("\n\nPress Enter to continue...");
@@ -303,7 +303,7 @@ void createDog(Dog *d)
 
     d->hp = 100;
     d->maxHP = 100;
-    d->attack = 120;
+    d->attack = 220;
     d->speed = 100;
 
     d->defense = 315;

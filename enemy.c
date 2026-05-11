@@ -669,6 +669,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         // FINAL DAMAGE
         player->hp -= enemyDamage;
         player->hp = clamp(player->hp);
+
         printf("%s dealt %d damage!\n", enemy->name, enemyDamage);
     }
 
