@@ -6,7 +6,7 @@
 #include "battle.h"
 #include "dog.h"
 #include "cinematic.h"
-#include "enemy.h"
+#include "enemies/enemy.h"
 
 void runStage1(Dog *player, int progress[])
 {
@@ -92,7 +92,7 @@ void runStage1(Dog *player, int progress[])
             Dog tempEnemy;
             createEnemy(&tempEnemy);
 
-            setEnemyByZone(&tempEnemy, zoneIndex, enemyType);
+            loadStage1Enemies(&tempEnemy, zoneIndex, enemyType);
 
             char *verbs[] = {
                 "showed",
@@ -148,7 +148,7 @@ void runStage1(Dog *player, int progress[])
         // ENEMY SETUP
         // =========================
 
-        setEnemyByZone(&enemy, zoneIndex, i);
+        loadStage1Enemies(&enemy, zoneIndex, i);
 
         // ELITE ENEMY
         if (i == maxEnemies)

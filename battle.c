@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <windows.h>
 #include "dog.h"
-#include "enemy.h"
+#include "enemies/enemy.h"
 #include "skill.h"
 #include "sparring.h"
 #include "dog_utils.h"
@@ -284,7 +284,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 i = 2;
         }
 
-        setEnemyByZone(&enemy, zoneIndex, i);
+        loadStage2Enemies(&enemy, zoneIndex, i);
 
         system("cls");
         printf("\n[WILD TERRITORY ENEMY]\n");
@@ -303,7 +303,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
     { // Stage 1: Urban Strays
         if (i >= 3)
             i = 2;
-        setEnemyByZone(&enemy, zoneIndex, i);
+        loadStage1Enemies(&enemy, zoneIndex, i);
         enemy.numSkills = 0; // No wild skills
     }
 

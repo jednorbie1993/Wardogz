@@ -6,7 +6,7 @@
 #include <ctype.h>
 #include "sparring.h"
 #include "skill.h"
-#include "enemy.h"
+#include "enemies/enemy.h"
 #include "dog.h"
 #include "battle.h"
 #include "stat.h"

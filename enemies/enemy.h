@@ -1,7 +1,7 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include "dog.h"
+#include "../dog.h"
 
 int enemyAttack(Dog *player, Dog *enemy, int *defending);
 void createEnemy(Dog *e);
@@ -17,5 +17,8 @@ int usePackAttack(Dog *user, Dog *target);
 int useAmbush(Dog *user, Dog *target);
 int useHowlDebuff(Dog *user, Dog *target);
 int useFeralRush(Dog *user, Dog *target);
+
+void loadStage1Enemies(Dog *e, int zoneIndex, int enemyType);
+void loadStage2Enemies(Dog *e, int zoneIndex, int enemyType);
 
 #endif
