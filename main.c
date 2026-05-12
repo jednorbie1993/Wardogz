@@ -305,6 +305,6 @@ int main()
 
     played 4/25
 
-                   9111
+    gcc *.c enemies/*.c stages/*.c skills/*.c ui/*.c -o wardogz.exe
 
     */
