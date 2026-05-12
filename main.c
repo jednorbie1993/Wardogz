@@ -307,6 +307,6 @@ int main()
 
     gcc *.c enemies/*.c stages/*.c skills/*.c ui/*.c -o wardogz.exe
 
-    gcc *.c enemies/*.c -o wardogz.exe
+    gcc *.c enemies/*.c -o wardogz.exe; .\wardogz.exe
 
     */
