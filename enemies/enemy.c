@@ -36,6 +36,10 @@ void createEnemy(Dog *e)
 
     e->isConfused = 0;
     e->confuseTurns = 0;
+
+    // NEW DEFAULTS
+    e->zoneType = ZONE_NORMAL;
+    e->personalityType = PERSONALITY_NORMAL;
 }
 
 // =========================
@@ -64,13 +68,13 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     // =========================
     if (enemy->numSkills >= 3)
     {
-        if (strstr(enemy->name, "Ravine") && rand() % 100 < 15)
+        if (enemy->zoneType == ZONE_RAVINE && rand() % 100 < 15)
         {
             printf("Ambush bonus! Speed increased!\n");
             enemy->speed += 3;
         }
 
-        if (strstr(enemy->name, "Trial") && enemy->hp < enemy->maxHP / 2)
+        if (enemy->zoneType == ZONE_TRIAL && enemy->hp < enemy->maxHP / 2)
         {
             printf("Trial Rage activated!\n");
             enemy->attack += 3;
@@ -78,14 +82,14 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
         int skillChoice;
 
-        if (strstr(enemy->name, "Ravine"))
+        if (enemy->zoneType == ZONE_RAVINE)
         {
             if (rand() % 100 < 50)
                 skillChoice = 0;
             else
                 skillChoice = rand() % 2;
         }
-        else if (strstr(enemy->name, "Trial"))
+        else if (enemy->zoneType == ZONE_TRIAL)
         {
             if (enemy->hp < enemy->maxHP / 2)
                 skillChoice = 1;
@@ -129,7 +133,6 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             break;
         }
 
-        // STATUS EFFECTS
         if (player->accuracyModifier < 0)
         {
             player->accuracy += 20;
@@ -169,9 +172,9 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     int enemyDamage = (enemy->attack / 6) + 4;
 
     // =========================
-    // PERSONALITY MODIFIERS
+    // PERSONALITY MODIFIERS (REPLACED)
     // =========================
-    if (strstr(enemy->name, "Alpha") || strstr(enemy->name, "King"))
+    if (enemy->personalityType == PERSONALITY_ALPHA)
     {
         enemyDamage += 6;
 
@@ -189,7 +192,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             displayBattleStatus(*player, *enemy);
         }
     }
-    else if (strstr(enemy->name, "Iron") || strstr(enemy->name, "Guard"))
+    else if (enemy->personalityType == PERSONALITY_TANK)
     {
         enemyDamage -= 2;
 
@@ -205,7 +208,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             displayBattleStatus(*player, *enemy);
         }
     }
-    else if (strstr(enemy->name, "Scrap") || strstr(enemy->name, "Fighter"))
+    else if (enemy->personalityType == PERSONALITY_DESPERATE)
     {
         if (enemy->hp < enemy->maxHP / 2)
         {
@@ -219,7 +222,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             displayBattleStatus(*player, *enemy);
         }
     }
-    else if (strstr(enemy->name, "Skinny") || strstr(enemy->name, "Stray"))
+    else if (enemy->personalityType == PERSONALITY_WEAK)
     {
         enemyDamage -= 2;
     }
@@ -255,9 +258,6 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
     cinematicDots("Enemy attacking");
 
-    // =========================
-    // DAMAGE CALC
-    // =========================
     enemyDamage += rand() % 5;
     enemyDamage -= player->defense / 40;
 
@@ -380,9 +380,6 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     }
     else
     {
-        // =========================
-        // OSSAS COUNTER TRAP (RESTORED)
-        // =========================
         if (player->isCountering && player->counterDamage > 0)
         {
             int triggerChance = 65 + (player->intelligence / 20);

@@ -51,6 +51,24 @@ typedef struct {
     int aiScore;
 } Skill;
 
+// ================= ZONE TYPE =================
+typedef enum
+{
+    ZONE_NORMAL,
+    ZONE_RAVINE,
+    ZONE_TRIAL
+} ZoneType;
+
+// ================= PERSONALITY TYPE =================
+typedef enum
+{
+    PERSONALITY_NORMAL,
+    PERSONALITY_ALPHA,
+    PERSONALITY_TANK,
+    PERSONALITY_DESPERATE,
+    PERSONALITY_WEAK
+} PersonalityType;
+
 // ================= DOG STRUCT =================
 typedef struct {
     char name[50];
@@ -79,6 +97,9 @@ typedef struct {
     int numSkills;                // 🔥 IBINALIK
     int isCountering;
     int counterDamage;
+
+    ZoneType zoneType;
+    PersonalityType personalityType;
 
     int sparringProgress[5];      // 🔥 IBINALIK
 
