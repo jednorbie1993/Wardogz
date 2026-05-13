@@ -34,7 +34,12 @@ typedef enum {
     SKILL_PACK_ATTACK = 20,
     SKILL_AMBUSH,
     SKILL_HOWL_DEBUFF,
-    SKILL_FERAL_RUSH
+    SKILL_FERAL_RUSH,
+
+    SKILL_PRECISION_SHOT,
+    SKILL_TACTICAL_GUARD,
+    SKILL_REINFORCEMENT,
+    SKILL_SELF_DESTRUCT
 
 } SkillID;
 
@@ -56,7 +61,10 @@ typedef enum
 {
     ZONE_NORMAL,
     ZONE_RAVINE,
-    ZONE_TRIAL
+    ZONE_TRIAL,
+    ZONE_FOREST,
+    ZONE_CITY,
+    ZONE_MILITARY
 } ZoneType;
 
 // ================= PERSONALITY TYPE =================
@@ -100,6 +108,7 @@ typedef struct {
 
     ZoneType zoneType;
     PersonalityType personalityType;
+    int guardTurns;
 
     int sparringProgress[5];      // 🔥 IBINALIK
 

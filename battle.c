@@ -9,6 +9,7 @@
 #include "dog_utils.h"
 #include "cinematic.h"
 #include "battle.h"
+#include "enemies/enemy_stage3.h"
 
 // extern globals from dog.c
 extern int animationOn;
@@ -260,35 +261,22 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
     enemy.bleedDamage = 0;
     enemy.accuracyModifier = 0;
-    enemy.numSkills = 0;
-    player->bleedDamage = 0; // Player safety too
+    //enemy.numSkills = 0;
+    player->bleedDamage = 0;
     player->accuracyModifier = 0;
 
-    // 🔥 ENEMY SETUP - CLEAN & SIMPLE
     int i = progress[zoneIndex];
-    if (zoneIndex >= 3)
-    {                       // Stage 2: Wild Territory
-        if (zoneIndex == 5) // Ravine (0/2)
-        {
-            if (i >= 2)
-                i = 1;
-        }
-        else if (zoneIndex == 6 || zoneIndex == 7) // Trial + Mountain (0/4)
-        {
-            if (i >= 4)
-                i = 3;
-        }
-        else if (zoneIndex >= 3) // other wild zones (0/3)
-        {
-            if (i >= 3)
-                i = 2;
-        }
 
-        loadStage2Enemies(&enemy, zoneIndex, i);
+    // =========================
+    // STAGE 3 SYSTEM
+    // =========================
+    if (zoneIndex == 3 || zoneIndex == 4)
+    {
+        loadStage3Enemies(&enemy, zoneIndex, i);
 
-        system("cls");
-        printf("\n[WILD TERRITORY ENEMY]\n");
+        printf("\n[MILITARY ENEMY DEPLOYED]\n");
         printf("Enemy: %s\n", enemy.name);
+
         printf("Skills: ");
         for (int s = 0; s < enemy.numSkills; s++)
         {
@@ -297,14 +285,20 @@ int battle(Dog *player, int zoneIndex, int progress[])
                 printf(" | ");
         }
         printf("\n");
+
         waitForEnter();
     }
+    if (zoneIndex == 3 || zoneIndex == 4)
+    {
+        loadStage3Enemies(&enemy, zoneIndex, i);
+    }
+    else if (zoneIndex >= 5)
+    {
+        loadStage2Enemies(&enemy, zoneIndex, i);
+    }
     else
-    { // Stage 1: Urban Strays
-        if (i >= 3)
-            i = 2;
+    {
         loadStage1Enemies(&enemy, zoneIndex, i);
-        enemy.numSkills = 0; // No wild skills
     }
 
     system("cls");

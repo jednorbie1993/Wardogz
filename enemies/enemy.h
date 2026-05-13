@@ -18,7 +18,8 @@ int useAmbush(Dog *user, Dog *target);
 int useHowlDebuff(Dog *user, Dog *target);
 int useFeralRush(Dog *user, Dog *target);
 
-void loadStage1Enemies(Dog *e, int zoneIndex, int enemyType);
-void loadStage2Enemies(Dog *e, int zoneIndex, int enemyType);
+void loadStage1Enemies(Dog *enemy, int zoneIndex, int enemyIndex);
+void loadStage2Enemies(Dog *enemy, int zoneIndex, int enemyIndex);
+void loadStage3Enemies(Dog *enemy, int zoneIndex, int enemyIndex);
 
 #endif
