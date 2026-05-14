@@ -261,7 +261,6 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
     enemy.bleedDamage = 0;
     enemy.accuracyModifier = 0;
-    //enemy.numSkills = 0;
     player->bleedDamage = 0;
     player->accuracyModifier = 0;
 
