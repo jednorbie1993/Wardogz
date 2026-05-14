@@ -128,6 +128,25 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             useFeralRush(enemy, player);
             break;
 
+        // =========================
+        // MILITARY SKILLS
+        // =========================
+        case SKILL_PRECISION_SHOT:
+            usePrecisionShot(enemy, player);
+            break;
+
+        case SKILL_TACTICAL_GUARD:
+            useTacticalGuard(enemy, player);
+            break;
+
+        case SKILL_REINFORCEMENT:
+            useReinforcement(enemy, player);
+            break;
+
+        case SKILL_SELF_DESTRUCT:
+            useSelfDestruct(enemy, player);
+            break;
+
         default:
             printf("%s uses basic attack!\n", enemy->name);
             break;

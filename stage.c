@@ -14,7 +14,7 @@ void startStage(Dog *player)
     int stageChoice;
 
     // progress: 1 = locked, 2 = unlocked, 3 = completed
-    static int progress[3] = {3, 3, 0};
+    static int progress[11] = {3,3,3,3,0,0,0,0,0,0,0};
 
     while (1)
     {

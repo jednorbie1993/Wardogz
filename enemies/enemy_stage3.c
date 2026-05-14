@@ -13,11 +13,15 @@ void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
     enemy->numSkills = 4;
     enemy->zoneType = ZONE_MILITARY;
 
+    if (zoneIndex == 3 && i > 1)
+    i = 1;
 
+    if (zoneIndex == 4 && i > 3)
+    i = 3;
     // =========================
     // ZONE 1: MILITARY OUTPOST
     // =========================
-    if (zoneIndex == 1)
+    if (zoneIndex == 3)
     {
         if (i == 0)
         {
@@ -36,7 +40,7 @@ void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
     // =========================
     // ZONE 2: MILITARY BASE
     // =========================
-    else if (zoneIndex == 2)
+    else if (zoneIndex == 4)
     {
         if (i == 0)
         {
