@@ -13,6 +13,8 @@ void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
     enemy->numSkills = 4;
     enemy->zoneType = ZONE_MILITARY;
 
+    setEnemySkillsMilitary(enemy, zoneIndex);
+
     if (zoneIndex == 3 && i > 1)
     i = 1;
 
@@ -21,11 +23,12 @@ void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
     // =========================
     // ZONE 1: MILITARY OUTPOST
     // =========================
-    if (zoneIndex == 3)
+    if (zoneIndex == 8)
     {
         if (i == 0)
         {
             strcpy(enemy->name, "Rookie Soldier");
+            printf("[DEBUG] enemy name = %s\n", enemy->name);
             enemy->attack += 3;
             enemy->defense += 2;
         }
@@ -40,7 +43,7 @@ void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
     // =========================
     // ZONE 2: MILITARY BASE
     // =========================
-    else if (zoneIndex == 4)
+    else if (zoneIndex == 9)
     {
         if (i == 0)
         {

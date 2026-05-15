@@ -269,25 +269,8 @@ int battle(Dog *player, int zoneIndex, int progress[])
     // =========================
     // STAGE 3 SYSTEM
     // =========================
-    if (zoneIndex == 3 || zoneIndex == 4)
-    {
-        loadStage3Enemies(&enemy, zoneIndex, i);
-
-        printf("\n[MILITARY ENEMY DEPLOYED]\n");
-        printf("Enemy: %s\n", enemy.name);
-
-        printf("Skills: ");
-        for (int s = 0; s < enemy.numSkills; s++)
-        {
-            printf("%s", enemy.skills[s].name);
-            if (s < enemy.numSkills - 1)
-                printf(" | ");
-        }
-        printf("\n");
-
-        waitForEnter();
-    }
-    if (zoneIndex == 3 || zoneIndex == 4)
+    
+    if (zoneIndex >= 8 && zoneIndex <= 11)
     {
         loadStage3Enemies(&enemy, zoneIndex, i);
     }

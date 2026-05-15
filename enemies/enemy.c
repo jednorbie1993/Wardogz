@@ -63,6 +63,7 @@ void enemyQuickAttack(Dog *player, Dog *enemy)
 // =========================
 int enemyAttack(Dog *player, Dog *enemy, int *defending)
 {
+
     // =========================
     // WILD SKILLS SYSTEM
     // =========================
