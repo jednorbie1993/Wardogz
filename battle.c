@@ -415,7 +415,8 @@ int battle(Dog *player, int zoneIndex, int progress[])
                     "I won't hold back anymore.",
                     "You're still standing?",
                     "Tch... annoying.",
-                    "This fight is mine."};
+                    "This fight is mine."
+                };
 
                 char *wildLines[] = {
                     "GRRRR...",
@@ -427,17 +428,38 @@ int battle(Dog *player, int zoneIndex, int progress[])
                     "This land belongs to us.",
                     "Your fear is showing.",
                     "Run while you still can.",
-                    "You're prey now."};
+                    "You're prey now."
+                };
+
+                // 🔥 NEW MILITARY DOGZ LINES
+                char *militaryLines[] = {
+                    "Target acquired. Recalculating...",
+                    "Discipline will prevail!",
+                    "Your resistance is futile.",
+                    "Tactical retreat denied.",
+                    "Engaging counter-protocols!",
+                    "Military precision activated.",
+                    "You cannot defeat ORDER!",
+                    "Reinforcements en route.",
+                    "Error: Target still operational.",
+                    "Commander protocol: ELIMINATE!"
+                };
 
                 int randomLine = rand() % 10;
 
-                if (zoneIndex >= 3)
+                if (zoneIndex >= 8)  // Military Zone (8-11)
+                {
+                    typeText(enemy.name, 25);
+                    printf(": ");
+                    typeText(militaryLines[randomLine], 22);
+                }
+                else if (zoneIndex >= 3)  // Wild Territory
                 {
                     typeText(enemy.name, 25);
                     printf(": ");
                     typeText(wildLines[randomLine], 20);
                 }
-                else
+                else  // Urban Strays
                 {
                     typeText(enemy.name, 25);
                     printf(": ");
@@ -569,27 +591,9 @@ int battle(Dog *player, int zoneIndex, int progress[])
             applyBattleStatGain(player);
             checkSkillUnlock(player);
 
-            /// 🔥 FIXED PROGRESS SYSTEM
-            if (zoneIndex == 7) // Mountain Den
-            {
-                if (progress[zoneIndex] < 4)
-                    progress[zoneIndex]++;
-            }
-            else if (zoneIndex == 5) // Ravine
-            {
-                if (progress[zoneIndex] < 2)
-                    progress[zoneIndex]++;
-            }
-            else if (zoneIndex == 6) // Trial
-            {
-                if (progress[zoneIndex] < 4)
-                    progress[zoneIndex]++;
-            }
-            else
-            {
-                if (progress[zoneIndex] < 3)
-                    progress[zoneIndex]++;
-            }
+            int maxEnemies[12] = {3,3,3,3,0,2,4,4,2,4,4,3};
+            if (progress[zoneIndex] < maxEnemies[zoneIndex])
+            progress[zoneIndex]++;
 
             player->fatigue = clampFatigue(player->fatigue + 20, player->maxFatigue);
             player->defense = baseDef;

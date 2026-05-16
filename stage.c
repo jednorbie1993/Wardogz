@@ -13,8 +13,8 @@ void startStage(Dog *player)
 {
     int stageChoice;
 
-    // progress: 1 = locked, 2 = unlocked, 3 = completed
-    static int progress[11] = {3,3,3,3,0,0,0,0,0,0,0};
+    // progress: Stage1(0-3), Stage2(5-7), Stage3(8-11)
+    static int progress[12] = {3,3,3,3,0,0,0,4,0,0,0,0};
 
     while (1)
     {
@@ -22,15 +22,15 @@ void startStage(Dog *player)
 
         printf("=== SELECT STAGE ===\n\n");
 
-        printf("1. Urban Strays\n");
+        printf("1. Urban Strays (COMPLETED)\n");
 
         if (progress[0] >= 3)
-            printf("2. Wild Territory\n");
+            printf("2. Wild Territory (%d/4)\n", progress[7]);
         else
             printf("2. Wild Territory (Locked)\n");
 
-        if (progress[1] >= 3)
-            printf("3. Military Zone\n");
+        if (progress[7] >= 4)
+            printf("3. Military Zone (UNLOCKED)\n");
         else
             printf("3. Military Zone (Locked)\n");
 
@@ -67,22 +67,20 @@ void startStage(Dog *player)
         {
             if (progress[0] < 3)
             {
-                printf("Stage 2 is locked!\n");
+                printf("Complete Urban Strays first!\n");
                 waitForEnter();
                 continue;
             }
-
             runStage2(player, progress);
         }
         else if (stageChoice == 3)
         {
-            if (progress[1] < 3)
+            if (progress[7] < 4)
             {
-                printf("Military Zone is locked!\n");
+                printf("Complete Wild Territory first!\n");
                 waitForEnter();
                 continue;
             }
-
             runStage3(player, progress);
         }
     }

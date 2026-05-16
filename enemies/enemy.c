@@ -99,12 +99,24 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             else
                 skillChoice = rand() % 3;
         }
+        else if (enemy->zoneType == ZONE_MILITARY)
+        {
+            int r = rand() % 100;
+
+            if (enemy->hp < enemy->maxHP * 0.2)
+                skillChoice = 3; // Self Destruct panic
+            else if (r < 35)
+                skillChoice = 0; // Precision
+            else if (r < 55)
+                skillChoice = 1; // Guard
+            else if (r < 80)
+                skillChoice = 2; // Heal
+            else
+                skillChoice = 0;
+        }
         else
         {
-            if (rand() % 100 < 65)
-                skillChoice = 0;
-            else
-                skillChoice = rand() % enemy->numSkills;
+            skillChoice = rand() % enemy->numSkills;
         }
 
         printf("%s snarls viciously...\n", enemy->name);

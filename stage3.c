@@ -9,6 +9,14 @@
 #include "enemies/enemy.h"
 #include "enemies/enemy_stage3.h"
 
+int getZoneMax(int zoneIndex)
+{
+    if (zoneIndex == 8) return 2;   // Military Outpost
+    if (zoneIndex == 9 || zoneIndex == 10) return 4;  // Training/Sniper
+    if (zoneIndex == 11) return 3;  // Commander Base
+    return 2; // default
+}
+
 void runStage3(Dog *player, int progress[])
 {
     int zoneChoice;
@@ -21,21 +29,21 @@ void runStage3(Dog *player, int progress[])
         printf("=== STAGE 3: MILITARY ZONE ===\n\n");
 
         printf("1. Military Outpost (%d/2)\n", progress[8]);
-
+        
         if (progress[8] >= 2)
             printf("2. Tactical Training Grounds (%d/4)\n", progress[9]);
         else
-            printf("2. Tactical Training Grounds (Locked)\n");
+            printf("2. Tactical Training Grounds (LOCKED)\n");
 
         if (progress[9] >= 4)
             printf("3. Sniper Valley (%d/4)\n", progress[10]);
         else
-            printf("3. Sniper Valley (Locked)\n");
+            printf("3. Sniper Valley (LOCKED)\n");
 
         if (progress[10] >= 4)
             printf("4. Commander Base (%d/3)\n", progress[11]);
         else
-            printf("4. Commander Base (Locked)\n");
+            printf("4. Commander Base (LOCKED)\n");
 
         printf("5. Back\n");
         printf("Choice: ");
@@ -62,30 +70,33 @@ void runStage3(Dog *player, int progress[])
             return;
 
         // =========================
-        // ZONE INDEX (OFFSET AFTER STAGE 2)
+        // ZONE INDEX MAPPING
         // =========================
-        int zoneIndex = zoneChoice + 7;
+        int zoneIndex;
+        if (zoneChoice == 1) zoneIndex = 8;
+        else if (zoneChoice == 2) zoneIndex = 9;
+        else if (zoneChoice == 3) zoneIndex = 10;
+        else if (zoneChoice == 4) zoneIndex = 11;
+        else continue;
 
         // =========================
         // LOCK CHECKS
         // =========================
         if (zoneChoice == 2 && progress[8] < 2)
         {
-            printf("Finish Zone 1 first!\n");
+            printf("Complete Military Outpost first!\n");
             waitForEnter();
             continue;
         }
-
         if (zoneChoice == 3 && progress[9] < 4)
         {
-            printf("Finish Zone 2 first!\n");
+            printf("Complete Tactical Training Grounds first!\n");
             waitForEnter();
             continue;
         }
-
         if (zoneChoice == 4 && progress[10] < 4)
         {
-            printf("Finish Zone 3 first!\n");
+            printf("Complete Sniper Valley first!\n");
             waitForEnter();
             continue;
         }
@@ -95,55 +106,30 @@ void runStage3(Dog *player, int progress[])
         // =========================
         Dog enemy;
         createEnemy(&enemy);
-
         enemy.zoneType = ZONE_MILITARY;
 
-        int maxEnemies = 2;
-
-        if (zoneIndex == 9 || zoneIndex == 10)
-            maxEnemies = 4;
-
-        if (zoneIndex == 11)
-            maxEnemies = 3;
-
         int i;
+        int zoneMax = getZoneMax(zoneIndex);
 
         // =========================
-        // REPLAY MODE (MILITARY INTEL FILES)
+        // REPLAY MODE (SIMPLE & SAFE)
         // =========================
-        if (progress[zoneIndex] >= maxEnemies)
+        if (progress[zoneIndex] >= zoneMax)
         {
-            printf("\n");
-
-            int enemyType = rand() % maxEnemies;
-
+            printf("\n[MILITARY INTEL]: Training data acquired...\n");
+            
+            int enemyType = rand() % zoneMax;
             Dog tempEnemy;
             createEnemy(&tempEnemy);
-
             loadStage3Enemies(&tempEnemy, zoneIndex, enemyType);
-
-            char *intelLog[] = {
-                "Enemy patrol pattern recorded.",
-                "Tactical movement observed.",
-                "Squad formation detected.",
-                "Commander response simulated."
-            };
-
-            int log = rand() % 4;
-
-            printf("%s appeared\n\n", tempEnemy.name);
-            printf("[MILITARY INTEL]: %s\n", intelLog[log]);
-
+            
+            printf("%s patrol pattern recorded!\n", tempEnemy.name);
             if (systemLog)
                 printf(" (REPLAY MODE)\n");
-
+            
             waitForEnter();
-
-            // elite chance (commander sighting)
-            if (rand() % 100 < 20)
-                i = maxEnemies;
-            else
-                i = rand() % maxEnemies;
+            
+            i = (rand() % 100 < 20) ? (zoneMax) : (rand() % zoneMax);
         }
         else
         {
@@ -156,27 +142,23 @@ void runStage3(Dog *player, int progress[])
         loadStage3Enemies(&enemy, zoneIndex, i);
 
         // =========================
-        // ELITE COMMANDER UNIT
+        // BOSS FIGHT (Last enemy)
         // =========================
-        if (i == maxEnemies)
+        if (i == zoneMax - 1)
         {
-            strcpy(enemy.name, "COMMANDER UNIT");
-
-            enemy.attack += 20;
-            enemy.defense += 15;
-            enemy.speed += 10;
+            printf("\n*** ELITE MILITARY DOGZ BOSS DETECTED! ***\n");
+            enemy.attack += 15;
+            enemy.defense += 12;
+            enemy.speed += 8;
             enemy.maxHP += 60;
             enemy.hp = enemy.maxHP;
         }
 
         // =========================
-        // INTRO FIGHT
+        // INTRO
         // =========================
-        if (progress[zoneIndex] < maxEnemies)
-        {
-            printf("\nENGAGING: %s\n", enemy.name);
-            waitForEnter();
-        }
+        printf("\nENGAGING: %s\n", enemy.name);
+        waitForEnter();
 
         // =========================
         // PLAYER CHECK
@@ -184,26 +166,19 @@ void runStage3(Dog *player, int progress[])
         if (player->hp <= 0)
         {
             system("cls");
-            typeText("You must recover before re-engaging military forces!\n", 25);
+            typeText("Recover HP before engaging Military Dogz!\n", 25);
             waitForEnter();
             continue;
         }
 
         // =========================
-        // BOSS INTRO
+        // FINAL BOSS INTRO
         // =========================
-        int isBossFight = (progress[zoneIndex] == maxEnemies - 1);
-
-        if (zoneIndex == 11 && isBossFight)
+        if (zoneIndex == 11 && i == 2)
         {
             system("cls");
-
-            typeText("Surveillance systems activate...\n", 25);
-            typeText("A high-ranking commander steps forward.\n\n", 25);
-
-            typeText("COMMANDER AI:\n", 30);
-            typeText("\"Order is absolute. Resistance is irrelevant.\"\n", 30);
-
+            typeText("ALERT: COMMANDER DOGZ DEPLOYED\n", 30);
+            typeText("Military Dogz Commander: \"Discipline will crush chaos!\"\n\n", 28);
             waitForEnter();
         }
 
@@ -216,39 +191,32 @@ void runStage3(Dog *player, int progress[])
             continue;
 
         // =========================
-        // ESCAPE / SURRENDER
+        // VICTORY PROGRESS
+        // =========================
+        if (result == 1)
+        {
+            if (progress[zoneIndex] < zoneMax)
+            {
+                progress[zoneIndex]++;
+                printf("Zone Progress: %d/%d\n", progress[zoneIndex], zoneMax);
+                waitForEnter();
+            }
+        }
+
+        // =========================
+        // DEFEAT MESSAGE
         // =========================
         if (result == 2)
         {
             system("cls");
-
-            int outro = rand() % 4;
-
-            printf("\n");
-
-            switch (outro)
-            {
-                case 0:
-                    typeText("Military tactics overwhelmed me...\n", 25);
-                    typeText("Need to rethink strategy.\n", 25);
-                    break;
-
-                case 1:
-                    typeText("Their coordination is insane...\n", 25);
-                    typeText("I barely escaped.\n", 25);
-                    break;
-
-                case 2:
-                    typeText("That commander-level pressure...\n", 25);
-                    typeText("Too dangerous.\n", 25);
-                    break;
-
-                case 3:
-                    typeText("This is no longer wild territory...\n", 25);
-                    typeText("It's war.\n", 25);
-                    break;
-            }
-
+            char *defeatMsg[] = {
+                "Military Dogz tactics too strong...\n",
+                "Their formation overwhelmed me...\n",
+                "Need better strategy against elites...\n",
+                "Commander Dogz precision is deadly...\n"
+            };
+            int msg = rand() % 4;
+            typeText(defeatMsg[msg], 25);
             waitForEnter();
         }
     }
