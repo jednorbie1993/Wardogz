@@ -19,9 +19,12 @@ int main()
     createDog(&player);
 
     int restCount = 0;
+    int progress[12] = {0};
 
     while (1)
     {
+
+
         system("cls");
         printf("===== WARDOGZ MENU =====\n");
         printf("1. Wardogz\n");
@@ -156,7 +159,7 @@ int main()
         else if (choice == 3)
         {
             system("cls");
-            startStage(&player);
+            startStage(&player, progress);
             restCount = 0;
             player.fatigue = clampFatigue(player.fatigue - 10, player.maxFatigue);
         }

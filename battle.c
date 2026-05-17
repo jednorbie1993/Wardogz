@@ -13,6 +13,7 @@
 
 // extern globals from dog.c
 extern int animationOn;
+
 int cinematicMode = 1;
 
 void cinematicPause(int ms)
@@ -591,9 +592,16 @@ int battle(Dog *player, int zoneIndex, int progress[])
             applyBattleStatGain(player);
             checkSkillUnlock(player);
 
-            int maxEnemies[12] = {3,3,3,3,0,2,4,4,2,4,4,3};
+            int maxEnemies[12] =
+            {
+                3,3,3,
+                3,3,2,4,4,
+                2,4,4,3
+            };
             if (progress[zoneIndex] < maxEnemies[zoneIndex])
-            progress[zoneIndex]++;
+            {
+                progress[zoneIndex]++;
+            }
 
             player->fatigue = clampFatigue(player->fatigue + 20, player->maxFatigue);
             player->defense = baseDef;

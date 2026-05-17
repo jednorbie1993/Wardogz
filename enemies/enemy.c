@@ -81,45 +81,68 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             enemy->attack += 3;
         }
 
-        int skillChoice;
+        int skillChoice = 0;
 
+        // =========================
+        // ZONE: RAVINE
+        // =========================
         if (enemy->zoneType == ZONE_RAVINE)
         {
-            if (rand() % 100 < 50)
-                skillChoice = 0;
-            else
-                skillChoice = rand() % 2;
+            int pool[] = {0, 1};
+            skillChoice = pool[rand() % 2];
         }
+
+        // =========================
+        // ZONE: TRIAL
+        // =========================
         else if (enemy->zoneType == ZONE_TRIAL)
         {
             if (enemy->hp < enemy->maxHP / 2)
                 skillChoice = 1;
-            else if (rand() % 100 < 45)
-                skillChoice = 0;
             else
-                skillChoice = rand() % 3;
+            {
+                int pool[] = {0, 1, 2};
+                skillChoice = pool[rand() % 3];
+            }
         }
+
+        // =========================
+        // ZONE: MILITARY (FIXED PROPERLY)
+        // =========================
         else if (enemy->zoneType == ZONE_MILITARY)
         {
             int r = rand() % 100;
 
             if (enemy->hp < enemy->maxHP * 0.2)
-                skillChoice = 3; // Self Destruct panic
-            else if (r < 35)
-                skillChoice = 0; // Precision
-            else if (r < 55)
-                skillChoice = 1; // Guard
+                skillChoice = 3; // Self Destruct
+            else if (r < 25)
+                skillChoice = 0; // Precision Shot
+            else if (r < 45)
+                skillChoice = 1; // Tactical Guard
+            else if (r < 60)
+                skillChoice = 2; // Reinforcement
             else if (r < 80)
-                skillChoice = 2; // Heal
+                skillChoice = 4; // Barrage Fire
             else
-                skillChoice = 0;
+                skillChoice = 5; // Military Charge
         }
+
+        // =========================
+        // DEFAULT SAFETY
+        // =========================
         else
         {
             skillChoice = rand() % enemy->numSkills;
         }
 
         printf("%s snarls viciously...\n", enemy->name);
+
+        // SAFETY CHECK (IMPORTANT)
+        if (skillChoice < 0 || skillChoice >= MAX_SKILLS)
+        {
+            printf("%s hesitates...\n", enemy->name);
+            skillChoice = 0;
+        }
 
         SkillID skillId = enemy->skills[skillChoice].id;
 
@@ -158,6 +181,14 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
         case SKILL_SELF_DESTRUCT:
             useSelfDestruct(enemy, player);
+            break;
+
+        case SKILL_BARRAGE_FIRE:
+            useBarrageFire(enemy, player);
+            break;
+
+        case SKILL_MILITARY_CHARGE:
+            useMilitaryCharge(enemy, player);
             break;
 
         default:

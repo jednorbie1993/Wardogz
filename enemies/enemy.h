@@ -23,6 +23,8 @@ int usePrecisionShot(Dog *user, Dog *target);
 int useTacticalGuard(Dog *user, Dog *target);
 int useReinforcement(Dog *user, Dog *target);
 int useSelfDestruct(Dog *user, Dog *target);
+int useMilitaryCharge(Dog *user, Dog *target);
+int useBarrageFire(Dog *user, Dog *target);
 
 void setEnemySkillsMilitary(Dog *enemy, int zoneIndex);
 

@@ -237,14 +237,17 @@ void setEnemySkillsMilitary(Dog *enemy, int zoneIndex)
     strcpy(enemy->skills[3].name, "Self Destruct");
     enemy->skills[3].power = 50;
 
-    // NEW SKILLS 5 & 6
-    enemy->skills[4].id = 100; // Barrage Fire
+    enemy->skills[4].id = SKILL_BARRAGE_FIRE;
     strcpy(enemy->skills[4].name, "Barrage Fire");
     enemy->skills[4].power = 20;
 
-    enemy->skills[5].id = 101; // Military Charge
+    enemy->skills[4].cooldown = 2; // optional kung may cooldown system ka
+
+    enemy->skills[5].id = SKILL_MILITARY_CHARGE;
     strcpy(enemy->skills[5].name, "Military Charge");
     enemy->skills[5].power = 25;
+
+    enemy->skills[5].cooldown = 3;
 
     enemy->numSkills = 6;
 

@@ -3,7 +3,7 @@
 
 #include "dog.h"
 
-void startStage(Dog *player);
+void startStage(Dog *player, int progress[]);
 void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
 int battle(Dog *player, int zoneIndex, int progress[]);  // ✅ ADD THIS
 

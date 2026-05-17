@@ -301,8 +301,8 @@ void createDog(Dog *d)
     fgets(d->name, 50, stdin);
     d->name[strcspn(d->name, "\n")] = 0;
 
-    d->hp = 100;
-    d->maxHP = 100;
+    d->hp = 900;
+    d->maxHP = 900;
     d->attack = 920;
     d->speed = 100;
 
