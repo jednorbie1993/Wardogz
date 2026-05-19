@@ -28,6 +28,16 @@ int useBarrageFire(Dog *user, Dog *target);
 
 void setEnemySkillsMilitary(Dog *enemy, int zoneIndex);
 
+// Add this at the TOP of enemy.c (after your includes):
+
+// 🧬 BIO LAB SKILLS FORWARD DECLARATIONS
+int useMutationSurge(Dog *user, Dog *target);
+int useBioShield(Dog *user, Dog *target);
+int useCellRegen(Dog *user, Dog *target);
+int useContainedExplosion(Dog *user, Dog *target);
+int useAcidSpit(Dog *user, Dog *target);
+int useNeuroToxin(Dog *user, Dog *target);
+
 void loadStage1Enemies(Dog *enemy, int zoneIndex, int enemyIndex);
 void loadStage2Enemies(Dog *enemy, int zoneIndex, int enemyIndex);
 void loadStage3Enemies(Dog *enemy, int zoneIndex, int enemyIndex);

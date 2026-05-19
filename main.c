@@ -315,3 +315,9 @@ int main()
     gcc *.c enemies/*.c -o wardogz.exe
 
     */
+  /*int progress[12] =
+        {
+            3,3,3,
+            3,3,2,4,4,
+            2,4,4,3
+        };*/

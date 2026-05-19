@@ -128,6 +128,27 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         }
 
         // =========================
+        // ZONE: BIO-LAB (ADD THIS)
+        // =========================
+        else if (enemy->zoneType == ZONE_BIOLAB)
+        {
+            int r = rand() % 100;
+
+            if (enemy->hp < enemy->maxHP * 0.25)
+                skillChoice = 3; // Contained Explosion
+            else if (r < 20)
+                skillChoice = 0; // Mutation Surge
+            else if (r < 35)
+                skillChoice = 1; // Bio Shield
+            else if (r < 50)
+                skillChoice = 2; // Cell Regeneration
+            else if (r < 70)
+                skillChoice = 4; // Acid Spit
+            else
+                skillChoice = 5; // Neuro Toxin
+        }
+
+        // =========================
         // DEFAULT SAFETY
         // =========================
         else
@@ -190,6 +211,32 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         case SKILL_MILITARY_CHARGE:
             useMilitaryCharge(enemy, player);
             break;
+        // =========================
+        // BIO LAB SKILLS (ADD THIS)
+        // =========================
+        case SKILL_MUTATION_SURGE:
+            useMutationSurge(enemy, player);
+            break;
+
+        case SKILL_BIO_SHIELD:
+            useBioShield(enemy, player);
+            break;
+
+        case SKILL_CELL_REGEN:
+            useCellRegen(enemy, player);
+            break;
+
+        case SKILL_CONTAINED_EXPLOSION:
+            useContainedExplosion(enemy, player);
+            break;
+
+        case SKILL_ACID_SPIT:
+            useAcidSpit(enemy, player);
+            break;
+
+        case SKILL_NEURO_TOXIN:
+            useNeuroToxin(enemy, player);
+            break;    
 
         default:
             printf("%s uses basic attack!\n", enemy->name);

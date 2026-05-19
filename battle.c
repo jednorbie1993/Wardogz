@@ -10,6 +10,7 @@
 #include "cinematic.h"
 #include "battle.h"
 #include "enemies/enemy_stage3.h"
+#include "stage4.h"
 
 // extern globals from dog.c
 extern int animationOn;
@@ -271,15 +272,19 @@ int battle(Dog *player, int zoneIndex, int progress[])
     // STAGE 3 SYSTEM
     // =========================
     
-    if (zoneIndex >= 8 && zoneIndex <= 11)
+    if (zoneIndex >= 12 && zoneIndex <= 15)  // Stage 4: Bio-Containment
+    {
+        loadStage4Enemies(&enemy, zoneIndex, i);
+    }
+    else if (zoneIndex >= 8 && zoneIndex <= 11)  // Stage 3: Military
     {
         loadStage3Enemies(&enemy, zoneIndex, i);
     }
-    else if (zoneIndex >= 5)
+    else if (zoneIndex >= 3 && zoneIndex <= 7)  // Stage 2: Wild
     {
         loadStage2Enemies(&enemy, zoneIndex, i);
     }
-    else
+    else  // Stage 1: Urban
     {
         loadStage1Enemies(&enemy, zoneIndex, i);
     }
@@ -446,9 +451,29 @@ int battle(Dog *player, int zoneIndex, int progress[])
                     "Commander protocol: ELIMINATE!"
                 };
 
+                // 🔥 NEW BIO LAB LINES (ADD THIS)
+                char *bioLabLines[] = {
+                    "Subject containment failing...",
+                    "ERROR: Target still operational.",
+                    "Bio-signature detected. Engaging.",
+                    "Containment protocol: ACTIVATE!",
+                    "Sample analysis complete. ELIMINATE.",
+                    "Experiment success rate: 99%...",
+                    "Hybrid systems online.",
+                    "PROJECT Omega engaging.",
+                    "Mutation surge: IMPUTING!",
+                    "BREACH IMMINENT!"
+                };
+
                 int randomLine = rand() % 10;
 
-                if (zoneIndex >= 8)  // Military Zone (8-11)
+                if (zoneIndex >= 12)  // Bio-Containment Zone (12-15)
+                {
+                    typeText(enemy.name, 25);
+                    printf(": ");
+                    typeText(bioLabLines[randomLine], 22);
+                }
+                else if (zoneIndex >= 8)  // Military Zone (8-11)
                 {
                     typeText(enemy.name, 25);
                     printf(": ");
@@ -592,11 +617,12 @@ int battle(Dog *player, int zoneIndex, int progress[])
             applyBattleStatGain(player);
             checkSkillUnlock(player);
 
-            int maxEnemies[12] =
+            int maxEnemies[16] =
             {
-                3,3,3,
-                3,3,2,4,4,
-                2,4,4,3
+                3,3,3,        // Stage 1: Urban Strays (zones 0-2)
+                3,3,2,4,4,   // Stage 2: Wild Territory (zones 3-7)
+                2,4,4,3,      // Stage 3: Military Zone (zones 8-11)
+                2,4,4,3       // Stage 4: Bio-Containment (zones 12-15)
             };
             if (progress[zoneIndex] < maxEnemies[zoneIndex])
             {

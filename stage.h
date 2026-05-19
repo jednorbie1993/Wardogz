@@ -9,5 +9,7 @@ int battle(Dog *player, int zoneIndex, int progress[]);  // ✅ ADD THIS
 
 void loadStage1Enemies(Dog *e, int zoneIndex, int enemyType);
 void loadStage2Enemies(Dog *e, int zoneIndex, int enemyType);
+void loadStage4Enemies(Dog *e, int zoneIndex, int enemyType);
+void runStage4(Dog *player, int progress[]);
 
 #endif

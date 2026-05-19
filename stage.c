@@ -6,6 +6,7 @@
 #include "stage1.h"
 #include "stage2.h"
 #include "stage3.h"
+#include "stage4.h"  // ADD THIS
 #include "dog.h"
 #include "cinematic.h"
 
@@ -13,11 +14,18 @@ void startStage(Dog *player, int progress[])
 {
     int stageChoice;
 
-    // progress: Stage1(0-3), Stage2(5-7), Stage3(8-11)
+    // progress: Stage1(0-3), Stage2(5-7), Stage3(8-11), Stage4(12-15)
     
     while (1)
     {
         system("cls");
+        int progress[16] =
+        {
+            3,3,3,
+            3,3,2,4,4,
+            2,4,4,3,
+            3,3,3,
+        };
         
         int urbanComplete =
         (progress[0] >= 3) +
@@ -37,6 +45,12 @@ void startStage(Dog *player, int progress[])
         (progress[10] >= 4) +
         (progress[11] >= 3);
 
+    int bioLabComplete =
+        (progress[12] >= 2) +
+        (progress[13] >= 4) +
+        (progress[14] >= 4) +
+        (progress[15] >= 3);
+
 
         printf("=== SELECT STAGE ===\n\n");
 
@@ -52,7 +66,12 @@ void startStage(Dog *player, int progress[])
         else
             printf("3. Military Zone (Locked)\n");
 
-        printf("4. Back\n\n");
+        if (militaryComplete >= 4)
+            printf("4. Bio-Containment Zone (%d/4)\n", bioLabComplete);
+        else
+            printf("4. Bio-Containment Zone (Locked)\n");
+
+        printf("5. Back\n\n");
         printf("Choice: ");
 
         char input[10];
@@ -67,14 +86,14 @@ void startStage(Dog *player, int progress[])
 
         stageChoice = atoi(input);
 
-        if (stageChoice < 1 || stageChoice > 4)
+        if (stageChoice < 1 || stageChoice > 5)
         {
-            printf("Invalid choice! Select 1-4 only.\n");
+            printf("Invalid choice! Select 1-5 only.\n");
             waitForEnter();
             continue;
         }
 
-        if (stageChoice == 4)
+        if (stageChoice == 5)
             return;
 
         if (stageChoice == 1)
@@ -100,6 +119,16 @@ void startStage(Dog *player, int progress[])
                 continue;
             }
             runStage3(player, progress);
+        }
+        else if (stageChoice == 4)
+        {
+            if (militaryComplete < 4)
+            {
+                printf("Complete Military Zone first!\n");
+                waitForEnter();
+                continue;
+            }
+            runStage4(player, progress);  // ADD THIS
         }
     }
 }
