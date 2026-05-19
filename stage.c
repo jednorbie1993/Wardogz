@@ -18,12 +18,6 @@ void startStage(Dog *player, int progress[])
     while (1)
     {
         system("cls");
-        /*int progress[12] =
-        {
-            3,3,3,
-            3,3,2,4,4,
-            2,4,4,3
-        };*/
         
         int urbanComplete =
         (progress[0] >= 3) +
