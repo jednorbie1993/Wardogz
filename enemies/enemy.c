@@ -281,92 +281,14 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
     int enemyDamage = (enemy->attack / 6) + 4;
 
-    // =========================
-    // PERSONALITY MODIFIERS (REPLACED)
-    // =========================
-    if (enemy->personalityType == PERSONALITY_ALPHA)
+    if (enemy->zoneType == ZONE_CITY)
     {
-        enemyDamage += 6;
-
-        if (rand() % 100 < 20)
-        {
-            printf("\n");
-            typeText(enemy->name, 30);
-            typeText(" is ENRAGED!\n", 30);
-
-            enemyDamage += 8;
-
-            waitForEnter();
-
-            system("cls");
-            displayBattleStatus(*player, *enemy);
-        }
-    }
-    else if (enemy->personalityType == PERSONALITY_TANK)
-    {
-        enemyDamage -= 2;
-
-        if (rand() % 100 < 30)
-        {
-            printf("\nEnemy HARDENED!\n");
-
-            enemyDamage = (enemyDamage * 70) / 100;
-
-            waitForEnter();
-
-            system("cls");
-            displayBattleStatus(*player, *enemy);
-        }
-    }
-    else if (enemy->personalityType == PERSONALITY_DESPERATE)
-    {
-        if (enemy->hp < enemy->maxHP / 2)
-        {
-            enemyDamage += 5;
-
-            printf("\nEnemy is DESPERATE!\n");
-
-            waitForEnter();
-
-            system("cls");
-            displayBattleStatus(*player, *enemy);
-        }
-    }
-    else if (enemy->personalityType == PERSONALITY_WEAK)
-    {
-        enemyDamage -= 2;
-    }
-
-    // =========================
-    // MOVE TYPE
-    // =========================
-    int moveType = rand() % 3;
-    char *moveName = "Attack";
-
-    if (moveType == 0)
-    {
-        enemyDamage += 5;
-        moveName = "Bite";
-    }
-    else if (moveType == 1)
-    {
-        enemyDamage += 3;
-        moveName = "Scratch";
+        handleStage1EnemyBehavior(player, enemy, &enemyDamage);
     }
     else
     {
-        enemyDamage += 8;
-        moveName = "Lock Jaw";
+        handleStage1EnemyBehavior(player, enemy, &enemyDamage);
     }
-
-    printf("\n");
-
-    typeText(enemy->name, 25);
-    typeText(" used ", 20);
-    typeText(moveName, 35);
-    printf("!\n");
-
-    cinematicDots("Enemy attacking");
 
     enemyDamage += rand() % 5;
     enemyDamage -= player->defense / 40;

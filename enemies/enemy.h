@@ -13,6 +13,8 @@ void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
 void setEnemySkillsWild(Dog *enemy, int zoneIndex, int enemyLevel);
 void enemyQuickAttack(Dog *player, Dog *enemy);
 
+int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage);
+
 // skill-type enemy actions
 int usePackAttack(Dog *user, Dog *target);
 int useAmbush(Dog *user, Dog *target);
