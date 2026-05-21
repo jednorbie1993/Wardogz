@@ -67,7 +67,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     // =========================
     // WILD SKILLS SYSTEM
     // =========================
-    if (enemy->numSkills >= 3)
+    if (enemy->numSkills >= 3 && enemy->zoneType != ZONE_CITY)
     {
         if (enemy->zoneType == ZONE_RAVINE && rand() % 100 < 15)
         {

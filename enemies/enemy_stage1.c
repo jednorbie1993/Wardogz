@@ -6,6 +6,68 @@
 #include "enemy.h"
 #include "../cinematic.h"
 #include "../battle.h"
+#include "enemy_stage1.h"
+
+
+void setEnemySkillsStage1(Dog *enemy)
+{
+    enemy->numSkills = 0;
+
+    enemy->skills[0] = (Skill){
+        "Stray Bite",
+        8,
+        0,
+        SKILL_DAMAGE,
+        90,
+        SKILL_STRAY_BITE,
+        0,
+        0,
+        10
+    };
+
+    enemy->skills[1] = (Skill){
+        "Dirty Scratch",
+        6,
+        0,
+        SKILL_DAMAGE,
+        95,
+        SKILL_DIRTY_SCRATCH,
+        0,
+        0,
+        8
+    };
+
+    enemy->skills[2] = (Skill){
+        "Lock Jaw",
+        12,
+        0,
+        SKILL_DAMAGE,
+        80,
+        SKILL_LOCK_JAW,
+        0,
+        0,
+        15
+    };
+
+    enemy->numSkills = 3;
+
+    if (enemy->personalityType == PERSONALITY_ALPHA)
+    {
+        enemy->skills[3] = (Skill){
+            "Alpha Rage",
+            15,
+            0,
+            SKILL_BUFF,
+            85,
+            SKILL_ALPHA_RAGE,
+            0,
+            0,
+            20
+        };
+
+        enemy->numSkills = 4;
+    }
+}
 
 void loadStage1Enemies(Dog *enemy, int zoneIndex, int i)
 {
@@ -90,6 +152,7 @@ void loadStage1Enemies(Dog *enemy, int zoneIndex, int i)
         strcpy(enemy->name, "Unknown Dog");
         enemy->personalityType = PERSONALITY_NORMAL;
     }
+    setEnemySkillsStage1(enemy);
 }
 
 int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
@@ -147,33 +210,54 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
         *enemyDamage -= 2;
     }
 
-    int moveType = rand() % 3;
-    char *moveName = "Attack";
-
-    if (moveType == 0)
-    {
-        *enemyDamage += 5;
-        moveName = "Bite";
-    }
-    else if (moveType == 1)
-    {
-        *enemyDamage += 3;
-        moveName = "Scratch";
-    }
-    else
-    {
-        *enemyDamage += 8;
-        moveName = "Lock Jaw";
-    }
+    int skillChoice = rand() % enemy->numSkills;
+    Skill skill = enemy->skills[skillChoice];
 
     printf("\n");
 
     typeText(enemy->name, 25);
     typeText(" used ", 20);
-    typeText(moveName, 35);
+    typeText(skill.name, 35);
     printf("!\n");
 
     cinematicDots("Enemy attacking");
 
+    switch (skill.id)
+    {
+    case SKILL_STRAY_BITE:
+        *enemyDamage += skill.power;
+        break;
+
+    case SKILL_DIRTY_SCRATCH:
+        *enemyDamage += skill.power;
+
+        if (rand() % 100 < 20)
+        {
+            player->isBleeding = 1;
+            player->bleedTurns = 2;
+            player->bleedDamage = 3;
+
+            printf("You started bleeding!\n");
+        }
+        break;
+
+    case SKILL_LOCK_JAW:
+        *enemyDamage += skill.power;
+        break;
+
+    case SKILL_ALPHA_RAGE:
+        *enemyDamage += skill.power;
+
+        enemy->attack += 2;
+
+        printf("%s grows more aggressive!\n", enemy->name);
+        break;
+
+    default:
+        *enemyDamage += 4;
+        break;
+    }
+
     return 1;
 }
+
