@@ -280,15 +280,8 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     printf("\n--- ENEMY TURN ---\n");
 
     int enemyDamage = (enemy->attack / 6) + 4;
-
-    if (enemy->zoneType == ZONE_CITY)
-    {
-        handleStage1EnemyBehavior(player, enemy, &enemyDamage);
-    }
-    else
-    {
-        handleStage1EnemyBehavior(player, enemy, &enemyDamage);
-    }
+   
+    handleStage1EnemyBehavior(player, enemy, &enemyDamage);
 
     enemyDamage += rand() % 5;
     enemyDamage -= player->defense / 40;
