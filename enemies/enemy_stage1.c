@@ -241,7 +241,7 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
         }
         break;
 
-    case SKILL_LOCK_JAW:
+    case SKILL_LOCK_JAW: //updated
         *enemyDamage += skill.power;
         break;
 
