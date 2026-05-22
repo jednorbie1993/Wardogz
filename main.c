@@ -306,7 +306,7 @@ int main()
 
     gcc main.c dog.c sparring.c enemy.c stage.c -o wardogz.exe
  
-    played 4/25 5/13 5/14 5/16 5/18 5/20 5/21
+    played 4/25 5/13 5/14 5/16 5/18 5/20 5/21 5/22
 
     gcc *.c enemies/*.c stages/*.c skills/*.c ui/*.c -o wardogz.exe
 
