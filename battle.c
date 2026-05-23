@@ -11,6 +11,7 @@
 #include "battle.h"
 #include "enemies/enemy_stage3.h"
 #include "stage4.h"
+#include "dialogue/battle_dialogue.h"
 
 // extern globals from dog.c
 extern int animationOn;
@@ -246,6 +247,82 @@ void loseSequence(Dog *player, Dog *enemy)
     printf("\nYou are back to full HP!\n");
 }
 
+int handlePlayerDefeat(Dog *player, Dog *enemy, int baseDef, int baseSpd)
+{
+    player->hp = 0;
+
+    system("cls");
+    displayBattleStatus(*player, *enemy);
+
+    int loseMsg = rand() % 3;
+
+    if (loseMsg == 0)
+        printf("\nYou collapse from exhaustion...\n");
+    else if (loseMsg == 1)
+        printf("\nYour vision starts to fade...\n");
+    else
+        printf("\nYou can no longer continue fighting...\n");
+
+    Sleep(900);
+
+    printf("\n YOU LOSE \n");
+
+    player->fatigue = clampFatigue(player->fatigue + 20, player->maxFatigue);
+
+    player->defense = baseDef;
+    player->speed = baseSpd;
+
+    waitForEnter();
+
+    return 0;
+}
+
+int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], int baseDef, int baseSpd)
+{
+    enemy->hp = 0;
+
+    system("cls");
+    displayBattleStatus(*player, *enemy);
+
+    int defeatMsg = rand() % 3;
+
+    if (defeatMsg == 0)
+        printf("\nFinishing blow!\n");
+    else if (defeatMsg == 1)
+        printf("\n%s can no longer fight...\n", enemy->name);
+    else
+        printf("\n%s collapsed...\n", enemy->name);
+
+    Sleep(700);
+
+    printf("\n YOU WIN! \n");
+
+    applyBattleStatGain(player);
+    checkSkillUnlock(player);
+
+    int maxEnemies[16] =
+    {
+        3,3,3,
+        3,3,2,4,4,
+        2,4,4,3,
+        2,4,4,3
+    };
+
+    if (progress[zoneIndex] < maxEnemies[zoneIndex])
+    {
+        progress[zoneIndex]++;
+    }
+
+    player->fatigue = clampFatigue(player->fatigue + 20, player->maxFatigue);
+
+    player->defense = baseDef;
+    player->speed = baseSpd;
+
+    waitForEnter();
+
+    return 1;
+}
+
 int battle(Dog *player, int zoneIndex, int progress[])
 {
     if (player->hp <= 0)
@@ -411,89 +488,8 @@ int battle(Dog *player, int zoneIndex, int progress[])
 
                 printf("\n");
 
-                char *backAlleyLines[] = {
-                    "Not bad...",
-                    "You're tougher than I expected.",
-                    "That attack almost got me.",
-                    "Heh... this is getting fun.",
-                    "You fight pretty well.",
-                    "Let's end this.",
-                    "I won't hold back anymore.",
-                    "You're still standing?",
-                    "Tch... annoying.",
-                    "This fight is mine."
-                };
-
-                char *wildLines[] = {
-                    "GRRRR...",
-                    "The wild shows no mercy.",
-                    "You entered the wrong territory.",
-                    "Only the strong survive here.",
-                    "I'll tear you apart.",
-                    "You can smell the blood in the air.",
-                    "This land belongs to us.",
-                    "Your fear is showing.",
-                    "Run while you still can.",
-                    "You're prey now."
-                };
-
-                // 🔥 NEW MILITARY DOGZ LINES
-                char *militaryLines[] = {
-                    "Target acquired. Recalculating...",
-                    "Discipline will prevail!",
-                    "Your resistance is futile.",
-                    "Tactical retreat denied.",
-                    "Engaging counter-protocols!",
-                    "Military precision activated.",
-                    "You cannot defeat ORDER!",
-                    "Reinforcements en route.",
-                    "Error: Target still operational.",
-                    "Commander protocol: ELIMINATE!"
-                };
-
-                // 🔥 NEW BIO LAB LINES (ADD THIS)
-                char *bioLabLines[] = {
-                    "Subject containment failing...",
-                    "ERROR: Target still operational.",
-                    "Bio-signature detected. Engaging.",
-                    "Containment protocol: ACTIVATE!",
-                    "Sample analysis complete. ELIMINATE.",
-                    "Experiment success rate: 99%...",
-                    "Hybrid systems online.",
-                    "PROJECT Omega engaging.",
-                    "Mutation surge: IMPUTING!",
-                    "BREACH IMMINENT!"
-                };
-
-                int randomLine = rand() % 10;
-
-                if (zoneIndex >= 12)  // Bio-Containment Zone (12-15)
-                {
-                    typeText(enemy.name, 25);
-                    printf(": ");
-                    typeText(bioLabLines[randomLine], 22);
-                }
-                else if (zoneIndex >= 8)  // Military Zone (8-11)
-                {
-                    typeText(enemy.name, 25);
-                    printf(": ");
-                    typeText(militaryLines[randomLine], 22);
-                }
-                else if (zoneIndex >= 3)  // Wild Territory
-                {
-                    typeText(enemy.name, 25);
-                    printf(": ");
-                    typeText(wildLines[randomLine], 20);
-                }
-                else  // Urban Strays
-                {
-                    typeText(enemy.name, 25);
-                    printf(": ");
-                    typeText(backAlleyLines[randomLine], 20);
-                }
-
-                printf("\n\n");
-
+                playEnemyBattleDialogue(zoneIndex, enemy.name);
+                printf("\n");
 
                 criticalHPScene(player);
                 criticalHPScene(&enemy);
@@ -554,87 +550,14 @@ int battle(Dog *player, int zoneIndex, int progress[])
         // 🔥 WIN/LOSE CHECK
         if (player->hp <= 0)
         {
-            player->hp = 0;
-
-            system("cls");
-            displayBattleStatus(*player, enemy);
-
-            // 🔥 Random defeat dialogue
-            int loseMsg = rand() % 3;
-
-            if (loseMsg == 0)
-            {
-                printf("\nYou collapse from exhaustion...\n");
-            }
-            else if (loseMsg == 1)
-            {
-                printf("\nYour vision starts to fade...\n");
-            }
-            else
-            {
-                printf("\nYou can no longer continue fighting...\n");
-            }
-
-            Sleep(900);
-
-            printf("\n YOU LOSE \n");
-
-            player->fatigue = clampFatigue(player->fatigue + 20, player->maxFatigue);
-
-            player->defense = baseDef;
-            player->speed = baseSpd;
-
-            waitForEnter();
-            return 0;
+            return handlePlayerDefeat(player, &enemy, baseDef, baseSpd);
         }
 
         if (enemy.hp <= 0)
         {
-            enemy.hp = 0;
-
-            system("cls");
-            displayBattleStatus(*player, enemy);
-
-            // 🔥 Random defeat message
-            int defeatMsg = rand() % 3;
-
-            if (defeatMsg == 0)
-            {
-                printf("\nFinishing blow!\n");
-            }
-            else if (defeatMsg == 1)
-            {
-                printf("\n%s can no longer fight...\n", enemy.name);
-            }
-            else
-            {
-                printf("\n%s collapsed...\n", enemy.name);
-            }
-
-            Sleep(700);
-
-            printf("\n YOU WIN! \n");
-            applyBattleStatGain(player);
-            checkSkillUnlock(player);
-
-            int maxEnemies[16] =
-            {
-                3,3,3,        // Stage 1: Urban Strays (zones 0-2)
-                3,3,2,4,4,   // Stage 2: Wild Territory (zones 3-7)
-                2,4,4,3,      // Stage 3: Military Zone (zones 8-11)
-                2,4,4,3       // Stage 4: Bio-Containment (zones 12-15)
-            };
-            if (progress[zoneIndex] < maxEnemies[zoneIndex])
-            {
-                progress[zoneIndex]++;
-            }
-
-            player->fatigue = clampFatigue(player->fatigue + 20, player->maxFatigue);
-            player->defense = baseDef;
-            player->speed = baseSpd;
-            waitForEnter();
-            return 1;
+            return handleEnemyDefeat(player, &enemy, zoneIndex, progress, baseDef, baseSpd);
         }
+        
     }
 
     player->defense = baseDef;

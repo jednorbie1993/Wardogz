@@ -294,25 +294,14 @@ int main()
 }    
     /*
 
-    gcc main.c dog.c stage.c enemy.c -o wardogz
-    .\wardogz.exe
-
-    gcc *.c -o wardogz
-    .\wardogz.exe
-
     gcc *.c -o wardo -Wall -Wextra
-
-    gcc *.c -o wardogz.exe; .\wardogz.exe
-
-    gcc main.c dog.c sparring.c enemy.c stage.c -o wardogz.exe
  
     played 4/25 5/13 5/14 5/16 5/18 5/20 5/21 5/22
 
     gcc *.c enemies/*.c stages/*.c skills/*.c ui/*.c -o wardogz.exe
 
-    gcc *.c enemies/*.c -o wardogz.exe; .\wardogz.exe
+    gcc *.c enemies/*.c dialogue/*.c -o wardogz.exe; .\wardogz.exe
 
-    gcc *.c enemies/*.c -o wardogz.exe
 
     */
   /*int progress[12] =

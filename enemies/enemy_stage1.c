@@ -4,25 +4,24 @@
 #include <windows.h>
 
 #include "enemy.h"
+#include "enemy_stage1.h"
 #include "../cinematic.h"
 #include "../battle.h"
-#include "enemy_stage1.h"
-
 
 void setEnemySkillsStage1(Dog *enemy)
 {
-    enemy->numSkills = 0;
+    enemy->numSkills = 3;
 
     enemy->skills[0] = (Skill){
-        "Stray Bite",
-        8,
-        0,
-        SKILL_DAMAGE,
-        90,
-        SKILL_STRAY_BITE,
-        0,
-        0,
-        10
+        "Stray Bite",        // 1. Skill Name
+        8,                   // 2. Power / Damage
+        0,                   // 3. Energy Cost / Mana Cost
+        SKILL_DAMAGE,        // 4. Skill Type
+        90,                  // 5. Accuracy (%)
+        SKILL_STRAY_BITE,    // 6. Skill ID
+        0,                   // 7. Effect Value 1
+        0,                   // 8. Effect Value 2
+        10                   // 9. Cooldown / Duration
     };
 
     enemy->skills[1] = (Skill){
@@ -49,8 +48,6 @@ void setEnemySkillsStage1(Dog *enemy)
         15
     };
 
-    enemy->numSkills = 3;
-
     if (enemy->personalityType == PERSONALITY_ALPHA)
     {
         enemy->skills[3] = (Skill){
@@ -69,7 +66,7 @@ void setEnemySkillsStage1(Dog *enemy)
     }
 }
 
-void loadStage1Enemies(Dog *enemy, int zoneIndex, int i)
+void loadStage1Enemies(Dog *enemy, int zoneIndex, int enemyIndex)
 {
     createEnemy(enemy);
 
@@ -78,12 +75,12 @@ void loadStage1Enemies(Dog *enemy, int zoneIndex, int i)
 
     if (zoneIndex == 0)
     {
-        if (i == 0)
+        if (enemyIndex == 0)
         {
             strcpy(enemy->name, "Skinny Stray");
             enemy->personalityType = PERSONALITY_WEAK;
         }
-        else if (i == 1)
+        else if (enemyIndex == 1)
         {
             strcpy(enemy->name, "Scrap Fighter");
             enemy->attack += 3;
@@ -102,13 +99,13 @@ void loadStage1Enemies(Dog *enemy, int zoneIndex, int i)
     }
     else if (zoneIndex == 1)
     {
-        if (i == 0)
+        if (enemyIndex == 0)
         {
             strcpy(enemy->name, "Rust Hound");
             enemy->defense += 3;
             enemy->personalityType = PERSONALITY_TANK;
         }
-        else if (i == 1)
+        else if (enemyIndex == 1)
         {
             strcpy(enemy->name, "Guard Dog");
             enemy->defense += 5;
@@ -125,13 +122,12 @@ void loadStage1Enemies(Dog *enemy, int zoneIndex, int i)
     }
     else if (zoneIndex == 2)
     {
-        if (i == 0)
+        if (enemyIndex == 0)
         {
             strcpy(enemy->name, "Night Stray");
             enemy->speed += 3;
-            enemy->personalityType = PERSONALITY_NORMAL;
         }
-        else if (i == 1)
+        else if (enemyIndex == 1)
         {
             strcpy(enemy->name, "Sneak Biter");
             enemy->accuracy += 5;
@@ -150,12 +146,12 @@ void loadStage1Enemies(Dog *enemy, int zoneIndex, int i)
     else
     {
         strcpy(enemy->name, "Unknown Dog");
-        enemy->personalityType = PERSONALITY_NORMAL;
     }
+
     setEnemySkillsStage1(enemy);
 }
 
-int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
+void applyStage1Personality(Dog *player, Dog *enemy, int *enemyDamage)
 {
     if (enemy->personalityType == PERSONALITY_ALPHA)
     {
@@ -170,7 +166,6 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
             *enemyDamage += 8;
 
             waitForEnter();
-
             system("cls");
             displayBattleStatus(*player, *enemy);
         }
@@ -186,7 +181,6 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
             *enemyDamage = (*enemyDamage * 70) / 100;
 
             waitForEnter();
-
             system("cls");
             displayBattleStatus(*player, *enemy);
         }
@@ -200,7 +194,6 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
             printf("\nEnemy is DESPERATE!\n");
 
             waitForEnter();
-
             system("cls");
             displayBattleStatus(*player, *enemy);
         }
@@ -210,18 +203,14 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
         *enemyDamage -= 2;
     }
 
-    int skillChoice = rand() % enemy->numSkills;
-    Skill skill = enemy->skills[skillChoice];
+    if (*enemyDamage < 0)
+    {
+        *enemyDamage = 0;
+    }
+}
 
-    printf("\n");
-
-    typeText(enemy->name, 25);
-    typeText(" used ", 20);
-    typeText(skill.name, 35);
-    printf("!\n");
-
-    cinematicDots("Enemy attacking");
-
+void useStage1EnemySkill(Dog *player, Dog *enemy, Skill skill, int *enemyDamage)
+{
     switch (skill.id)
     {
     case SKILL_STRAY_BITE:
@@ -241,13 +230,12 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
         }
         break;
 
-    case SKILL_LOCK_JAW: //updated
+    case SKILL_LOCK_JAW:
         *enemyDamage += skill.power;
         break;
 
     case SKILL_ALPHA_RAGE:
         *enemyDamage += skill.power;
-
         enemy->attack += 2;
 
         printf("%s grows more aggressive!\n", enemy->name);
@@ -257,7 +245,30 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
         *enemyDamage += 4;
         break;
     }
+}
+
+int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
+{
+    if (enemy->numSkills <= 0)
+    {
+        return 0;
+    }
+
+    applyStage1Personality(player, enemy, enemyDamage);
+
+    int skillChoice = rand() % enemy->numSkills;
+    Skill skill = enemy->skills[skillChoice];
+
+    printf("\n");
+
+    typeText(enemy->name, 25);
+    typeText(" used ", 20);
+    typeText(skill.name, 35);
+    printf("!\n");
+
+    cinematicDots("Enemy attacking");
+
+    useStage1EnemySkill(player, enemy, skill, enemyDamage);
 
     return 1;
 }
-
