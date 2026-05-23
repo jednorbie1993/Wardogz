@@ -3,7 +3,7 @@
 #include <time.h>
 #include "dog.h"
 #include <windows.h>
-#include "stage.h"
+#include "stages/stage.h"
 #include <ctype.h>
 #include "sparring.h"
 #include "cinematic.h"
@@ -301,6 +301,8 @@ int main()
     gcc *.c enemies/*.c stages/*.c skills/*.c ui/*.c -o wardogz.exe
 
     gcc *.c enemies/*.c dialogue/*.c -o wardogz.exe; .\wardogz.exe
+
+    gcc *.c enemies/*.c stages/*.c dialogue/*.c -o wardogz.exe; .\wardogz.exe
 
 
     */

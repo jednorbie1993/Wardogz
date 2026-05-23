@@ -1,7 +1,7 @@
 #ifndef STAGE4_H
 #define STAGE4_H
 
-#include "dog.h"
+#include "../dog.h"
 #include <stdio.h>
 
 void loadStage4Enemies(Dog *enemy, int zoneIndex, int enemyType);

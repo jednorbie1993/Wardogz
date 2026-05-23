@@ -3,11 +3,11 @@
 #include <string.h>
 
 #include "stage3.h"
-#include "battle.h"
-#include "dog.h"
-#include "cinematic.h"
-#include "enemies/enemy.h"
-#include "enemies/enemy_stage3.h"
+#include "../battle.h"
+#include "../dog.h"
+#include "../cinematic.h"
+#include "../enemies/enemy.h"
+#include "../enemies/enemy_stage3.h"
 
 int getZoneMax(int zoneIndex)
 {

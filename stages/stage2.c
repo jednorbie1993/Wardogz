@@ -3,10 +3,10 @@
 #include <string.h>
 
 #include "stage2.h"
-#include "battle.h"
-#include "dog.h"
-#include "cinematic.h"
-#include "enemies/enemy.h"
+#include "../battle.h"
+#include "../dog.h"
+#include "../cinematic.h"
+#include "../enemies/enemy.h"
 
 void runStage2(Dog *player, int progress[])
 {

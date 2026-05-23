@@ -2,9 +2,9 @@
 #include <stdlib.h>
 
 #include "stage1.h"
-#include "battle.h"
-#include "dog.h"
-#include "cinematic.h"
+#include "../battle.h"
+#include "../dog.h"
+#include "../cinematic.h"
 
 #define STAGE1_MAX_ENEMIES 3
 

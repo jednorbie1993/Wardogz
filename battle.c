@@ -10,7 +10,7 @@
 #include "cinematic.h"
 #include "battle.h"
 #include "enemies/enemy_stage3.h"
-#include "stage4.h"
+#include "stages/stage4.h"
 #include "dialogue/battle_dialogue.h"
 
 // extern globals from dog.c

@@ -1,7 +1,7 @@
 #ifndef STAGE_H
 #define STAGE_H
 
-#include "dog.h"
+#include "../dog.h"
 
 void startStage(Dog *player, int progress[]);
 void setEnemyByZone(Dog *enemy, int zoneIndex, int i);

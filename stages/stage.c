@@ -7,8 +7,8 @@
 #include "stage2.h"
 #include "stage3.h"
 #include "stage4.h"  // ADD THIS
-#include "dog.h"
-#include "cinematic.h"
+#include "../dog.h"
+#include "../cinematic.h"
 
 void startStage(Dog *player, int progress[])
 {
