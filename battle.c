@@ -48,6 +48,31 @@ void battleDivider()
     printf("====================================\n");
 }
 
+void showEnemyEntrance(Dog *enemy, int zoneIndex)
+{
+    printf("\n");
+
+    if (zoneIndex >= 8 && zoneIndex <= 11)
+    {
+        typeText(enemy->name, 25);
+        typeText(" arrived!", 20);
+    }
+    else if (zoneIndex >= 3 && zoneIndex <= 7)
+    {
+        typeText(enemy->name, 25);
+        typeText(" emerged!", 20);
+    }
+    else
+    {
+        typeText(enemy->name, 25);
+        typeText(" appeared!", 20);
+    }
+
+    printf("\n");
+    waitForEnter();
+}
+
+
 void showHPBarPlayer(int hp, int maxHp)
 {
     static int lastHP = -1;
@@ -364,6 +389,8 @@ int battle(Dog *player, int zoneIndex, int progress[])
     {
         loadStage1Enemies(&enemy, zoneIndex, i);
     }
+
+    showEnemyEntrance(&enemy, zoneIndex);
 
     system("cls");
     zoneStoryIntro(zoneIndex, progress[zoneIndex]);
