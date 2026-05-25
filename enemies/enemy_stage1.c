@@ -254,8 +254,6 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
         return 0;
     }
 
-    applyStage1Personality(player, enemy, enemyDamage);
-
     int skillChoice = rand() % enemy->numSkills;
     Skill skill = enemy->skills[skillChoice];
 
@@ -269,6 +267,8 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
     cinematicDots("Enemy attacking");
 
     useStage1EnemySkill(player, enemy, skill, enemyDamage);
+
+    applyStage1Personality(player, enemy, enemyDamage);
 
     return 1;
 }
