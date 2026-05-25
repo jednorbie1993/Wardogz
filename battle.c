@@ -4,7 +4,7 @@
 #include "dog.h"
 #include "enemies/enemy.h"
 #include "skill.h"
-#include "sparring.h"
+#include "sparring/sparring.h"
 #include "dog_utils.h"
 #include "cinematic.h"
 #include "battle.h"

@@ -5,7 +5,7 @@
 #include <windows.h>
 #include "stages/stage.h"
 #include <ctype.h>
-#include "sparring.h"
+#include "sparring/sparring.h"
 #include "cinematic.h"
 
 int main()
@@ -302,7 +302,8 @@ int main()
 
     gcc *.c enemies/*.c dialogue/*.c -o wardogz.exe; .\wardogz.exe
 
-    gcc *.c enemies/*.c stages/*.c dialogue/*.c -o wardogz.exe; .\wardogz.exe
+    gcc *.c enemies/*.c stages/*.c dialogue/*.c sparring/*.c -o wardogz.exe; .\wardogz.exe
+
 
 
     */

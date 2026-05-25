@@ -4,7 +4,7 @@
 #include <conio.h>
 #include <string.h> // para sa strcspn
 #include <ctype.h>
-#include "sparring.h"
+#include "sparring/sparring.h"
 #include "skill.h"
 #include "enemies/enemy.h"
 #include "dog.h"

@@ -5,7 +5,7 @@
 #define BALANCED 2
 #define CAUTIOUS 3
 
-#include "dog.h"
+#include "../dog.h"
 
 // 🥊 SPARRING-SPECIFIC SKILL IDS (local only)
 typedef enum {

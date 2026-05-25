@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include "dog.h"
-#include "cinematic.h"
-#include "battle.h"
+#include "../dog.h"
+#include "../cinematic.h"
+#include "../battle.h"
 
 void initSparringProgress(Dog *d) {
     for (int i = 0; i < 5; i++) {
