@@ -304,7 +304,7 @@ int main()
 
     gcc *.c enemies/*.c stages/*.c dialogue/*.c sparring/*.c -o wardogz.exe; .\wardogz.exe
 
-
+    .\build.bat
 
     */
   /*int progress[12] =
