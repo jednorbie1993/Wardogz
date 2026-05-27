@@ -6,6 +6,8 @@
 #include "../dog.h"
 #include "../cinematic.h"
 #include "../battle.h"
+#include "ossas.h"
+#include "chubby.h"
 
 void initSparringProgress(Dog *d) {
     for (int i = 0; i < 5; i++) {
@@ -620,27 +622,8 @@ void assignSkills(Dog *d, int type)
 
     if (type == 1) // OSSAS
     {
-        strcpy(d->skills[0].name, "Wild Bite");
-        d->skills[0].type = SKILL_DAMAGE;
-        d->skills[0].power = 12;
-        d->skills[0].accuracy = 90;
-
-        strcpy(d->skills[1].name, "Rush Claw");
-        d->skills[1].type = SKILL_DAMAGE;
-        d->skills[1].power = 11;
-        d->skills[1].accuracy = 95;
-
-        strcpy(d->skills[2].name, "Headbutt");
-        d->skills[2].type = SKILL_DEBUFF;
-        d->skills[2].power = 13;
-        d->skills[2].accuracy = 80;
-
-        strcpy(d->skills[3].name, "Rage Leap");
-        d->skills[3].type = SKILL_DAMAGE;
-        d->skills[3].power = 10;
-        d->skills[3].accuracy = 65;
-        d->skills[3].cooldown = 3;
-        d->skills[3].cdLeft = 0;
+        createOssas(&enemy);
+        assignOssasSkills(&enemy);
     }
 
     // CHUBBY - TANK WITH DAMAGE BUFF
@@ -772,8 +755,16 @@ int sparringBattle(Dog *player, int type)
     Dog sparPlayer;
 
     createSparPlayer(player, &sparPlayer); // FAIR STATS
-    createSparPartner(&enemy, type);
-    assignSkills(&enemy, type);
+    if (type == 1)
+    {
+        createOssas(&enemy);
+        assignOssasSkills(&enemy);
+    }
+    else if (type == 2)
+    {
+        createChubby(&enemy);
+        assignChubbySkills(&enemy);
+    }
 
     sparPlayer.hp = sparPlayer.maxHP;
     enemy.hp = enemy.maxHP;
