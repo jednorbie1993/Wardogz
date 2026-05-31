@@ -6,8 +6,13 @@
 #include "../dog.h"
 #include "../cinematic.h"
 #include "../battle.h"
-#include "ossas.h"
-#include "chubby.h"
+#include "characters/ossas.h"
+#include "characters/chubby.h"
+#include "characters/snoop.h"
+#include "characters/tiny.h"
+#include "characters/jeward.h"
+#include "sparring_unlocks.h"
+#include "sparring_ai.h"
 
 void initSparringProgress(Dog *d) {
     for (int i = 0; i < 5; i++) {
@@ -72,150 +77,6 @@ void applySparReward(Dog *player, int type)
 
     printf("Spar reward applied!\n");
     waitForEnter();
-}
-
-void checkSparringUnlock(Dog *d) {
-    // Check each sparring enemy
-    if (d->sparringProgress[0] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Ossas Counter")) {
-        strcpy(d->skills[d->skillCount].name, "Ossas Counter");
-        d->skills[d->skillCount].power = 18;
-        d->skills[d->skillCount].cost = 12;
-        d->skills[d->skillCount].type = SKILL_ATTACK;
-        printf("OSSAS DEFEATED 10/10! UNLOCKED: Ossas Counter!\n");
-        d->skillCount++;
-    }
-
-    if (d->sparringProgress[1] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Chubby Bulldozer")) {
-        strcpy(d->skills[d->skillCount].name, "Chubby Bulldozer");
-        d->skills[d->skillCount].power = 22;
-        d->skills[d->skillCount].cost = 14;
-        d->skills[d->skillCount].type = SKILL_ATTACK;
-        printf("CHUBBY DEFEATED 10/10! UNLOCKED: Chubby Bulldozer!\n");
-        d->skillCount++;
-    }
-
-    if (d->sparringProgress[2] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Tiny Blitz")) {
-        strcpy(d->skills[d->skillCount].name, "Tiny Blitz");
-        d->skills[d->skillCount].power = 20;
-        d->skills[d->skillCount].cost = 13;
-        d->skills[d->skillCount].type = SKILL_ATTACK;
-        printf("TINY DEFEATED 10/10! UNLOCKED: Tiny Blitz!\n");
-        d->skillCount++;
-    }
-
-    if (d->sparringProgress[3] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Jeward Precision")) {
-        strcpy(d->skills[d->skillCount].name, "Jeward Precision");
-        d->skills[d->skillCount].power = 25;
-        d->skills[d->skillCount].cost = 15;
-        d->skills[d->skillCount].type = SKILL_ATTACK;
-        printf("JEWARD DEFEATED 10/10! UNLOCKED: Jeward Precision!\n");
-        d->skillCount++;
-    }
-
-    if (d->sparringProgress[4] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Snoop Phantom")) {
-        strcpy(d->skills[d->skillCount].name, "Snoop Phantom");
-        d->skills[d->skillCount].power = 28;
-        d->skills[d->skillCount].cost = 16;
-        d->skills[d->skillCount].type = SKILL_ATTACK;
-        printf("SNOOP DEFEATED 10/10! UNLOCKED: Snoop Phantom!\n");
-        d->skillCount++;
-    }
-}
-
-void createSparPartner(Dog *e, int type)
-{
-    // reset basic stats first
-    memset(e, 0, sizeof(Dog));
-
-    e->maxHP = 80 + rand() % 30;
-    e->hp = e->maxHP;
-
-    e->fatigue = 100;
-    e->maxFatigue = 100;
-
-    e->isConfused = 0;
-    e->confuseTurns = 0;
-    e->isBleeding = 0;
-    e->bleedTurns = 0;
-
-    e->skillCount = 0;
-
-    // ================= OSSAS (ATTACK) =================
-    if (type == 1)
-    {
-        strcpy(e->name, "Ossas");
-
-        e->attack = 120 + rand() % 30;
-        e->defense = 60 + rand() % 20;
-        e->speed = 70 + rand() % 20;
-        e->accuracy = 80 + rand() % 10;
-        e->intelligence = 50;
-
-        printf("Ossas appears! Aggressive attacker!\n");
-    }
-
-    // ================= CHUBBY (DEFENSE) =================
-    else if (type == 2)
-    {
-        strcpy(e->name, "Chubby");
-
-        e->attack = 60 + rand() % 20;
-        e->defense = 130 + rand() % 40;
-        e->speed = 50 + rand() % 15;
-        e->accuracy = 70 + rand() % 10;
-        e->intelligence = 60;
-
-        printf("Chubby appears! Defensive tank!\n");
-    }
-
-    // ================= JWEAR (ACCURACY) =================
-    else if (type == 3)
-    {
-        strcpy(e->name, "Jeward");
-
-        e->attack = 80 + rand() % 20;
-        e->defense = 70 + rand() % 20;
-        e->speed = 80 + rand() % 20;
-        e->accuracy = 140 + rand() % 30;
-        e->intelligence = 80;
-
-        printf("Jeward appears! Precision striker!\n");
-    }
-
-    // ================= TINY (INTELLIGENCE) =================
-    else if (type == 4)
-    {
-        strcpy(e->name, "Tiny");
-
-        e->attack = 70 + rand() % 20;
-        e->defense = 60 + rand() % 20;
-        e->speed = 60 + rand() % 20;
-        e->accuracy = 80 + rand() % 15;
-        e->intelligence = 150 + rand() % 40;
-
-        printf("Tiny appears! Smart strategist!\n");
-    }
-
-    // ================= SNOOPY (SPEED) =================
-    else if (type == 5)
-    {
-        strcpy(e->name, "Snoopy");
-
-        e->attack = 70 + rand() % 20;
-        e->defense = 60 + rand() % 20;
-        e->speed = 110 + rand() % 20;     //  FIXED: 110-130 (not 150-190!)
-        e->accuracy = 85 + rand() % 15;
-        e->intelligence = 70;
-
-        printf("Snoopy appears! Speed demon!\n");
-    }
-
-    // fallback safety
-    else
-    {
-        strcpy(e->name, "Unknown");
-    }
-    pauseAndClear();
 }
 
 void sparringMenu(Dog *player)
@@ -427,167 +288,6 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
     return 1;
 }
 
-int chooseEnemyMove(Dog *enemy, Dog *player, int type)
-{
-    int candidates[10];
-    int count = 0;
-
-    int mode;
-
-    // ================= MODE DECISION =================
-    if (enemy->hp < enemy->maxHP * 0.35)
-        mode = CAUTIOUS;
-    else if (player->hp < player->maxHP * 0.30)
-        mode = AGGRESSIVE;
-    else
-        mode = BALANCED;
-
-    // ================= TYPE-SPECIFIC BEHAVIOR =================
-    if (type == 1) // OSSAS - Always aggressive
-        mode = AGGRESSIVE;
-    else if (type == 2) // CHUBBY - Defensive first
-    {
-        if (enemy->hp > enemy->maxHP * 0.7)
-            mode = BALANCED;
-        else
-            mode = CAUTIOUS;
-    }
-    else if (type == 3) // JEWARD - Precision focus
-        mode = BALANCED;
-    else if (type == 4) // TINY - Smart decisions
-    {
-        if (player->hp < player->maxHP * 0.5)
-            mode = AGGRESSIVE;
-        else if (enemy->hp < enemy->maxHP * 0.5)
-            mode = CAUTIOUS;
-        else
-            mode = BALANCED;
-    }
-    else if (type == 5) // SNOOPY - Aggressive rotation
-        mode = AGGRESSIVE;
-
-    // ALL DOGS: HP-BASED BUFF PRIORITY
-    if (enemy->hp < enemy->maxHP * 0.5)
-    {
-        if (mode != CAUTIOUS) mode = BALANCED;
-    }
-
-    // ================= PICK SKILLS =================
-    for (int i = 0; i < enemy->skillCount; i++)
-    {
-        if (enemy->skills[i].cdLeft > 0)
-            continue;
-
-        int score = enemy->skills[i].power;
-
-        // ================= MODE BEHAVIOR =================
-        if (mode == AGGRESSIVE)
-            score += 25;
-        else if (mode == BALANCED)
-            score += rand() % 15;
-        else if (mode == CAUTIOUS)
-        {
-            if (enemy->skills[i].type == SKILL_HEAL || enemy->skills[i].type == SKILL_BUFF)
-                score += 35;
-        }
-
-        // ================= DOG-SPECIFIC SMART AI =================
-
-        // OSSAS: Pure aggression, favors high damage
-        if (type == 1)
-        {
-            if (strcmp(enemy->skills[i].name, "Rage Leap") == 0 && enemy->skills[i].cdLeft == 0)
-                score += 28;
-            else if (strcmp(enemy->skills[i].name, "Wild Bite") == 0)
-                score += 26;
-            else if (strcmp(enemy->skills[i].name, "Rush Claw") == 0)
-                score += 24;
-            else if (strcmp(enemy->skills[i].name, "Headbutt") == 0)
-                score += 22;
-        }
-
-        // CHUBBY: Damage buffs first
-        else if (type == 2)
-        {
-            if (strcmp(enemy->skills[i].name, "Body Slam") == 0)
-                score += 28;
-            else if (strcmp(enemy->skills[i].name, "Heavy Crush") == 0 && enemy->skills[i].cdLeft == 0)
-                score += 27;
-            else if (strcmp(enemy->skills[i].name, "Slow Slam") == 0)
-                score += 25 + (rand() % 3);
-            else if (strcmp(enemy->skills[i].name, "Guard Bash") == 0)
-                score += 23;
-        }
-        //jeward
-        else if (type == 3)
-        {
-            if (strcmp(enemy->skills[i].name, "Precision Bite") == 0)
-                score += 28;
-            else if (strcmp(enemy->skills[i].name, "Counter Snap") == 0)
-                score += 25;
-            else if (strcmp(enemy->skills[i].name, "Eye Strike") == 0)
-                score += 23;
-            else if (strcmp(enemy->skills[i].name, "Focus Jab") == 0)
-                score += 21 + (rand() % 3);
-        }
-
-        // TINY: Damage + mind control
-        else if (type == 4)
-        {
-            if (strcmp(enemy->skills[i].name, "Brain Crush") == 0 && enemy->skills[i].cdLeft == 0)
-                score += 28;
-            else if (strcmp(enemy->skills[i].name, "Mind Bite") == 0)
-                score += 26;
-            else if (strcmp(enemy->skills[i].name, "Quick Dodge Bite") == 0)
-                score += 25 + (rand() % 3);
-            else if (strcmp(enemy->skills[i].name, "Confuse Peck") == 0)
-                score += 24;
-        }
-
-        // SNOOPY: rotation
-        else if (type == 5)
-        {
-            if (strcmp(enemy->skills[i].name, "Triple Bite") == 0 && enemy->skills[i].cdLeft == 0)
-                score += 25 + (rand() % 5);
-            else if (strcmp(enemy->skills[i].name, "Wind Kick") == 0)
-                score += 24 + (rand() % 3);
-            else if (strcmp(enemy->skills[i].name, "Flash Dodge") == 0)
-            {
-                if (enemy->hp < enemy->maxHP * 0.6)
-                    score += 26;
-                else
-                    score += 23 + (rand() % 3);
-            }
-            else if (strcmp(enemy->skills[i].name, "Speed Dash") == 0 && enemy->skills[i].cdLeft == 0)
-                score += 24 + (rand() % 4);
-        }
-
-        candidates[count] = i;
-        enemy->skills[i].aiScore = score;
-        count++;
-    }
-
-    if (count == 0)
-        return 0;
-
-    // ================= PICK BEST WITH TIES BROKEN BY RANDOM =================
-    int best = candidates[0];
-    int bestScore = enemy->skills[best].aiScore;
-
-    for (int i = 1; i < count; i++)
-    {
-        int idx = candidates[i];
-        if (enemy->skills[idx].aiScore > bestScore ||
-            (enemy->skills[idx].aiScore == bestScore && rand() % 3 == 0))  // 33% tiebreaker
-        {
-            best = idx;
-            bestScore = enemy->skills[idx].aiScore;
-        }
-    }
-
-    return best;
-}
-
 void createSparPlayer(Dog *orig, Dog *spar)
 {
     // copy basic info (name, etc.)
@@ -618,108 +318,31 @@ void createSparPlayer(Dog *orig, Dog *spar)
 
 void assignSkills(Dog *d, int type)
 {
-    d->skillCount = 4;
 
-    if (type == 1) // OSSAS
+    if (type == 1)
     {
-        createOssas(&enemy);
-        assignOssasSkills(&enemy);
+        createOssas(d);
+        assignOssasSkills(d);
     }
-
-    // CHUBBY - TANK WITH DAMAGE BUFF
     else if (type == 2)
     {
-        strcpy(d->skills[0].name, "Body Slam");        // BUFF+DAMAGE
-        d->skills[0].type = SKILL_DAMAGE;
-        d->skills[0].power = 10;
-        d->skills[0].accuracy = 95;
-
-        strcpy(d->skills[1].name, "Slow Slam");
-        d->skills[1].type = SKILL_DAMAGE;
-        d->skills[1].power = 8;
-        d->skills[1].accuracy = 95;
-
-        strcpy(d->skills[2].name, "Guard Bash");
-        d->skills[2].type = SKILL_DEBUFF;
-        d->skills[2].power = 6;
-        d->skills[2].accuracy = 85;
-
-        strcpy(d->skills[3].name, "Heavy Crush");       // BUFF+DAMAGE
-        d->skills[3].type = SKILL_DAMAGE;
-        d->skills[3].power = 12;
-        d->skills[3].accuracy = 75;
-        d->skills[3].cooldown = 2;
-        d->skills[3].cdLeft = 0;
+        createChubby(d);
+        assignChubbySkills(d);
     }
-
-    else if (type == 3) // JEWARD
+    else if (type == 3)
     {
-        strcpy(d->skills[0].name, "Precision Bite");
-        d->skills[0].type = SKILL_DAMAGE;
-        d->skills[0].power = 14;
-        d->skills[0].accuracy = 100;
-
-        strcpy(d->skills[1].name, "Eye Strike");
-        d->skills[1].type = SKILL_DEBUFF;
-        d->skills[1].power = 7;
-        d->skills[1].accuracy = 90;
-
-        strcpy(d->skills[2].name, "Counter Snap");
-        d->skills[2].type = SKILL_DAMAGE;
-        d->skills[2].power = 10;
-        d->skills[2].accuracy = 95;
-
-        strcpy(d->skills[3].name, "Focus Jab");
-        d->skills[3].type = SKILL_BUFF;
-        d->skills[3].power = 5;
-        d->skills[3].accuracy = 100;
+        createJeward(d);
+        assignJewardSkills(d);
     }
-
-    // TINY - SMART DAMAGE DEALER
     else if (type == 4)
     {
-        strcpy(d->skills[0].name, "Mind Bite");         //  DAMAGE+DEBUFF
-        d->skills[0].type = SKILL_DAMAGE;
-        d->skills[0].power = 11;
-        d->skills[0].accuracy = 90;
-
-        strcpy(d->skills[1].name, "Quick Dodge Bite");
-        d->skills[1].type = SKILL_DAMAGE;
-        d->skills[1].power = 11;
-        d->skills[1].accuracy = 95;
-
-        strcpy(d->skills[2].name, "Confuse Peck");
-        d->skills[2].type = SKILL_DEBUFF;
-        d->skills[2].power = 8;
-        d->skills[2].accuracy = 80;
-
-        strcpy(d->skills[3].name, "Brain Crush");        //  DAMAGE+BUFF
-        d->skills[3].type = SKILL_DAMAGE;
-        d->skills[3].power = 13;
-        d->skills[3].accuracy = 85;
-        d->skills[3].cooldown = 2;
-        d->skills[3].cdLeft = 0;
+        createTiny(d);
+        assignTinySkills(d);
     }
-
-    else if (type == 5) // SNOOPY - BALANCED ROTATION
+    else if (type == 5)
     {
-        // Speed Dash (CD: 2)
-        strcpy(d->skills[0].name, "Speed Dash");
-        d->skills[0].type = SKILL_DAMAGE; d->skills[0].power = 9; d->skills[0].accuracy = 100;
-        d->skills[0].cooldown = 2; d->skills[0].cdLeft = 0;
-
-        // Triple Bite (CD: 3)  SPAM FIXED!
-        strcpy(d->skills[1].name, "Triple Bite");
-        d->skills[1].type = SKILL_DAMAGE; d->skills[1].power = 15; d->skills[1].accuracy = 75;
-        d->skills[1].cooldown = 3; d->skills[1].cdLeft = 0;
-
-        // Wind Kick
-        strcpy(d->skills[2].name, "Wind Kick");
-        d->skills[2].type = SKILL_DEBUFF; d->skills[2].power = 7; d->skills[2].accuracy = 90;
-
-        // Flash Dodge
-        strcpy(d->skills[3].name, "Flash Dodge");
-        d->skills[3].type = SKILL_BUFF; d->skills[3].power = 8; d->skills[3].accuracy = 100;
+        createSnoopy(d);
+        assignSnoopySkills(d);
     }
 }
 
@@ -759,12 +382,39 @@ int sparringBattle(Dog *player, int type)
     {
         createOssas(&enemy);
         assignOssasSkills(&enemy);
+
+        printf("Ossas appears! Aggressive attacker!\n");
     }
     else if (type == 2)
     {
         createChubby(&enemy);
         assignChubbySkills(&enemy);
+
+        printf("Chubby appears! Defensive tank!\n");
     }
+    else if (type == 3)
+    {
+        createJeward(&enemy);
+        assignJewardSkills(&enemy);
+
+        printf("Jeward appears! Precision striker!\n");
+    }
+    else if (type == 4)
+    {
+        createTiny(&enemy);
+        assignTinySkills(&enemy);
+
+        printf("Tiny appears! Smart strategist!\n");
+    }
+    else if (type == 5)
+    {
+        createSnoopy(&enemy);
+        assignSnoopySkills(&enemy);
+
+        printf("Snoopy appears! Speed demon!\n");
+    }
+
+    pauseAndClear();
 
     sparPlayer.hp = sparPlayer.maxHP;
     enemy.hp = enemy.maxHP;
