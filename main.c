@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include "sparring/sparring.h"
 #include "cinematic.h"
+#include "sparring/sparring_system.h"
 
 int main()
 {

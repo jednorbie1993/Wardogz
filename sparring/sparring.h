@@ -18,13 +18,12 @@ typedef enum {
 // sparring system
 int sparringBattle(Dog *player, int type);
 void createSparPartner(Dog *e, int type);
-void sparringMenu(Dog *player);
-int useSkill(Dog *user, Dog *enemy, Skill skill);
-void applySparReward(Dog *player, int type);
+
+
 void assignSkills(Dog *d, int type);
 void createSparPlayer(Dog *orig, Dog *spar);
 void updateDebuffs(Dog *d);
-void updateSparringProgress(Dog *d, int enemyIndex, int win);
-void initSparringProgress(Dog *d);
+
+
 
 #endif

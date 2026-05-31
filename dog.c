@@ -11,6 +11,7 @@
 #include "battle.h"
 #include "stat.h"
 #include "cinematic.h"
+#include "sparring/sparring_system.h"
 
 int systemLog = 0;
 int animationOn = 1; //  NEW (default ON)

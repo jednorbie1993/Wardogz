@@ -2,6 +2,7 @@
 #include "../dog.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 int chooseEnemyMove(Dog *enemy, Dog *player, int type)
 {
@@ -162,4 +163,140 @@ int chooseEnemyMove(Dog *enemy, Dog *player, int type)
     }
 
     return best;
+}
+
+int useSkill(Dog *user, Dog *enemy, Skill skill)
+{
+
+    // ================= HIT CHANCE CALC =================
+    int hitChance = skill.accuracy + (user->accuracy / 5) - (enemy->speed / 6);
+    if (hitChance < 20) hitChance = 20;
+    if (hitChance > 95) hitChance = 95;
+
+    // ================= DODGE CHECK (ONCE ONLY) =================
+    int dodgeChance = enemy->speed / 8;
+    if (dodgeChance > 40) dodgeChance = 40;
+
+    int dodgeRoll = rand() % 100;
+
+    if (dodgeRoll < dodgeChance)
+    {
+        printf("%s used %s but %s DODGED!\n", user->name, skill.name, enemy->name);
+        return 0; // NO DAMAGE
+    }
+
+    // ================= DAMAGE SKILLS =================
+    if (skill.type == SKILL_DAMAGE)
+    {
+        int base = skill.power + (user->attack / 15);
+        int reduce = enemy->defense / 18;
+        int variance = rand() % 6;
+        int dmg = base - reduce + variance;
+
+        if (dmg < 10) dmg = 10;
+        enemy->hp -= dmg;
+
+        if (rand() % 100 < 10)
+        {
+            dmg += 5;
+            printf("CRITICAL HIT! +%d\n", 5);
+        }
+
+        printf("%s used %s! Dealt %d damage!\n", user->name, skill.name, dmg);
+
+        // APPLY COOLDOWN
+        for (int i = 0; i < user->skillCount; i++)
+        {
+            if (strcmp(user->skills[i].name, skill.name) == 0)
+            {
+                user->skills[i].cdLeft = user->skills[i].cooldown;
+                break;
+            }
+        }
+
+        // ================= ALL SPECIAL EFFECTS =================
+        // BASIC PLAYER
+        if (strcmp(skill.name, "Hip Check") == 0 && rand() % 100 < 40)
+        {
+            enemy->isStunned = 1; enemy->stunTurns = 2;
+            printf("%s STUNNED!\n", enemy->name);
+        }
+        if (strcmp(skill.name, "Charge") == 0)
+        {
+            int recoil = dmg / 5; user->hp -= recoil;
+            printf("%s recoil: %d\n", user->name, recoil);
+        }
+
+        // OSSAS
+        if (strcmp(skill.name, "Wild Bite") == 0 && rand() % 100 < 35)
+        { enemy->isBleeding = 1; enemy->bleedTurns = 3; printf("%s BLEEDING!\n", enemy->name); }
+        if (strcmp(skill.name, "Rush Claw") == 0 && rand() % 100 < 25)
+        { int extra = user->attack / 8; enemy->hp -= extra; printf("Extra slash! %d\n", extra); }
+        if (strcmp(skill.name, "Headbutt") == 0 && rand() % 100 < 30)
+        { enemy->isStunned = 1; enemy->stunTurns = 1; printf("%s dazed!\n", enemy->name); }
+        if (strcmp(skill.name, "Rage Leap") == 0)
+        { int recoil = dmg / 4; user->hp -= recoil; printf("%s recoil: %d\n", user->name, recoil); }
+
+        // CHUBBY NEW MOVES
+        if (strcmp(skill.name, "Body Slam") == 0)
+        {
+            user->defense += 4;  // Self buff
+            printf("%s tougher!\n", user->name);
+        }
+        if (strcmp(skill.name, "Heavy Crush") == 0 && rand() % 100 < 30)
+        {
+            enemy->isStunned = 1; enemy->stunTurns = 1;
+            printf("%s CRUSHED!\n", enemy->name);
+        }
+        // JEWARD
+        if (strcmp(skill.name, "Counter Snap") == 0 && rand() % 100 < 30)
+        { int counter = user->attack / 7; enemy->hp -= counter; printf("Counter! %d damage\n", counter); }
+
+        // TINY NEW MOVES
+        if (strcmp(skill.name, "Mind Bite") == 0 && rand() % 100 < 35)
+        {
+            enemy->isConfused = 1; enemy->confuseTurns = 2;
+            printf("%s MIND BROKEN!\n", enemy->name);
+        }
+        if (strcmp(skill.name, "Brain Crush") == 0)
+        {
+            user->intelligence += 5;
+            printf("%s smarter!\n", user->name);
+        }
+        // SNOOPY
+        if (strcmp(skill.name, "Triple Bite") == 0)
+        {
+            int hits = 2 + (rand() % 2);
+            for (int i = 0; i < hits; i++)
+            { int extra = user->attack / 10; enemy->hp -= extra; printf("Extra bite #%d: %d\n", i+1, extra); }
+        }
+        if (strcmp(skill.name, "Wind Kick") == 0 && rand() % 100 < 30)
+        { enemy->accuracy = (enemy->accuracy > 30) ? enemy->accuracy - 20 : 30; printf("%s vision blurred!\n", enemy->name); }
+
+        return 1;
+    }
+
+    // ================= OTHER SKILL TYPES =================
+    else if (skill.type == SKILL_HEAL)
+    {
+        int heal = (user->intelligence / 5) + skill.power;
+        user->hp = (user->hp + heal > user->maxHP) ? user->maxHP : user->hp + heal;
+        printf("%s healed %d HP!\n", user->name, heal);
+        return 1;
+    }
+    else if (skill.type == SKILL_BUFF)
+    {
+        user->attack += skill.power;
+        printf("%s attack UP!\n", user->name);
+        return 1;
+    }
+    else if (skill.type == SKILL_DEBUFF)
+    {
+        enemy->attack -= skill.power;
+        if (enemy->attack < 1) enemy->attack = 1;
+        printf("%s attack DOWN!\n", enemy->name);
+        return 1;
+    }
+
+    return 1;
 }

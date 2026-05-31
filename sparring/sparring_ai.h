@@ -7,5 +7,6 @@
 #include "../dog.h"
 
 int chooseEnemyMove(Dog *enemy, Dog *player, int type);
+int useSkill(Dog *attacker, Dog *target, Skill skill);
 
 #endif
