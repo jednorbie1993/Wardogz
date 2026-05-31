@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "tiny.h"
+
 void createTiny(Dog *e)
 {
     strcpy(e->name, "Tiny");

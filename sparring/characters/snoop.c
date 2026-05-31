@@ -1,6 +1,8 @@
-#include "snoopy.h"
+#include "snoop.h"
 #include <string.h>
 #include <stdlib.h>
+
+#include "snoop.h"
 
 void createSnoopy(Dog *e)
 {

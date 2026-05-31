@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "jeward.h"
+
 void createJeward(Dog *e)
 {
     strcpy(e->name, "Jeward");

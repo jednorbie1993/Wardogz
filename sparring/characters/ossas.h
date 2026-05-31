@@ -1,7 +1,7 @@
 #ifndef OSSAS_H
 #define OSSAS_H
 
-#include "../dog.h"
+#include "../../dog.h"
 
 void createOssas(Dog *e);
 void assignOssasSkills(Dog *e);
