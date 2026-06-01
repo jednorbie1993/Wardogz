@@ -15,6 +15,7 @@
 #include "sparring_ai.h"
 #include "sparring_skills.h"
 #include "sparring_system.h"
+#include "sparring_status.h"
 
 
 void createSparPlayer(Dog *orig, Dog *spar)
@@ -75,31 +76,6 @@ void assignSkills(Dog *d, int type)
     }
 }
 
-// UPDATE DEBUFFS
-void updateDebuffs(Dog *d)
-{
-    // DEBUFF TIMER
-    if (d->accDebuffTurns > 0)
-    {
-        d->accDebuffTurns--;
-        if (d->accDebuffTurns == 0)
-        {
-            d->accTemp = d->accuracy;
-            printf("%s recovered from daze/stun!\n", d->name);
-        }
-    }
-
-    // STUN TIMER
-    if (d->isStunned && d->stunTurns > 0)
-    {
-        d->stunTurns--;
-        if (d->stunTurns == 0)
-        {
-            d->isStunned = 0;
-            printf("%s recovered from stun!\n", d->name);
-        }
-    }
-}
 
 int sparringBattle(Dog *player, int type)
 {
@@ -176,20 +152,7 @@ int sparringBattle(Dog *player, int type)
         updateCooldowns(&sparPlayer);
         updateCooldowns(&enemy);
 
-        // STATUS WITH DEBUFFS
-        printf("YOU: [%d/%d]", sparPlayer.hp, sparPlayer.maxHP);
-        if (sparPlayer.accDebuffTurns > 0)
-            printf(" (DAZED %d)", sparPlayer.accDebuffTurns);
-        if (sparPlayer.isStunned && sparPlayer.stunTurns > 0)
-            printf(" (STUN %d)", sparPlayer.stunTurns);
-        printf("\n");
-
-        printf("ENEMY: [%d/%d]", enemy.hp, enemy.maxHP);
-        if (enemy.accDebuffTurns > 0)
-            printf(" (DAZED %d)", enemy.accDebuffTurns);
-        if (enemy.isStunned && enemy.stunTurns > 0)
-            printf(" (STUN %d)", enemy.stunTurns);
-        printf("\n\n");
+        printSparringStatus(&sparPlayer, &enemy);
 
         // CHECK PLAYER STUN
         if (sparPlayer.isStunned && sparPlayer.stunTurns > 0)
