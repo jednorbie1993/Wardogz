@@ -139,6 +139,7 @@ typedef struct {
 void createDog(Dog *d);
 void printDog(Dog d);
 int battle(Dog *player, int zoneIndex, int progress[]);
+int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIndex);
 void displayBattleStatus(Dog player, Dog enemy);
 void trainDog(Dog *d, int type);
 

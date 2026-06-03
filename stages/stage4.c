@@ -221,7 +221,7 @@ void runStage4(Dog *player, int progress[])
         // =========================
         // BATTLE
         // =========================
-        int result = battle(player, zoneIndex, progress);
+        int result = battleWithEnemyIndex(player, zoneIndex, progress, i);
 
         if (result == 0)
             continue;

@@ -5,7 +5,8 @@
 
 void startStage(Dog *player, int progress[]);
 void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
-int battle(Dog *player, int zoneIndex, int progress[]);  // ✅ ADD THIS
+int battle(Dog *player, int zoneIndex, int progress[]);
+int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIndex);  // ✅ ADD THIS
 
 void loadStage1Enemies(Dog *e, int zoneIndex, int enemyType);
 void loadStage2Enemies(Dog *e, int zoneIndex, int enemyType);

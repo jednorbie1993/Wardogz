@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <windows.h>
 #include "dog.h"
 #include "enemies/enemy.h"
@@ -347,8 +348,103 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
     return 1;
 }
 
+
+static int getBattleMaxEnemies(int zoneIndex)
+{
+    int maxEnemies[16] =
+    {
+        3,3,3,
+        3,3,2,4,4,
+        2,4,4,3,
+        2,4,4,3
+    };
+
+    if (zoneIndex < 0 || zoneIndex >= 16)
+        return 3;
+
+    return maxEnemies[zoneIndex];
+}
+
+static int chooseReplayEnemyIndex(int zoneIndex, int progress[])
+{
+    int maxEnemies = getBattleMaxEnemies(zoneIndex);
+
+    if (progress[zoneIndex] >= maxEnemies)
+    {
+        if (zoneIndex >= 0 && zoneIndex <= 2)
+        {
+            if (rand() % 100 < 20)
+                return maxEnemies;
+        }
+        if (zoneIndex >= 3 && zoneIndex <= 7)
+        {
+            // Stage 2 replay: 25% chance for the secret/elite enemy.
+            if (rand() % 100 < 25)
+                return maxEnemies;
+        }
+        else if (zoneIndex >= 8 && zoneIndex <= 15)
+        {
+            // Stage 3/4 replay: 20% chance for elite replay version.
+            if (rand() % 100 < 20)
+                return maxEnemies;
+        }
+
+        return rand() % maxEnemies;
+    }
+
+    return progress[zoneIndex];
+}
+
+static void applyReplayEliteBonus(Dog *enemy, int zoneIndex, int enemyIndex)
+{
+    int maxEnemies = getBattleMaxEnemies(zoneIndex);
+
+    if (enemyIndex != maxEnemies)
+        return;
+
+    if (zoneIndex >= 0 && zoneIndex <= 2)
+    {
+        strcat(enemy->name, " Elite");
+        enemy->attack += 8;
+        enemy->defense += 5;
+        enemy->speed += 4;
+        enemy->maxHP += 25;
+    }
+    else if (zoneIndex >= 3 && zoneIndex <= 7)
+    {
+        strcpy(enemy->name, "Elite Predator");
+        enemy->attack += 15;
+        enemy->speed += 15;
+        enemy->maxHP += 40;
+    }
+    else if (zoneIndex >= 8 && zoneIndex <= 11)
+    {
+        strcat(enemy->name, " Elite");
+        enemy->attack += 12;
+        enemy->defense += 8;
+        enemy->speed += 6;
+        enemy->maxHP += 35;
+    }
+    else if (zoneIndex >= 12 && zoneIndex <= 15)
+    {
+        strcat(enemy->name, " Omega");
+        enemy->attack += 15;
+        enemy->defense += 10;
+        enemy->speed += 8;
+        enemy->maxHP += 45;
+    }
+
+    enemy->hp = enemy->maxHP;
+}
+
 int battle(Dog *player, int zoneIndex, int progress[])
 {
+    return battleWithEnemyIndex(player, zoneIndex, progress, -1);
+}
+
+int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIndex)
+{
+
     if (player->hp <= 0)
     {
         printf("You must rest before you battle again!\n");
@@ -367,7 +463,7 @@ int battle(Dog *player, int zoneIndex, int progress[])
     player->bleedDamage = 0;
     player->accuracyModifier = 0;
 
-    int i = progress[zoneIndex];
+    int i = (enemyIndex >= 0) ? enemyIndex : chooseReplayEnemyIndex(zoneIndex, progress);
 
     // =========================
     // STAGE 3 SYSTEM
@@ -389,6 +485,8 @@ int battle(Dog *player, int zoneIndex, int progress[])
     {
         loadStage1Enemies(&enemy, zoneIndex, i);
     }
+
+    applyReplayEliteBonus(&enemy, zoneIndex, i);
 
     showEnemyEntrance(&enemy, zoneIndex);
 
