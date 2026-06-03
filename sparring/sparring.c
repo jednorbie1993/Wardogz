@@ -76,6 +76,25 @@ void assignSkills(Dog *d, int type)
     }
 }
 
+void showSparringIntro(Dog *enemy, int type)
+{
+    printf("\n=================================\n");
+    printf("SPARRING START: %s\n", enemy->name);
+    printf("=================================\n\n");
+
+    if (type == 1)
+        printf("%s appears! Aggressive attacker!\n", enemy->name);
+    else if (type == 2)
+        printf("%s appears! Defensive tank!\n", enemy->name);
+    else if (type == 3)
+        printf("%s appears! Precision striker!\n", enemy->name);
+    else if (type == 4)
+        printf("%s appears! Smart strategist!\n", enemy->name);
+    else if (type == 5)
+        printf("%s appears! Speed demon!\n", enemy->name);
+
+    pauseAndClear();
+}
 
 int sparringBattle(Dog *player, int type)
 {
@@ -88,44 +107,37 @@ int sparringBattle(Dog *player, int type)
         createOssas(&enemy);
         assignOssasSkills(&enemy);
 
-        printf("Ossas appears! Aggressive attacker!\n");
     }
     else if (type == 2)
     {
         createChubby(&enemy);
         assignChubbySkills(&enemy);
 
-        printf("Chubby appears! Defensive tank!\n");
     }
     else if (type == 3)
     {
         createJeward(&enemy);
         assignJewardSkills(&enemy);
 
-        printf("Jeward appears! Precision striker!\n");
     }
     else if (type == 4)
     {
         createTiny(&enemy);
         assignTinySkills(&enemy);
 
-        printf("Tiny appears! Smart strategist!\n");
     }
     else if (type == 5)
     {
         createSnoopy(&enemy);
         assignSnoopySkills(&enemy);
 
-        printf("Snoopy appears! Speed demon!\n");
     }
-
-    pauseAndClear();
 
     sparPlayer.hp = sparPlayer.maxHP;
     enemy.hp = enemy.maxHP;
 
-    printf("\n SPARRING START: %s\n\n", enemy.name);
-    pauseAndClear();
+    system("cls");
+    showSparringIntro(&enemy, type);
 
     while (sparPlayer.hp > 0 && enemy.hp > 0)
     {
@@ -164,7 +176,7 @@ int sparringBattle(Dog *player, int type)
         }
         else
         {
-            printf("\nChoose Move:\n");
+            printf("Choose Move:\n");
             printf("1. Bite\n");
             printf("2. Scratch\n");
             printf("3. Charge\n");
@@ -197,12 +209,19 @@ int sparringBattle(Dog *player, int type)
 
                 default:
                     printf("Invalid move!\n");
+                    pauseAndClear();
                     continue;
             }
 
             // ================= PLAYER TURN =================
             printf("\n--- PLAYER TURN ---\n");
             useSkill(&sparPlayer, &enemy, tempSkill);
+
+            printf("\nPress Enter to continue...");
+            getchar();
+            system("cls");
+
+            printSparringStatus(&sparPlayer, &enemy);
         }
 
         if (enemy.hp <= 0)

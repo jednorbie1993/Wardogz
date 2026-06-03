@@ -1,7 +1,7 @@
 #include "ossas.h"
 #include <string.h>
 #include <stdlib.h>
-
+#include <stdio.h>
 #include "ossas.h"
 
 void createOssas(Dog *e)
@@ -43,4 +43,32 @@ void assignOssasSkills(Dog *d)
     d->skills[3].accuracy = 65;
     d->skills[3].cooldown = 3;
     d->skills[3].cdLeft = 0;
+}
+
+void applyOssasEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
+{
+    if (strcmp(skill.name, "Wild Bite") == 0 && rand() % 100 < 35)
+    {
+        enemy->isBleeding = 1;
+        enemy->bleedTurns = 3;
+        printf("%s is BLEEDING!\n", enemy->name);
+    }
+    else if (strcmp(skill.name, "Rush Claw") == 0 && rand() % 100 < 25)
+    {
+        int extra = user->attack / 8;
+        enemy->hp -= extra;
+        printf("Extra slash! %d damage!\n", extra);
+    }
+    else if (strcmp(skill.name, "Headbutt") == 0 && rand() % 100 < 30)
+    {
+        enemy->isStunned = 1;
+        enemy->stunTurns = 1;
+        printf("%s is stunned!\n", enemy->name);
+    }
+    else if (strcmp(skill.name, "Rage Leap") == 0)
+    {
+        int recoil = dmg / 4;
+        user->hp -= recoil;
+        printf("%s took %d recoil damage!\n", user->name, recoil);
+    }
 }

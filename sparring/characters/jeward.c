@@ -1,7 +1,7 @@
 #include "jeward.h"
 #include <string.h>
 #include <stdlib.h>
-
+#include <stdio.h>
 #include "jeward.h"
 
 void createJeward(Dog *e)
@@ -41,4 +41,15 @@ void assignJewardSkills(Dog *d)
     d->skills[3].type = SKILL_BUFF;
     d->skills[3].power = 5;
     d->skills[3].accuracy = 100;
+}
+
+void applyJewardEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
+{
+    if (strcmp(skill.name, "Counter Snap") == 0 && rand() % 100 < 30)
+    {
+        int counter = user->attack / 7;
+        enemy->hp -= counter;
+
+        printf("Counter! %d damage!\n", counter);
+    }
 }

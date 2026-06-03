@@ -1,7 +1,7 @@
 #include "snoop.h"
 #include <string.h>
 #include <stdlib.h>
-
+#include <stdio.h>
 #include "snoop.h"
 
 void createSnoopy(Dog *e)
@@ -45,4 +45,28 @@ void assignSnoopySkills(Dog *d)
     d->skills[3].type = SKILL_BUFF;
     d->skills[3].power = 8;
     d->skills[3].accuracy = 100;
+}
+
+void applySnoopyEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
+{
+    if (strcmp(skill.name, "Triple Bite") == 0)
+    {
+        int hits = 2 + (rand() % 2);
+
+        for (int i = 0; i < hits; i++)
+        {
+            int extra = user->attack / 10;
+            enemy->hp -= extra;
+
+            printf("Extra bite #%d: %d damage!\n", i + 1, extra);
+        }
+    }
+    else if (strcmp(skill.name, "Wind Kick") == 0 && rand() % 100 < 30)
+    {
+        enemy->accuracy = (enemy->accuracy > 30)
+            ? enemy->accuracy - 20
+            : 30;
+
+        printf("%s vision blurred!\n", enemy->name);
+    }
 }

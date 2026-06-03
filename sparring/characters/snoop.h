@@ -5,5 +5,6 @@
 
 void createSnoopy(Dog *e);
 void assignSnoopySkills(Dog *d);
+void applySnoopyEffect(Dog *user, Dog *enemy, Skill skill, int dmg);
 
 #endif

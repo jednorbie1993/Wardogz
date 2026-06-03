@@ -1,7 +1,7 @@
 #include "tiny.h"
 #include <string.h>
 #include <stdlib.h>
-
+#include <stdio.h>
 #include "tiny.h"
 
 void createTiny(Dog *e)
@@ -43,4 +43,21 @@ void assignTinySkills(Dog *d)
     d->skills[3].accuracy = 85;
     d->skills[3].cooldown = 2;
     d->skills[3].cdLeft = 0;
+}
+
+void applyTinyEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
+{
+    if (strcmp(skill.name, "Mind Bite") == 0 && rand() % 100 < 35)
+    {
+        enemy->isConfused = 1;
+        enemy->confuseTurns = 2;
+
+        printf("%s MIND BROKEN!\n", enemy->name);
+    }
+    else if (strcmp(skill.name, "Brain Crush") == 0)
+    {
+        user->intelligence += 5;
+
+        printf("%s became smarter!\n", user->name);
+    }
 }

@@ -3,6 +3,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "characters/ossas.h"
+#include "characters/chubby.h"
+#include "characters/jeward.h"
+#include "characters/snoop.h"
+#include "characters/tiny.h"
 
 int chooseEnemyMove(Dog *enemy, Dog *player, int type)
 {
@@ -213,6 +218,28 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
                 break;
             }
         }
+        // CHARACTER SPECIAL EFFECTS
+
+        if (strcmp(user->name, "Ossas") == 0)
+        {
+            applyOssasEffect(user, enemy, skill, dmg);
+        }
+        else if (strcmp(user->name, "Chubby") == 0)
+        {
+            applyChubbyEffect(user, enemy, skill, dmg);
+        }
+        else if (strcmp(user->name, "Jeward") == 0)
+        {
+            applyJewardEffect(user, enemy, skill, dmg);
+        }
+        else if (strcmp(user->name, "Tiny") == 0)
+        {
+            applyTinyEffect(user, enemy, skill, dmg);
+        }
+        else if (strcmp(user->name, "Snoopy") == 0)
+        {
+            applySnoopyEffect(user, enemy, skill, dmg);
+        }
 
         // ================= ALL SPECIAL EFFECTS =================
         // BASIC PLAYER
@@ -226,52 +253,6 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
             int recoil = dmg / 5; user->hp -= recoil;
             printf("%s recoil: %d\n", user->name, recoil);
         }
-
-        // OSSAS
-        if (strcmp(skill.name, "Wild Bite") == 0 && rand() % 100 < 35)
-        { enemy->isBleeding = 1; enemy->bleedTurns = 3; printf("%s BLEEDING!\n", enemy->name); }
-        if (strcmp(skill.name, "Rush Claw") == 0 && rand() % 100 < 25)
-        { int extra = user->attack / 8; enemy->hp -= extra; printf("Extra slash! %d\n", extra); }
-        if (strcmp(skill.name, "Headbutt") == 0 && rand() % 100 < 30)
-        { enemy->isStunned = 1; enemy->stunTurns = 1; printf("%s dazed!\n", enemy->name); }
-        if (strcmp(skill.name, "Rage Leap") == 0)
-        { int recoil = dmg / 4; user->hp -= recoil; printf("%s recoil: %d\n", user->name, recoil); }
-
-        // CHUBBY NEW MOVES
-        if (strcmp(skill.name, "Body Slam") == 0)
-        {
-            user->defense += 4;  // Self buff
-            printf("%s tougher!\n", user->name);
-        }
-        if (strcmp(skill.name, "Heavy Crush") == 0 && rand() % 100 < 30)
-        {
-            enemy->isStunned = 1; enemy->stunTurns = 1;
-            printf("%s CRUSHED!\n", enemy->name);
-        }
-        // JEWARD
-        if (strcmp(skill.name, "Counter Snap") == 0 && rand() % 100 < 30)
-        { int counter = user->attack / 7; enemy->hp -= counter; printf("Counter! %d damage\n", counter); }
-
-        // TINY NEW MOVES
-        if (strcmp(skill.name, "Mind Bite") == 0 && rand() % 100 < 35)
-        {
-            enemy->isConfused = 1; enemy->confuseTurns = 2;
-            printf("%s MIND BROKEN!\n", enemy->name);
-        }
-        if (strcmp(skill.name, "Brain Crush") == 0)
-        {
-            user->intelligence += 5;
-            printf("%s smarter!\n", user->name);
-        }
-        // SNOOPY
-        if (strcmp(skill.name, "Triple Bite") == 0)
-        {
-            int hits = 2 + (rand() % 2);
-            for (int i = 0; i < hits; i++)
-            { int extra = user->attack / 10; enemy->hp -= extra; printf("Extra bite #%d: %d\n", i+1, extra); }
-        }
-        if (strcmp(skill.name, "Wind Kick") == 0 && rand() % 100 < 30)
-        { enemy->accuracy = (enemy->accuracy > 30) ? enemy->accuracy - 20 : 30; printf("%s vision blurred!\n", enemy->name); }
 
         return 1;
     }

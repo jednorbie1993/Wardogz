@@ -1,7 +1,6 @@
-#include "chubby.h"
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
 #include "chubby.h"
 
 void createChubby(Dog *e)
@@ -43,4 +42,19 @@ void assignChubbySkills(Dog *d)
     d->skills[3].accuracy = 75;
     d->skills[3].cooldown = 2;
     d->skills[3].cdLeft = 0;
+}
+
+void applyChubbyEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
+{
+    if (strcmp(skill.name, "Body Slam") == 0)
+    {
+        user->defense += 4;
+        printf("%s became tougher!\n", user->name);
+    }
+    else if (strcmp(skill.name, "Heavy Crush") == 0 && rand() % 100 < 30)
+    {
+        enemy->isStunned = 1;
+        enemy->stunTurns = 1;
+        printf("%s is CRUSHED!\n", enemy->name);
+    }
 }
