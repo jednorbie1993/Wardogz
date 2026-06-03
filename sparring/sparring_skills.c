@@ -49,3 +49,4 @@ Skill createHipCheckSkill(void)
 
     return skill;
 }
+
