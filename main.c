@@ -298,7 +298,7 @@ int main()
     gcc *.c -o wardo -Wall -Wextra
  
     played in 2026 Month of May, 
-        June - 1, 2, 3
+        June - 1, 2, 3, 4,
 
     gcc *.c enemies/*.c stages/*.c skills/*.c ui/*.c -o wardogz.exe
 
