@@ -321,8 +321,8 @@ void createDog(Dog *d)
 
     d->isBleeding = 0;
     d->bleedTurns = 0;
-    d->bleedDamage = 0;  // 🔥 ADD THIS
-    d->accuracyModifier = 0;  // 🔥 ADD THIS
+    d->bleedDamage = 0;  //  ADD THIS
+    d->accuracyModifier = 0;  //  ADD THIS
 
     strcpy(d->skills[0].name, "Bite");
     d->skills[0].power = 5;
