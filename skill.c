@@ -105,6 +105,17 @@ void applyHealSkill(Dog *player, Skill s)
 
 void checkSkillUnlock(Dog *d)
 {
+    // ================= SECRET ENEMY SKILLS =================
+    if (d->defeatedGrimfang && d->skillCount < MAX_SKILLS && !hasSkill(d, "Shadow Bite"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Shadow Bite");
+        d->skills[d->skillCount].power = 18;
+        d->skills[d->skillCount].cost = 8;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+
+        printf("NEW SECRET SKILL UNLOCKED: Shadow Bite!\n");
+        d->skillCount++;
+    }
     // ================= SPEED =================
     if (d->speed >= 100 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Quick Dash"))
     {
