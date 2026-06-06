@@ -7,21 +7,22 @@
 #include "enemy_stage1.h"
 #include "../cinematic.h"
 #include "../battle.h"
+#include "../replay_system.h"
 
 void setEnemySkillsStage1(Dog *enemy)
 {
     enemy->numSkills = 3;
 
     enemy->skills[0] = (Skill){
-        "Stray Bite",        // 1. Skill Name
-        8,                   // 2. Power / Damage
-        0,                   // 3. Energy Cost / Mana Cost
-        SKILL_DAMAGE,        // 4. Skill Type
-        90,                  // 5. Accuracy (%)
-        SKILL_STRAY_BITE,    // 6. Skill ID
-        0,                   // 7. Effect Value 1
-        0,                   // 8. Effect Value 2
-        10                   // 9. Cooldown / Duration
+        "Stray Bite",     // 1. Skill Name
+        8,                // 2. Power / Damage
+        0,                // 3. Energy Cost / Mana Cost
+        SKILL_DAMAGE,     // 4. Skill Type
+        90,               // 5. Accuracy (%)
+        SKILL_STRAY_BITE, // 6. Skill ID
+        0,                // 7. Effect Value 1
+        0,                // 8. Effect Value 2
+        10                // 9. Cooldown / Duration
     };
 
     enemy->skills[1] = (Skill){
@@ -33,8 +34,7 @@ void setEnemySkillsStage1(Dog *enemy)
         SKILL_DIRTY_SCRATCH,
         0,
         0,
-        8
-    };
+        8};
 
     enemy->skills[2] = (Skill){
         "Lock Jaw",
@@ -45,8 +45,7 @@ void setEnemySkillsStage1(Dog *enemy)
         SKILL_LOCK_JAW,
         0,
         0,
-        15
-    };
+        15};
 
     if (enemy->personalityType == PERSONALITY_ALPHA)
     {
@@ -59,16 +58,43 @@ void setEnemySkillsStage1(Dog *enemy)
             SKILL_ALPHA_RAGE,
             0,
             0,
-            20
-        };
+            20};
 
         enemy->numSkills = 4;
     }
 }
 
+void createGrimfang(Dog *enemy)
+{
+    strcpy(enemy->name, "Grimfang");
+
+    enemy->hp = 200;
+    enemy->maxHP = 200;
+    enemy->attack = 45;
+    enemy->defense = 40;
+    enemy->speed = 35;
+    enemy->accuracy = 90;
+    enemy->intelligence = 35;
+
+    enemy->zoneType = ZONE_CITY;
+    enemy->personalityType = PERSONALITY_ALPHA;
+
+    enemy->numSkills = 4;
+
+    enemy->skills[0] = (Skill){"Fang Ripper", 14, 0, SKILL_DAMAGE, 95, SKILL_FANG_RIPPER, 0, 0, 10};
+    enemy->skills[1] = (Skill){"Savage Rush", 24, 0, SKILL_DAMAGE, 85, SKILL_SAVAGE_RUSH, 0, 0, 15};
+    enemy->skills[2] = (Skill){"Blood Trail", 10, 0, SKILL_DAMAGE, 90, SKILL_BLOOD_TRAIL, 0, 0, 18};
+    enemy->skills[3] = (Skill){"Shadow Maw", 35, 0, SKILL_DAMAGE, 80, SKILL_SHADOW_MAW, 3, 0, 25};
+}
+
 void loadStage1Enemies(Dog *enemy, int zoneIndex, int enemyIndex)
 {
     createEnemy(enemy);
+    if (enemyIndex == SECRET_GRIMFANG_INDEX)
+    {
+        createGrimfang(enemy);
+        return;
+    }
 
     enemy->zoneType = ZONE_CITY;
     enemy->personalityType = PERSONALITY_NORMAL;
@@ -243,6 +269,39 @@ void useStage1EnemySkill(Dog *player, Dog *enemy, Skill skill, int *enemyDamage)
 
     default:
         *enemyDamage += 4;
+        break;
+    case SKILL_FANG_RIPPER:
+        *enemyDamage += skill.power;
+        break;
+
+    case SKILL_SAVAGE_RUSH:
+        *enemyDamage += skill.power;
+        enemy->hp -= 6;
+        printf("%s took 6 recoil damage!\n", enemy->name);
+        break;
+
+    case SKILL_BLOOD_TRAIL:
+        *enemyDamage += skill.power;
+
+        if (rand() % 100 < 35)
+        {
+            player->isBleeding = 1;
+            player->bleedTurns = 3;
+            player->bleedDamage = 4;
+            printf("You are bleeding from Blood Trail!\n");
+        }
+        break;
+
+    case SKILL_SHADOW_MAW:
+        *enemyDamage += skill.power;
+
+        if (rand() % 100 < 25)
+        {
+            player->isBleeding = 1;
+            player->bleedTurns = 3;
+            player->bleedDamage = 5;
+            printf("Shadow Maw caused heavy bleeding!\n");
+        }
         break;
     }
 }

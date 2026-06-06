@@ -6,23 +6,31 @@
 int chooseReplayEnemyIndex(int zoneIndex, int progress[])
 {
     int maxEnemies = getBattleMaxEnemies(zoneIndex);
+    static int urbanReplayCount = 0;
 
     if (progress[zoneIndex] >= maxEnemies)
     {
         if (zoneIndex >= 0 && zoneIndex <= 2)
         {
+            urbanReplayCount++;
+
+            if (urbanReplayCount % 10 == 0)
+                return SECRET_GRIMFANG_INDEX;
+
+            if (rand() % 100 < 17)
+                return SECRET_GRIMFANG_INDEX;
+
             if (rand() % 100 < 20)
                 return maxEnemies;
         }
+
         if (zoneIndex >= 3 && zoneIndex <= 7)
         {
-            // Stage 2 replay: 25% chance for the secret/elite enemy.
             if (rand() % 100 < 25)
                 return maxEnemies;
         }
         else if (zoneIndex >= 8 && zoneIndex <= 15)
         {
-            // Stage 3/4 replay: 20% chance for elite replay version.
             if (rand() % 100 < 20)
                 return maxEnemies;
         }

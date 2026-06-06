@@ -36,6 +36,13 @@ typedef enum {
     SKILL_LOCK_JAW,
     SKILL_ALPHA_RAGE,
 
+    //grimfang
+    SKILL_FANG_RIPPER,
+    SKILL_SAVAGE_RUSH,
+    SKILL_BLOOD_TRAIL,
+    SKILL_SHADOW_MAW,
+    SKILL_SHADOW_BITE,
+
     // 🔥 WILD SKILLS (IBINALIK)
     SKILL_PACK_ATTACK = 20,
     SKILL_AMBUSH,
@@ -132,7 +139,7 @@ typedef struct {
     int skillCount;
 
     int equipped[4];              // 🔥 IBINALIK
-
+    int defeatedGrimfang;
 } Dog;
 
 // ================= CORE FUNCTIONS =================

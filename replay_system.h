@@ -1,5 +1,6 @@
 #ifndef REPLAY_SYSTEM_H
 #define REPLAY_SYSTEM_H
+#define SECRET_GRIMFANG_INDEX 99
 
 #include "dog.h"
 
