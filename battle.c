@@ -325,6 +325,10 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
 
     applyBattleStatGain(player);
     checkSkillUnlock(player);
+    if (strcmp(enemy->name, "Grimfang") == 0)
+    {
+        player->defeatedGrimfang = 1;
+    }
 
     int maxEnemies[16] =
     {
