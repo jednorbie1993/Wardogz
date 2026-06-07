@@ -7,6 +7,7 @@
 #include "../dog.h"
 #include "../cinematic.h"
 #include "../enemies/enemy.h"
+#include "../replay_system.h"
 
 void runStage2(Dog *player, int progress[])
 {
@@ -123,7 +124,7 @@ void runStage2(Dog *player, int progress[])
 
         if (progress[zoneIndex] >= maxEnemies)
         {
-            printf("\n");
+            /*printf("\n");
 
             int enemyType = rand() % maxEnemies;
 
@@ -140,10 +141,12 @@ void runStage2(Dog *player, int progress[])
 
             int verb = rand() % 4;
 
-            printf("%s %s\n\n", tempEnemy.name, verbs[verb]);
+            printf("%s %s\n\n", tempEnemy.name, verbs[verb]);*/
 
             // REPLAY QUOTES
             int replayLine = rand() % 4;
+
+            printf("\n");
 
             switch(replayLine)
             {
@@ -172,10 +175,7 @@ void runStage2(Dog *player, int progress[])
             waitForEnter();
 
             // ELITE CHANCE
-            if (rand() % 100 < 25)
-                i = maxEnemies;
-            else
-                i = rand() % maxEnemies;
+            i = chooseReplayEnemyIndex(zoneIndex, progress, 1);
         }
         else
         {

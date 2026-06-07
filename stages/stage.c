@@ -24,7 +24,7 @@ void startStage(Dog *player, int progress[])
             3,3,3,
             3,3,2,4,4,
             2,4,4,3,
-            3,3,3,
+            2,4,4,3
         };
         
         int urbanComplete =

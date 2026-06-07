@@ -3,14 +3,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-int chooseReplayEnemyIndex(int zoneIndex, int progress[])
+int chooseReplayEnemyIndex(int zoneIndex, int progress[], int isWildTerritory)
 {
     int maxEnemies = getBattleMaxEnemies(zoneIndex);
     static int urbanReplayCount = 0;
+    static int wildReplayCount = 0;
 
     if (progress[zoneIndex] >= maxEnemies)
     {
-        if (zoneIndex >= 0 && zoneIndex <= 2)
+        // Back Alley / Urban Strays secret
+        if (!isWildTerritory && zoneIndex >= 0 && zoneIndex <= 2)
         {
             urbanReplayCount++;
 
@@ -24,12 +26,23 @@ int chooseReplayEnemyIndex(int zoneIndex, int progress[])
                 return maxEnemies;
         }
 
-        if (zoneIndex >= 3 && zoneIndex <= 7)
+        // Wild Territory secret kahit anong zone
+        if (isWildTerritory)
         {
-            if (rand() % 100 < 25)
+            wildReplayCount++;
+
+            if (wildReplayCount % 12 == 0)
+                return SECRET_DIREMAW_INDEX;
+
+            if (rand() % 100 < 20)
+                return SECRET_DIREMAW_INDEX;
+
+            if (rand() % 100 < 20)
                 return maxEnemies;
         }
-        else if (zoneIndex >= 8 && zoneIndex <= 15)
+
+        // Other replay zones
+        if (!isWildTerritory && zoneIndex >= 8 && zoneIndex <= 15)
         {
             if (rand() % 100 < 20)
                 return maxEnemies;

@@ -323,12 +323,18 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
 
     printf("\n YOU WIN! \n");
 
-    applyBattleStatGain(player);
-    checkSkillUnlock(player);
     if (strcmp(enemy->name, "Grimfang") == 0)
     {
         player->defeatedGrimfang = 1;
     }
+
+    if (strcmp(enemy->name, "Diremaw") == 0)
+    {
+        player->defeatedDiremaw = 1;
+    }
+
+    applyBattleStatGain(player);
+    checkSkillUnlock(player);
 
     int maxEnemies[16] =
     {
@@ -352,7 +358,6 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
 
     return 1;
 }
-
 
 int getBattleMaxEnemies(int zoneIndex)
 {
@@ -398,7 +403,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
     player->bleedDamage = 0;
     player->accuracyModifier = 0;
 
-    int i = (enemyIndex >= 0) ? enemyIndex : chooseReplayEnemyIndex(zoneIndex, progress);
+    int i = (enemyIndex >= 0) ? enemyIndex : chooseReplayEnemyIndex(zoneIndex, progress, 0);
 
     // =========================
     // STAGE 3 SYSTEM

@@ -184,6 +184,30 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         case SKILL_FERAL_RUSH:
             useFeralRush(enemy, player);
             break;
+        //diremaw
+        case SKILL_MAULING_BITE:
+            useMaulingBite(enemy, player);
+            break;
+
+        case SKILL_RABID_CLAW:
+            useRabidClaw(enemy, player);
+            break;
+
+        case SKILL_BLOOD_SCENT:
+            useBloodScent(enemy, player);
+            break;
+
+        case SKILL_WILD_POUNCE:
+            useWildPounce(enemy, player);
+            break;
+
+        case SKILL_BONE_BREAKER:
+            useBoneBreaker(enemy, player);
+            break;
+
+        case SKILL_PREDATOR_FRENZY:
+            usePredatorFrenzy(enemy, player);
+            break;
 
         // =========================
         // MILITARY SKILLS

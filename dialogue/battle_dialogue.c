@@ -84,5 +84,4 @@ void playEnemyBattleDialogue(int zoneIndex, char enemyName[])
         typeText(backAlleyLines[randomLine], 20);
     }
 
-    printf("\n");
 }

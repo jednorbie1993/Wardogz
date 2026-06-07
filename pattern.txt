@@ -128,3 +128,11 @@ if (strcmp(enemy->name, "Grimfang") == 0 &&
 
     printf("\nNEW SECRET SKILL LEARNED: Shadow Bite!\n");
 }     
+
+stage2------------------------------------------------------------
+enemies.c/.h
+enemy_stage2.c
+battle.c
+dog.h
+replay_system.c/.h
+skill.c

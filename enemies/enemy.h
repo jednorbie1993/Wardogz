@@ -40,6 +40,13 @@ int useContainedExplosion(Dog *user, Dog *target);
 int useAcidSpit(Dog *user, Dog *target);
 int useNeuroToxin(Dog *user, Dog *target);
 
+int useMaulingBite(Dog *user, Dog *target);
+int useRabidClaw(Dog *user, Dog *target);
+int useBloodScent(Dog *user, Dog *target);
+int useWildPounce(Dog *user, Dog *target);
+int useBoneBreaker(Dog *user, Dog *target);
+int usePredatorFrenzy(Dog *user, Dog *target);
+
 void loadStage1Enemies(Dog *enemy, int zoneIndex, int enemyIndex);
 void loadStage2Enemies(Dog *enemy, int zoneIndex, int enemyIndex);
 void loadStage3Enemies(Dog *enemy, int zoneIndex, int enemyIndex);

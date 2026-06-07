@@ -338,7 +338,9 @@ void createDog(Dog *d)
     d->equipped[1] = 1;
     d->equipped[2] = -1;
     d->equipped[3] = -1;
-
+    //secret enemy
+    d->defeatedGrimfang = 0;
+    d->defeatedDiremaw = 0;
 
     initSparringProgress(d);
 }

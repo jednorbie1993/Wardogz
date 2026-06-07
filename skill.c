@@ -112,8 +112,21 @@ void checkSkillUnlock(Dog *d)
         d->skills[d->skillCount].power = 18;
         d->skills[d->skillCount].cost = 8;
         d->skills[d->skillCount].type = SKILL_ATTACK;
+        d->skills[d->skillCount].id = SKILL_SHADOW_BITE;
 
         printf("NEW SECRET SKILL UNLOCKED: Shadow Bite!\n");
+        d->skillCount++;
+    }
+
+    if (d->defeatedDiremaw && d->skillCount < MAX_SKILLS && !hasSkill(d, "Dire Bite"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Dire Bite");
+        d->skills[d->skillCount].power = 22;
+        d->skills[d->skillCount].cost = 10;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+        d->skills[d->skillCount].id = SKILL_DIRE_BITE;
+
+        printf("NEW SECRET SKILL UNLOCKED: Dire Bite!\n");
         d->skillCount++;
     }
     // ================= SPEED =================

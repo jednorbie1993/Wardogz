@@ -145,7 +145,7 @@ void runStage4(Dog *player, int progress[])
         // =========================
         if (progress[zoneIndex] >= zoneMax)
         {
-            printf("\n[DATA LOG]: Containment subject recorded...\n");
+            /*printf("\n[DATA LOG]: Containment subject recorded...\n");
             
             int enemyType = rand() % zoneMax;
             Dog tempEnemy;
@@ -156,7 +156,7 @@ void runStage4(Dog *player, int progress[])
             if (systemLog)
                 printf(" (REPLAY MODE)\n");
             
-            waitForEnter();
+            waitForEnter();*/
             
             i = (rand() % 100 < 20) ? (zoneMax) : (rand() % zoneMax);
         }
@@ -175,8 +175,8 @@ void runStage4(Dog *player, int progress[])
         // =========================
         if (i == zoneMax - 1)
         {
-            printf("\n*** CONTAINMENT SUBJECT DETECTED! ***\n");
-            printf("*** SUBJECT SHOWS EXTREME AGGRESSION ***\n");
+            /*printf("\n*** CONTAINMENT SUBJECT DETECTED! ***\n");
+            printf("*** SUBJECT SHOWS EXTREME AGGRESSION ***\n");*/
             enemy.attack += 18;
             enemy.defense += 14;
             enemy.speed += 10;
@@ -187,10 +187,10 @@ void runStage4(Dog *player, int progress[])
         // =========================
         // FINAL INTRO
         // =========================
-        printf("\nENGAGING: %s\n", enemy.name);
+        /*printf("\nENGAGING: %s\n", enemy.name);
         printf("HP: %d | ATK: %d | DEF: %d | SPD: %d\n", 
                enemy.hp, enemy.attack, enemy.defense, enemy.speed);
-        waitForEnter();
+        waitForEnter();*/
 
         // =========================
         // PLAYER CHECK

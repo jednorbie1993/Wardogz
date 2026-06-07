@@ -116,7 +116,7 @@ void runStage3(Dog *player, int progress[])
         // =========================
         if (progress[zoneIndex] >= zoneMax)
         {
-            printf("\n[MILITARY INTEL]: Training data acquired...\n");
+            /*printf("\n[MILITARY INTEL]: Training data acquired...\n");
             
             int enemyType = rand() % zoneMax;
             Dog tempEnemy;
@@ -127,7 +127,7 @@ void runStage3(Dog *player, int progress[])
             if (systemLog)
                 printf(" (REPLAY MODE)\n");
             
-            waitForEnter();
+            waitForEnter();*/
             
             i = (rand() % 100 < 20) ? (zoneMax) : (rand() % zoneMax);
         }
@@ -157,8 +157,8 @@ void runStage3(Dog *player, int progress[])
         // =========================
         // INTRO
         // =========================
-        printf("\nENGAGING: %s\n", enemy.name);
-        waitForEnter();
+        /*printf("\nENGAGING: %s\n", enemy.name);
+        waitForEnter();*/
 
         // =========================
         // PLAYER CHECK
@@ -174,13 +174,13 @@ void runStage3(Dog *player, int progress[])
         // =========================
         // FINAL BOSS INTRO
         // =========================
-        if (zoneIndex == 11 && i == 2)
+        /*if (zoneIndex == 11 && i == 2)
         {
             system("cls");
             typeText("ALERT: COMMANDER DOGZ DEPLOYED\n", 30);
             typeText("Military Dogz Commander: \"Discipline will crush chaos!\"\n\n", 28);
             waitForEnter();
-        }
+        }*/
 
         // =========================
         // BATTLE

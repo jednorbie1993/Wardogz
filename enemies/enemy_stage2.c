@@ -2,14 +2,45 @@
 #include <string.h>
 #include <stdlib.h>
 #include "enemy.h"
+#include "../replay_system.h"
 
 // =========================
 // WILD TERRITORY ENEMIES
 // =========================
 
+void createDiremaw(Dog *enemy)
+{
+    strcpy(enemy->name, "Diremaw");
+
+    enemy->hp = 240;
+    enemy->maxHP = 240;
+    enemy->attack = 50;
+    enemy->defense = 45;
+    enemy->speed = 40;
+    enemy->accuracy = 88;
+    enemy->intelligence = 30;
+
+    enemy->zoneType = ZONE_NORMAL;
+    enemy->personalityType = PERSONALITY_DESPERATE;
+
+    enemy->numSkills = 6;
+
+    enemy->skills[0] = (Skill){"Mauling Bite", 16, 0, SKILL_DAMAGE, 95, SKILL_MAULING_BITE, 0, 0, 10};
+    enemy->skills[1] = (Skill){"Rabid Claw", 12, 0, SKILL_DAMAGE, 90, SKILL_RABID_CLAW, 0, 0, 18};
+    enemy->skills[2] = (Skill){"Blood Scent", 18, 0, SKILL_DAMAGE, 90, SKILL_BLOOD_SCENT, 0, 0, 16};
+    enemy->skills[3] = (Skill){"Wild Pounce", 20, 0, SKILL_DAMAGE, 85, SKILL_WILD_POUNCE, 0, 0, 15};
+    enemy->skills[4] = (Skill){"Bone Breaker", 24, 0, SKILL_DAMAGE, 80, SKILL_BONE_BREAKER, 0, 0, 20};
+    enemy->skills[5] = (Skill){"Predator Frenzy", 8, 0, SKILL_DAMAGE, 80, SKILL_PREDATOR_FRENZY, 3, 0, 25};
+}
+
 void loadStage2Enemies(Dog *enemy, int zoneIndex, int i)
 {
     createEnemy(enemy);
+    if (i == SECRET_DIREMAW_INDEX)
+    {
+        createDiremaw(enemy);
+        return;
+    }
 
     // =========================
     // ZONE 3: WILD TERRITORY - RIVER
@@ -243,6 +274,96 @@ int useFeralRush(Dog *user, Dog *target)
     printf("%s FERAL RUSH! -%d +BLEED!\n", user->name, dmg);
 
     return dmg;
+}
+
+int useMaulingBite(Dog *user, Dog *target)
+{
+    int dmg = user->attack * 1.1 + (rand() % 5);
+    target->hp -= dmg;
+
+    printf("%s uses Mauling Bite! -%d\n", user->name, dmg);
+
+    return dmg;
+}
+
+int useRabidClaw(Dog *user, Dog *target)
+{
+    int dmg = user->attack * 0.9 + (rand() % 5);
+    target->hp -= dmg;
+
+    target->isBleeding = 1;
+    target->bleedTurns = 3;
+    target->bleedDamage = 5;
+
+    printf("%s uses Rabid Claw! -%d +BLEED!\n", user->name, dmg);
+
+    return dmg;
+}
+
+int useBloodScent(Dog *user, Dog *target)
+{
+    int dmg = user->attack * 1.0 + (rand() % 5);
+
+    if (target->isBleeding)
+    {
+        dmg += 12;
+        printf("%s smells blood! Bonus damage!\n", user->name);
+    }
+
+    target->hp -= dmg;
+
+    printf("%s uses Blood Scent! -%d\n", user->name, dmg);
+
+    return dmg;
+}
+
+int useWildPounce(Dog *user, Dog *target)
+{
+    int dmg = user->attack * 1.15 + (rand() % 6);
+    target->hp -= dmg;
+
+    user->speed += 5;
+
+    printf("%s uses Wild Pounce! -%d Speed UP!\n", user->name, dmg);
+
+    return dmg;
+}
+
+int useBoneBreaker(Dog *user, Dog *target)
+{
+    int dmg = user->attack * 1.25 + (rand() % 6);
+    target->hp -= dmg;
+
+    target->defense -= 5;
+
+    if (target->defense < 0)
+        target->defense = 0;
+
+    printf("%s uses Bone Breaker! -%d Defense DOWN!\n", user->name, dmg);
+
+    return dmg;
+}
+
+int usePredatorFrenzy(Dog *user, Dog *target)
+{
+    int hits = 1 + rand() % 3;
+    int total = 0;
+
+    printf("%s uses Predator Frenzy!\n", user->name);
+
+    for (int i = 0; i < hits; i++)
+    {
+        int dmg = user->attack * 0.45 + (rand() % 4);
+        target->hp -= dmg;
+        total += dmg;
+
+        printf("Hit %d: -%d\n", i + 1, dmg);
+    }
+
+    user->hp -= 8;
+    printf("%s took 8 recoil damage!\n", user->name);
+
+    return total;
 }
 
 // =====================================================

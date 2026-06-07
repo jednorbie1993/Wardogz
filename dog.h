@@ -43,7 +43,16 @@ typedef enum {
     SKILL_SHADOW_MAW,
     SKILL_SHADOW_BITE,
 
-    // 🔥 WILD SKILLS (IBINALIK)
+    //diremaw
+    SKILL_MAULING_BITE = 40,
+    SKILL_WILD_POUNCE,
+    SKILL_RABID_CLAW,
+    SKILL_PREDATOR_FRENZY,
+    SKILL_DIRE_BITE,
+    SKILL_BONE_BREAKER,
+    SKILL_BLOOD_SCENT,
+
+    // WILD SKILLS
     SKILL_PACK_ATTACK = 20,
     SKILL_AMBUSH,
     SKILL_HOWL_DEBUFF,
@@ -140,6 +149,8 @@ typedef struct {
 
     int equipped[4];              // 🔥 IBINALIK
     int defeatedGrimfang;
+
+    int defeatedDiremaw;
 } Dog;
 
 // ================= CORE FUNCTIONS =================
