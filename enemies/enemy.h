@@ -29,6 +29,7 @@ int useMilitaryCharge(Dog *user, Dog *target);
 int useBarrageFire(Dog *user, Dog *target);
 
 void setEnemySkillsMilitary(Dog *enemy, int zoneIndex);
+int useAmbushStrike(Dog *user, Dog *target);
 
 // Add this at the TOP of enemy.c (after your includes):
 

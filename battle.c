@@ -53,6 +53,47 @@ void battleDivider()
 void showEnemyEntrance(Dog *enemy, int zoneIndex)
 {
     printf("\n");
+    if (strcmp(enemy->name, "Grimfang") == 0)
+    {
+        typeText("\"The streets belong to the strongest.\"", 25);
+
+        printf("\n\n");
+
+        typeText("Grimfang emerged!", 25);
+
+        printf("\n");
+        waitForEnter();
+
+        return;
+    }
+
+    if (strcmp(enemy->name, "Diremaw") == 0)
+    {
+        typeText("\"The wild doesn't care who you are. It only decides who remains.\"", 25);
+
+        printf("\n\n");
+
+        typeText("Diremaw emerged!", 25);
+
+        printf("\n");
+        waitForEnter();
+
+        return;
+    }
+
+    if (strcmp(enemy->name, "Blackclaw") == 0)
+    {
+        typeText("\"We were weapons... until we learned who the real enemy was.\"", 25);
+
+        printf("\n\n");
+
+        typeText("Blackclaw emerged!", 25);
+
+        printf("\n");
+        waitForEnter();
+
+        return;
+    }
 
     if (zoneIndex >= 8 && zoneIndex <= 11)
     {
@@ -321,6 +362,19 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
 
     Sleep(700);
 
+    if (strcmp(enemy->name, "Blackclaw") == 0)
+    {
+        typeText("Blackclaw lowers his head.", 25);
+        printf("\n");
+
+        waitForEnter();
+        printf("\n");
+
+        typeText("\"The battlefield... belongs to no one.\"", 25);
+        printf("\n");
+        waitForEnter();
+    }
+
     printf("\n YOU WIN! \n");
 
     if (strcmp(enemy->name, "Grimfang") == 0)
@@ -331,6 +385,10 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
     if (strcmp(enemy->name, "Diremaw") == 0)
     {
         player->defeatedDiremaw = 1;
+    }
+    if (strcmp(enemy->name, "Blackclaw") == 0)
+    {
+        player->defeatedBlackclaw = 1;
     }
 
     applyBattleStatGain(player);

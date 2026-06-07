@@ -4,10 +4,48 @@
 #include "enemy.h"
 #include "../dog.h"
 #include "enemy_stage3.h"
+#include "../replay_system.h"
+
+void createBlackclaw(Dog *enemy)
+{
+    createEnemy(enemy);
+
+    strcpy(enemy->name, "Blackclaw");
+
+    enemy->zoneType = ZONE_MILITARY;
+    enemy->personalityType = PERSONALITY_ALPHA;
+
+    enemy->attack += 28;
+    enemy->defense += 18;
+    enemy->speed += 22;
+    enemy->maxHP += 80;
+    enemy->hp = enemy->maxHP;
+
+    enemy->numSkills = 3;
+
+    enemy->skills[0].id = SKILL_AMBUSH_STRIKE;
+    strcpy(enemy->skills[0].name, "Ambush Strike");
+    enemy->skills[0].power = 28;
+
+    enemy->skills[1].id = SKILL_PRECISION_SHOT;
+    strcpy(enemy->skills[1].name, "Precision Shot");
+    enemy->skills[1].power = 18;
+
+    enemy->skills[2].id = SKILL_MILITARY_CHARGE;
+    strcpy(enemy->skills[2].name, "Military Charge");
+    enemy->skills[2].power = 25;
+}
 
 void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
 {
     createEnemy(enemy);
+    
+    if (i == SECRET_BLACKCLAW_INDEX)
+    {
+        createBlackclaw(enemy);
+        return;
+    }
+
     enemy->numSkills = 6;  // Increased to 6 skills
     enemy->zoneType = ZONE_MILITARY;
 
@@ -158,6 +196,14 @@ void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
     }
 
     setEnemySkillsMilitary(enemy, zoneIndex);
+}
+int useAmbushStrike(Dog *user, Dog *target)
+{
+    int dmg = user->attack * 1.8 + (rand() % 8);
+    target->hp -= dmg;
+
+    printf("%s uses Ambush Strike! -%d\n", user->name, dmg);
+    return dmg;
 }
 
 int useSelfDestruct(Dog *user, Dog *target)

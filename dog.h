@@ -64,6 +64,7 @@ typedef enum {
     SKILL_SELF_DESTRUCT,
     SKILL_BARRAGE_FIRE,
     SKILL_MILITARY_CHARGE,
+    SKILL_AMBUSH_STRIKE,
     SKILL_MUTATION_SURGE = 31,
     SKILL_BIO_SHIELD,
     SKILL_CELL_REGEN,
@@ -151,6 +152,7 @@ typedef struct {
     int defeatedGrimfang;
 
     int defeatedDiremaw;
+    int defeatedBlackclaw;
 } Dog;
 
 // ================= CORE FUNCTIONS =================

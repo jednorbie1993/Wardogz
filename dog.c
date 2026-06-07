@@ -83,10 +83,10 @@ void preBattleScene(int zoneIndex)
 {
     const char *messages[6];
 
-    // STAGE 1 - URBAN STRAYS
     if (zoneIndex <= 2)
     {
-        static const char *urbanMessages[] = {
+        static const char *urbanMessages[] =
+        {
             "The alley reeks of rust and old blood...",
             "You hear barking somewhere beyond the dark streets...",
             "Broken bottles crack beneath your paws...",
@@ -96,13 +96,12 @@ void preBattleScene(int zoneIndex)
         };
 
         for (int i = 0; i < 6; i++)
-        {
             messages[i] = urbanMessages[i];
-        }
     }
-    else // STAGE 2 - WILD TERRITORY
+    else if (zoneIndex <= 7)
     {
-        static const char *wildMessages[] = {
+        static const char *wildMessages[] =
+        {
             "The forest air feels heavy with danger...",
             "Growls echo somewhere in the wild...",
             "Fresh claw marks cover the ground...",
@@ -112,13 +111,40 @@ void preBattleScene(int zoneIndex)
         };
 
         for (int i = 0; i < 6; i++)
-        {
             messages[i] = wildMessages[i];
-        }
+    }
+    else if (zoneIndex <= 11)
+    {
+        static const char *militaryMessages[] =
+        {
+            "Abandoned military structures surround the area...",
+            "Boot prints remain in the dust...",
+            "A distant siren echoes through the ruins...",
+            "Old surveillance equipment flickers nearby...",
+            "The checkpoint ahead feels strangely silent...",
+            "Something patrols these grounds..."
+        };
+
+        for (int i = 0; i < 6; i++)
+            messages[i] = militaryMessages[i];
+    }
+    else
+    {
+        static const char *bioMessages[] =
+        {
+            "The laboratory smells of chemicals and decay...",
+            "Warning lights flash across the facility...",
+            "Strange noises echo through the corridors...",
+            "Containment chambers line the walls...",
+            "A cold mechanical voice repeats an alert...",
+            "Something escaped from the testing area..."
+        };
+
+        for (int i = 0; i < 6; i++)
+            messages[i] = bioMessages[i];
     }
 
     int count = 6;
-
     int r = rand() % count;
 
     printf("\n");
@@ -133,6 +159,7 @@ void preBattleScene(int zoneIndex)
     printf("\n\nPress Enter to continue...");
     getchar();
 }
+
 void trainDog(Dog *d, int type)
 {
     printf("\nTraining");
@@ -341,6 +368,7 @@ void createDog(Dog *d)
     //secret enemy
     d->defeatedGrimfang = 0;
     d->defeatedDiremaw = 0;
+    d->defeatedBlackclaw = 0;
 
     initSparringProgress(d);
 }

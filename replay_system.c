@@ -8,6 +8,7 @@ int chooseReplayEnemyIndex(int zoneIndex, int progress[], int isWildTerritory)
     int maxEnemies = getBattleMaxEnemies(zoneIndex);
     static int urbanReplayCount = 0;
     static int wildReplayCount = 0;
+    static int militaryReplayCount = 0;
 
     if (progress[zoneIndex] >= maxEnemies)
     {
@@ -34,15 +35,28 @@ int chooseReplayEnemyIndex(int zoneIndex, int progress[], int isWildTerritory)
             if (wildReplayCount % 12 == 0)
                 return SECRET_DIREMAW_INDEX;
 
-            if (rand() % 100 < 20)
+            if (rand() % 100 < 17)
                 return SECRET_DIREMAW_INDEX;
 
             if (rand() % 100 < 20)
                 return maxEnemies;
         }
 
-        // Other replay zones
-        if (!isWildTerritory && zoneIndex >= 8 && zoneIndex <= 15)
+        if (!isWildTerritory && zoneIndex >= 8 && zoneIndex <= 11)
+        {
+            militaryReplayCount++;
+
+            if (militaryReplayCount % 10 == 0)
+                return SECRET_BLACKCLAW_INDEX;
+
+            if (rand() % 100 < 18)
+                return SECRET_BLACKCLAW_INDEX;
+
+            if (rand() % 100 < 20)
+                return maxEnemies;
+        }
+               // Other replay zones
+        if (!isWildTerritory && zoneIndex >= 12 && zoneIndex <= 15)
         {
             if (rand() % 100 < 20)
                 return maxEnemies;

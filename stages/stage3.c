@@ -8,6 +8,7 @@
 #include "../cinematic.h"
 #include "../enemies/enemy.h"
 #include "../enemies/enemy_stage3.h"
+#include "../replay_system.h"
 
 int getZoneMax(int zoneIndex)
 {
@@ -129,7 +130,7 @@ void runStage3(Dog *player, int progress[])
             
             waitForEnter();*/
             
-            i = (rand() % 100 < 20) ? (zoneMax) : (rand() % zoneMax);
+            i = chooseReplayEnemyIndex(zoneIndex, progress, 0);
         }
         else
         {

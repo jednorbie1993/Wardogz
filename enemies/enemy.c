@@ -235,6 +235,9 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         case SKILL_MILITARY_CHARGE:
             useMilitaryCharge(enemy, player);
             break;
+        case SKILL_AMBUSH_STRIKE:
+            useAmbushStrike(enemy, player);
+            break;    
         // =========================
         // BIO LAB SKILLS (ADD THIS)
         // =========================
