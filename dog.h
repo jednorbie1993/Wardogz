@@ -70,7 +70,8 @@ typedef enum {
     SKILL_CELL_REGEN,
     SKILL_CONTAINED_EXPLOSION,
     SKILL_ACID_SPIT,
-    SKILL_NEURO_TOXIN
+    SKILL_NEURO_TOXIN,
+    SKILL_OMEGA_BITE
 
 } SkillID;
 
@@ -153,6 +154,7 @@ typedef struct {
 
     int defeatedDiremaw;
     int defeatedBlackclaw;
+    int defeatedOmega;
 } Dog;
 
 // ================= CORE FUNCTIONS =================

@@ -3,6 +3,7 @@
 #define SECRET_GRIMFANG_INDEX 99
 #define SECRET_DIREMAW_INDEX 98
 #define SECRET_BLACKCLAW_INDEX 97
+#define SECRET_OMEGA_INDEX 96
 
 #include "dog.h"
 

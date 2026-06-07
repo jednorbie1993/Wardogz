@@ -4,10 +4,51 @@
 #include "enemy.h"
 #include "../dog.h"
 #include "enemy_stage4.h"
+#include "../replay_system.h"
+
+void createOmegaPrime(Dog *enemy)
+{
+    createEnemy(enemy);
+
+    strcpy(enemy->name, "Omega Prime");
+
+    enemy->zoneType = ZONE_BIOLAB;
+    enemy->personalityType = PERSONALITY_ALPHA;
+
+    enemy->attack += 38;
+    enemy->defense += 25;
+    enemy->speed += 18;
+    enemy->maxHP += 120;
+    enemy->hp = enemy->maxHP;
+
+    enemy->numSkills = 4;
+
+    enemy->skills[0].id = SKILL_MUTATION_SURGE;
+    strcpy(enemy->skills[0].name, "Mutation Surge");
+    enemy->skills[0].power = 28;
+
+    enemy->skills[1].id = SKILL_ACID_SPIT;
+    strcpy(enemy->skills[1].name, "Acid Spit");
+    enemy->skills[1].power = 26;
+
+    enemy->skills[2].id = SKILL_NEURO_TOXIN;
+    strcpy(enemy->skills[2].name, "Neuro Toxin");
+    enemy->skills[2].power = 24;
+
+    enemy->skills[3].id = SKILL_CONTAINED_EXPLOSION;
+    strcpy(enemy->skills[3].name, "Core Breach");
+    enemy->skills[3].power = 60;
+}
 
 void loadStage4Enemies(Dog *enemy, int zoneIndex, int i)
 {
     createEnemy(enemy);
+    if (i == SECRET_OMEGA_INDEX)
+    {
+        createOmegaPrime(enemy);
+        return;
+    }
+
     enemy->numSkills = 6;
     enemy->zoneType = ZONE_BIOLAB;
 

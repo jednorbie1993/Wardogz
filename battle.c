@@ -94,6 +94,19 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
 
         return;
     }
+    if (strcmp(enemy->name, "Omega Prime") == 0)
+    {
+        typeText("\"The experiment is complete... and you are the final test.\"", 25);
+
+        printf("\n\n");
+
+        typeText("Omega Prime emerged!", 25);
+
+        printf("\n");
+        waitForEnter();
+
+        return;
+    }
 
     if (zoneIndex >= 8 && zoneIndex <= 11)
     {
@@ -389,6 +402,10 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
     if (strcmp(enemy->name, "Blackclaw") == 0)
     {
         player->defeatedBlackclaw = 1;
+    }
+    if (strcmp(enemy->name, "Omega Prime") == 0)
+    {
+        player->defeatedOmega = 1;
     }
 
     applyBattleStatGain(player);

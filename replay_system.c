@@ -9,6 +9,7 @@ int chooseReplayEnemyIndex(int zoneIndex, int progress[], int isWildTerritory)
     static int urbanReplayCount = 0;
     static int wildReplayCount = 0;
     static int militaryReplayCount = 0;
+    static int bioReplayCount = 0;
 
     if (progress[zoneIndex] >= maxEnemies)
     {
@@ -51,6 +52,19 @@ int chooseReplayEnemyIndex(int zoneIndex, int progress[], int isWildTerritory)
 
             if (rand() % 100 < 18)
                 return SECRET_BLACKCLAW_INDEX;
+
+            if (rand() % 100 < 20)
+                return maxEnemies;
+        }
+        if (!isWildTerritory && zoneIndex >= 12 && zoneIndex <= 15)
+        {
+            bioReplayCount++;
+
+            if (bioReplayCount % 10 == 0)
+                return SECRET_OMEGA_INDEX;
+
+            if (rand() % 100 < 98)
+                return SECRET_OMEGA_INDEX;
 
             if (rand() % 100 < 20)
                 return maxEnemies;

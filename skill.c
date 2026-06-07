@@ -140,6 +140,17 @@ void checkSkillUnlock(Dog *d)
         printf("NEW SECRET SKILL UNLOCKED: Ambush Strike!\n");
         d->skillCount++;
     }
+    if (d->defeatedOmega && d->skillCount < MAX_SKILLS && !hasSkill(d, "Omega Bite"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Omega Bite");
+        d->skills[d->skillCount].power = 28;
+        d->skills[d->skillCount].cost = 13;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+        d->skills[d->skillCount].id = SKILL_OMEGA_BITE;
+
+        printf("NEW SECRET SKILL UNLOCKED: Omega Bite!\n");
+        d->skillCount++;
+    }
     // ================= SPEED =================
     if (d->speed >= 100 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Quick Dash"))
     {
