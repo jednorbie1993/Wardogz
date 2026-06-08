@@ -20,7 +20,7 @@ int main()
     createDog(&player);
 
     int restCount = 0;
-    int progress[12] = {0};
+    int progress[17] = {0};
 
     while (1)
     {
@@ -298,7 +298,7 @@ int main()
     gcc *.c -o wardo -Wall -Wextra
  
     played in 2026 Month of May, 
-        June - 1, 2, 3, 4, 5, 
+        June - 1, 2, 3, 4, 5, 6, 7, 8
 
     gcc *.c enemies/*.c stages/*.c skills/*.c ui/*.c -o wardogz.exe
 
