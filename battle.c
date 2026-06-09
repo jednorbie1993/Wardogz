@@ -490,7 +490,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
     {
         loadStage5Enemies(&enemy, zoneIndex, i);
     }
-    if (zoneIndex >= 12 && zoneIndex <= 15)  // Stage 4: Bio-Containment
+    else if (zoneIndex >= 12 && zoneIndex <= 15)  // Stage 4: Bio-Containment
     {
         loadStage4Enemies(&enemy, zoneIndex, i);
     }
