@@ -72,4 +72,5 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
     enemy->skills[3].power = 30;
 
     enemy->numSkills = 4;
+    //
 }
