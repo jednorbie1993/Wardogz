@@ -5,6 +5,7 @@
 #include <windows.h>
 #include "enemy.h"
 #include "../cinematic.h"
+#include "enemy_stage5.h"
 
 extern int systemLog;
 
@@ -184,7 +185,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         case SKILL_FERAL_RUSH:
             useFeralRush(enemy, player);
             break;
-        //diremaw
+        // diremaw
         case SKILL_MAULING_BITE:
             useMaulingBite(enemy, player);
             break;
@@ -237,7 +238,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             break;
         case SKILL_AMBUSH_STRIKE:
             useAmbushStrike(enemy, player);
-            break;    
+            break;
         // =========================
         // BIO LAB SKILLS (ADD THIS)
         // =========================
@@ -263,7 +264,23 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
         case SKILL_NEURO_TOXIN:
             useNeuroToxin(enemy, player);
-            break;    
+            break;
+
+        case SKILL_REINFORCED_BITE:
+            useReinforcedBite(enemy, player);
+            break;
+
+        case SKILL_COMBAT_RUSH:
+            useCombatRush(enemy, player);
+            break;
+
+        case SKILL_PREDATOR_INSTINCT:
+            usePredatorInstinct(enemy, player);
+            break;
+
+        case SKILL_ENHANCED_JAW_CRUSH:
+            useEnhancedJawCrush(enemy, player);
+            break;
 
         default:
             printf("%s uses basic attack!\n", enemy->name);
@@ -307,7 +324,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     printf("\n--- ENEMY TURN ---\n");
 
     int enemyDamage = (enemy->attack / 6) + 4;
-   
+
     handleStage1EnemyBehavior(player, enemy, &enemyDamage);
 
     enemyDamage += rand() % 5;
