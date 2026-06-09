@@ -74,3 +74,83 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
     enemy->numSkills = 4;
     //
 }
+
+int useReinforcedBite(Dog *user, Dog *target)
+{
+    int hits = (rand() % 3) + 1;
+    int total = 0;
+
+    printf("%s uses Reinforced Bite!\n", user->name);
+
+    for (int i = 0; i < hits; i++)
+    {
+        int dmg = (user->attack * 1.1) + 6 + (rand() % 5);
+
+        if (target->defense > 0)
+            dmg -= target->defense / 45;
+
+        if (dmg < 2)
+            dmg = 2;
+
+        target->hp -= dmg;
+        total += dmg;
+
+        printf("Hit %d! -%d HP\n", i + 1, dmg);
+    }
+
+    printf("Total damage: -%d HP\n", total);
+    return total;
+}
+
+int useCombatRush(Dog *user, Dog *target)
+{
+    int dmg = user->attack + 10 + (rand() % 8);
+
+    if (user->speed > target->speed)
+    {
+        dmg += 10;
+        printf("%s outsped the target!\n", user->name);
+    }
+
+    if (target->defense > 0)
+        dmg -= target->defense / 40;
+
+    if (dmg < 3)
+        dmg = 3;
+
+    target->hp -= dmg;
+
+    printf("%s uses Combat Rush! -%d HP\n", user->name, dmg);
+    return dmg;
+}
+
+int usePredatorInstinct(Dog *user, Dog *target)
+{
+    user->attack += 6;
+    user->speed += 5;
+
+    printf("%s activates Predator Instinct!\n", user->name);
+    printf("Attack +6 | Speed +5\n");
+
+    return 0;
+}
+
+int useEnhancedJawCrush(Dog *user, Dog *target)
+{
+    int dmg = (user->attack * 1.5) + 12 + (rand() % 10);
+
+    if (target->defense > 0)
+        dmg -= target->defense / 35;
+
+    if (dmg < 5)
+        dmg = 5;
+
+    target->hp -= dmg;
+
+    user->attack += 4;
+
+    printf("%s uses Enhanced Jaw Crush! -%d HP\n", user->name, dmg);
+    printf("%s's reinforced jaw grows stronger! Attack +4\n", user->name);
+
+    return dmg;
+}
