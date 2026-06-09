@@ -13,6 +13,7 @@
 #include "stages/stage4.h"
 #include "dialogue/battle_dialogue.h"
 #include "replay_system.h"
+#include "enemies/enemy_stage5.h"
 
 // extern globals from dog.c
 extern int animationOn;
@@ -411,12 +412,13 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
     applyBattleStatGain(player);
     checkSkillUnlock(player);
 
-    int maxEnemies[16] =
+    int maxEnemies[17] =
     {
         3,3,3,
         3,3,2,4,4,
         2,4,4,3,
-        2,4,4,3
+        2,4,4,3,
+        4
     };
 
     if (progress[zoneIndex] < maxEnemies[zoneIndex])
@@ -436,15 +438,16 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
 
 int getBattleMaxEnemies(int zoneIndex)
 {
-    int maxEnemies[16] =
+    int maxEnemies[17] =
     {
         3,3,3,
         3,3,2,4,4,
         2,4,4,3,
-        2,4,4,3
+        2,4,4,3,
+        4
     };
 
-    if (zoneIndex < 0 || zoneIndex >= 16)
+    if (zoneIndex < 0 || zoneIndex >= 17)
         return 3;
 
     return maxEnemies[zoneIndex];
@@ -483,7 +486,10 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
     // =========================
     // STAGE 3 SYSTEM
     // =========================
-    
+    if (zoneIndex == 16)
+    {
+        loadStage5Enemies(&enemy, zoneIndex, i);
+    }
     if (zoneIndex >= 12 && zoneIndex <= 15)  // Stage 4: Bio-Containment
     {
         loadStage4Enemies(&enemy, zoneIndex, i);
