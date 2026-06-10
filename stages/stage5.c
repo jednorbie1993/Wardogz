@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "stage5.h"
+#include "../battle.h"
+#include "../dog.h"
+#include "../cinematic.h"
+#include "../enemies/enemy.h"
+#include "../enemies/enemy_stage5.h"
+#include "../replay_system.h"
+
+int getZoneMaxStage5(int zoneIndex)
+{
+    if (zoneIndex == 16) return 4; // Enhanced Strays
+    return 4;
+}
+
+void runStage5(Dog *player, int progress[])
+{
+    int zoneChoice;
+    char input[10];
+
+    while (1)
+    {
+        system("cls");
+
+        printf("====================================\n");
+        printf("  STAGE 5: BLACKSITE LABORATORY\n");
+        printf("====================================\n\n");
+
+        printf("1. Enhanced Strays (%d/4)\n", progress[16]);
+
+        printf("2. Back\n");
+        printf("\nChoice: ");
+
+        fgets(input, sizeof(input), stdin);
+
+        if (input[0] == '\n')
+        {
+            printf("\nPlease select a number.");
+            waitForEnter();
+            continue;
+        }
+
+        zoneChoice = atoi(input);
+
+        if (zoneChoice < 1 || zoneChoice > 2)
+        {
+            printf("\nInvalid choice! Select 1-2 only.");
+            waitForEnter();
+            continue;
+        }
+
+        if (zoneChoice == 2)
+            return;
+
+        int zoneIndex = 16;
+
+        system("cls");
+        typeText("[BLACKSITE LABORATORY]\n", 20);
+        typeText("Archived records detected...\n", 25);
+        typeText("SUBJECT PROGRAM: STRAY ENHANCEMENT PROJECT\n", 25);
+        typeText("STATUS: SUCCESSFUL\n", 25);
+        typeText("\nThese were once ordinary strays from the Back Alley.\n", 25);
+        typeText("Now they move like trained weapons.\n", 25);
+        waitForEnter();
+
+        Dog enemy;
+        createEnemy(&enemy);
+        enemy.zoneType = ZONE_BIOLAB;
+
+        int i;
+        int zoneMax = getZoneMaxStage5(zoneIndex);
+
+        if (progress[zoneIndex] >= zoneMax)
+        {
+            i = chooseReplayEnemyIndex(zoneIndex, progress, 0);
+        }
+        else
+        {
+            i = progress[zoneIndex];
+        }
+
+        loadStage5Enemies(&enemy, zoneIndex, i);
+
+        if (i == zoneMax - 1)
+        {
+            enemy.attack += 20;
+            enemy.defense += 16;
+            enemy.speed += 12;
+            enemy.maxHP += 90;
+            enemy.hp = enemy.maxHP;
+        }
+
+        if (player->hp <= 0)
+        {
+            system("cls");
+            typeText("Recover HP before entering the Blacksite Laboratory!\n", 25);
+            waitForEnter();
+            continue;
+        }
+
+        if (zoneIndex == 16 && i == 3)
+        {
+            system("cls");
+            typeText("======================================\n", 15);
+            typeText("        ALPHA-X CONTAINMENT OPENED\n", 25);
+            typeText("======================================\n\n", 15);
+            typeText("\"Subject Alpha-X recognizes your presence.\"\n", 25);
+            typeText("\"Aggression level: MAXIMUM.\"\n", 25);
+            waitForEnter();
+        }
+
+        int result = battleWithEnemyIndex(player, zoneIndex, progress, i);
+
+        if (result == 0)
+            continue;
+
+        if (result == 1)
+        {
+            if (progress[zoneIndex] < zoneMax)
+            {
+                progress[zoneIndex]++;
+                printf("\n[DATA LOG]: Enhanced stray contained.");
+                printf("\nZone Progress: %d/%d\n", progress[zoneIndex], zoneMax);
+                waitForEnter();
+            }
+
+            if (zoneIndex == 16 && progress[16] >= 4)
+            {
+                system("cls");
+                typeText("======================================\n", 15);
+                typeText("   ZONE 1: ENHANCED STRAYS COMPLETE\n", 20);
+                typeText("======================================\n\n", 15);
+                typeText("If the old Back Alley strays became this strong...\n", 28);
+                typeText("what else is waiting deeper inside the laboratory?\n", 28);
+                waitForEnter();
+            }
+        }
+
+        if (result == 2)
+        {
+            system("cls");
+            char *defeatMsg[] = {
+                "Subject overpowered the intruder...\n",
+                "Enhanced combat instincts confirmed...\n",
+                "Blacksite security remains active...\n",
+                "Old strays are no longer ordinary enemies...\n",
+                "The laboratory records another failed entry...\n"
+            };
+
+            int msg = rand() % 5;
+            typeText(defeatMsg[msg], 25);
+            waitForEnter();
+        }
+    }
+}
