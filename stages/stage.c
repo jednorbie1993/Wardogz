@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,7 +7,8 @@
 #include "stage1.h"
 #include "stage2.h"
 #include "stage3.h"
-#include "stage4.h"  // ADD THIS
+#include "stage4.h"
+#include "stage5.h"
 #include "../dog.h"
 #include "../cinematic.h"
 
@@ -14,43 +16,52 @@ void startStage(Dog *player, int progress[])
 {
     int stageChoice;
 
-    // progress: Stage1(0-3), Stage2(5-7), Stage3(8-11), Stage4(12-15)
-    
+    // progress:
+    // Stage1 = 0-2
+    // Stage2 = 3-7
+    // Stage3 = 8-11
+    // Stage4 = 12-15
+    // Stage5 = 16
+
     while (1)
     {
         system("cls");
-        int progress[16] =
+        int progress[17] =
         {
             3,3,3,
             3,3,2,4,4,
             2,4,4,3,
-            2,4,4,3
+            2,4,4,3,
+            4
         };
-        
+
+
         int urbanComplete =
-        (progress[0] >= 3) +
-        (progress[1] >= 3) +
-        (progress[2] >= 3);
+            (progress[0] >= 3) +
+            (progress[1] >= 3) +
+            (progress[2] >= 3);
 
-    int wildComplete =
-        (progress[3] >= 3) +
-        (progress[4] >= 3) +
-        (progress[5] >= 2) +
-        (progress[6] >= 4) +
-        (progress[7] >= 4);
+        int wildComplete =
+            (progress[3] >= 3) +
+            (progress[4] >= 3) +
+            (progress[5] >= 2) +
+            (progress[6] >= 4) +
+            (progress[7] >= 4);
 
-    int militaryComplete =
-        (progress[8] >= 2) +
-        (progress[9] >= 4) +
-        (progress[10] >= 4) +
-        (progress[11] >= 3);
+        int militaryComplete =
+            (progress[8] >= 2) +
+            (progress[9] >= 4) +
+            (progress[10] >= 4) +
+            (progress[11] >= 3);
 
-    int bioLabComplete =
-        (progress[12] >= 2) +
-        (progress[13] >= 4) +
-        (progress[14] >= 4) +
-        (progress[15] >= 3);
+        int bioLabComplete =
+            (progress[12] >= 2) +
+            (progress[13] >= 4) +
+            (progress[14] >= 4) +
+            (progress[15] >= 3);
 
+        int blacksiteComplete =
+            (progress[16] >= 4);
 
         printf("=== SELECT STAGE ===\n\n");
 
@@ -71,7 +82,12 @@ void startStage(Dog *player, int progress[])
         else
             printf("4. Bio-Containment Zone (Locked)\n");
 
-        printf("5. Back\n\n");
+        if (bioLabComplete >= 4)
+            printf("5. Blacksite Laboratory (%d/1)\n", blacksiteComplete);
+        else
+            printf("5. Blacksite Laboratory (Locked)\n");
+
+        printf("6. Back\n\n");
         printf("Choice: ");
 
         char input[10];
@@ -86,14 +102,14 @@ void startStage(Dog *player, int progress[])
 
         stageChoice = atoi(input);
 
-        if (stageChoice < 1 || stageChoice > 5)
+        if (stageChoice < 1 || stageChoice > 6)
         {
-            printf("Invalid choice! Select 1-5 only.\n");
+            printf("Invalid choice! Select 1-6 only.\n");
             waitForEnter();
             continue;
         }
 
-        if (stageChoice == 5)
+        if (stageChoice == 6)
             return;
 
         if (stageChoice == 1)
@@ -108,6 +124,7 @@ void startStage(Dog *player, int progress[])
                 waitForEnter();
                 continue;
             }
+
             runStage2(player, progress);
         }
         else if (stageChoice == 3)
@@ -118,6 +135,7 @@ void startStage(Dog *player, int progress[])
                 waitForEnter();
                 continue;
             }
+
             runStage3(player, progress);
         }
         else if (stageChoice == 4)
@@ -128,7 +146,19 @@ void startStage(Dog *player, int progress[])
                 waitForEnter();
                 continue;
             }
-            runStage4(player, progress);  // ADD THIS
+
+            runStage4(player, progress);
+        }
+        else if (stageChoice == 5)
+        {
+            if (bioLabComplete < 4)
+            {
+                printf("Complete Bio-Containment Zone first!\n");
+                waitForEnter();
+                continue;
+            }
+
+            runStage5(player, progress);
         }
     }
 }
