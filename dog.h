@@ -19,7 +19,8 @@ typedef enum {
 // ================= SKILL IDs =================
 typedef enum {
     SKILL_NONE = -1,
-    SKILL_ATTACK,
+
+    SKILL_ATTACK = 0,
     SKILL_BITE,
     SKILL_SCRATCH,
     SKILL_QUICK_DASH,
@@ -30,21 +31,27 @@ typedef enum {
     SKILL_SURE_STRIKE,
     SKILL_LAST_STAND,
 
-    //backalley
-    SKILL_STRAY_BITE = 10,
+    // backalley
+    SKILL_STRAY_BITE,
     SKILL_DIRTY_SCRATCH,
     SKILL_LOCK_JAW,
     SKILL_ALPHA_RAGE,
 
-    //grimfang
+    // grimfang
     SKILL_FANG_RIPPER,
     SKILL_SAVAGE_RUSH,
     SKILL_BLOOD_TRAIL,
     SKILL_SHADOW_MAW,
     SKILL_SHADOW_BITE,
 
-    //diremaw
-    SKILL_MAULING_BITE = 40,
+    // wild skills
+    SKILL_PACK_ATTACK,
+    SKILL_AMBUSH,
+    SKILL_HOWL_DEBUFF,
+    SKILL_FERAL_RUSH,
+
+    // diremaw
+    SKILL_MAULING_BITE,
     SKILL_WILD_POUNCE,
     SKILL_RABID_CLAW,
     SKILL_PREDATOR_FRENZY,
@@ -52,12 +59,7 @@ typedef enum {
     SKILL_BONE_BREAKER,
     SKILL_BLOOD_SCENT,
 
-    // WILD SKILLS
-    SKILL_PACK_ATTACK = 20,
-    SKILL_AMBUSH,
-    SKILL_HOWL_DEBUFF,
-    SKILL_FERAL_RUSH,
-
+    // military
     SKILL_PRECISION_SHOT,
     SKILL_TACTICAL_GUARD,
     SKILL_REINFORCEMENT,
@@ -65,13 +67,21 @@ typedef enum {
     SKILL_BARRAGE_FIRE,
     SKILL_MILITARY_CHARGE,
     SKILL_AMBUSH_STRIKE,
-    SKILL_MUTATION_SURGE = 31,
+
+    // bio lab
+    SKILL_MUTATION_SURGE,
     SKILL_BIO_SHIELD,
     SKILL_CELL_REGEN,
     SKILL_CONTAINED_EXPLOSION,
     SKILL_ACID_SPIT,
     SKILL_NEURO_TOXIN,
-    SKILL_OMEGA_BITE
+    SKILL_OMEGA_BITE,
+
+    // secret lab
+    SKILL_REINFORCED_BITE,
+    SKILL_COMBAT_RUSH,
+    SKILL_PREDATOR_INSTINCT,
+    SKILL_ENHANCED_JAW_CRUSH
 
 } SkillID;
 
@@ -155,6 +165,8 @@ typedef struct {
     int defeatedDiremaw;
     int defeatedBlackclaw;
     int defeatedOmega;
+
+    int mutationTriggered;
 } Dog;
 
 // ================= CORE FUNCTIONS =================
