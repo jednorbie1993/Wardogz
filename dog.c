@@ -369,7 +369,7 @@ void createDog(Dog *d)
     d->defeatedGrimfang = 0;
     d->defeatedDiremaw = 0;
     d->defeatedBlackclaw = 0;
-    enemy->mutationTriggered = 0;
+    
 
     initSparringProgress(d);
 }
