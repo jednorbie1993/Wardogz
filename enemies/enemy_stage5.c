@@ -138,7 +138,7 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
             enemy->maxHP += 160;
         }
 
-        setEnhancedStraySkills(enemy);
+        setWildTerritorySkills(enemy);
     }
 
     enemy->hp = enemy->maxHP;
@@ -222,4 +222,81 @@ int useEnhancedJawCrush(Dog *user, Dog *target)
     printf("%s's reinforced jaw grows stronger! Attack +4\n", user->name);
 
     return dmg;
+}
+
+int useRazorSlash(Dog *user, Dog *target)
+{
+    int dmg = user->attack + 14 + (rand() % 8);
+
+    if (target->defense > 0)
+        dmg -= target->defense / 45;
+
+    if (dmg < 4)
+        dmg = 4;
+
+    target->hp -= dmg;
+
+    printf("%s uses Razor Slash! -%d HP\n", user->name, dmg);
+    printf("Sharp claws tear through the target!\n");
+
+    return dmg;
+}
+
+int useBloodFrenzy(Dog *user, Dog *target)
+{
+    user->attack += 8;
+    user->speed += 4;
+
+    printf("%s enters Blood Frenzy!\n", user->name);
+    printf("Attack +8 | Speed +4\n");
+
+    return 0;
+}
+
+int useFangStorm(Dog *user, Dog *target)
+{
+    int hits = 3;
+    int total = 0;
+
+    printf("%s uses Fang Storm!\n", user->name);
+
+    for (int i = 0; i < hits; i++)
+    {
+        int dmg = (user->attack * 0.8) + 8 + (rand() % 5);
+
+        if (target->defense > 0)
+            dmg -= target->defense / 50;
+
+        if (dmg < 3)
+            dmg = 3;
+
+        target->hp -= dmg;
+        total += dmg;
+
+        printf("Fang hit %d! -%d HP\n", i + 1, dmg);
+    }
+
+    printf("Total damage: -%d HP\n", total);
+    return total;
+}
+
+void setWildTerritorySkills(Dog *enemy)
+{
+    enemy->skills[0].id = SKILL_REINFORCED_BITE;
+    strcpy(enemy->skills[0].name, "Reinforced Bite");
+    enemy->skills[0].power = 24;
+
+    enemy->skills[1].id = SKILL_RAZOR_SLASH;
+    strcpy(enemy->skills[1].name, "Razor Slash");
+    enemy->skills[1].power = 22;
+
+    enemy->skills[2].id = SKILL_BLOOD_FRENZY;
+    strcpy(enemy->skills[2].name, "Blood Frenzy");
+    enemy->skills[2].power = 0;
+
+    enemy->skills[3].id = SKILL_FANG_STORM;
+    strcpy(enemy->skills[3].name, "Fang Storm");
+    enemy->skills[3].power = 30;
+
+    enemy->numSkills = 4;
 }

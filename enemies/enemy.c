@@ -312,6 +312,18 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             useEnhancedJawCrush(enemy, player);
             break;
 
+        case SKILL_RAZOR_SLASH:
+            useRazorSlash(enemy, player);
+            break;
+
+        case SKILL_BLOOD_FRENZY:
+            useBloodFrenzy(enemy, player);
+            break;
+
+        case SKILL_FANG_STORM:
+            useFangStorm(enemy, player);
+            break;    
+
         default:
             {
                 int dmg = (enemy->attack / 6) + 4;

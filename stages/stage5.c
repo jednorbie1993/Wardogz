@@ -32,7 +32,12 @@ void runStage5(Dog *player, int progress[])
         printf("====================================\n\n");
 
         printf("1. Enhanced Strays (%d/4)\n", progress[16]);
-        printf("2. Feral Mutation Ward (%d/4)\n", progress[17]);
+
+        if (progress[16] >= 4)
+            printf("2. Feral Mutation Ward (%d/4)\n", progress[17]);
+        else
+            printf("2. Feral Mutation Ward (Locked)\n");
+
         printf("3. Back");
         printf("\n\nChoice: ");
 
@@ -46,6 +51,13 @@ void runStage5(Dog *player, int progress[])
         }
 
         zoneChoice = atoi(input);
+
+        if (zoneChoice == 2 && progress[16] < 4)
+        {
+            printf("\nComplete Enhanced Strays first!");
+            waitForEnter();
+            continue;
+        }
 
         if (zoneChoice < 1 || zoneChoice > 2)
         {
@@ -195,6 +207,25 @@ void runStage5(Dog *player, int progress[])
                 typeText("ZONE 1: ENHANCED STRAYS COMPLETE\n\n", 20);
                 typeText("If the old Back Alley strays became this strong...\n", 28);
                 typeText("what else is waiting deeper inside the laboratory?\n", 28);
+                waitForEnter();
+            }
+        }
+
+        if (result == 1)
+        {
+            if (progress[zoneIndex] < zoneMax)
+            {
+                printf("\n[DATA LOG]: Feral mutation contained.");
+                printf("\nZone Progress: %d/%d\n", progress[zoneIndex], zoneMax);
+                waitForEnter();
+            }
+
+            if (zoneIndex == 17 && progress[17] >= 4)
+            {
+                system("cls");
+                typeText("ZONE 2: WILD TERRITORY COMPLETE\n\n", 20);
+                typeText("These were no longer ordinary strays...\n", 28);
+                typeText("their instincts had evolved into something savage.\n", 28);
                 waitForEnter();
             }
         }
