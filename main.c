@@ -298,7 +298,7 @@ int main()
     gcc *.c -o wardo -Wall -Wextra
  
     played in 2026 Month of May, 
-        June - 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+        June - 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
 
     gcc *.c enemies/*.c stages/*.c skills/*.c ui/*.c -o wardogz.exe
 
@@ -307,6 +307,7 @@ int main()
     gcc *.c enemies/*.c stages/*.c dialogue/*.c sparring/*.c -o wardogz.exe; .\wardogz.exe
 
     .\build.bat
+    .\wardogz.exe
 
     */
   /*int progress[12] =
