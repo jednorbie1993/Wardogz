@@ -30,9 +30,8 @@ void runStage5(Dog *player, int progress[])
         printf("====================================\n\n");
 
         printf("1. Enhanced Strays (%d/4)\n", progress[16]);
-
-        printf("2. Back\n");
-        printf("\nChoice: ");
+        printf("2. Back");
+        printf("\n\nChoice: ");
 
         fgets(input, sizeof(input), stdin);
 
@@ -56,22 +55,58 @@ void runStage5(Dog *player, int progress[])
             return;
 
         int zoneIndex = 16;
+        int zoneMax = getZoneMaxStage5(zoneIndex);
 
-        system("cls");
-        typeText("[BLACKSITE LABORATORY]\n", 20);
-        typeText("Archived records detected...\n", 25);
-        typeText("SUBJECT PROGRAM: STRAY ENHANCEMENT PROJECT\n", 25);
-        typeText("STATUS: SUCCESSFUL\n", 25);
-        typeText("\nThese were once ordinary strays from the Back Alley.\n", 25);
-        typeText("Now they move like trained weapons.\n", 25);
-        waitForEnter();
+        /*
+            FIRST TIME INTRO ONLY:
+            This appears only before the first fight of Stage 5 Zone 1.
+            It will not show again after progress[16] becomes 1 or higher.
+        */
+        if (progress[zoneIndex] == 0)
+        {
+            system("cls");
+            typeText("[RESEARCH LOG - DR. BRICKY]\n\n", 25);
+
+            typeText("\"At last... years of research, countless failures, and endless sacrifices have finally paid off.\"\n\n", 25);
+            typeText("\"The Stray Enhancement Project is complete.\"\n\n", 25);
+            typeText("\"What the world calls ordinary dogs... I see as untapped potential.\"\n\n", 25);
+            typeText("\"Strength. Intelligence. Adaptation.\"\n\n", 25);
+            typeText("\"Humanity has spent centuries trying to create the perfect soldier.\"\n\n", 25);
+            typeText("\"They were looking in the wrong species.\"\n\n", 25);
+            typeText("\"These subjects are no longer strays.\"\n\n", 25);
+            typeText("\"They are the future.\"\n\n", 25);
+            typeText("\"And soon... the entire world will witness my masterpiece.\"\n\n", 25);
+
+            typeText("- Dr. Bricky\n", 25);
+            waitForEnter();
+        }
+        /*
+            REPLAY INTRO ONLY:
+            This appears only after Zone 1 is already complete.
+        */
+        else if (progress[zoneIndex] >= zoneMax)
+        {
+            system("cls");
+
+            if (rand() % 2 == 0)
+            {
+                typeText("The laboratory remains active...\n", 25);
+                typeText("Enhanced subjects continue their patrols.\n", 25);
+            }
+            else
+            {
+                typeText("The Blacksite grows quieter...\n", 25);
+                typeText("But the experiments are far from over.\n", 25);
+            }
+
+            waitForEnter();
+        }
 
         Dog enemy;
         createEnemy(&enemy);
-        enemy.zoneType = ZONE_BIOLAB;
+        enemy.zoneType = ZONE_MUTANT;
 
         int i;
-        int zoneMax = getZoneMaxStage5(zoneIndex);
 
         if (progress[zoneIndex] >= zoneMax)
         {
@@ -101,14 +136,21 @@ void runStage5(Dog *player, int progress[])
             continue;
         }
 
+        /*
+            ALPHA-X BOSS INTRO:
+            This appears when the fourth enemy is selected.
+        */
         if (zoneIndex == 16 && i == 3)
         {
             system("cls");
-            typeText("======================================\n", 15);
-            typeText("        ALPHA-X CONTAINMENT OPENED\n", 25);
-            typeText("======================================\n\n", 15);
-            typeText("\"Subject Alpha-X recognizes your presence.\"\n", 25);
-            typeText("\"Aggression level: MAXIMUM.\"\n", 25);
+            typeText("Dr. Bricky: So you made it this far...\n", 25);
+            typeText("Dr. Bricky: Impressive.\n", 25);
+            typeText("Dr. Bricky: Allow me to introduce my masterpiece.\n", 25);
+            typeText("Dr. Bricky: Alpha-X... awaken.\n\n", 25);
+
+            typeText("Alpha-X steps out of the containment chamber.\n", 25);
+            typeText("Its eyes lock onto you.\n", 25);
+
             waitForEnter();
         }
 
@@ -130,9 +172,7 @@ void runStage5(Dog *player, int progress[])
             if (zoneIndex == 16 && progress[16] >= 4)
             {
                 system("cls");
-                typeText("======================================\n", 15);
-                typeText("   ZONE 1: ENHANCED STRAYS COMPLETE\n", 20);
-                typeText("======================================\n\n", 15);
+                typeText("ZONE 1: ENHANCED STRAYS COMPLETE\n\n", 20);
                 typeText("If the old Back Alley strays became this strong...\n", 28);
                 typeText("what else is waiting deeper inside the laboratory?\n", 28);
                 waitForEnter();
@@ -142,7 +182,8 @@ void runStage5(Dog *player, int progress[])
         if (result == 2)
         {
             system("cls");
-            char *defeatMsg[] = {
+            char *defeatMsg[] =
+            {
                 "Subject overpowered the intruder...\n",
                 "Enhanced combat instincts confirmed...\n",
                 "Blacksite security remains active...\n",
