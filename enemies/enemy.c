@@ -37,6 +37,7 @@ void createEnemy(Dog *e)
 
     e->isConfused = 0;
     e->confuseTurns = 0;
+    e->mutationTriggered = 0;
 
     // NEW DEFAULTS
     e->zoneType = ZONE_NORMAL;
@@ -136,28 +137,57 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             int r = rand() % 100;
 
             if (enemy->hp < enemy->maxHP * 0.25)
-                skillChoice = 3; // Contained Explosion
+                skillChoice = 3;
             else if (r < 20)
-                skillChoice = 0; // Mutation Surge
+                skillChoice = 0;
             else if (r < 35)
-                skillChoice = 1; // Bio Shield
+                skillChoice = 1;
             else if (r < 50)
-                skillChoice = 2; // Cell Regeneration
+                skillChoice = 2;
             else if (r < 70)
-                skillChoice = 4; // Acid Spit
+                skillChoice = 4;
             else
-                skillChoice = 5; // Neuro Toxin
+                skillChoice = 5;
         }
+        else if (enemy->zoneType == ZONE_MUTANT)
+        {
+            int r = rand() % 100;
 
-        // =========================
-        // DEFAULT SAFETY
-        // =========================
+            if (enemy->hp < enemy->maxHP * 0.30)
+                skillChoice = 3;
+            else if (r < 25)
+                skillChoice = 0;
+            else if (r < 50)
+                skillChoice = 1;
+            else if (r < 75)
+                skillChoice = 2;
+            else
+                skillChoice = 4;
+        }
         else
         {
             skillChoice = rand() % enemy->numSkills;
         }
 
-        printf("%s snarls viciously...\n", enemy->name);
+        char *bioLabLines[] = {"Mutation active.", "Target acquired.", "Bio weapon online."};
+        char *mutantLines[] = {"Perfect mutation.", "No weaknesses.", "Adapting..."};
+        char *wildLines[] = {"Grrrr...", "The beast attacks.", "Predator mode."};
+
+        int randomLine = rand() % 3;
+
+        if (enemy->zoneType == ZONE_BIOLAB)
+            printf("%s\n", bioLabLines[randomLine]);
+        else if (enemy->zoneType == ZONE_MUTANT)
+            printf("%s\n", mutantLines[randomLine]);
+        else
+            printf("%s\n", wildLines[randomLine]);
+
+        /*if (enemy->zoneType == ZONE_BIOLAB)
+            printf("%s mutates violently...\n", enemy->name);
+        else if (enemy->zoneType == ZONE_MUTANT)
+            printf("%s activates perfect mutation...\n", enemy->name);
+        else
+            printf("%s snarls viciously...\n", enemy->name);*/
 
         // SAFETY CHECK (IMPORTANT)
         if (skillChoice < 0 || skillChoice >= MAX_SKILLS)
@@ -265,7 +295,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         case SKILL_NEURO_TOXIN:
             useNeuroToxin(enemy, player);
             break;
-
+        //secret lab skills 
         case SKILL_REINFORCED_BITE:
             useReinforcedBite(enemy, player);
             break;
@@ -283,8 +313,53 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             break;
 
         default:
-            printf("%s uses basic attack!\n", enemy->name);
-            break;
+            {
+                int dmg = (enemy->attack / 6) + 4;
+                dmg -= player->defense / 40;
+
+                if (dmg < 3)
+                    dmg = 3;
+
+                player->hp -= dmg;
+                player->hp = clamp(player->hp);
+
+                printf("%s uses basic attack!\n", enemy->name);
+                printf("You took %d damage!\n", dmg);
+                break;
+            }
+        }
+        if (enemy->zoneType == ZONE_MUTANT &&
+            enemy->hp < enemy->maxHP * 0.70 &&
+            !enemy->mutationTriggered)
+        {
+            char *mutationLines[] =
+            {
+                "Experimental genes activated!",
+                "Prototype limiters released!",
+                "Predatory instincts unleashed!",
+                "Mutation level rising!",
+                "Combat adaptation detected!"
+            };
+
+            int randomLine = rand() % 5;
+
+            printf("\n");
+
+            typeText(enemy->name, 30);
+            typeText(" is mutating!\n", 30);
+
+            typeText(mutationLines[randomLine], 30);
+            printf("\n");
+
+            typeText("Attack increased!\n", 30);
+
+            enemy->attack += 3;
+
+            enemy->mutationTriggered = 1;
+
+            waitForEnter();
+            system("cls");
+            displayBattleStatus(*player, *enemy);
         }
 
         if (player->accuracyModifier < 0)

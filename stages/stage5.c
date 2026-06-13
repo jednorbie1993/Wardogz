@@ -12,7 +12,9 @@
 
 int getZoneMaxStage5(int zoneIndex)
 {
-    if (zoneIndex == 16) return 4; // Enhanced Strays
+    if (zoneIndex == 16) return 4;
+    if (zoneIndex == 17) return 4;
+
     return 4;
 }
 
@@ -30,7 +32,8 @@ void runStage5(Dog *player, int progress[])
         printf("====================================\n\n");
 
         printf("1. Enhanced Strays (%d/4)\n", progress[16]);
-        printf("2. Back");
+        printf("2. Feral Mutation Ward (%d/4)\n", progress[17]);
+        printf("3. Back");
         printf("\n\nChoice: ");
 
         fgets(input, sizeof(input), stdin);
@@ -46,15 +49,21 @@ void runStage5(Dog *player, int progress[])
 
         if (zoneChoice < 1 || zoneChoice > 2)
         {
-            printf("\nInvalid choice! Select 1-2 only.");
+            printf("\nInvalid choice! Select 1-3 only.");
             waitForEnter();
             continue;
         }
 
-        if (zoneChoice == 2)
+        if (zoneChoice == 3)
             return;
 
-        int zoneIndex = 16;
+        int zoneIndex;
+
+        if (zoneChoice == 1)
+            zoneIndex = 16;
+        else
+            zoneIndex = 17;
+
         int zoneMax = getZoneMaxStage5(zoneIndex);
 
         /*
@@ -153,6 +162,18 @@ void runStage5(Dog *player, int progress[])
 
             waitForEnter();
         }
+        if (zoneIndex == 17 && i == 3)
+        {
+            system("cls");
+
+            typeText("Warning...\n",25);
+            typeText("Containment breach detected.\n",25);
+            typeText("Subject LYCAN-REX released.\n\n",25);
+
+            typeText("A massive werewolf-like beast emerges from the darkness.\n",25);
+
+            waitForEnter();
+        }
 
         int result = battleWithEnemyIndex(player, zoneIndex, progress, i);
 
@@ -163,7 +184,6 @@ void runStage5(Dog *player, int progress[])
         {
             if (progress[zoneIndex] < zoneMax)
             {
-                progress[zoneIndex]++;
                 printf("\n[DATA LOG]: Enhanced stray contained.");
                 printf("\nZone Progress: %d/%d\n", progress[zoneIndex], zoneMax);
                 waitForEnter();
@@ -183,13 +203,12 @@ void runStage5(Dog *player, int progress[])
         {
             system("cls");
             char *defeatMsg[] =
-            {
-                "Subject overpowered the intruder...\n",
-                "Enhanced combat instincts confirmed...\n",
-                "Blacksite security remains active...\n",
-                "Old strays are no longer ordinary enemies...\n",
-                "The laboratory records another failed entry...\n"
-            };
+                {
+                    "Subject overpowered the intruder...\n",
+                    "Enhanced combat instincts confirmed...\n",
+                    "Blacksite security remains active...\n",
+                    "Old strays are no longer ordinary enemies...\n",
+                    "The laboratory records another failed entry...\n"};
 
             int msg = rand() % 5;
             typeText(defeatMsg[msg], 25);

@@ -26,13 +26,13 @@ void startStage(Dog *player, int progress[])
     while (1)
     {
         system("cls");
-        int progress[17] =
+        int progress[18] =
         {
             3,3,3,
             3,3,2,4,4,
             2,4,4,3,
             2,4,4,3,
-            0
+            0,0
         };
 
 

@@ -104,6 +104,20 @@ void playEnemyBattleDialogue(int zoneIndex, char enemyName[])
         "BREACH IMMINENT!"
     };
 
+    char *blacksiteLines[] =
+    {
+        "We were once abandoned. Now we are perfected.",
+        "The alley was only the beginning.",
+        "Every subject here survived the impossible.",
+        "The laboratory rewards those who endure.",
+        "You recognize us. We remember you too.",
+        "Former strays. Current weapons.",
+        "Pain created monsters. Training created soldiers.",
+        "You fought us before. Try again.",
+        "Evolution never stops.",
+        "Welcome to the Blacksite."
+    };
+
     int randomLine = rand() % 10;
 
     typeText(enemyName, 25);
@@ -121,7 +135,11 @@ void playEnemyBattleDialogue(int zoneIndex, char enemyName[])
     {
         typeText(blackclawLines[randomLine], 22);
     }
-    else if (zoneIndex >= 12)
+        else if (zoneIndex >= 16)
+    {
+        typeText(blacksiteLines[randomLine], 22);
+    }
+        else if (zoneIndex >= 12)
     {
         typeText(bioLabLines[randomLine], 22);
     }

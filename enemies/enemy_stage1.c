@@ -195,6 +195,40 @@ void applyStage1Personality(Dog *player, Dog *enemy, int *enemyDamage)
             system("cls");
             displayBattleStatus(*player, *enemy);
         }
+
+        if (enemy->zoneType == ZONE_MUTANT &&
+            enemy->hp < enemy->maxHP * 0.70 &&
+            !enemy->mutationTriggered)
+        {
+            char *mutationLines[] =
+            {
+                "Experimental genes activated!",
+                "Prototype limiters released!",
+                "Predatory instincts unleashed!",
+                "Mutation level rising!",
+                "Combat adaptation detected!"
+            };
+
+            int randomLine = rand() % 5;
+
+            printf("\n");
+
+            typeText(enemy->name, 30);
+            typeText(" is mutating!\n", 30);
+
+            typeText(mutationLines[randomLine], 30);
+            printf("\n");
+
+            typeText("Attack increased!\n", 30);
+
+            *enemyDamage += 3;
+
+            enemy->mutationTriggered = 1;
+
+            waitForEnter();
+            system("cls");
+            displayBattleStatus(*player, *enemy);
+        }
     }
     else if (enemy->personalityType == PERSONALITY_TANK)
     {

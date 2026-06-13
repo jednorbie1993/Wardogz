@@ -10,7 +10,7 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
 {
     createEnemy(enemy);
 
-    enemy->zoneType = ZONE_BIOLAB;
+    enemy->zoneType = ZONE_MUTANT;
     enemy->personalityType = PERSONALITY_ALPHA;
     enemy->numSkills = 4;
 
@@ -53,6 +53,14 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
         }
 
         enemy->hp = enemy->maxHP;
+    }
+    else if (zoneIndex == 17)
+    {
+        // Feral Mutation Ward
+        i == 0 -> Nightmaw
+        i == 1 -> Bloodhowl
+        i == 2 -> Ravagefang
+        i == 3 -> Lycan Rex
     }
 
     enemy->skills[0].id = SKILL_REINFORCED_BITE;
