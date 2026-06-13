@@ -1,0 +1,88 @@
+Hindi mo talaga kailangang kabisaduhin lahat bro.
+
+Sa totoong trabaho, bihira ang programmer na kabisado ang buong project.
+
+Ang ginagawa nila:
+- May notes/checklist
+- May code template
+- May search (Ctrl+Shift+F)
+- May documentation
+- May Git history
+- May AI
+
+Sa totoo lang, kahit hindi mo maalala lahat ng exact function names, normal lang iyon.
+
+Lumaki na ang Wardogz:
+- Stage 1
+- Stage 2
+- Stage 3
+- Stage 4
+- Stage 5
+- Sparring
+- Replay
+- Secret enemies
+- Skill unlocks
+- Personalities
+- Battle dialogue
+
+Normal lang na malito.
+
+=== KAPAG MAGDADAGDAG NG ENEMY ===
+1. enemy_stageX.c
+2. enemy.c
+3. dog.h (kung may bagong skill)
+
+=== KAPAG MAGDADAGDAG NG SKILL ===
+1. dog.h
+2. enemy_stageX.c
+3. enemy.c
+4. enemy_stageX.h
+
+=== KAPAG MAGDADAGDAG NG ZONE ===
+1. stage5.c
+2. enemy_stage5.c
+3. battle.c
+4. progress[]
+
+=== KAPAG MAGDADAGDAG NG SECRET ENEMY ===
+1. enemy_stageX.c
+2. replay_system.c
+3. battle.c
+4. checkSkillUnlock()
+
+=== WARDOGZ_DEV_NOTES ===
+
+NEW ZONE
+1. stage5.c
+2. enemy_stage5.c
+3. battle.c
+4. progress[]
+
+NEW SKILL
+1. dog.h
+2. enemy_stage5.c
+3. enemy.c
+4. enemy_stage5.h
+
+NEW SECRET ENEMY
+1. enemy_stageX.c
+2. replay_system.c
+3. battle.c
+4. checkSkillUnlock()
+
+Pinakamahalagang files:
+- dog.h
+- enemy.c
+- battle.c
+- stage5.c
+- enemy_stage5.c
+
+Karamihan ng bugs sa Wardogz umiikot lang sa mga files na ito.
+
+1. dog.h          -> skill IDs
+2. enemy_stage5.c -> enemy names/stats + skill effects
+3. enemy_stage5.h -> prototypes
+4. enemy.c        -> case SKILL_...
+5. stage5.c       -> menu, choice limit, Back number, zoneIndex
+6. battle.c       -> intro quote + complete dialogue
+7. progress[]     -> dapat kasya index

@@ -438,16 +438,16 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
 
 int getBattleMaxEnemies(int zoneIndex)
 {
-    int maxEnemies[17] =
+    int maxEnemies[18] =
     {
         3,3,3,
         3,3,2,4,4,
         2,4,4,3,
         2,4,4,3,
-        4
+        4,4
     };
 
-    if (zoneIndex < 0 || zoneIndex >= 17)
+    if (zoneIndex < 0 || zoneIndex >= 18)
         return 3;
 
     return maxEnemies[zoneIndex];
@@ -486,7 +486,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
     // =========================
     // STAGE 3 SYSTEM
     // =========================
-    if (zoneIndex == 16)
+    if (zoneIndex >= 16 && zoneIndex <= 17)
     {
         loadStage5Enemies(&enemy, zoneIndex, i);
     }

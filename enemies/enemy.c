@@ -324,6 +324,22 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             useFangStorm(enemy, player);
             break;    
 
+        case SKILL_TACTICAL_BITE:
+            useTacticalBite(enemy, player);
+            break;
+
+        case SKILL_ARMOR_BREAK:
+            useArmorBreak(enemy, player);
+            break;
+
+        case SKILL_SUPPRESSION_HOWL:
+            useSuppressionHowl(enemy, player);
+            break;
+
+        case SKILL_BLACKSITE_EXECUTION:
+            useBlacksiteExecution(enemy, player);
+            break;
+            
         default:
             {
                 int dmg = (enemy->attack / 6) + 4;

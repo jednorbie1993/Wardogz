@@ -52,16 +52,19 @@ void runStage5(Dog *player, int progress[])
 
         zoneChoice = atoi(input);
 
-        if (zoneChoice == 2 && progress[16] < 4)
+        if (zoneChoice < 1 || zoneChoice > 3)
         {
-            printf("\nComplete Enhanced Strays first!");
+            printf("\nInvalid choice! Select 1-3 only.");
             waitForEnter();
             continue;
         }
 
-        if (zoneChoice < 1 || zoneChoice > 2)
+        if (zoneChoice == 3)
+            return;
+
+        if (zoneChoice == 2 && progress[16] < 4)
         {
-            printf("\nInvalid choice! Select 1-3 only.");
+            printf("\nComplete Enhanced Strays first!");
             waitForEnter();
             continue;
         }
@@ -83,7 +86,7 @@ void runStage5(Dog *player, int progress[])
             This appears only before the first fight of Stage 5 Zone 1.
             It will not show again after progress[16] becomes 1 or higher.
         */
-        if (progress[zoneIndex] == 0)
+        if (zoneIndex == 16 && progress[16] == 0)
         {
             system("cls");
             typeText("[RESEARCH LOG - DR. BRICKY]\n\n", 25);
@@ -194,10 +197,16 @@ void runStage5(Dog *player, int progress[])
 
         if (result == 1)
         {
-            if (progress[zoneIndex] < zoneMax)
+            if (zoneIndex == 16 && progress[16] < zoneMax)
             {
                 printf("\n[DATA LOG]: Enhanced stray contained.");
-                printf("\nZone Progress: %d/%d\n", progress[zoneIndex], zoneMax);
+                printf("\nZone Progress: %d/%d\n", progress[16], zoneMax);
+                waitForEnter();
+            }
+            else if (zoneIndex == 17 && progress[17] < zoneMax)
+            {
+                printf("\n[DATA LOG]: Feral mutation contained.");
+                printf("\nZone Progress: %d/%d\n", progress[17], zoneMax);
                 waitForEnter();
             }
 
@@ -209,21 +218,11 @@ void runStage5(Dog *player, int progress[])
                 typeText("what else is waiting deeper inside the laboratory?\n", 28);
                 waitForEnter();
             }
-        }
-
-        if (result == 1)
-        {
-            if (progress[zoneIndex] < zoneMax)
-            {
-                printf("\n[DATA LOG]: Feral mutation contained.");
-                printf("\nZone Progress: %d/%d\n", progress[zoneIndex], zoneMax);
-                waitForEnter();
-            }
 
             if (zoneIndex == 17 && progress[17] >= 4)
             {
                 system("cls");
-                typeText("ZONE 2: WILD TERRITORY COMPLETE\n\n", 20);
+                typeText("ZONE 2: FERAL MUTATION WARD COMPLETE\n\n", 20);
                 typeText("These were no longer ordinary strays...\n", 28);
                 typeText("their instincts had evolved into something savage.\n", 28);
                 waitForEnter();
