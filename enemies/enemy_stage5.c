@@ -6,6 +6,48 @@
 #include "enemy_stage5.h"
 #include "../replay_system.h"
 
+void setEnhancedStraySkills(Dog *enemy)
+{
+    enemy->skills[0].id = SKILL_REINFORCED_BITE;
+    strcpy(enemy->skills[0].name, "Reinforced Bite");
+    enemy->skills[0].power = 24;
+
+    enemy->skills[1].id = SKILL_COMBAT_RUSH;
+    strcpy(enemy->skills[1].name, "Combat Rush");
+    enemy->skills[1].power = 20;
+
+    enemy->skills[2].id = SKILL_PREDATOR_INSTINCT;
+    strcpy(enemy->skills[2].name, "Predator Instinct");
+    enemy->skills[2].power = 0;
+
+    enemy->skills[3].id = SKILL_ENHANCED_JAW_CRUSH;
+    strcpy(enemy->skills[3].name, "Enhanced Jaw Crush");
+    enemy->skills[3].power = 30;
+
+    enemy->numSkills = 4;
+}
+
+void setRazorfangSkills(Dog *enemy)
+{
+    enemy->skills[0].id = SKILL_REINFORCED_BITE;
+    strcpy(enemy->skills[0].name, "Reinforced Bite");
+    enemy->skills[0].power = 24;
+
+    enemy->skills[1].id = SKILL_COMBAT_RUSH;
+    strcpy(enemy->skills[1].name, "Combat Rush");
+    enemy->skills[1].power = 20;
+
+    enemy->skills[2].id = SKILL_PREDATOR_INSTINCT;
+    strcpy(enemy->skills[2].name, "Predator Instinct");
+    enemy->skills[2].power = 0;
+
+    enemy->skills[3].id = SKILL_ENHANCED_JAW_CRUSH;
+    strcpy(enemy->skills[3].name, "Enhanced Jaw Crush");
+    enemy->skills[3].power = 30;
+
+    enemy->numSkills = 4;
+}
+
 void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
 {
     createEnemy(enemy);
@@ -14,9 +56,12 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
     enemy->personalityType = PERSONALITY_ALPHA;
     enemy->numSkills = 4;
 
-    if (zoneIndex == 16 && i > 3)
+    if (i > 3)
         i = 3;
 
+    // =========================
+    // ZONE 1: ENHANCED STRAYS
+    // =========================
     if (zoneIndex == 16)
     {
         if (i == 0)
@@ -52,35 +97,52 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
             enemy->maxHP += 120;
         }
 
-        enemy->hp = enemy->maxHP;
+        setEnhancedStraySkills(enemy);
     }
+
+    // =========================
+    // ZONE 2: FERAL MUTATION WARD
+    // =========================
     else if (zoneIndex == 17)
     {
-        // Feral Mutation Ward
-        i == 0 -> Nightmaw
-        i == 1 -> Bloodhowl
-        i == 2 -> Ravagefang
-        i == 3 -> Lycan Rex
+        if (i == 0)
+        {
+            strcpy(enemy->name, "Nightmaw");
+            enemy->attack += 24;
+            enemy->defense += 10;
+            enemy->speed += 20;
+            enemy->maxHP += 60;
+        }
+        else if (i == 1)
+        {
+            strcpy(enemy->name, "Bloodhowl");
+            enemy->attack += 28;
+            enemy->defense += 12;
+            enemy->speed += 16;
+            enemy->maxHP += 80;
+        }
+        else if (i == 2)
+        {
+            strcpy(enemy->name, "Ravagefang");
+            enemy->attack += 32;
+            enemy->defense += 18;
+            enemy->speed += 18;
+            enemy->maxHP += 100;
+        }
+        else if (i == 3)
+        {
+            strcpy(enemy->name, "Lycan Rex");
+            enemy->attack += 40;
+            enemy->defense += 25;
+            enemy->speed += 25;
+            enemy->maxHP += 160;
+        }
+
+        setEnhancedStraySkills(enemy);
     }
 
-    enemy->skills[0].id = SKILL_REINFORCED_BITE;
-    strcpy(enemy->skills[0].name, "Reinforced Bite");
-    enemy->skills[0].power = 24;
-
-    enemy->skills[1].id = SKILL_COMBAT_RUSH;
-    strcpy(enemy->skills[1].name, "Combat Rush");
-    enemy->skills[1].power = 20;
-
-    enemy->skills[2].id = SKILL_PREDATOR_INSTINCT;
-    strcpy(enemy->skills[2].name, "Predator Instinct");
-    enemy->skills[2].power = 0;
-
-    enemy->skills[3].id = SKILL_ENHANCED_JAW_CRUSH;
-    strcpy(enemy->skills[3].name, "Enhanced Jaw Crush");
-    enemy->skills[3].power = 30;
-
+    enemy->hp = enemy->maxHP;
     enemy->numSkills = 4;
-    //
 }
 
 int useReinforcedBite(Dog *user, Dog *target)
@@ -154,7 +216,6 @@ int useEnhancedJawCrush(Dog *user, Dog *target)
         dmg = 5;
 
     target->hp -= dmg;
-
     user->attack += 4;
 
     printf("%s uses Enhanced Jaw Crush! -%d HP\n", user->name, dmg);
