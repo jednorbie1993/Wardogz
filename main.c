@@ -20,7 +20,16 @@ int main()
     createDog(&player);
 
     int restCount = 0;
-    int progress[17] = {0};
+    //int progress[19] = {0};
+
+    int progress[19] =
+    {
+        3,3,3,
+        3,3,2,4,4,
+        2,4,4,3,
+        2,4,4,3,
+        4,4,0
+    };
 
     while (1)
     {
@@ -293,28 +302,4 @@ int main()
         }
     }
 }    
-    /*
-
-    gcc *.c -o wardo -Wall -Wextra
- 
-    played in 2026 Month of May, 
-        June - 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13
-
-    gcc *.c enemies/*.c stages/*.c skills/*.c ui/*.c -o wardogz.exe
-
-    gcc *.c enemies/*.c dialogue/*.c -o wardogz.exe; .\wardogz.exe
-
-    gcc *.c enemies/*.c stages/*.c dialogue/*.c sparring/*.c -o wardogz.exe; .\wardogz.exe
-
-    .\build.bat
     
-    .\wardogz.exe
-
-    */
-  /*int progress[12] =
-        {
-            3,3,3,
-            3,3,2,4,4,
-            2,4,4,3,
-            2,4,4,3
-        };*/
