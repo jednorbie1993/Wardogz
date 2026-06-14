@@ -24,5 +24,9 @@ int useTacticalBite(Dog *user, Dog *target);
 int useArmorBreak(Dog *user, Dog *target);
 int useSuppressionHowl(Dog *user, Dog *target);
 int useBlacksiteExecution(Dog *user, Dog *target);
+int usePlasmaBite(Dog *user, Dog *target);
+int useCryoLock(Dog *user, Dog *target);
+int useThunderSurge(Dog *user, Dog *target);
+int useApexOverdrive(Dog *user, Dog *target);
 
 #endif

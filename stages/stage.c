@@ -47,7 +47,8 @@ void startStage(Dog *player, int progress[])
         int blacksiteComplete =
             (progress[16] >= 4) +
             (progress[17] >= 4) +
-            (progress[18] >= 4);
+            (progress[18] >= 4) +
+            (progress[19] >= 4);
 
         printf("=== SELECT STAGE ===\n\n");
 
@@ -69,7 +70,7 @@ void startStage(Dog *player, int progress[])
             printf("4. Bio-Containment Zone (Locked)\n");
 
         if (bioLabComplete >= 4)
-            printf("5. Blacksite Laboratory (%d/3)\n", blacksiteComplete);
+            printf("5. Blacksite Laboratory (%d/4)\n", blacksiteComplete);
         else
             printf("5. Blacksite Laboratory (Locked)\n");
 

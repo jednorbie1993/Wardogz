@@ -22,13 +22,13 @@ int main()
     int restCount = 0;
     //int progress[19] = {0};
 
-    int progress[19] =
+    int progress[20] =
     {
         3,3,3,
         3,3,2,4,4,
         2,4,4,3,
         2,4,4,3,
-        4,4,0
+        4,4,4,0
     };
 
     while (1)

@@ -153,16 +153,25 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         {
             int r = rand() % 100;
 
+            /*
+                STAGE 5 / BLACKSITE LABORATORY
+                Most Stage 5 enemies only have 4 skills:
+                index 0, 1, 2, 3
+
+                IMPORTANT:
+                Do NOT choose index 4 here unless the enemy really has
+                a 5th skill, or it can cause wrong/empty skills.
+            */
             if (enemy->hp < enemy->maxHP * 0.30)
                 skillChoice = 3;
-            else if (r < 25)
+            else if (r < 30)
                 skillChoice = 0;
-            else if (r < 50)
+            else if (r < 55)
                 skillChoice = 1;
-            else if (r < 75)
+            else if (r < 80)
                 skillChoice = 2;
             else
-                skillChoice = 4;
+                skillChoice = rand() % enemy->numSkills;
         }
         else
         {
@@ -339,20 +348,69 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         case SKILL_BLACKSITE_EXECUTION:
             useBlacksiteExecution(enemy, player);
             break;
-            
+
+        case SKILL_PLASMA_BITE:
+            usePlasmaBite(enemy, player);
+            break;
+
+        case SKILL_CRYO_LOCK:
+            useCryoLock(enemy, player);
+            break;
+
+        case SKILL_THUNDER_SURGE:
+            useThunderSurge(enemy, player);
+            break;
+
+        case SKILL_APEX_OVERDRIVE:
+            useApexOverdrive(enemy, player);
+            break;
+
         default:
             {
-                int dmg = (enemy->attack / 6) + 4;
-                dmg -= player->defense / 40;
+                char *mutantActions[] =
+                {
+                    "launches a savage assault!",
+                    "tears through the battlefield!",
+                    "unleashes a violent mutation strike!"
+                };
 
-                if (dmg < 3)
-                    dmg = 3;
+                char *militaryActions[] =
+                {
+                    "executes a combat maneuver!",
+                    "launches a tactical offensive!",
+                    "performs a precision assault!"
+                };
+
+                char *bioActions[] =
+                {
+                    "releases unstable bio-energy!",
+                    "lashes out with a mutated strike!",
+                    "fires an experimental attack!"
+                };
+
+                int dmg = (enemy->attack / 4) + 8 + (rand() % 8);
+
+                dmg -= player->defense / 45;
+
+                if (dmg < 5)
+                    dmg = 5;
 
                 player->hp -= dmg;
                 player->hp = clamp(player->hp);
 
-                printf("%s uses basic attack!\n", enemy->name);
+                int r = rand() % 3;
+
+                if (enemy->zoneType == ZONE_MUTANT)
+                    printf("%s %s\n", enemy->name, mutantActions[r]);
+                else if (enemy->zoneType == ZONE_BIOLAB)
+                    printf("%s %s\n", enemy->name, bioActions[r]);
+                else if (enemy->zoneType == ZONE_MILITARY)
+                    printf("%s %s\n", enemy->name, militaryActions[r]);
+                else
+                    printf("%s attacks fiercely!\n", enemy->name);
+
                 printf("You took %d damage!\n", dmg);
+
                 break;
             }
         }

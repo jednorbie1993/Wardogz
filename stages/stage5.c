@@ -15,6 +15,7 @@ int getZoneMaxStage5(int zoneIndex)
     if (zoneIndex == 16) return 4;
     if (zoneIndex == 17) return 4;
     if (zoneIndex == 18) return 4;
+    if (zoneIndex == 19) return 4;
 
     return 4;
 }
@@ -44,7 +45,12 @@ void runStage5(Dog *player, int progress[])
         else
             printf("3. Combat Prototype Unit (Locked)\n");
 
-        printf("4. Back");
+        if (progress[18] >= 4)
+            printf("4. Elemental Apex Chamber (%d/4)\n", progress[19]);
+        else
+            printf("4. Elemental Apex Chamber (Locked)\n");
+
+        printf("5. Back");
         printf("\n\nChoice: ");
 
         fgets(input, sizeof(input), stdin);
@@ -58,14 +64,14 @@ void runStage5(Dog *player, int progress[])
 
         zoneChoice = atoi(input);
 
-        if (zoneChoice < 1 || zoneChoice > 4)
+        if (zoneChoice < 1 || zoneChoice > 5)
         {
-            printf("\nInvalid choice! Select 1-4 only.");
+            printf("\nInvalid choice! Select 1-5 only.");
             waitForEnter();
             continue;
         }
 
-        if (zoneChoice == 4)
+        if (zoneChoice == 5)
             return;
 
         if (zoneChoice == 2 && progress[16] < 4)
@@ -82,14 +88,23 @@ void runStage5(Dog *player, int progress[])
             continue;
         }
 
+        if (zoneChoice == 4 && progress[18] < 4)
+        {
+            printf("\nComplete Combat Prototype Unit first!");
+            waitForEnter();
+            continue;
+        }
+
         int zoneIndex;
 
         if (zoneChoice == 1)
             zoneIndex = 16;
         else if (zoneChoice == 2)
             zoneIndex = 17;
-        else
+        else if (zoneChoice == 3)
             zoneIndex = 18;
+        else
+            zoneIndex = 19;
 
         int zoneMax = getZoneMaxStage5(zoneIndex);
 
@@ -124,6 +139,18 @@ void runStage5(Dog *player, int progress[])
             typeText("Security System: Combat Prototype Unit activated.\n", 25);
             waitForEnter();
         }
+        // FIRST TIME INTRO ONLY - Zone 4
+        else if (zoneIndex == 19 && progress[19] == 0)
+        {
+            system("cls");
+            typeText("[BLACKSITE CORE LOG]\n\n", 25);
+            typeText("Elemental reactor pressure rising...\n", 25);
+            typeText("Cryo, plasma, and thunder energy detected inside the chamber.\n", 25);
+            typeText("These subjects are not simple mutations anymore.\n", 25);
+            typeText("Their bodies are adapting to unstable elemental power.\n\n", 25);
+            typeText("Security System: Elemental Apex Chamber unlocked.\n", 25);
+            waitForEnter();
+        }
         // REPLAY INTRO ONLY
         else if (progress[zoneIndex] >= zoneMax)
         {
@@ -140,6 +167,19 @@ void runStage5(Dog *player, int progress[])
                 {
                     typeText("The tactical ward resets its combat simulation...\n", 25);
                     typeText("Another prototype steps forward.\n", 25);
+                }
+            }
+            else if (zoneIndex == 19)
+            {
+                if (rand() % 2 == 0)
+                {
+                    typeText("The Elemental Apex Chamber reactivates...\n", 25);
+                    typeText("Unstable energy gathers around another subject.\n", 25);
+                }
+                else
+                {
+                    typeText("The core refuses to shut down...\n", 25);
+                    typeText("A new elemental mutation awakens.\n", 25);
                 }
             }
             else
@@ -234,6 +274,20 @@ void runStage5(Dog *player, int progress[])
 
             waitForEnter();
         }
+        // ZONE 4 BOSS INTRO
+        else if (zoneIndex == 19 && i == 3)
+        {
+            system("cls");
+
+            typeText("Warning: Core stability failing.\n", 25);
+            typeText("Elemental pressure has exceeded safe limits.\n\n", 25);
+            typeText("The chamber doors open slowly.\n", 25);
+            typeText("Apex-0 steps forward, surrounded by unstable energy.\n", 25);
+            typeText("Dr. Bricky: This is not training anymore.\n", 25);
+            typeText("Dr. Bricky: This is evolution under pressure.\n", 25);
+
+            waitForEnter();
+        }
 
         int result = battleWithEnemyIndex(player, zoneIndex, progress, i);
 
@@ -258,6 +312,12 @@ void runStage5(Dog *player, int progress[])
             {
                 printf("\n[DATA LOG]: Combat prototype neutralized.");
                 printf("\nZone Progress: %d/%d\n", progress[18], zoneMax);
+                waitForEnter();
+            }
+            else if (zoneIndex == 19 && progress[19] < zoneMax)
+            {
+                printf("\n[DATA LOG]: Elemental apex subject stabilized.");
+                printf("\nZone Progress: %d/%d\n", progress[19], zoneMax);
                 waitForEnter();
             }
 
@@ -287,6 +347,15 @@ void runStage5(Dog *player, int progress[])
                 typeText("they were trained like weapons inside the Blacksite.\n", 28);
                 waitForEnter();
             }
+
+            if (zoneIndex == 19 && progress[19] >= 4)
+            {
+                system("cls");
+                typeText("ZONE 4: ELEMENTAL APEX CHAMBER COMPLETE\n\n", 20);
+                typeText("The Blacksite core begins to cool down...\n", 28);
+                typeText("but the energy left behind still feels alive.\n", 28);
+                waitForEnter();
+            }
         }
 
         if (result == 2)
@@ -301,10 +370,12 @@ void runStage5(Dog *player, int progress[])
                 "Old strays are no longer ordinary enemies...\n",
                 "The laboratory records another failed entry...\n",
                 "Combat prototype efficiency confirmed...\n",
-                "Tactical ward remains undefeated...\n"
+                "Tactical ward remains undefeated...\n",
+                "Elemental pressure overwhelms the intruder...\n",
+                "The Apex Chamber remains unstable...\n"
             };
 
-            int msg = rand() % 7;
+            int msg = rand() % 9;
             typeText(defeatMsg[msg], 25);
             waitForEnter();
         }

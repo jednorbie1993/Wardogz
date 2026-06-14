@@ -431,16 +431,16 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
     applyBattleStatGain(player);
     checkSkillUnlock(player);
 
-    int maxEnemies[19] =
+    int maxEnemies[20] =
     {
         3,3,3,
         3,3,2,4,4,
         2,4,4,3,
         2,4,4,3,
-        4,4,4
+        4,4,4,4
     };
 
-    if (zoneIndex >= 0 && zoneIndex < 19 && progress[zoneIndex] < maxEnemies[zoneIndex])
+    if (zoneIndex >= 0 && zoneIndex < 20 && progress[zoneIndex] < maxEnemies[zoneIndex])
     {
         progress[zoneIndex]++;
     }
@@ -457,16 +457,16 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
 
 int getBattleMaxEnemies(int zoneIndex)
 {
-    int maxEnemies[19] =
+    int maxEnemies[20] =
     {
         3,3,3,
         3,3,2,4,4,
         2,4,4,3,
         2,4,4,3,
-        4,4,4
+        4,4,4,4
     };
 
-    if (zoneIndex < 0 || zoneIndex >= 19)
+    if (zoneIndex < 0 || zoneIndex >= 20)
         return 3;
 
     return maxEnemies[zoneIndex];
@@ -505,7 +505,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
     // =========================
     // STAGE LOADER SYSTEM
     // =========================
-    if (zoneIndex >= 16 && zoneIndex <= 18)
+    if (zoneIndex >= 16 && zoneIndex <= 19)
     {
         loadStage5Enemies(&enemy, zoneIndex, i);
     }

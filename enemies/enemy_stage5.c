@@ -11,6 +11,7 @@
     Zone 1 = index 16: Enhanced Strays
     Zone 2 = index 17: Feral Mutation Ward
     Zone 3 = index 18: Combat Prototype Unit
+    Zone 4 = index 19: Elemental Apex Chamber
 
     NOTE:
     If you add the new Zone 3 skill IDs below, also add them in dog.h enum:
@@ -18,6 +19,12 @@
         SKILL_ARMOR_BREAK
         SKILL_SUPPRESSION_HOWL
         SKILL_BLACKSITE_EXECUTION
+
+    If you add the new Zone 4 skill IDs below, also add them in dog.h enum:
+        SKILL_PLASMA_BITE
+        SKILL_CRYO_LOCK
+        SKILL_THUNDER_SURGE
+        SKILL_APEX_OVERDRIVE
 
     Then add the skill cases in enemy.c / battle enemy skill switch.
 */
@@ -85,6 +92,27 @@ void setCombatPrototypeSkills(Dog *enemy)
     enemy->skills[3].id = SKILL_BLACKSITE_EXECUTION;
     strcpy(enemy->skills[3].name, "Blacksite Execution");
     enemy->skills[3].power = 36;
+
+    enemy->numSkills = 4;
+}
+
+void setElementalApexSkills(Dog *enemy)
+{
+    enemy->skills[0].id = SKILL_PLASMA_BITE;
+    strcpy(enemy->skills[0].name, "Plasma Bite");
+    enemy->skills[0].power = 30;
+
+    enemy->skills[1].id = SKILL_CRYO_LOCK;
+    strcpy(enemy->skills[1].name, "Cryo Lock");
+    enemy->skills[1].power = 24;
+
+    enemy->skills[2].id = SKILL_THUNDER_SURGE;
+    strcpy(enemy->skills[2].name, "Thunder Surge");
+    enemy->skills[2].power = 0;
+
+    enemy->skills[3].id = SKILL_APEX_OVERDRIVE;
+    strcpy(enemy->skills[3].name, "Apex Overdrive");
+    enemy->skills[3].power = 42;
 
     enemy->numSkills = 4;
 }
@@ -228,6 +256,50 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
         }
 
         setCombatPrototypeSkills(enemy);
+    }
+
+    // =========================
+    // ZONE 4: ELEMENTAL APEX CHAMBER
+    // =========================
+    else if (zoneIndex == 19)
+    {
+        enemy->zoneType = ZONE_MUTANT;
+        enemy->personalityType = PERSONALITY_DESPERATE;
+
+        if (i == 0)
+        {
+            strcpy(enemy->name, "Pyroclaw");
+            enemy->attack += 40;
+            enemy->defense += 20;
+            enemy->speed += 26;
+            enemy->maxHP += 130;
+        }
+        else if (i == 1)
+        {
+            strcpy(enemy->name, "Frostmaw");
+            enemy->attack += 36;
+            enemy->defense += 34;
+            enemy->speed += 16;
+            enemy->maxHP += 150;
+        }
+        else if (i == 2)
+        {
+            strcpy(enemy->name, "Voltfang");
+            enemy->attack += 42;
+            enemy->defense += 22;
+            enemy->speed += 34;
+            enemy->maxHP += 140;
+        }
+        else
+        {
+            strcpy(enemy->name, "Apex Chimera");
+            enemy->attack += 55;
+            enemy->defense += 40;
+            enemy->speed += 30;
+            enemy->maxHP += 230;
+        }
+
+        setElementalApexSkills(enemy);
     }
     else
     {
@@ -466,6 +538,86 @@ int useBlacksiteExecution(Dog *user, Dog *target)
 
     printf("%s uses Blacksite Execution! -%d HP\n", user->name, dmg);
     printf("The combat prototype follows its final order.\n");
+
+    return dmg;
+}
+
+// =========================
+// ZONE 4 SKILLS
+// =========================
+
+int usePlasmaBite(Dog *user, Dog *target)
+{
+    int dmg = user->attack + 20 + (rand() % 12);
+
+    if (target->defense > 0)
+        dmg -= target->defense / 45;
+
+    if (dmg < 8)
+        dmg = 8;
+
+    target->hp -= dmg;
+
+    target->defense -= 3;
+    if (target->defense < 0)
+        target->defense = 0;
+
+    printf("%s uses Plasma Bite! -%d HP\n", user->name, dmg);
+    printf("The heated bite weakens %s's defense by 3!\n", target->name);
+
+    return dmg;
+}
+
+int useCryoLock(Dog *user, Dog *target)
+{
+    int dmg = user->attack + 14 + (rand() % 9);
+
+    if (target->defense > 0)
+        dmg -= target->defense / 48;
+
+    if (dmg < 6)
+        dmg = 6;
+
+    target->hp -= dmg;
+
+    target->speed -= 6;
+    if (target->speed < 1)
+        target->speed = 1;
+
+    printf("%s uses Cryo Lock! -%d HP\n", user->name, dmg);
+    printf("%s's speed was lowered by 6!\n", target->name);
+
+    return dmg;
+}
+
+int useThunderSurge(Dog *user, Dog *target)
+{
+    user->attack += 6;
+    user->speed += 8;
+
+    printf("%s activates Thunder Surge!\n", user->name);
+    printf("Attack +6 | Speed +8\n");
+
+    return 0;
+}
+
+int useApexOverdrive(Dog *user, Dog *target)
+{
+    int dmg = (user->attack * 1.8) + 22 + (rand() % 14);
+
+    if (user->hp < user->maxHP / 2)
+        dmg += 16;
+
+    if (target->defense > 0)
+        dmg -= target->defense / 34;
+
+    if (dmg < 10)
+        dmg = 10;
+
+    target->hp -= dmg;
+
+    printf("%s uses Apex Overdrive! -%d HP\n", user->name, dmg);
+    printf("Elemental energy overloads the chamber.\n");
 
     return dmg;
 }
