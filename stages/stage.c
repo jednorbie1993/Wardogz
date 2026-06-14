@@ -16,25 +16,9 @@ void startStage(Dog *player, int progress[])
 {
     int stageChoice;
 
-    // progress:
-    // Stage1 = 0-2
-    // Stage2 = 3-7
-    // Stage3 = 8-11
-    // Stage4 = 12-15
-    // Stage5 = 16
-
     while (1)
     {
         system("cls");
-        int progress[18] =
-        {
-            3,3,3,
-            3,3,2,4,4,
-            2,4,4,3,
-            2,4,4,3,
-            4,0
-        };
-
 
         int urbanComplete =
             (progress[0] >= 3) +
@@ -62,7 +46,8 @@ void startStage(Dog *player, int progress[])
 
         int blacksiteComplete =
             (progress[16] >= 4) +
-            (progress[17] >= 4);
+            (progress[17] >= 4) +
+            (progress[18] >= 4);
 
         printf("=== SELECT STAGE ===\n\n");
 
@@ -84,7 +69,7 @@ void startStage(Dog *player, int progress[])
             printf("4. Bio-Containment Zone (Locked)\n");
 
         if (bioLabComplete >= 4)
-            printf("5. Blacksite Laboratory (%d/2)\n", blacksiteComplete);
+            printf("5. Blacksite Laboratory (%d/3)\n", blacksiteComplete);
         else
             printf("5. Blacksite Laboratory (Locked)\n");
 

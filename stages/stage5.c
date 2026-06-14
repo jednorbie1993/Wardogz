@@ -14,6 +14,7 @@ int getZoneMaxStage5(int zoneIndex)
 {
     if (zoneIndex == 16) return 4;
     if (zoneIndex == 17) return 4;
+    if (zoneIndex == 18) return 4;
 
     return 4;
 }
@@ -38,7 +39,12 @@ void runStage5(Dog *player, int progress[])
         else
             printf("2. Feral Mutation Ward (Locked)\n");
 
-        printf("3. Back");
+        if (progress[17] >= 4)
+            printf("3. Combat Prototype Unit (%d/4)\n", progress[18]);
+        else
+            printf("3. Combat Prototype Unit (Locked)\n");
+
+        printf("4. Back");
         printf("\n\nChoice: ");
 
         fgets(input, sizeof(input), stdin);
@@ -52,14 +58,14 @@ void runStage5(Dog *player, int progress[])
 
         zoneChoice = atoi(input);
 
-        if (zoneChoice < 1 || zoneChoice > 3)
+        if (zoneChoice < 1 || zoneChoice > 4)
         {
-            printf("\nInvalid choice! Select 1-3 only.");
+            printf("\nInvalid choice! Select 1-4 only.");
             waitForEnter();
             continue;
         }
 
-        if (zoneChoice == 3)
+        if (zoneChoice == 4)
             return;
 
         if (zoneChoice == 2 && progress[16] < 4)
@@ -69,23 +75,25 @@ void runStage5(Dog *player, int progress[])
             continue;
         }
 
-        if (zoneChoice == 3)
-            return;
+        if (zoneChoice == 3 && progress[17] < 4)
+        {
+            printf("\nComplete Feral Mutation Ward first!");
+            waitForEnter();
+            continue;
+        }
 
         int zoneIndex;
 
         if (zoneChoice == 1)
             zoneIndex = 16;
-        else
+        else if (zoneChoice == 2)
             zoneIndex = 17;
+        else
+            zoneIndex = 18;
 
         int zoneMax = getZoneMaxStage5(zoneIndex);
 
-        /*
-            FIRST TIME INTRO ONLY:
-            This appears only before the first fight of Stage 5 Zone 1.
-            It will not show again after progress[16] becomes 1 or higher.
-        */
+        // FIRST TIME INTRO ONLY - Zone 1
         if (zoneIndex == 16 && progress[16] == 0)
         {
             system("cls");
@@ -104,23 +112,48 @@ void runStage5(Dog *player, int progress[])
             typeText("- Dr. Bricky\n", 25);
             waitForEnter();
         }
-        /*
-            REPLAY INTRO ONLY:
-            This appears only after Zone 1 is already complete.
-        */
+        // FIRST TIME INTRO ONLY - Zone 3
+        else if (zoneIndex == 18 && progress[18] == 0)
+        {
+            system("cls");
+            typeText("[BLACKSITE SECURITY LOG]\n\n", 25);
+            typeText("The deeper wing of the laboratory opens.\n", 25);
+            typeText("These subjects are different... trained, disciplined, and weaponized.\n", 25);
+            typeText("They do not hunt like animals.\n", 25);
+            typeText("They move like soldiers.\n\n", 25);
+            typeText("Security System: Combat Prototype Unit activated.\n", 25);
+            waitForEnter();
+        }
+        // REPLAY INTRO ONLY
         else if (progress[zoneIndex] >= zoneMax)
         {
             system("cls");
 
-            if (rand() % 2 == 0)
+            if (zoneIndex == 18)
             {
-                typeText("The laboratory remains active...\n", 25);
-                typeText("Enhanced subjects continue their patrols.\n", 25);
+                if (rand() % 2 == 0)
+                {
+                    typeText("Combat prototypes return to their patrol routes...\n", 25);
+                    typeText("Their training never stops.\n", 25);
+                }
+                else
+                {
+                    typeText("The tactical ward resets its combat simulation...\n", 25);
+                    typeText("Another prototype steps forward.\n", 25);
+                }
             }
             else
             {
-                typeText("The Blacksite grows quieter...\n", 25);
-                typeText("But the experiments are far from over.\n", 25);
+                if (rand() % 2 == 0)
+                {
+                    typeText("The laboratory remains active...\n", 25);
+                    typeText("Enhanced subjects continue their patrols.\n", 25);
+                }
+                else
+                {
+                    typeText("The Blacksite grows quieter...\n", 25);
+                    typeText("But the experiments are far from over.\n", 25);
+                }
             }
 
             waitForEnter();
@@ -160,10 +193,7 @@ void runStage5(Dog *player, int progress[])
             continue;
         }
 
-        /*
-            ALPHA-X BOSS INTRO:
-            This appears when the fourth enemy is selected.
-        */
+        // ZONE 1 BOSS INTRO
         if (zoneIndex == 16 && i == 3)
         {
             system("cls");
@@ -177,15 +207,30 @@ void runStage5(Dog *player, int progress[])
 
             waitForEnter();
         }
-        if (zoneIndex == 17 && i == 3)
+        // ZONE 2 BOSS INTRO
+        else if (zoneIndex == 17 && i == 3)
         {
             system("cls");
 
-            typeText("Warning...\n",25);
-            typeText("Containment breach detected.\n",25);
-            typeText("Subject LYCAN-REX released.\n\n",25);
+            typeText("Warning...\n", 25);
+            typeText("Containment breach detected.\n", 25);
+            typeText("Subject LYCAN-REX released.\n\n", 25);
 
-            typeText("A massive werewolf-like beast emerges from the darkness.\n",25);
+            typeText("A massive werewolf-like beast emerges from the darkness.\n", 25);
+
+            waitForEnter();
+        }
+        // ZONE 3 BOSS INTRO
+        else if (zoneIndex == 18 && i == 3)
+        {
+            system("cls");
+
+            typeText("Security System: Final prototype authorized.\n", 25);
+            typeText("Blacksite doors lock behind you.\n\n", 25);
+            typeText("A heavily trained combat subject steps forward.\n", 25);
+            typeText("Its armor is scarred from countless test battles.\n", 25);
+            typeText("Dr. Bricky: This one does not need rage.\n", 25);
+            typeText("Dr. Bricky: It was built to end fights quickly.\n", 25);
 
             waitForEnter();
         }
@@ -209,6 +254,12 @@ void runStage5(Dog *player, int progress[])
                 printf("\nZone Progress: %d/%d\n", progress[17], zoneMax);
                 waitForEnter();
             }
+            else if (zoneIndex == 18 && progress[18] < zoneMax)
+            {
+                printf("\n[DATA LOG]: Combat prototype neutralized.");
+                printf("\nZone Progress: %d/%d\n", progress[18], zoneMax);
+                waitForEnter();
+            }
 
             if (zoneIndex == 16 && progress[16] >= 4)
             {
@@ -227,20 +278,33 @@ void runStage5(Dog *player, int progress[])
                 typeText("their instincts had evolved into something savage.\n", 28);
                 waitForEnter();
             }
+
+            if (zoneIndex == 18 && progress[18] >= 4)
+            {
+                system("cls");
+                typeText("ZONE 3: COMBAT PROTOTYPE UNIT COMPLETE\n\n", 20);
+                typeText("These subjects were not wild anymore...\n", 28);
+                typeText("they were trained like weapons inside the Blacksite.\n", 28);
+                waitForEnter();
+            }
         }
 
         if (result == 2)
         {
             system("cls");
-            char *defeatMsg[] =
-                {
-                    "Subject overpowered the intruder...\n",
-                    "Enhanced combat instincts confirmed...\n",
-                    "Blacksite security remains active...\n",
-                    "Old strays are no longer ordinary enemies...\n",
-                    "The laboratory records another failed entry...\n"};
 
-            int msg = rand() % 5;
+            char *defeatMsg[] =
+            {
+                "Subject overpowered the intruder...\n",
+                "Enhanced combat instincts confirmed...\n",
+                "Blacksite security remains active...\n",
+                "Old strays are no longer ordinary enemies...\n",
+                "The laboratory records another failed entry...\n",
+                "Combat prototype efficiency confirmed...\n",
+                "Tactical ward remains undefeated...\n"
+            };
+
+            int msg = rand() % 7;
             typeText(defeatMsg[msg], 25);
             waitForEnter();
         }

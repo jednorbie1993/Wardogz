@@ -109,7 +109,26 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
         return;
     }
 
-    if (zoneIndex >= 8 && zoneIndex <= 11)
+    if (strcmp(enemy->name, "Commander Cerberus") == 0)
+    {
+        typeText("\"Prototype command unit online. Target acquired.\"", 25);
+
+        printf("\n\n");
+
+        typeText("Commander Cerberus deployed!", 25);
+
+        printf("\n");
+        waitForEnter();
+
+        return;
+    }
+
+    if (zoneIndex >= 16 && zoneIndex <= 18)
+    {
+        typeText(enemy->name, 25);
+        typeText(" deployed!", 20);
+    }
+    else if (zoneIndex >= 8 && zoneIndex <= 11)
     {
         typeText(enemy->name, 25);
         typeText(" arrived!", 20);
@@ -412,16 +431,16 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
     applyBattleStatGain(player);
     checkSkillUnlock(player);
 
-    int maxEnemies[17] =
+    int maxEnemies[19] =
     {
         3,3,3,
         3,3,2,4,4,
         2,4,4,3,
         2,4,4,3,
-        4
+        4,4,4
     };
 
-    if (progress[zoneIndex] < maxEnemies[zoneIndex])
+    if (zoneIndex >= 0 && zoneIndex < 19 && progress[zoneIndex] < maxEnemies[zoneIndex])
     {
         progress[zoneIndex]++;
     }
@@ -438,16 +457,16 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
 
 int getBattleMaxEnemies(int zoneIndex)
 {
-    int maxEnemies[18] =
+    int maxEnemies[19] =
     {
         3,3,3,
         3,3,2,4,4,
         2,4,4,3,
         2,4,4,3,
-        4,4
+        4,4,4
     };
 
-    if (zoneIndex < 0 || zoneIndex >= 18)
+    if (zoneIndex < 0 || zoneIndex >= 19)
         return 3;
 
     return maxEnemies[zoneIndex];
@@ -484,9 +503,9 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
     int i = (enemyIndex >= 0) ? enemyIndex : chooseReplayEnemyIndex(zoneIndex, progress, 0);
 
     // =========================
-    // STAGE 3 SYSTEM
+    // STAGE LOADER SYSTEM
     // =========================
-    if (zoneIndex >= 16 && zoneIndex <= 17)
+    if (zoneIndex >= 16 && zoneIndex <= 18)
     {
         loadStage5Enemies(&enemy, zoneIndex, i);
     }
