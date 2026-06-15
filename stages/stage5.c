@@ -16,9 +16,12 @@ int getZoneMaxStage5(int zoneIndex)
     if (zoneIndex == 17) return 4;
     if (zoneIndex == 18) return 4;
     if (zoneIndex == 19) return 4;
+    if (zoneIndex == 20) return 1; // FINAL ZONE: Project Cerberus
 
     return 4;
 }
+
+void showProjectCerberusEnding(Dog *player);
 
 void runStage5(Dog *player, int progress[])
 {
@@ -50,7 +53,12 @@ void runStage5(Dog *player, int progress[])
         else
             printf("4. Elemental Apex Chamber (Locked)\n");
 
-        printf("5. Back");
+        if (progress[19] >= 4)
+            printf("5. Final Containment: Project Cerberus (%d/1)\n", progress[20]);
+        else
+            printf("5. Final Containment: Project Cerberus (Locked)\n");
+
+        printf("6. Back");
         printf("\n\nChoice: ");
 
         fgets(input, sizeof(input), stdin);
@@ -64,14 +72,14 @@ void runStage5(Dog *player, int progress[])
 
         zoneChoice = atoi(input);
 
-        if (zoneChoice < 1 || zoneChoice > 5)
+        if (zoneChoice < 1 || zoneChoice > 6)
         {
-            printf("\nInvalid choice! Select 1-5 only.");
+            printf("\nInvalid choice! Select 1-6 only.");
             waitForEnter();
             continue;
         }
 
-        if (zoneChoice == 5)
+        if (zoneChoice == 6)
             return;
 
         if (zoneChoice == 2 && progress[16] < 4)
@@ -95,6 +103,13 @@ void runStage5(Dog *player, int progress[])
             continue;
         }
 
+        if (zoneChoice == 5 && progress[19] < 4)
+        {
+            printf("\nComplete Elemental Apex Chamber first!");
+            waitForEnter();
+            continue;
+        }
+
         int zoneIndex;
 
         if (zoneChoice == 1)
@@ -103,8 +118,10 @@ void runStage5(Dog *player, int progress[])
             zoneIndex = 17;
         else if (zoneChoice == 3)
             zoneIndex = 18;
-        else
+        else if (zoneChoice == 4)
             zoneIndex = 19;
+        else
+            zoneIndex = 20;
 
         int zoneMax = getZoneMaxStage5(zoneIndex);
 
@@ -151,12 +168,39 @@ void runStage5(Dog *player, int progress[])
             typeText("Security System: Elemental Apex Chamber unlocked.\n", 25);
             waitForEnter();
         }
+        // FIRST TIME INTRO ONLY - Zone 5 / Final Boss
+        else if (zoneIndex == 20 && progress[20] == 0)
+        {
+            system("cls");
+            typeText("[FINAL CONTAINMENT - PROJECT CERBERUS]\n\n", 25);
+            typeText("The deepest door of the Blacksite opens.\n", 25);
+            typeText("No patrols. No cages. No warning lights.\n", 25);
+            typeText("Only one containment pod remains active.\n\n", 25);
+
+            typeText("Dr. Bricky: Every stray... every mutant... every soldier...\n", 25);
+            typeText("Dr. Bricky: They were all unfinished drafts.\n", 25);
+            typeText("Dr. Bricky: But this one... this is my true introduction to the world.\n\n", 25);
+
+            typeText("The glass pod cracks from the inside.\n", 25);
+            typeText("A humanoid mutant dog opens its eyes.\n", 25);
+            typeText("Its body is built like a weapon... but it breathes like something alive.\n\n", 25);
+
+            typeText("SYSTEM: Regeneration cycle unstable.\n", 25);
+            typeText("SYSTEM: Subject will fully heal after 10 to 12 turns.\n", 25);
+            typeText("SYSTEM: Blacksite self-destruct timer active: 2 minutes.\n", 25);
+            waitForEnter();
+        }
         // REPLAY INTRO ONLY
         else if (progress[zoneIndex] >= zoneMax)
         {
             system("cls");
 
-            if (zoneIndex == 18)
+            if (zoneIndex == 20)
+            {
+                typeText("The final containment pod repairs itself...\n", 25);
+                typeText("Project Cerberus waits in silence.\n", 25);
+            }
+            else if (zoneIndex == 18)
             {
                 if (rand() % 2 == 0)
                 {
@@ -214,9 +258,27 @@ void runStage5(Dog *player, int progress[])
             i = progress[zoneIndex];
         }
 
-        loadStage5Enemies(&enemy, zoneIndex, i);
+        if (zoneIndex == 20)
+        {
+            // Final Zone is 1/1 only.
+            // NOTE: For full battle mechanics, battle.c/enemy_stage5.c must also support zoneIndex 20.
+            // Regen rule target: random 10-12 turns = full heal.
+            // Timer rule target: 2 minutes = lose/escape if time runs out.
+            strcpy(enemy.name, "Project Cerberus");
+            enemy.zoneType = ZONE_MUTANT;
+            enemy.personalityType = PERSONALITY_ALPHA;
+            enemy.attack += 35;
+            enemy.defense += 28;
+            enemy.speed += 18;
+            enemy.maxHP += 130;
+            enemy.hp = enemy.maxHP;
+        }
+        else
+        {
+            loadStage5Enemies(&enemy, zoneIndex, i);
+        }
 
-        if (i == zoneMax - 1)
+        if (i == zoneMax - 1 && zoneIndex != 20)
         {
             enemy.attack += 20;
             enemy.defense += 16;
@@ -288,6 +350,21 @@ void runStage5(Dog *player, int progress[])
 
             waitForEnter();
         }
+        // ZONE 5 FINAL BOSS INTRO
+        else if (zoneIndex == 20 && i == 0)
+        {
+            system("cls");
+
+            typeText("[BLACKSITE MELTDOWN WARNING]\n\n", 25);
+            typeText("Project Cerberus steps out of the broken pod.\n", 25);
+            typeText("It stands like a human... but growls like a beast.\n\n", 25);
+            typeText("Dr. Bricky: Do not waste time.\n", 25);
+            typeText("Dr. Bricky: In 10 to 12 turns, Cerberus will regenerate completely.\n", 25);
+            typeText("Dr. Bricky: And in 2 minutes... this whole laboratory disappears.\n\n", 25);
+            typeText("SYSTEM: Defeat Project Cerberus before regeneration and meltdown.\n", 25);
+
+            waitForEnter();
+        }
 
         int result = battleWithEnemyIndex(player, zoneIndex, progress, i);
 
@@ -318,6 +395,12 @@ void runStage5(Dog *player, int progress[])
             {
                 printf("\n[DATA LOG]: Elemental apex subject stabilized.");
                 printf("\nZone Progress: %d/%d\n", progress[19], zoneMax);
+                waitForEnter();
+            }
+            else if (zoneIndex == 20 && progress[20] < zoneMax)
+            {
+                printf("\n[DATA LOG]: Project Cerberus defeated.");
+                printf("\nZone Progress: %d/%d\n", progress[20], zoneMax);
                 waitForEnter();
             }
 
@@ -356,6 +439,11 @@ void runStage5(Dog *player, int progress[])
                 typeText("but the energy left behind still feels alive.\n", 28);
                 waitForEnter();
             }
+
+            if (zoneIndex == 20 && progress[20] >= 1)
+            {
+                showProjectCerberusEnding(player);
+            }
         }
 
         if (result == 2)
@@ -372,12 +460,70 @@ void runStage5(Dog *player, int progress[])
                 "Combat prototype efficiency confirmed...\n",
                 "Tactical ward remains undefeated...\n",
                 "Elemental pressure overwhelms the intruder...\n",
-                "The Apex Chamber remains unstable...\n"
+                "The Apex Chamber remains unstable...\n",
+                "Project Cerberus begins another regeneration cycle...\n",
+                "The self-destruct timer continues counting down...\n"
             };
 
-            int msg = rand() % 9;
+            int msg = rand() % 11;
             typeText(defeatMsg[msg], 25);
             waitForEnter();
         }
     }
+}
+
+void showProjectCerberusEnding(Dog *player)
+{
+    system("cls");
+
+    typeText("[FINAL CONTAINMENT ROOM]\n\n", 25);
+    typeText("Project Cerberus collapses to the floor.\n", 25);
+    typeText("The Blacksite alarms begin to fade.\n\n", 25);
+
+    waitForEnter();
+    system("cls");
+
+    typeText("Dr. Bricky slowly steps out from behind the broken chamber.\n\n", 25);
+    typeText("Dr. Bricky: Amazing...\n", 25);
+    typeText("Dr. Bricky: You actually defeated my final subject.\n\n", 25);
+    typeText("Dr. Bricky: Your dog is not ordinary either.\n", 25);
+    typeText("Dr. Bricky: That strength... that loyalty...\n", 25);
+    typeText("Dr. Bricky: That is exactly what I have been searching for.\n\n", 25);
+
+    waitForEnter();
+    system("cls");
+
+    typeText("Dr. Bricky: Come with me.\n", 25);
+    typeText("Dr. Bricky: Together, we can create something greater.\n", 25);
+    typeText("Dr. Bricky: No more weak creatures.\n", 25);
+    typeText("Dr. Bricky: Only evolution.\n\n", 25);
+
+    typeText("You refuse.\n\n", 25);
+
+    waitForEnter();
+    system("cls");
+
+    typeText("Project Cerberus suddenly moves.\n", 25);
+    typeText("Your dog jumps in front of you.\n\n", 25);
+    typeText("Dr. Bricky raises a hidden injector.\n", 25);
+    typeText("A black serum enters the wound.\n\n", 25);
+
+    waitForEnter();
+    system("cls");
+
+    typeText("Dr. Bricky: Interesting...\n", 25);
+    typeText("Dr. Bricky: Let us see how long this curse follows you.\n\n", 25);
+    typeText("Dr. Bricky: Not by time.\n", 25);
+    typeText("Dr. Bricky: Not by death.\n", 25);
+    typeText("Dr. Bricky: Not even by another timeline.\n\n", 25);
+
+    waitForEnter();
+    system("cls");
+
+    typeText("[BLACKSITE LABORATORY DESTROYED]\n\n", 25);
+    typeText("The final chamber falls silent.\n", 25);
+    typeText("The story is over...\n", 25);
+    typeText("Or so it seems.\n", 25);
+
+    waitForEnter();
 }

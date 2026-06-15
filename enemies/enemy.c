@@ -158,11 +158,25 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
                 Most Stage 5 enemies only have 4 skills:
                 index 0, 1, 2, 3
 
-                IMPORTANT:
-                Do NOT choose index 4 here unless the enemy really has
-                a 5th skill, or it can cause wrong/empty skills.
+                Zone 5 final boss: Project Cerberus
+                - Uses the same existing skill IDs from enemy_stage5.c
+                - No new dog.h enum needed here
+                - Regen/timer should be handled in battle.c
             */
-            if (enemy->hp < enemy->maxHP * 0.30)
+            if (strcmp(enemy->name, "Project Cerberus") == 0)
+            {
+                if (enemy->hp < enemy->maxHP * 0.35)
+                    skillChoice = 0; // Mutation Overdrive / Apex Overdrive effect
+                else if (r < 30)
+                    skillChoice = 1; // Humanoid Jaw Crush
+                else if (r < 55)
+                    skillChoice = 2; // Timeline Maul
+                else if (r < 80)
+                    skillChoice = 3; // Cursed Instinct
+                else
+                    skillChoice = 0;
+            }
+            else if (enemy->hp < enemy->maxHP * 0.30)
                 skillChoice = 3;
             else if (r < 30)
                 skillChoice = 0;
@@ -187,7 +201,23 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         if (enemy->zoneType == ZONE_BIOLAB)
             printf("%s\n", bioLabLines[randomLine]);
         else if (enemy->zoneType == ZONE_MUTANT)
-            printf("%s\n", mutantLines[randomLine]);
+        {
+            if (strcmp(enemy->name, "Project Cerberus") == 0)
+            {
+                char *cerberusLines[] =
+                {
+                    "Regeneration cells unstable.",
+                    "Humanoid mutation adapting.",
+                    "Timeline curse resonating."
+                };
+
+                printf("%s\n", cerberusLines[randomLine]);
+            }
+            else
+            {
+                printf("%s\n", mutantLines[randomLine]);
+            }
+        }
         else
             printf("%s\n", wildLines[randomLine]);
 
@@ -365,6 +395,22 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             useApexOverdrive(enemy, player);
             break;
 
+        case SKILL_MUTATION_OVERDRIVE:
+            useMutationOverdrive(enemy, player);
+            break;
+
+        case SKILL_HUMANOID_JAW_CRUSH:
+            useHumanoidJawCrush(enemy, player);
+            break;
+
+        case SKILL_TIMELINE_MAUL:
+            useTimelineMaul(enemy, player);
+            break;
+
+        case SKILL_CURSED_INSTINCT:
+            useCursedInstinct(enemy, player);
+            break;
+            
         default:
             {
                 char *mutantActions[] =
@@ -427,6 +473,15 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
                 "Combat adaptation detected!"
             };
 
+            char *cerberusMutationLines[] =
+            {
+                "Regeneration cells awakened!",
+                "Humanoid frame adapting!",
+                "Black serum reacting!",
+                "Timeline curse detected!",
+                "Final containment failing!"
+            };
+
             int randomLine = rand() % 5;
 
             printf("\n");
@@ -434,12 +489,19 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             typeText(enemy->name, 30);
             typeText(" is mutating!\n", 30);
 
-            typeText(mutationLines[randomLine], 30);
+            if (strcmp(enemy->name, "Project Cerberus") == 0)
+                typeText(cerberusMutationLines[randomLine], 30);
+            else
+                typeText(mutationLines[randomLine], 30);
+
             printf("\n");
 
             typeText("Attack increased!\n", 30);
 
-            enemy->attack += 3;
+            if (strcmp(enemy->name, "Project Cerberus") == 0)
+                enemy->attack += 5;
+            else
+                enemy->attack += 3;
 
             enemy->mutationTriggered = 1;
 

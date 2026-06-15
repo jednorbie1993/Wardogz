@@ -123,7 +123,27 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
         return;
     }
 
-    if (zoneIndex >= 16 && zoneIndex <= 18)
+    if (strcmp(enemy->name, "Project Cerberus") == 0)
+    {
+        typeText("\"The final subject is awake.\"", 25);
+
+        printf("\n\n");
+
+        typeText("[FINAL CONTAINMENT BREACH]", 25);
+        printf("\n");
+        typeText("Project Cerberus steps out of the chamber.", 25);
+        printf("\n");
+        typeText("Its body looks more humanoid than dog.", 25);
+        printf("\n");
+        typeText("Mutation veins pulse across its frame.", 25);
+
+        printf("\n");
+        waitForEnter();
+
+        return;
+    }
+
+    if (zoneIndex >= 16 && zoneIndex <= 20)
     {
         typeText(enemy->name, 25);
         typeText(" deployed!", 20);
@@ -377,6 +397,8 @@ int handlePlayerDefeat(Dog *player, Dog *enemy, int baseDef, int baseSpd)
     return 0;
 }
 
+
+
 int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], int baseDef, int baseSpd)
 {
     enemy->hp = 0;
@@ -410,6 +432,7 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
 
     printf("\n YOU WIN! \n");
 
+
     if (strcmp(enemy->name, "Grimfang") == 0)
     {
         player->defeatedGrimfang = 1;
@@ -431,16 +454,17 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
     applyBattleStatGain(player);
     checkSkillUnlock(player);
 
-    int maxEnemies[20] =
+    int maxEnemies[21] =
     {
         3,3,3,
         3,3,2,4,4,
         2,4,4,3,
         2,4,4,3,
-        4,4,4,4
+        4,4,4,4,
+        1
     };
 
-    if (zoneIndex >= 0 && zoneIndex < 20 && progress[zoneIndex] < maxEnemies[zoneIndex])
+    if (zoneIndex >= 0 && zoneIndex < 21 && progress[zoneIndex] < maxEnemies[zoneIndex])
     {
         progress[zoneIndex]++;
     }
@@ -457,16 +481,17 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
 
 int getBattleMaxEnemies(int zoneIndex)
 {
-    int maxEnemies[20] =
+    int maxEnemies[21] =
     {
         3,3,3,
         3,3,2,4,4,
         2,4,4,3,
         2,4,4,3,
-        4,4,4,4
+        4,4,4,4,
+        1
     };
 
-    if (zoneIndex < 0 || zoneIndex >= 20)
+    if (zoneIndex < 0 || zoneIndex >= 21)
         return 3;
 
     return maxEnemies[zoneIndex];
@@ -505,7 +530,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
     // =========================
     // STAGE LOADER SYSTEM
     // =========================
-    if (zoneIndex >= 16 && zoneIndex <= 19)
+    if (zoneIndex >= 16 && zoneIndex <= 20)
     {
         loadStage5Enemies(&enemy, zoneIndex, i);
     }
@@ -538,11 +563,26 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
     showHPBarPlayer(-1, 1);
     showHPBarEnemy(-1, 1);
 
+    int battleTurn = 0;
+    int cerberusTimerActive = (strcmp(enemy.name, "Project Cerberus") == 0);
+    DWORD cerberusStartTime = GetTickCount();
+
     // 🔥 MAIN BATTLE LOOP
     while (player->hp > 0 && enemy.hp > 0)
     {
         system("cls");
         displayBattleStatus(*player, enemy);
+
+        if (cerberusTimerActive)
+        {
+            DWORD elapsed = GetTickCount() - cerberusStartTime;
+            int remaining = 120 - (int)(elapsed / 1000);
+
+            if (remaining < 0)
+                remaining = 0;
+
+            printf("[SELF DESTRUCT TIMER] %02d:%02d\n", remaining / 60, remaining % 60);
+        }
 
         if (player->hp <= 20)
         {
@@ -710,6 +750,42 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
         player->fatigue += 2;
         if (player->fatigue > player->maxFatigue)
             player->fatigue = player->maxFatigue;
+
+        battleTurn++;
+
+        if (strcmp(enemy.name, "Project Cerberus") == 0)
+        {
+            if (!enemy.regenerationUsed &&
+                battleTurn >= enemy.regenerationTurn)
+            {
+                system("cls");
+                displayBattleStatus(*player, enemy);
+
+                typeText("\n[MUTATION OVERDRIVE]\n", 25);
+                typeText("Project Cerberus fully regenerates!\n", 25);
+
+                enemy.hp = enemy.maxHP;
+                enemy.regenerationUsed = 1;
+
+                waitForEnter();
+            }
+        }    
+
+        if (cerberusTimerActive)
+        {
+            DWORD elapsed = GetTickCount() - cerberusStartTime;
+
+            if (elapsed >= 120000)
+            {
+                system("cls");
+                typeText("[BLACKSITE SELF-DESTRUCT]\n\n", 25);
+                typeText("The final chamber overloads.\n", 25);
+                typeText("You failed to stop Project Cerberus in time.\n", 25);
+                waitForEnter();
+
+                player->hp = 0;
+            }
+        }
 
         // 🔥 WIN/LOSE CHECK
         if (player->hp <= 0)

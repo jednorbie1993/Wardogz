@@ -93,6 +93,10 @@ typedef enum {
     SKILL_CRYO_LOCK,
     SKILL_THUNDER_SURGE,
     SKILL_APEX_OVERDRIVE,
+    SKILL_MUTATION_OVERDRIVE,
+    SKILL_HUMANOID_JAW_CRUSH,
+    SKILL_TIMELINE_MAUL,
+    SKILL_CURSED_INSTINCT,
 
 } SkillID;
 
@@ -178,6 +182,10 @@ typedef struct {
     int defeatedOmega;
 
     int mutationTriggered;
+    int regenerationTurn;
+    int regenerationUsed;
+
+    int campaignCompleted;
 } Dog;
 
 // ================= CORE FUNCTIONS =================

@@ -12,6 +12,7 @@
     Zone 2 = index 17: Feral Mutation Ward
     Zone 3 = index 18: Combat Prototype Unit
     Zone 4 = index 19: Elemental Apex Chamber
+    Zone 5 = index 20: Final Containment / Project Cerberus
 
     NOTE:
     If you add the new Zone 3 skill IDs below, also add them in dog.h enum:
@@ -113,6 +114,39 @@ void setElementalApexSkills(Dog *enemy)
     enemy->skills[3].id = SKILL_APEX_OVERDRIVE;
     strcpy(enemy->skills[3].name, "Apex Overdrive");
     enemy->skills[3].power = 42;
+
+    enemy->numSkills = 4;
+}
+
+void setFinalContainmentSkills(Dog *enemy)
+{
+    /*
+        Zone 5 uses existing skill IDs so this file will not force
+        extra dog.h enum changes yet.
+
+        The display names are final-boss themed, but the actual effects
+        still come from the matching IDs in enemy.c:
+            SKILL_APEX_OVERDRIVE       -> big damage
+            SKILL_ENHANCED_JAW_CRUSH   -> heavy bite + attack growth
+            SKILL_FANG_STORM           -> multi-hit
+            SKILL_PREDATOR_INSTINCT    -> attack/speed buff
+    */
+
+    enemy->skills[0].id = SKILL_APEX_OVERDRIVE;
+    strcpy(enemy->skills[0].name, "Mutation Overdrive");
+    enemy->skills[0].power = 45;
+
+    enemy->skills[1].id = SKILL_ENHANCED_JAW_CRUSH;
+    strcpy(enemy->skills[1].name, "Humanoid Jaw Crush");
+    enemy->skills[1].power = 38;
+
+    enemy->skills[2].id = SKILL_FANG_STORM;
+    strcpy(enemy->skills[2].name, "Timeline Maul");
+    enemy->skills[2].power = 34;
+
+    enemy->skills[3].id = SKILL_PREDATOR_INSTINCT;
+    strcpy(enemy->skills[3].name, "Cursed Instinct");
+    enemy->skills[3].power = 0;
 
     enemy->numSkills = 4;
 }
@@ -301,6 +335,35 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
 
         setElementalApexSkills(enemy);
     }
+    // =========================
+    // ZONE 5: FINAL CONTAINMENT
+    // =========================
+    else if (zoneIndex == 20)
+    {
+        /*
+            Final boss only: progress is 0/1 in stage5.c.
+            This is the humanoid mutant dog that should be defeated
+            before the 10-12 turn regeneration and 2-minute meltdown timer.
+            Regen/timer logic should be handled inside battle.c because
+            enemy_stage5.c only loads enemy data and skills.
+        */
+
+        enemy->zoneType = ZONE_MUTANT;
+        enemy->personalityType = PERSONALITY_DESPERATE;
+
+        strcpy(enemy->name, "Project Cerberus");
+
+        enemy->attack += 22;
+        enemy->defense += 22;
+        enemy->speed += 18;
+        enemy->maxHP += 240;
+
+        enemy->regenerationTurn = 10 + (rand() % 3);
+        enemy->regenerationUsed = 0;
+
+        setFinalContainmentSkills(enemy);
+    }
+
     else
     {
         strcpy(enemy->name, "Unknown Blacksite Dog");
@@ -620,4 +683,76 @@ int useApexOverdrive(Dog *user, Dog *target)
     printf("Elemental energy overloads the chamber.\n");
 
     return dmg;
+}
+
+int useMutationOverdrive(Dog *user, Dog *target)
+{
+    user->attack += 10;
+    user->defense += 6;
+    user->speed += 5;
+
+    printf("%s activates Mutation Overdrive!\n", user->name);
+    printf("Attack +10 | Defense +6 | Speed +5\n");
+
+    return 0;
+}
+
+int useHumanoidJawCrush(Dog *user, Dog *target)
+{
+    int dmg = (user->attack * 1.1) + 10 + (rand() % 8);
+
+    if (target->defense > 0)
+        dmg -= target->defense / 35;
+
+    if (dmg < 8)
+        dmg = 8;
+
+    target->hp -= dmg;
+
+    printf("%s uses Humanoid Jaw Crush! -%d HP\n", user->name, dmg);
+    printf("The humanoid mutant clamps down with unnatural force.\n");
+
+    return dmg;
+}
+
+int useTimelineMaul(Dog *user, Dog *target)
+{
+    int hits = 3;
+    int total = 0;
+
+    printf("%s uses Timeline Maul!\n", user->name);
+
+    for (int i = 0; i < hits; i++)
+    {
+        int dmg = (user->attack * 0.45) + 6 + (rand() % 5);
+
+        if (target->defense > 0)
+            dmg -= target->defense / 50;
+
+        if (dmg < 4)
+            dmg = 4;
+
+        target->hp -= dmg;
+        total += dmg;
+
+        printf("Timeline hit %d! -%d HP\n", i + 1, dmg);
+    }
+
+    printf("Total damage: -%d HP\n", total);
+    return total;
+}
+
+int useCursedInstinct(Dog *user, Dog *target)
+{
+    user->attack += 6;
+    target->defense -= 6;
+
+    if (target->defense < 0)
+        target->defense = 0;
+
+    printf("%s awakens Cursed Instinct!\n", user->name);
+    printf("%s gains Attack +6.\n", user->name);
+    printf("%s's Defense -6.\n", target->name);
+
+    return 0;
 }
