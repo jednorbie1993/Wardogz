@@ -8,6 +8,7 @@
 #include "sparring/sparring.h"
 #include "cinematic.h"
 #include "sparring/sparring_system.h"
+#include "credit.h"
 
 int main()
 {
@@ -18,6 +19,7 @@ int main()
     int choice;
 
     createDog(&player);
+    player.campaignCompleted = 0;
 
     int restCount = 0;
     //int progress[19] = {0};
@@ -42,7 +44,16 @@ int main()
         printf("3. Battle\n");
         printf("4. Rest (%d/3)\n", restCount);
         printf("5. Options\n");
-        printf("6. Exit\n");
+
+        if (player.campaignCompleted)
+        {
+            printf("6. Credits\n");
+            printf("7. Exit\n");
+        }
+        else
+        {
+            printf("6. Exit\n");
+        }
         printf("Enter choice: ");
 
         char input[10];
@@ -289,7 +300,15 @@ int main()
         }
 
         // ================= EXIT =================
-        else if (choice == 6)
+        else if (player.campaignCompleted && choice == 6)
+        {
+            showCredits();
+        }
+        else if
+        (
+            (player.campaignCompleted && choice == 7) ||
+            (!player.campaignCompleted && choice == 6)
+        )
         {
             printf("Exiting game...\n");
             break;
