@@ -1,6 +1,8 @@
 #include <stdio.h>
-#include "../dog.h"
-#include "credits.h"
+#include <stdlib.h>
+#include "dog.h"
+#include "cinematic.h"
+#include "credit.h"
 
 void showCampaignEnding(void)
 {
