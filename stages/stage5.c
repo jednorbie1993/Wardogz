@@ -9,6 +9,7 @@
 #include "../enemies/enemy.h"
 #include "../enemies/enemy_stage5.h"
 #include "../replay_system.h"
+#include "../credit.h"
 
 int getZoneMaxStage5(int zoneIndex)
 {
@@ -442,10 +443,27 @@ void runStage5(Dog *player, int progress[])
 
             if (zoneIndex == 20 && progress[20] >= 1)
             {
-                showProjectCerberusEnding(player);
+                if (!player->campaignCompleted)
+                {
+                    showProjectCerberusEnding(player);
+
+                    showCampaignEnding();
+                    showCredits();
+
+                    player->campaignCompleted = 1;
+
+                    system("cls");
+                    typeText("[NEW FEATURE UNLOCKED]\n\n", 25);
+                    typeText("Credits Viewer\n", 25);
+
+                    waitForEnter();
+                }
+                else
+                {
+                    showReplayEnding();
+                }
             }
         }
-
         if (result == 2)
         {
             system("cls");
