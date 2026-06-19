@@ -9,6 +9,7 @@
 #include "cinematic.h"
 #include "sparring/sparring_system.h"
 #include "credit.h"
+#include "arena.h"
 
 int main()
 {
@@ -179,10 +180,43 @@ int main()
         // ================= BATTLE =================
         else if (choice == 3)
         {
-            system("cls");
-            startStage(&player, progress);
-            restCount = 0;
-            player.fatigue = clampFatigue(player.fatigue - 10, player.maxFatigue);
+            int battleChoice;
+            char battleInput[10];
+
+            while (1)
+            {
+                system("cls");
+
+                printf("===== BATTLE =====\n");
+                printf("1. Campaign\n");
+                printf("2. Arena\n");
+                printf("3. Back\n");
+                printf("Choice: ");
+
+                fgets(battleInput, sizeof(battleInput), stdin);
+                battleChoice = atoi(battleInput);
+
+                if (battleChoice == 1)
+                {
+                    system("cls");
+                    startStage(&player, progress);
+                    restCount = 0;
+                    player.fatigue = clampFatigue(player.fatigue - 10, player.maxFatigue);
+                }
+                else if (battleChoice == 2)
+                {
+                    arenaMenu(&player);
+                }
+                else if (battleChoice == 3)
+                {
+                    break;
+                }
+                else
+                {
+                    printf("Invalid choice!\n");
+                    waitForEnter();
+                }
+            }
         }
 
         // ================= REST =================
