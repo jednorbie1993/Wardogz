@@ -2,7 +2,30 @@
 #include <stdlib.h>
 #include "arena.h"
 
+// ================= ARENA RANK NOTES =================
+// F, E, D, C, B, A, S = normal rank letters
+// X = SS
+// Z = SSS
+// Ginamit natin X at Z para hindi na muna baguhin ang Dog.arenaRank kung char pa rin siya.
+
 // ================= ARENA NAMES =================
+
+const char *getArenaClassName(char rank)
+{
+    switch (rank)
+    {
+        case 'F': return "F";
+        case 'E': return "E";
+        case 'D': return "D";
+        case 'C': return "C";
+        case 'B': return "B";
+        case 'A': return "A";
+        case 'S': return "S";
+        case 'X': return "SS";
+        case 'Z': return "SSS";
+        default: return "?";
+    }
+}
 
 const char *getArenaRankName(char rank)
 {
@@ -15,6 +38,8 @@ const char *getArenaRankName(char rank)
         case 'B': return "Royal Octagon";
         case 'A': return "Crown Arena";
         case 'S': return "Legend Island";
+        case 'X': return "Mythic Dome";
+        case 'Z': return "Final Apex";
         default: return "Unranked";
     }
 }
@@ -30,6 +55,8 @@ const char *getArenaTitle(char rank)
         case 'B': return "Royal Contender";
         case 'A': return "Crown Champion";
         case 'S': return "Living Legend";
+        case 'X': return "Mythic Champion";
+        case 'Z': return "World Legend"; 
         default: return "No Title";
     }
 }
@@ -47,6 +74,8 @@ int getRequiredWins(char rank)
         case 'B': return 8;
         case 'A': return 8;
         case 'S': return 9;
+        case 'X': return 4; // SS
+        case 'Z': return 1; // SSS final 1v1
         default: return 3;
     }
 }
@@ -62,6 +91,8 @@ int getRankIndex(char rank)
         case 'B': return 4;
         case 'A': return 5;
         case 'S': return 6;
+        case 'X': return 7; // SS
+        case 'Z': return 8; // SSS
         default: return 0;
     }
 }
@@ -69,6 +100,12 @@ int getRankIndex(char rank)
 int isRankUnlocked(char highestRank, char selectedRank)
 {
     return getRankIndex(selectedRank) <= getRankIndex(highestRank);
+}
+
+int isFinalArenaCleared(Dog *player)
+{
+    return player->arenaRank == 'Z' &&
+           player->arenaProgress >= player->arenaRequiredWins;
 }
 
 void rankUpArena(Dog *player)
@@ -85,6 +122,10 @@ void rankUpArena(Dog *player)
         player->arenaRank = 'A';
     else if (player->arenaRank == 'A')
         player->arenaRank = 'S';
+    else if (player->arenaRank == 'S')
+        player->arenaRank = 'X'; // SS
+    else if (player->arenaRank == 'X')
+        player->arenaRank = 'Z'; // SSS
     else
     {
         printf("\nYou already cleared the highest Arena Class!\n");
@@ -95,7 +136,7 @@ void rankUpArena(Dog *player)
     player->arenaRequiredWins = getRequiredWins(player->arenaRank);
 
     printf("\n===== RANK UP! =====\n");
-    printf("New Rank: Class %c\n", player->arenaRank);
+    printf("New Rank: Class %s\n", getArenaClassName(player->arenaRank));
     printf("New Venue: %s\n", getArenaRankName(player->arenaRank));
     printf("New Title: %s\n", getArenaTitle(player->arenaRank));
 }
@@ -107,17 +148,26 @@ void showArenaRecord(Dog *player)
     system("cls");
 
     printf("===== ARENA STATS =====\n\n");
-    printf("Highest Class: %c - %s\n", player->arenaRank, getArenaRankName(player->arenaRank));
+    printf("Highest Class: %s - %s\n",
+           getArenaClassName(player->arenaRank),
+           getArenaRankName(player->arenaRank));
     printf("Title: %s\n", getArenaTitle(player->arenaRank));
     printf("Record: %dW - %dL - %dD\n",
            player->arenaWins,
            player->arenaLosses,
            player->arenaDraws);
 
-    if (player->arenaRank == 'S')
-        printf("Progress: CLEARED\n");
+    if (isFinalArenaCleared(player))
+    {
+        printf("Arena Status: WORLD APEX LEGEND\n");
+    }
     else
-        printf("Progress: %d/%d\n", player->arenaProgress, player->arenaRequiredWins);
+    {
+        printf("Progress: %d/%d (Class %s)\n",
+               player->arenaProgress,
+               player->arenaRequiredWins,
+               getArenaClassName(player->arenaRank));
+    }
 
     waitForEnter();
 }
@@ -134,17 +184,22 @@ void enterArena(Dog *player, char selectedRank)
         system("cls");
 
         printf("===== %s =====\n", getArenaRankName(selectedRank));
-        printf("Class %c - %s\n", selectedRank, getArenaTitle(selectedRank));
+        printf("Class %s - %s\n",
+               getArenaClassName(selectedRank),
+               getArenaTitle(selectedRank));
 
-        if (selectedRank == player->arenaRank && player->arenaRank != 'S')
+        if (selectedRank == player->arenaRank)
         {
-            printf("Progress: %d/%d\n\n",
-                   player->arenaProgress,
-                   player->arenaRequiredWins);
-        }
-        else if (selectedRank == 'S' && player->arenaRank == 'S')
-        {
-            printf("Progress: CLEARED\n\n");
+            if (isFinalArenaCleared(player))
+            {
+                printf("Progress: CLEARED\n\n");
+            }
+            else
+            {
+                printf("Progress: %d/%d\n\n",
+                       player->arenaProgress,
+                       player->arenaRequiredWins);
+            }
         }
         else
         {
@@ -167,18 +222,32 @@ void enterArena(Dog *player, char selectedRank)
             printf("\nYou won the arena match!\n");
 
             // Progress only moves when fighting your current highest class.
-            // Old unlocked classes are just normal repeat battles.
-            if (selectedRank == player->arenaRank && player->arenaRank != 'S')
+            // Old unlocked classes are repeat battles only.
+            if (selectedRank == player->arenaRank && !isFinalArenaCleared(player))
             {
                 player->arenaProgress++;
 
-                printf("Progress: %d/%d\n",
-                       player->arenaProgress,
-                       player->arenaRequiredWins);
-
                 if (player->arenaProgress >= player->arenaRequiredWins)
                 {
-                    rankUpArena(player);
+                    if (player->arenaRank == 'Z')
+                    {
+                        printf("\n===== FINAL ARENA CLEARED! =====\n");
+                        printf("You defeated the SSS 1v1 champion!\n");
+                        printf("Arena Status: WORLD APEX LEGEND\n");
+                    }
+                    else
+                    {
+                        printf("Progress: %d/%d\n",
+                               player->arenaProgress,
+                               player->arenaRequiredWins);
+                        rankUpArena(player);
+                    }
+                }
+                else
+                {
+                    printf("Progress: %d/%d\n",
+                           player->arenaProgress,
+                           player->arenaRequiredWins);
                 }
             }
             else
@@ -245,7 +314,13 @@ void selectArenaMenu(Dog *player)
         if (isRankUnlocked(player->arenaRank, 'S'))
             printf("7. Legend Island      [Class S]\n");
 
-        printf("\n8. Back\n");
+        if (isRankUnlocked(player->arenaRank, 'X'))
+            printf("8. Mythic Dome        [Class SS]\n");
+
+        if (isRankUnlocked(player->arenaRank, 'Z'))
+            printf("9. Final Apex         [Class SSS]\n");
+
+        printf("\n0. Back\n");
         printf("Choice: ");
 
         fgets(input, sizeof(input), stdin);
@@ -265,7 +340,11 @@ void selectArenaMenu(Dog *player)
             enterArena(player, 'A');
         else if (choice == 7 && isRankUnlocked(player->arenaRank, 'S'))
             enterArena(player, 'S');
-        else if (choice == 8)
+        else if (choice == 8 && isRankUnlocked(player->arenaRank, 'X'))
+            enterArena(player, 'X');
+        else if (choice == 9 && isRankUnlocked(player->arenaRank, 'Z'))
+            enterArena(player, 'Z');
+        else if (choice == 0)
             break;
         else
         {
