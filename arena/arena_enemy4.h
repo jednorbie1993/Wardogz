@@ -4,7 +4,7 @@
 #include "../dog.h"
 
 
-void loadArenaClassCEnemy(Dog *enemy, int index)
+void loadArenaClassCEnemy(Dog *enemy, int enemyIndex);
 
 void setArenaSkill(Dog *enemy, int slot, const char *name, int power, int accuracy, SkillID id);
 

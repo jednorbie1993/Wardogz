@@ -28,7 +28,7 @@
     - 10 enemies total for random arena fights.
 */
 
-void loadArenaClassBEnemy(Dog *enemy, int index)
+void loadArenaClassBEnemy(Dog *enemy, int enemyIndex);
 {
     createEnemy(enemy);
 

@@ -25,7 +25,7 @@
     - May kapalit na mahinang stats.
 */
 
-void loadArenaClassCEnemy(Dog *enemy, int index)
+void loadArenaClassCEnemy(Dog *enemy, int enemyIndex);
 {
     createEnemy(enemy);
 
