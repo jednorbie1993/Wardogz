@@ -23,14 +23,20 @@ void loadArenaClassFEnemy(Dog *enemy, int enemyIndex)
     enemy->personalityType = PERSONALITY_NORMAL;
     enemy->numSkills = 4;
 
+    // Class F scale:
+    // Normal high stat: 120-140
+    // Boss / specialty stat: up to 150-155
+    // Weak stat: 45-80
+
     if (enemyIndex == 0)
     {
+        // Fast beginner type
         strcpy(enemy->name, "Ace");
-        enemy->maxHP = 110;
-        enemy->attack = 14;
-        enemy->defense = 60;
-        enemy->speed = 95;
-        enemy->accuracy = 90;
+        enemy->maxHP = 115;
+        enemy->attack = 72;
+        enemy->defense = 58;
+        enemy->speed = 135;
+        enemy->accuracy = 115;
         enemy->intelligence = 55;
 
         setArenaSkill(enemy, 0, "Stray Bite", 8, 92, SKILL_STRAY_BITE);
@@ -40,11 +46,12 @@ void loadArenaClassFEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 1)
     {
+        // Power type, pero mabagal at hindi pa tanky
         strcpy(enemy->name, "Rexx");
-        enemy->maxHP = 125;
-        enemy->attack = 18;
-        enemy->defense = 64;
-        enemy->speed = 88;
+        enemy->maxHP = 130;
+        enemy->attack = 145;
+        enemy->defense = 70;
+        enemy->speed = 68;
         enemy->accuracy = 88;
         enemy->intelligence = 50;
         enemy->personalityType = PERSONALITY_DESPERATE;
@@ -56,11 +63,12 @@ void loadArenaClassFEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 2)
     {
+        // Tank type, mataas HP/DEF pero mahina attack/speed
         strcpy(enemy->name, "Knox");
-        enemy->maxHP = 145;
-        enemy->attack = 16;
-        enemy->defense = 76;
-        enemy->speed = 78;
+        enemy->maxHP = 150;
+        enemy->attack = 65;
+        enemy->defense = 145;
+        enemy->speed = 55;
         enemy->accuracy = 86;
         enemy->intelligence = 60;
         enemy->personalityType = PERSONALITY_TANK;
@@ -72,13 +80,14 @@ void loadArenaClassFEnemy(Dog *enemy, int enemyIndex)
     }
     else
     {
+        // Class F boss, konting lampas pero hindi pa E level
         strcpy(enemy->name, "Vex");
-        enemy->maxHP = 165;
-        enemy->attack = 22;
-        enemy->defense = 70;
-        enemy->speed = 105;
-        enemy->accuracy = 92;
-        enemy->intelligence = 65;
+        enemy->maxHP = 155;
+        enemy->attack = 135;
+        enemy->defense = 90;
+        enemy->speed = 125;
+        enemy->accuracy = 110;
+        enemy->intelligence = 75;
         enemy->personalityType = PERSONALITY_ALPHA;
 
         setArenaSkill(enemy, 0, "Ambush Strike", 14, 88, SKILL_AMBUSH_STRIKE);
