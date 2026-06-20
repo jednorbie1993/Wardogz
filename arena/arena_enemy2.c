@@ -11,6 +11,11 @@
 
 
 // ================= CLASS E =================
+// Class E scale:
+// Normal high stat: 150-200
+// Boss/specialty can slightly pass 200
+// Weak stat: 45-90
+// Skill power usually: 12-22
 void loadArenaClassEEnemy(Dog *enemy, int enemyIndex)
 {
     createEnemy(enemy);
@@ -21,13 +26,14 @@ void loadArenaClassEEnemy(Dog *enemy, int enemyIndex)
 
     if (enemyIndex == 0)
     {
+        // Tank beginner
         strcpy(enemy->name, "Bruiser");
-        enemy->maxHP = 180;
-        enemy->attack = 28;
-        enemy->defense = 80;
-        enemy->speed = 82;
-        enemy->accuracy = 88;
-        enemy->intelligence = 60;
+        enemy->maxHP = 185;
+        enemy->attack = 95;
+        enemy->defense = 155;
+        enemy->speed = 78;
+        enemy->accuracy = 92;
+        enemy->intelligence = 65;
 
         setArenaSkill(enemy, 0, "Heavy Bite", 15, 88, SKILL_HEAVY_BITE);
         setArenaSkill(enemy, 1, "Lock Jaw", 14, 84, SKILL_LOCK_JAW);
@@ -36,13 +42,14 @@ void loadArenaClassEEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 1)
     {
+        // Fast attacker
         strcpy(enemy->name, "Spike");
-        enemy->maxHP = 170;
-        enemy->attack = 30;
-        enemy->defense = 72;
-        enemy->speed = 110;
-        enemy->accuracy = 90;
-        enemy->intelligence = 62;
+        enemy->maxHP = 165;
+        enemy->attack = 120;
+        enemy->defense = 85;
+        enemy->speed = 175;
+        enemy->accuracy = 110;
+        enemy->intelligence = 70;
         enemy->personalityType = PERSONALITY_ALPHA;
 
         setArenaSkill(enemy, 0, "Savage Fang", 17, 86, SKILL_SAVAGE_FANG);
@@ -52,13 +59,14 @@ void loadArenaClassEEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 2)
     {
+        // Desperate attacker
         strcpy(enemy->name, "Fang");
         enemy->maxHP = 195;
-        enemy->attack = 32;
-        enemy->defense = 85;
-        enemy->speed = 96;
-        enemy->accuracy = 88;
-        enemy->intelligence = 70;
+        enemy->attack = 145;
+        enemy->defense = 100;
+        enemy->speed = 125;
+        enemy->accuracy = 100;
+        enemy->intelligence = 78;
         enemy->personalityType = PERSONALITY_DESPERATE;
 
         setArenaSkill(enemy, 0, "Bone Breaker", 18, 82, SKILL_BONE_BREAKER);
@@ -68,13 +76,14 @@ void loadArenaClassEEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 3)
     {
+        // Heavy tank
         strcpy(enemy->name, "Crusher");
-        enemy->maxHP = 220;
-        enemy->attack = 34;
-        enemy->defense = 105;
-        enemy->speed = 70;
-        enemy->accuracy = 84;
-        enemy->intelligence = 58;
+        enemy->maxHP = 215;
+        enemy->attack = 110;
+        enemy->defense = 190;
+        enemy->speed = 60;
+        enemy->accuracy = 88;
+        enemy->intelligence = 62;
         enemy->personalityType = PERSONALITY_TANK;
 
         setArenaSkill(enemy, 0, "Tactical Guard", 0, 100, SKILL_TACTICAL_GUARD);
@@ -84,29 +93,31 @@ void loadArenaClassEEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 4)
     {
+        // High defense but weak speed
         strcpy(enemy->name, "Twister");
         enemy->maxHP = 190;
-        enemy->attack = 45;
-        enemy->defense = 155;
-        enemy->speed = 85;
-        enemy->accuracy = 95;
-        enemy->intelligence = 82;
+        enemy->attack = 125;
+        enemy->defense = 200;
+        enemy->speed = 75;
+        enemy->accuracy = 105;
+        enemy->intelligence = 85;
         enemy->personalityType = PERSONALITY_DESPERATE;
 
-        setArenaSkill(enemy, 0, "Heavy Bite", 20, 88, SKILL_HEAVY_BITE);
-        setArenaSkill(enemy, 1, "Savage Fang", 22, 80, SKILL_SAVAGE_FANG);
+        setArenaSkill(enemy, 0, "Heavy Bite", 18, 88, SKILL_HEAVY_BITE);
+        setArenaSkill(enemy, 1, "Savage Fang", 20, 80, SKILL_SAVAGE_FANG);
         setArenaSkill(enemy, 2, "Last Stand", 0, 100, SKILL_LAST_STAND);
-        setArenaSkill(enemy, 3, "Lock Jaw", 18, 82, SKILL_LOCK_JAW);
+        setArenaSkill(enemy, 3, "Lock Jaw", 17, 82, SKILL_LOCK_JAW);
     }
     else
     {
+        // Class E boss
         strcpy(enemy->name, "Pit King");
-        enemy->maxHP = 250;
-        enemy->attack = 40;
-        enemy->defense = 95;
-        enemy->speed = 100;
-        enemy->accuracy = 90;
-        enemy->intelligence = 78;
+        enemy->maxHP = 235;
+        enemy->attack = 165;
+        enemy->defense = 145;
+        enemy->speed = 135;
+        enemy->accuracy = 110;
+        enemy->intelligence = 90;
         enemy->personalityType = PERSONALITY_ALPHA;
 
         setArenaSkill(enemy, 0, "Savage Fang", 20, 86, SKILL_SAVAGE_FANG);
