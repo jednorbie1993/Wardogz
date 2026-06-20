@@ -82,6 +82,22 @@ void loadArenaClassEEnemy(Dog *enemy, int enemyIndex)
         setArenaSkill(enemy, 2, "Heavy Bite", 17, 86, SKILL_HEAVY_BITE);
         setArenaSkill(enemy, 3, "Lock Jaw", 16, 80, SKILL_LOCK_JAW);
     }
+    else if (enemyIndex == 4)
+    {
+        strcpy(enemy->name, "Twister");
+        enemy->maxHP = 190;
+        enemy->attack = 45;
+        enemy->defense = 155;
+        enemy->speed = 85;
+        enemy->accuracy = 95;
+        enemy->intelligence = 82;
+        enemy->personalityType = PERSONALITY_DESPERATE;
+
+        setArenaSkill(enemy, 0, "Heavy Bite", 20, 88, SKILL_HEAVY_BITE);
+        setArenaSkill(enemy, 1, "Savage Fang", 22, 80, SKILL_SAVAGE_FANG);
+        setArenaSkill(enemy, 2, "Last Stand", 0, 100, SKILL_LAST_STAND);
+        setArenaSkill(enemy, 3, "Lock Jaw", 18, 82, SKILL_LOCK_JAW);
+    }
     else
     {
         strcpy(enemy->name, "Pit King");

@@ -254,9 +254,14 @@ int arenaBattle(Dog *player, char selectedRank)
     }
     else if (selectedRank == 'E')
     {
-        int enemyIndex = rand() % 5;
+        int enemyIndex = rand() % 6;
         loadArenaClassEEnemy(&enemy, enemyIndex);
     }
+    else if (selectedRank == 'E')
+    {
+        int enemyIndex = rand() % 8;
+        loadArenaClassDEnemy(&enemy, enemyIndex);
+    }    
     else
     {
         system("cls");

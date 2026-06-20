@@ -102,27 +102,42 @@ void showArenaEnemyEntrance(Dog *enemy, char selectedRank)
 
     if (selectedRank == 'F')
     {
-        if (strcmp(enemy->name, "Ace") == 0)
-            typeText("A clean-collared speed dog steps into the ring.\n", 20);
-        else if (strcmp(enemy->name, "Rexx") == 0)
-            typeText("A heavy-biting guard dog cracks his jaw.\n", 20);
-        else if (strcmp(enemy->name, "Knox") == 0)
-            typeText("A thick-built arena dog plants his paws.\n", 20);
-        else
-            typeText("The Class F gate opens for its sharpest fighter.\n", 20);
+        char *arenaQuotes[] =
+        {
+            "The arena gates creak open.\n",
+            "A challenger steps onto the dusty grounds.\n",
+            "The crowd watches the next match in silence.\n",
+            "Paws scrape against the arena floor.\n",
+            "Another fighter enters the Open Grounds.\n"
+        };
+
+        typeText(arenaQuotes[rand() % 5], 20);
     }
     else if (selectedRank == 'E')
     {
-        if (strcmp(enemy->name, "Bruiser") == 0)
-            typeText("A rough street fighter drags his paws across the pit.\n", 20);
-        else if (strcmp(enemy->name, "Spike") == 0)
-            typeText("A sharp-eyed dog circles the arena with restless speed.\n", 20);
-        else if (strcmp(enemy->name, "Fang") == 0)
-            typeText("A scarred pit dog bares his teeth at the crowd.\n", 20);
-        else if (strcmp(enemy->name, "Crusher") == 0)
-            typeText("A heavy-bodied dog steps forward like a wall.\n", 20);
-        else
-            typeText("The Street Pit champion enters without fear.\n", 20);
+        char *arenaQuotes[] =
+        {
+            "The crowd roars as another challenger enters the pit.\n",
+            "Dust rises from the arena floor as the battle begins.\n",
+            "The spectators lean forward in anticipation.\n",
+            "A fierce opponent steps into the fighting grounds.\n",
+            "The arena falls silent before the clash.\n"
+        };
+
+        typeText(arenaQuotes[rand() % 5], 20);
+    }
+    else if (selectedRank == 'D')
+    {
+        char *arenaQuotes[] =
+        {
+            "Scrap metal rattles across the junkyard.\n",
+            "A fighter emerges from between rusted wrecks.\n",
+            "The scent of oil fills the air.\n",
+            "Broken steel echoes through the arena.\n",
+            "The junkyard crowd gathers for another fight.\n"
+        };
+
+        typeText(arenaQuotes[rand() % 5], 20);
     }
 
     printf("\n%s entered the arena!\n", enemy->name);
