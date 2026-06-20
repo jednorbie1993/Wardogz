@@ -1,12 +1,24 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <windows.h>
+
 #include "arena.h"
+#include "battle.h"
+#include "skill.h"
+#include "stat.h"
+#include "cinematic.h"
+#include "enemies/enemy.h"
+#include "arena.h"
+
+void showHPBarPlayer(int hp, int maxHp);
+void showHPBarEnemy(int hp, int maxHp);
 
 // ================= ARENA RANK NOTES =================
 // F, E, D, C, B, A, S = normal rank letters
 // X = SS
 // Z = SSS
-// Ginamit natin X at Z para hindi na muna baguhin ang Dog.arenaRank kung char pa rin siya.
+// Ginamit muna ang X at Z para hindi baguhin ang Dog.arenaRank na char.
 
 // ================= ARENA NAMES =================
 
@@ -56,7 +68,7 @@ const char *getArenaTitle(char rank)
         case 'A': return "Crown Champion";
         case 'S': return "Living Legend";
         case 'X': return "Mythic Champion";
-        case 'Z': return "World Legend"; 
+        case 'Z': return "World Legend";
         default: return "No Title";
     }
 }
@@ -111,21 +123,45 @@ int isFinalArenaCleared(Dog *player)
 void rankUpArena(Dog *player)
 {
     if (player->arenaRank == 'F')
+    {
         player->arenaRank = 'E';
+        player->maxRest++;
+    }
     else if (player->arenaRank == 'E')
+    {
         player->arenaRank = 'D';
+        player->maxRest++;
+    }
     else if (player->arenaRank == 'D')
+    {
         player->arenaRank = 'C';
+        player->maxRest++;
+    }
     else if (player->arenaRank == 'C')
+    {
         player->arenaRank = 'B';
+        player->maxRest++;
+    }
     else if (player->arenaRank == 'B')
+    {
         player->arenaRank = 'A';
+        player->maxSkillSlots = 5;
+    }
     else if (player->arenaRank == 'A')
+    {
         player->arenaRank = 'S';
+        player->maxSkillSlots = 6;
+    }
     else if (player->arenaRank == 'S')
+    {
         player->arenaRank = 'X'; // SS
+        player->maxSkillSlots = 7;
+    }
     else if (player->arenaRank == 'X')
+    {
         player->arenaRank = 'Z'; // SSS
+        player->maxSkillSlots = 8;
+    }
     else
     {
         printf("\nYou already cleared the highest Arena Class!\n");
@@ -139,6 +175,371 @@ void rankUpArena(Dog *player)
     printf("New Rank: Class %s\n", getArenaClassName(player->arenaRank));
     printf("New Venue: %s\n", getArenaRankName(player->arenaRank));
     printf("New Title: %s\n", getArenaTitle(player->arenaRank));
+
+    if (player->arenaRank == 'E')
+        printf("Reward: Rest Capacity +1\n");
+    else if (player->arenaRank == 'D')
+        printf("Reward: Rest Capacity +1\n");
+
+    else if (player->arenaRank == 'C')
+        printf("Reward: Rest Capacity +1\n");
+
+    else if (player->arenaRank == 'A')
+        printf("Reward: Skill Slots increased to 5\n");
+
+    else if (player->arenaRank == 'S')
+        printf("Reward: Skill Slots increased to 6\n");
+
+    else if (player->arenaRank == 'X')
+        printf("Reward: Skill Slots increased to 7\n");
+
+    else if (player->arenaRank == 'Z')
+        printf("Reward: Skill Slots increased to 8\n");
+    }
+// ================= ARENA ENEMY SKILLS =================
+
+void setArenaSkill(Dog *enemy, int slot, const char *name, int power, int accuracy, SkillID id)
+{
+    enemy->skills[slot] = (Skill){"", power, 0, SKILL_DAMAGE, accuracy, id, 0, 0, 10};
+    strcpy(enemy->skills[slot].name, name);
+}
+
+// Class F muna: trained / owned dogs. Stage 1 level stats, pero may mixed campaign style moves.
+void loadArenaClassFEnemy(Dog *enemy, int enemyIndex)
+{
+    createEnemy(enemy);
+
+    enemy->zoneType = ZONE_NORMAL;
+    enemy->personalityType = PERSONALITY_NORMAL;
+    enemy->numSkills = 4;
+
+    if (enemyIndex == 0)
+    {
+        strcpy(enemy->name, "Ace");
+        enemy->maxHP = 110;
+        enemy->attack = 14;
+        enemy->defense = 60;
+        enemy->speed = 95;
+        enemy->accuracy = 90;
+        enemy->intelligence = 55;
+
+        setArenaSkill(enemy, 0, "Stray Bite", 8, 92, SKILL_STRAY_BITE);
+        setArenaSkill(enemy, 1, "Ambush", 9, 88, SKILL_AMBUSH);
+        setArenaSkill(enemy, 2, "Dirty Scratch", 7, 95, SKILL_DIRTY_SCRATCH);
+        setArenaSkill(enemy, 3, "Quick Rush", 10, 90, SKILL_FERAL_RUSH);
+    }
+    else if (enemyIndex == 1)
+    {
+        strcpy(enemy->name, "Rexx");
+        enemy->maxHP = 125;
+        enemy->attack = 18;
+        enemy->defense = 64;
+        enemy->speed = 88;
+        enemy->accuracy = 88;
+        enemy->intelligence = 50;
+        enemy->personalityType = PERSONALITY_DESPERATE;
+
+        setArenaSkill(enemy, 0, "Lock Jaw", 12, 82, SKILL_LOCK_JAW);
+        setArenaSkill(enemy, 1, "Pack Attack", 10, 90, SKILL_PACK_ATTACK);
+        setArenaSkill(enemy, 2, "Bone Breaker", 13, 78, SKILL_BONE_BREAKER);
+        setArenaSkill(enemy, 3, "Feral Rush", 11, 86, SKILL_FERAL_RUSH);
+    }
+    else if (enemyIndex == 2)
+    {
+        strcpy(enemy->name, "Knox");
+        enemy->maxHP = 145;
+        enemy->attack = 16;
+        enemy->defense = 76;
+        enemy->speed = 78;
+        enemy->accuracy = 86;
+        enemy->intelligence = 60;
+        enemy->personalityType = PERSONALITY_TANK;
+
+        setArenaSkill(enemy, 0, "Tactical Guard", 0, 100, SKILL_TACTICAL_GUARD);
+        setArenaSkill(enemy, 1, "Stray Bite", 8, 92, SKILL_STRAY_BITE);
+        setArenaSkill(enemy, 2, "Armor Snap", 11, 85, SKILL_ARMOR_BREAK);
+        setArenaSkill(enemy, 3, "Pack Attack", 10, 90, SKILL_PACK_ATTACK);
+    }
+    else
+    {
+        strcpy(enemy->name, "Vex");
+        enemy->maxHP = 165;
+        enemy->attack = 22;
+        enemy->defense = 70;
+        enemy->speed = 105;
+        enemy->accuracy = 92;
+        enemy->intelligence = 65;
+        enemy->personalityType = PERSONALITY_ALPHA;
+
+        setArenaSkill(enemy, 0, "Ambush Strike", 14, 88, SKILL_AMBUSH_STRIKE);
+        setArenaSkill(enemy, 1, "Combat Rush", 13, 90, SKILL_COMBAT_RUSH);
+        setArenaSkill(enemy, 2, "Blood Frenzy", 12, 85, SKILL_BLOOD_FRENZY);
+        setArenaSkill(enemy, 3, "Alpha Rage", 15, 82, SKILL_ALPHA_RAGE);
+    }
+
+    enemy->hp = enemy->maxHP;
+}
+
+void showArenaEnemyEntrance(Dog *enemy, char selectedRank)
+{
+    system("cls");
+
+    printf("===== %s =====\n", getArenaRankName(selectedRank));
+    printf("Class %s Match\n\n", getArenaClassName(selectedRank));
+
+    if (selectedRank == 'F')
+    {
+        if (strcmp(enemy->name, "Ace") == 0)
+            typeText("A clean-collared speed dog steps into the ring.\n", 20);
+        else if (strcmp(enemy->name, "Rexx") == 0)
+            typeText("A heavy-biting guard dog cracks his jaw.\n", 20);
+        else if (strcmp(enemy->name, "Knox") == 0)
+            typeText("A thick-built arena dog plants his paws.\n", 20);
+        else
+            typeText("The Class F gate opens for its sharpest fighter.\n", 20);
+    }
+
+    printf("\n%s entered the arena!\n", enemy->name);
+    waitForEnter();
+}
+
+// ================= ARENA BATTLE CORE =================
+
+void applyArenaWinProgress(Dog *player, char selectedRank)
+{
+    player->arenaWins++;
+
+    if (selectedRank == player->arenaRank && !isFinalArenaCleared(player))
+    {
+        player->arenaProgress++;
+
+        if (player->arenaProgress >= player->arenaRequiredWins)
+        {
+            if (player->arenaRank == 'Z')
+            {
+                printf("\n===== FINAL ARENA CLEARED! =====\n");
+                printf("You defeated the SSS 1v1 champion!\n");
+                printf("Arena Status: WORLD APEX LEGEND\n");
+            }
+            else
+            {
+                printf("\nProgress: %d/%d\n",
+                       player->arenaProgress,
+                       player->arenaRequiredWins);
+                rankUpArena(player);
+            }
+        }
+        else
+        {
+            printf("\nArena Progress: %d/%d\n",
+                   player->arenaProgress,
+                   player->arenaRequiredWins);
+        }
+    }
+    else
+    {
+        printf("\nVictory recorded.\n");
+    }
+}
+
+int arenaBattle(Dog *player, char selectedRank)
+{
+    if (player->hp <= 0)
+    {
+        printf("You must rest before entering the Arena!\n");
+        waitForEnter();
+        return -1;
+    }
+
+    Dog enemy;
+
+    if (selectedRank == 'F')
+    {
+        int enemyIndex = player->arenaProgress;
+
+        if (enemyIndex < 0)
+            enemyIndex = 0;
+        if (enemyIndex > 3)
+            enemyIndex = 3;
+
+        // Class F requires 3 wins, pero may 4 possible enemies for variety/replay.
+        // Progress 0 = Ace, 1 = Rexx, 2+ = Knox/Vex random.
+        if (enemyIndex >= 2)
+            enemyIndex = 2 + (rand() % 2);
+
+        loadArenaClassFEnemy(&enemy, enemyIndex);
+    }
+    else
+    {
+        system("cls");
+        printf("Class %s real battle is not built yet.\n", getArenaClassName(selectedRank));
+        printf("Focus muna tayo sa Class F.\n");
+        waitForEnter();
+        return -1;
+    }
+
+    int choice, move;
+    int defending = 0;
+    int baseDef = player->defense;
+    int baseSpd = player->speed;
+
+    player->bleedDamage = 0;
+    player->accuracyModifier = 0;
+    enemy.bleedDamage = 0;
+    enemy.accuracyModifier = 0;
+
+    showArenaEnemyEntrance(&enemy, selectedRank);
+
+    showHPBarPlayer(-1, 1);
+    showHPBarEnemy(-1, 1);
+
+    while (player->hp > 0 && enemy.hp > 0)
+    {
+        system("cls");
+        displayBattleStatus(*player, enemy);
+
+        printf("===== ARENA BATTLE =====\n");
+        printf("Opponent: %s\n\n", enemy.name);
+
+        printf("--- YOUR TURN ---\n");
+        printf("1. Attack  2. Defend  3. Heal  4. Surrender\n");
+        printf("Choice: ");
+
+        char input[10];
+        fgets(input, sizeof(input), stdin);
+
+        if (sscanf(input, "%d", &choice) != 1 || choice < 1 || choice > 4)
+        {
+            printf("Invalid choice!\n");
+            waitForEnter();
+            continue;
+        }
+
+        if (choice == 1)
+        {
+            system("cls");
+            displayBattleStatus(*player, enemy);
+
+            printf("Skills:\n");
+            for (int j = 0; j < 4; j++)
+            {
+                if (player->equipped[j] != -1)
+                {
+                    int idx = player->equipped[j];
+                    printf("%d. %s (P:%d C:%d)\n", j + 1,
+                           player->skills[idx].name,
+                           player->skills[idx].power,
+                           player->skills[idx].cost);
+                }
+                else
+                    printf("%d. ---\n", j + 1);
+            }
+
+            printf("Choice: ");
+            fgets(input, sizeof(input), stdin);
+
+            if (sscanf(input, "%d", &move) != 1 || move < 1 || move > 4)
+            {
+                printf("Invalid skill!\n");
+                waitForEnter();
+                continue;
+            }
+
+            int skillIdx = player->equipped[move - 1];
+            if (skillIdx == -1)
+            {
+                printf("No skill equipped!\n");
+                waitForEnter();
+                continue;
+            }
+
+            Skill s = player->skills[skillIdx];
+
+            system("cls");
+            displayBattleStatus(*player, enemy);
+
+            if (player->fatigue < s.cost)
+            {
+                printf("\nLow energy! Weak attack!\n");
+                player->fatigue = 0;
+            }
+            else
+            {
+                player->fatigue -= s.cost;
+            }
+
+            useSkill(player, &enemy, s);
+
+            if (enemy.hp < 0)
+                enemy.hp = 0;
+
+            waitForEnter();
+        }
+        else if (choice == 2)
+        {
+            defending = 1;
+            printf("Defending!\n");
+            waitForEnter();
+        }
+        else if (choice == 3)
+        {
+            player->hp += 20;
+            if (player->hp > player->maxHP)
+                player->hp = player->maxHP;
+
+            printf("Healed +20 HP!\n");
+            waitForEnter();
+        }
+        else if (choice == 4)
+        {
+            printf("\nYou surrendered the arena match.\n");
+            player->arenaLosses++;
+            player->defense = baseDef;
+            player->speed = baseSpd;
+            waitForEnter();
+            return 2;
+        }
+
+        if (enemy.hp <= 0)
+            break;
+
+        Sleep(400);
+        enemyAttack(player, &enemy, &defending);
+        defending = 0;
+
+        player->fatigue += 2;
+        if (player->fatigue > player->maxFatigue)
+            player->fatigue = player->maxFatigue;
+    }
+
+    system("cls");
+    displayBattleStatus(*player, enemy);
+
+    if (player->hp <= 0)
+    {
+        printf("\nYOU LOST THE ARENA MATCH...\n");
+        player->arenaLosses++;
+        player->fatigue = clampFatigue(player->fatigue + 15, player->maxFatigue);
+
+        player->defense = baseDef;
+        player->speed = baseSpd;
+
+        waitForEnter();
+        return 0;
+    }
+
+    printf("\nYOU WIN THE ARENA MATCH!\n");
+    printf("%s can no longer fight.\n", enemy.name);
+
+    applyArenaWinProgress(player, selectedRank);
+    applyBattleStatGain(player);
+
+    player->fatigue = clampFatigue(player->fatigue + 10, player->maxFatigue);
+    player->defense = baseDef;
+    player->speed = baseSpd;
+
+    waitForEnter();
+    return 1;
 }
 
 // ================= ARENA RECORD =================
@@ -191,25 +592,19 @@ void enterArena(Dog *player, char selectedRank)
         if (selectedRank == player->arenaRank)
         {
             if (isFinalArenaCleared(player))
-            {
                 printf("Progress: CLEARED\n\n");
-            }
             else
-            {
                 printf("Progress: %d/%d\n\n",
                        player->arenaProgress,
                        player->arenaRequiredWins);
-            }
         }
         else
         {
             printf("Progress: Cleared Class\n\n");
         }
 
-        printf("1. Win Test Battle\n");
-        printf("2. Lose Test Battle\n");
-        printf("3. Draw Test Battle\n");
-        printf("4. Back\n");
+        printf("1. Start Match\n");
+        printf("2. Back\n");
         printf("Choice: ");
 
         fgets(input, sizeof(input), stdin);
@@ -217,59 +612,9 @@ void enterArena(Dog *player, char selectedRank)
 
         if (choice == 1)
         {
-            player->arenaWins++;
-
-            printf("\nYou won the arena match!\n");
-
-            // Progress only moves when fighting your current highest class.
-            // Old unlocked classes are repeat battles only.
-            if (selectedRank == player->arenaRank && !isFinalArenaCleared(player))
-            {
-                player->arenaProgress++;
-
-                if (player->arenaProgress >= player->arenaRequiredWins)
-                {
-                    if (player->arenaRank == 'Z')
-                    {
-                        printf("\n===== FINAL ARENA CLEARED! =====\n");
-                        printf("You defeated the SSS 1v1 champion!\n");
-                        printf("Arena Status: WORLD APEX LEGEND\n");
-                    }
-                    else
-                    {
-                        printf("Progress: %d/%d\n",
-                               player->arenaProgress,
-                               player->arenaRequiredWins);
-                        rankUpArena(player);
-                    }
-                }
-                else
-                {
-                    printf("Progress: %d/%d\n",
-                           player->arenaProgress,
-                           player->arenaRequiredWins);
-                }
-            }
-            else
-            {
-                printf("Victory recorded.\n");
-            }
-
-            waitForEnter();
+            arenaBattle(player, selectedRank);
         }
         else if (choice == 2)
-        {
-            player->arenaLosses++;
-            printf("\nYou lost the arena match!\n");
-            waitForEnter();
-        }
-        else if (choice == 3)
-        {
-            player->arenaDraws++;
-            printf("\nThe arena match ended in a draw!\n");
-            waitForEnter();
-        }
-        else if (choice == 4)
         {
             break;
         }
