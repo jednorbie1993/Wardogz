@@ -11,23 +11,31 @@
 #include "../enemies/enemy.h"
 
 // ================= CLASS D =================
+// Class D scale:
+// Normal strong stat: 240-300
+// Small abnormal/specialty stat: 310-330
+// Weak stat: 80-150
+// Mid stat: 160-230
+
 void loadArenaClassDEnemy(Dog *enemy, int enemyIndex)
 {
     createEnemy(enemy);
 
+    enemy->arenaRank = 'D';
     enemy->zoneType = ZONE_CITY;
     enemy->personalityType = PERSONALITY_NORMAL;
     enemy->numSkills = 4;
 
     if (enemyIndex == 0)
     {
+        // Tank type: mataas HP/DEF, mahina ATK
         strcpy(enemy->name, "Gravel");
-        enemy->maxHP = 270;
-        enemy->attack = 45;
-        enemy->defense = 105;
-        enemy->speed = 90;
-        enemy->accuracy = 88;
-        enemy->intelligence = 68;
+        enemy->maxHP = 285;
+        enemy->attack = 145;
+        enemy->defense = 275;
+        enemy->speed = 150;
+        enemy->accuracy = 165;
+        enemy->intelligence = 125;
 
         setArenaSkill(enemy, 0, "Heavy Bite", 20, 88, SKILL_HEAVY_BITE);
         setArenaSkill(enemy, 1, "Lock Jaw", 18, 84, SKILL_LOCK_JAW);
@@ -36,13 +44,14 @@ void loadArenaClassDEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 1)
     {
+        // Speed type: mabilis pero manipis defense
         strcpy(enemy->name, "Slash");
-        enemy->maxHP = 285;
-        enemy->attack = 50;
-        enemy->defense = 100;
-        enemy->speed = 125;
-        enemy->accuracy = 90;
-        enemy->intelligence = 72;
+        enemy->maxHP = 245;
+        enemy->attack = 230;
+        enemy->defense = 115;
+        enemy->speed = 305;
+        enemy->accuracy = 245;
+        enemy->intelligence = 140;
         enemy->personalityType = PERSONALITY_ALPHA;
 
         setArenaSkill(enemy, 0, "Savage Fang", 22, 86, SKILL_SAVAGE_FANG);
@@ -52,13 +61,14 @@ void loadArenaClassDEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 2)
     {
+        // Heavy bruiser: makapal at may decent power, mabagal
         strcpy(enemy->name, "Brutus");
         enemy->maxHP = 320;
-        enemy->attack = 52;
-        enemy->defense = 125;
-        enemy->speed = 80;
-        enemy->accuracy = 84;
-        enemy->intelligence = 65;
+        enemy->attack = 255;
+        enemy->defense = 300;
+        enemy->speed = 95;
+        enemy->accuracy = 170;
+        enemy->intelligence = 115;
         enemy->personalityType = PERSONALITY_TANK;
 
         setArenaSkill(enemy, 0, "Tactical Guard", 0, 100, SKILL_TACTICAL_GUARD);
@@ -68,13 +78,14 @@ void loadArenaClassDEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 3)
     {
+        // Berserker: mataas ATK, mid speed, mahina INT
         strcpy(enemy->name, "Ravager");
-        enemy->maxHP = 310;
-        enemy->attack = 56;
-        enemy->defense = 112;
-        enemy->speed = 105;
-        enemy->accuracy = 88;
-        enemy->intelligence = 74;
+        enemy->maxHP = 275;
+        enemy->attack = 315;
+        enemy->defense = 170;
+        enemy->speed = 225;
+        enemy->accuracy = 190;
+        enemy->intelligence = 90;
         enemy->personalityType = PERSONALITY_DESPERATE;
 
         setArenaSkill(enemy, 0, "Feral Rush", 22, 88, SKILL_FERAL_RUSH);
@@ -84,13 +95,14 @@ void loadArenaClassDEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 4)
     {
+        // Wall type: abnormal DEF for Class D, pero mabagal at hindi malakas
         strcpy(enemy->name, "Ironhide");
-        enemy->maxHP = 360;
-        enemy->attack = 54;
-        enemy->defense = 145;
-        enemy->speed = 75;
-        enemy->accuracy = 82;
-        enemy->intelligence = 70;
+        enemy->maxHP = 335;
+        enemy->attack = 175;
+        enemy->defense = 330;
+        enemy->speed = 80;
+        enemy->accuracy = 150;
+        enemy->intelligence = 130;
         enemy->personalityType = PERSONALITY_TANK;
 
         setArenaSkill(enemy, 0, "Iron Guard", 0, 100, SKILL_IRON_GUARD);
@@ -100,13 +112,14 @@ void loadArenaClassDEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 5)
     {
+        // Fast attacker: high SPD/ACC, average HP/DEF
         strcpy(enemy->name, "Blitz");
-        enemy->maxHP = 300;
-        enemy->attack = 58;
-        enemy->defense = 108;
-        enemy->speed = 135;
-        enemy->accuracy = 92;
-        enemy->intelligence = 78;
+        enemy->maxHP = 255;
+        enemy->attack = 260;
+        enemy->defense = 135;
+        enemy->speed = 325;
+        enemy->accuracy = 285;
+        enemy->intelligence = 155;
         enemy->personalityType = PERSONALITY_ALPHA;
 
         setArenaSkill(enemy, 0, "Combat Rush", 25, 90, SKILL_COMBAT_RUSH);
@@ -116,13 +129,14 @@ void loadArenaClassDEnemy(Dog *enemy, int enemyIndex)
     }
     else if (enemyIndex == 6)
     {
+        // Power type: highest damage sa normal D enemy, pero accuracy/speed not perfect
         strcpy(enemy->name, "Mangler");
-        enemy->maxHP = 380;
-        enemy->attack = 62;
-        enemy->defense = 130;
-        enemy->speed = 95;
-        enemy->accuracy = 86;
-        enemy->intelligence = 76;
+        enemy->maxHP = 305;
+        enemy->attack = 325;
+        enemy->defense = 215;
+        enemy->speed = 140;
+        enemy->accuracy = 165;
+        enemy->intelligence = 110;
         enemy->personalityType = PERSONALITY_DESPERATE;
 
         setArenaSkill(enemy, 0, "Bone Breaker", 28, 78, SKILL_BONE_BREAKER);
@@ -132,13 +146,14 @@ void loadArenaClassDEnemy(Dog *enemy, int enemyIndex)
     }
     else
     {
+        // Class D boss: high stats pero hindi pa Class C level
         strcpy(enemy->name, "Junkyard Baron");
-        enemy->maxHP = 430;
-        enemy->attack = 68;
-        enemy->defense = 140;
-        enemy->speed = 115;
-        enemy->accuracy = 90;
-        enemy->intelligence = 85;
+        enemy->maxHP = 350;
+        enemy->attack = 335;
+        enemy->defense = 285;
+        enemy->speed = 230;
+        enemy->accuracy = 235;
+        enemy->intelligence = 180;
         enemy->personalityType = PERSONALITY_ALPHA;
 
         setArenaSkill(enemy, 0, "Alpha Rage", 32, 82, SKILL_ALPHA_RAGE);
