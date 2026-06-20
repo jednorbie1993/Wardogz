@@ -376,12 +376,12 @@ void createDog(Dog *d)
     d->defeatedDiremaw = 0;
     d->defeatedBlackclaw = 0;
 
-    d->arenaRank = 'D';
+    d->arenaRank = 'A';
     d->arenaWins = 0;
     d->arenaLosses = 0;
     d->arenaDraws = 0;
     d->arenaProgress = 0;
-    d->arenaRequiredWins = 6;
+    d->arenaRequiredWins = 1;
     d->maxRest = 3;
 
     initSparringProgress(d);

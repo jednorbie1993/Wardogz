@@ -25,14 +25,16 @@
     - May kapalit na mahinang stats.
 */
 
-void loadArenaClassCEnemy(Dog *enemy, int enemyIndex);
+void loadArenaClassCEnemy(Dog *enemy, int enemyIndex)
 {
     createEnemy(enemy);
 
     enemy->arenaRank = 'C';
+    enemy->zoneType = ZONE_MUTANT;
+    enemy->personalityType = PERSONALITY_NORMAL;
     enemy->numSkills = 4;
 
-    if (index == 0)
+    if (enemyIndex == 0)
     {
         // POWER TYPE
         // Sobrang lakas ng attack, pero glass cannon.
@@ -45,13 +47,14 @@ void loadArenaClassCEnemy(Dog *enemy, int enemyIndex);
         enemy->speed = 115;
         enemy->accuracy = 210;
         enemy->intelligence = 80;
+        enemy->personalityType = PERSONALITY_DESPERATE;
 
-        enemy->skills[0] = SKILL_RAZOR_SLASH;
-        enemy->skills[1] = SKILL_FANG_STORM;
-        enemy->skills[2] = SKILL_COMBAT_RUSH;
-        enemy->skills[3] = SKILL_BITE;
+        setArenaSkill(enemy, 0, "Razor Slash", 36, 84, SKILL_RAZOR_SLASH);
+        setArenaSkill(enemy, 1, "Fang Storm", 34, 82, SKILL_FANG_STORM);
+        setArenaSkill(enemy, 2, "Combat Rush", 30, 88, SKILL_COMBAT_RUSH);
+        setArenaSkill(enemy, 3, "Bite", 26, 92, SKILL_BITE);
     }
-    else if (index == 1)
+    else if (enemyIndex == 1)
     {
         // TANK TYPE
         // Matigas sobra, pero mabagal at hindi ganun kalakas tumama.
@@ -64,13 +67,14 @@ void loadArenaClassCEnemy(Dog *enemy, int enemyIndex);
         enemy->speed = 75;
         enemy->accuracy = 175;
         enemy->intelligence = 120;
+        enemy->personalityType = PERSONALITY_TANK;
 
-        enemy->skills[0] = SKILL_BIO_SHIELD;
-        enemy->skills[1] = SKILL_REINFORCED_BITE;
-        enemy->skills[2] = SKILL_CELL_REGENERATION;
-        enemy->skills[3] = SKILL_BITE;
+        setArenaSkill(enemy, 0, "Bio Shield", 0, 100, SKILL_BIO_SHIELD);
+        setArenaSkill(enemy, 1, "Reinforced Bite", 32, 84, SKILL_REINFORCED_BITE);
+        setArenaSkill(enemy, 2, "Cell Regeneration", 0, 100, SKILL_CELL_REGEN);
+        setArenaSkill(enemy, 3, "Bite", 25, 92, SKILL_BITE);
     }
-    else if (index == 2)
+    else if (enemyIndex == 2)
     {
         // STATUS / INT TYPE
         // Mataas skill/intelligence at accuracy, pero mahina katawan.
@@ -83,13 +87,14 @@ void loadArenaClassCEnemy(Dog *enemy, int enemyIndex);
         enemy->speed = 330;
         enemy->accuracy = 420;
         enemy->intelligence = 470;
+        enemy->personalityType = PERSONALITY_ALPHA;
 
-        enemy->skills[0] = SKILL_NEURO_TOXIN;
-        enemy->skills[1] = SKILL_ACID_SPIT;
-        enemy->skills[2] = SKILL_CRYO_LOCK;
-        enemy->skills[3] = SKILL_SCRATCH;
+        setArenaSkill(enemy, 0, "Neuro Toxin", 28, 88, SKILL_NEURO_TOXIN);
+        setArenaSkill(enemy, 1, "Acid Spit", 31, 86, SKILL_ACID_SPIT);
+        setArenaSkill(enemy, 2, "Cryo Lock", 24, 82, SKILL_CRYO_LOCK);
+        setArenaSkill(enemy, 3, "Scratch", 22, 95, SKILL_SCRATCH);
     }
-    else if (index == 3)
+    else if (enemyIndex == 3)
     {
         // BERSERKER TYPE
         // Mataas attack, decent speed, pero mahina intelligence.
@@ -102,13 +107,14 @@ void loadArenaClassCEnemy(Dog *enemy, int enemyIndex);
         enemy->speed = 260;
         enemy->accuracy = 170;
         enemy->intelligence = 90;
+        enemy->personalityType = PERSONALITY_DESPERATE;
 
-        enemy->skills[0] = SKILL_BLOOD_FRENZY;
-        enemy->skills[1] = SKILL_ENHANCED_JAW_CRUSH;
-        enemy->skills[2] = SKILL_FANG_STORM;
-        enemy->skills[3] = SKILL_BITE;
+        setArenaSkill(enemy, 0, "Blood Frenzy", 0, 100, SKILL_BLOOD_FRENZY);
+        setArenaSkill(enemy, 1, "Enhanced Jaw Crush", 38, 80, SKILL_ENHANCED_JAW_CRUSH);
+        setArenaSkill(enemy, 2, "Fang Storm", 35, 82, SKILL_FANG_STORM);
+        setArenaSkill(enemy, 3, "Bite", 26, 92, SKILL_BITE);
     }
-    else if (index == 4)
+    else if (enemyIndex == 4)
     {
         // BIO TANK TYPE
         // HP/DEF/INT mataas, pero mabagal at hindi accurate.
@@ -121,13 +127,14 @@ void loadArenaClassCEnemy(Dog *enemy, int enemyIndex);
         enemy->speed = 90;
         enemy->accuracy = 150;
         enemy->intelligence = 420;
+        enemy->personalityType = PERSONALITY_TANK;
 
-        enemy->skills[0] = SKILL_ACID_SPIT;
-        enemy->skills[1] = SKILL_MUTATION_SURGE;
-        enemy->skills[2] = SKILL_CELL_REGENERATION;
-        enemy->skills[3] = SKILL_BITE;
+        setArenaSkill(enemy, 0, "Acid Spit", 30, 84, SKILL_ACID_SPIT);
+        setArenaSkill(enemy, 1, "Mutation Surge", 0, 100, SKILL_MUTATION_SURGE);
+        setArenaSkill(enemy, 2, "Cell Regeneration", 0, 100, SKILL_CELL_REGEN);
+        setArenaSkill(enemy, 3, "Bite", 24, 92, SKILL_BITE);
     }
-    else if (index == 5)
+    else if (enemyIndex == 5)
     {
         // SPEED TYPE
         // Sobrang bilis, okay attack, pero manipis defense.
@@ -140,13 +147,14 @@ void loadArenaClassCEnemy(Dog *enemy, int enemyIndex);
         enemy->speed = 460;
         enemy->accuracy = 300;
         enemy->intelligence = 160;
+        enemy->personalityType = PERSONALITY_ALPHA;
 
-        enemy->skills[0] = SKILL_THUNDER_SURGE;
-        enemy->skills[1] = SKILL_PLASMA_BITE;
-        enemy->skills[2] = SKILL_COMBAT_RUSH;
-        enemy->skills[3] = SKILL_BITE;
+        setArenaSkill(enemy, 0, "Thunder Surge", 34, 86, SKILL_THUNDER_SURGE);
+        setArenaSkill(enemy, 1, "Plasma Bite", 36, 84, SKILL_PLASMA_BITE);
+        setArenaSkill(enemy, 2, "Combat Rush", 32, 88, SKILL_COMBAT_RUSH);
+        setArenaSkill(enemy, 3, "Bite", 25, 92, SKILL_BITE);
     }
-    else if (index == 6)
+    else if (enemyIndex == 6)
     {
         // MUTANT BALANCED TYPE
         // Malakas at makunat, pero mababa speed/accuracy/int.
@@ -159,11 +167,12 @@ void loadArenaClassCEnemy(Dog *enemy, int enemyIndex);
         enemy->speed = 145;
         enemy->accuracy = 140;
         enemy->intelligence = 100;
+        enemy->personalityType = PERSONALITY_DESPERATE;
 
-        enemy->skills[0] = SKILL_PREDATOR_INSTINCT;
-        enemy->skills[1] = SKILL_REINFORCED_BITE;
-        enemy->skills[2] = SKILL_ENHANCED_JAW_CRUSH;
-        enemy->skills[3] = SKILL_BITE;
+        setArenaSkill(enemy, 0, "Predator Instinct", 0, 100, SKILL_PREDATOR_INSTINCT);
+        setArenaSkill(enemy, 1, "Reinforced Bite", 34, 84, SKILL_REINFORCED_BITE);
+        setArenaSkill(enemy, 2, "Enhanced Jaw Crush", 37, 80, SKILL_ENHANCED_JAW_CRUSH);
+        setArenaSkill(enemy, 3, "Bite", 26, 92, SKILL_BITE);
     }
     else
     {
@@ -178,10 +187,14 @@ void loadArenaClassCEnemy(Dog *enemy, int enemyIndex);
         enemy->speed = 320;
         enemy->accuracy = 250;
         enemy->intelligence = 260;
+        enemy->personalityType = PERSONALITY_ALPHA;
 
-        enemy->skills[0] = SKILL_APEX_OVERDRIVE;
-        enemy->skills[1] = SKILL_PREDATOR_INSTINCT;
-        enemy->skills[2] = SKILL_PLASMA_BITE;
-        enemy->skills[3] = SKILL_ENHANCED_JAW_CRUSH;
+        setArenaSkill(enemy, 0, "Apex Overdrive", 0, 100, SKILL_APEX_OVERDRIVE);
+        setArenaSkill(enemy, 1, "Predator Instinct", 0, 100, SKILL_PREDATOR_INSTINCT);
+        setArenaSkill(enemy, 2, "Plasma Bite", 38, 84, SKILL_PLASMA_BITE);
+        setArenaSkill(enemy, 3, "Enhanced Jaw Crush", 40, 80, SKILL_ENHANCED_JAW_CRUSH);
     }
+
+
+    enemy->hp = enemy->maxHP;
 }

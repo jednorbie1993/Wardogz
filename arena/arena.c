@@ -81,10 +81,10 @@ int getRequiredWins(char rank)
     {
         case 'F': return 3;
         case 'E': return 5;
-        case 'D': return 6;
-        case 'C': return 6;
-        case 'B': return 8;
-        case 'A': return 8;
+        case 'D': return 1; //6
+        case 'C': return 1; //6
+        case 'B': return 1; //8
+        case 'A': return 1; //8
         case 'S': return 9;
         case 'X': return 4; // SS
         case 'Z': return 1; // SSS final 1v1
