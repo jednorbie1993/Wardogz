@@ -148,6 +148,19 @@ void showArenaEnemyEntrance(Dog *enemy, char selectedRank)
 
         typeText(arenaQuotes[rand() % 5], 20);
     }
+    else if (selectedRank == 'C')
+    {
+        char *arenaQuotes[] =
+        {
+            "The crowd falls silent as the next contender appears.\n",
+            "Strange scars cover the fighter's body.\n",
+            "The arena lights flicker for a brief moment.\n",
+            "An unnatural growl echoes through the battleground.\n",
+            "The spectators whisper as the challenger steps forward.\n"
+        };
+
+        typeText(arenaQuotes[rand() % 5], 20);
+    }
 
     printf("\n%s entered the arena!\n", enemy->name);
     waitForEnter();
