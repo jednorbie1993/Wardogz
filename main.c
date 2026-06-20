@@ -23,6 +23,7 @@ int main()
     player.campaignCompleted = 0;
 
     int restCount = 0;
+    int maxRest = 3;
     //int progress[19] = {0};
 
     int progress[21] =
@@ -43,7 +44,7 @@ int main()
         printf("1. Wardogz\n");
         printf("2. Train Dog\n");
         printf("3. Battle\n");
-        printf("4. Rest (%d/3)\n", restCount);
+        printf("4. Rest (%d/%d)\n", restCount, player.maxRest);
         printf("5. Options\n");
 
         if (player.campaignCompleted)
@@ -222,7 +223,7 @@ int main()
         // ================= REST =================
         else if (choice == 4)
         {
-            if (restCount >= 3)
+            if (restCount >= player.maxRest)
             {
                 printf("You're too tired to rest anymore!\n");
                 waitForEnter();
