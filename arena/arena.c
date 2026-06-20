@@ -250,25 +250,18 @@ int arenaBattle(Dog *player, char selectedRank)
 
     if (selectedRank == 'F')
     {
-        int enemyIndex = player->arenaProgress;
-
-        if (enemyIndex < 0)
-            enemyIndex = 0;
-        if (enemyIndex > 3)
-            enemyIndex = 3;
-
-        // Class F requires 3 wins, pero may 4 possible enemies for variety/replay.
-        // Progress 0 = Ace, 1 = Rexx, 2+ = Knox/Vex random.
-        if (enemyIndex >= 2)
-            enemyIndex = 2 + (rand() % 2);
-
+        int enemyIndex = rand() % 4;
         loadArenaClassFEnemy(&enemy, enemyIndex);
+    }
+    else if (selectedRank == 'E')
+    {
+        int enemyIndex = rand() % 5;
+        loadArenaClassEEnemy(&enemy, enemyIndex);
     }
     else
     {
         system("cls");
         printf("Class %s real battle is not built yet.\n", getArenaClassName(selectedRank));
-        printf("Focus muna tayo sa Class F.\n");
         waitForEnter();
         return -1;
     }
