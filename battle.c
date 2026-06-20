@@ -615,7 +615,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
 
             printf("Skills:\n");
 
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < player->maxSkillSlots; j++)
             {
                 if (player->equipped[j] != -1)
                 {
@@ -630,7 +630,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             }
 
             fgets(buffer, sizeof(buffer), stdin);
-            if (sscanf(buffer, "%d", &move) != 1 || move < 1 || move > 4)
+            if (sscanf(buffer, "%d", &move) != 1 || move < 1 || move > player->maxSkillSlots)
             {
                 printf("Invalid skill!\n");
                 waitForEnter();
