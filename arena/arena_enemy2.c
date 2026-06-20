@@ -5,9 +5,9 @@
 #include "arena_enemy2.h"
 #include "arena_enemy.h"
 #include "arena.h"
-#include "skill.h"
-#include "cinematic.h"
-#include "enemies/enemy.h"
+#include "../skill.h"
+#include "../cinematic.h"
+#include "../enemies/enemy.h"
 
 
 // ================= CLASS E =================

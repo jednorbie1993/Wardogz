@@ -1,9 +1,11 @@
-#ifndef ARENA_ENEMY2_H
-#define ARENA_ENEMY2_H
+#ifndef ARENA_ENEMY3_H
+#define ARENA_ENEMY3_H
 
 #include "../dog.h"
 
-void loadArenaClassEEnemy(Dog *enemy, int enemyIndex);
+
+void loadArenaClassDEnemy(Dog *enemy, int enemyIndex);
+
 void setArenaSkill(Dog *enemy, int slot, const char *name, int power, int accuracy, SkillID id);
 
 

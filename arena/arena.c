@@ -4,12 +4,11 @@
 #include <windows.h>
 
 #include "arena.h"
-#include "battle.h"
-#include "skill.h"
-#include "stat.h"
-#include "cinematic.h"
-#include "enemies/enemy.h"
-#include "arena.h"
+#include "../battle.h"
+#include "../skill.h"
+#include "../stat.h"
+#include "../cinematic.h"
+#include "../enemies/enemy.h"
 #include "arena_enemy.h"
 
 void showHPBarPlayer(int hp, int maxHp);
@@ -421,6 +420,7 @@ int arenaBattle(Dog *player, char selectedRank)
 
     applyArenaWinProgress(player, selectedRank);
     applyBattleStatGain(player);
+    checkSkillUnlock(player);
 
     player->fatigue = clampFatigue(player->fatigue + 10, player->maxFatigue);
     player->defense = baseDef;

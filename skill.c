@@ -418,7 +418,7 @@ void applySpecialEffects(Dog *player, Dog *enemy, Skill s, int *damage)
     // ================= 🔥 SPARRING TECHNIQUES =================
     else if (strcmp(s.name, "Ossas Counter") == 0)
     {
-        printf("🔄 OSSAS COUNTER STANCE!\n");
+        printf("OSSAS COUNTER STANCE!\n");
 
         *damage = 0;
 

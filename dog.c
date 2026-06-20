@@ -12,7 +12,7 @@
 #include "stat.h"
 #include "cinematic.h"
 #include "sparring/sparring_system.h"
-#include "arena.h"
+#include "arena/arena.h"
 
 int systemLog = 0;
 int animationOn = 1; //  NEW (default ON)
