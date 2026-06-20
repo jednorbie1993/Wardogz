@@ -1,7 +1,7 @@
 #ifndef ARENA_H
 #define ARENA_H
 
-#include "dog.h"
+#include "../dog.h"
 
 void arenaMenu(Dog *player);
 void selectArenaMenu(Dog *player);
