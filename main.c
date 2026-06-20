@@ -9,7 +9,7 @@
 #include "cinematic.h"
 #include "sparring/sparring_system.h"
 #include "credit.h"
-#include "arena.h"
+#include "arena/arena.h"
 
 int main()
 {
