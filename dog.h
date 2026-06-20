@@ -4,6 +4,7 @@
 #define MAX_SKILLS 20
 #define MAX_STAT 999
 #define MIN_STAT 0
+#define MAX_EQUIPPED_SKILLS 8
 
 extern int systemLog;
 extern int animationOn;
@@ -174,7 +175,8 @@ typedef struct {
     Skill skills[MAX_SKILLS];
     int skillCount;
 
-    int equipped[4];              // 🔥 IBINALIK
+    int equipped[MAX_EQUIPPED_SKILLS];
+    int maxSkillSlots;
     int defeatedGrimfang;
 
     int defeatedDiremaw;
@@ -186,6 +188,14 @@ typedef struct {
     int regenerationUsed;
 
     int campaignCompleted;
+
+    char arenaRank;
+    int arenaWins;
+    int arenaLosses;
+    int arenaDraws;
+    int arenaProgress;
+    int arenaRequiredWins;
+    int maxRest;
 } Dog;
 
 // ================= CORE FUNCTIONS =================
