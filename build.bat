@@ -2,7 +2,7 @@
 
 @echo off
 
-gcc *.c enemies/*.c stages/*.c dialogue/*.c sparring/*.c sparring/characters/*.c -o wardogz.exe
+gcc *.c enemies/*.c stages/*.c dialogue/*.c sparring/*.c sparring/characters/*.c arena/*.c -o wardogz.exe
 
 if %errorlevel% neq 0 (
     echo.
