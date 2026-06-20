@@ -12,6 +12,7 @@
 #include "stat.h"
 #include "cinematic.h"
 #include "sparring/sparring_system.h"
+#include "arena.h"
 
 int systemLog = 0;
 int animationOn = 1; //  NEW (default ON)
@@ -361,6 +362,11 @@ void createDog(Dog *d)
     d->skills[1].cost = 3;
     d->skills[1].type = SKILL_ATTACK;
 
+    d->maxSkillSlots = 4;
+
+    for (int i = 0; i < MAX_EQUIPPED_SKILLS; i++)
+    d->equipped[i] = -1;
+
     d->equipped[0] = 0;
     d->equipped[1] = 1;
     d->equipped[2] = -1;
@@ -369,7 +375,14 @@ void createDog(Dog *d)
     d->defeatedGrimfang = 0;
     d->defeatedDiremaw = 0;
     d->defeatedBlackclaw = 0;
-    
+
+    d->arenaRank = 'F';
+    d->arenaWins = 0;
+    d->arenaLosses = 0;
+    d->arenaDraws = 0;
+    d->arenaProgress = 0;
+    d->arenaRequiredWins = 3;
+    d->maxRest = 3;
 
     initSparringProgress(d);
 }
@@ -440,7 +453,7 @@ void skillMenu(Dog *d)
             system("cls");
             printf("--- CURRENT SKILLS ---\n");
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < d->maxSkillSlots; i++)
             {
                 if (d->equipped[i] != -1)
                 {
@@ -469,7 +482,7 @@ void skillMenu(Dog *d)
 
             // 👉 show current first (very important UX)
             printf("--- CURRENT SKILLS ---\n");
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < d->maxSkillSlots; i++)
             {
                 if (d->equipped[i] != -1)
                 {
@@ -482,12 +495,12 @@ void skillMenu(Dog *d)
                 }
             }
 
-            printf("\nChoose slot (1-4): ");
+            printf("\nChoose slot (1-%d): ", d->maxSkillSlots);
             scanf("%d", &slot);
             while (getchar() != '\n')
                 ;
 
-            if (slot < 1 || slot > 4)
+            if (slot < 1 || slot > d->maxSkillSlots)
             {
                 printf("Invalid slot!\n");
                 waitForEnter();
@@ -555,6 +568,25 @@ void printDog(Dog d)
     printf("Intelligence: %d\n", d.intelligence);
 
     printf("Fatigue: %d/100\n", d.fatigue); // ✅ DITO LANG
+
+    printf("Arena Rank: Class %c\n", d.arenaRank);
+    printf("Arena Title: %s\n", getArenaTitle(d.arenaRank));
+
+    printf("Arena Record: %dW - %dL - %dD\n",
+        d.arenaWins,
+        d.arenaLosses,
+        d.arenaDraws);
+
+    if (d.arenaRank == 'Z' && d.arenaProgress >= d.arenaRequiredWins)
+    {
+        printf("Arena Status: WORLD LEGEND\n");
+    }
+    else
+    {
+        printf("Arena Progress: %d/%d\n",
+            d.arenaProgress,
+            d.arenaRequiredWins);
+    }
 }
 
 void typeText(const char *text, int delay)
