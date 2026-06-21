@@ -1,0 +1,9 @@
+// F  = max around 150
+// E  = max around 200
+// D  = max around 300
+// C  = max around 400, abnormal can reach 450–480
+// B  = max around 500, abnormal can reach 550
+// A  = max around 600
+// S  = 700–800 depende build
+// SS = around 900
+// SSS = 900–999
