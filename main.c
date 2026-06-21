@@ -240,7 +240,7 @@ int main()
                 for (int i = 0; i < 3; i++)
                 {
                     printf(".");
-                    Sleep(300);
+                    Sleep(50);
                 }
 
                 printf("\n");
@@ -260,7 +260,8 @@ int main()
                 else
                 {
                     // second & third rest
-                    hpGain = 20;
+                    hpGain = 20 + ((player.maxHP / 100) * 5);
+                    hpGain += rand() % 6;
                 }
 
                 if (player.hp < player.maxHP)
@@ -274,7 +275,7 @@ int main()
                 }
 
                 // ================= FATIGUE RECOVERY =================
-                int fatigueGain = 20;
+                int fatigueGain = 20 + (rand() % 6);
 
                 if (player.fatigue < player.maxFatigue)
                 {
