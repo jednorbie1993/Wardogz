@@ -14,10 +14,10 @@ int computeBaseDamage(Dog *player, Dog *enemy, Skill s)
     if (atkRatio < 0.1f)
         atkRatio = 0.1f;
 
-    int dmg = (int)(atkRatio * 80) + 20 + s.power;
+    int dmg = (int)(atkRatio * 120) + 30 + s.power;
 
     float defRatio = (float)enemy->defense / 999.0f;
-    dmg -= (int)(defRatio * 30);
+    dmg -= (int)(defRatio * 35);
 
     if (isCritical(player->hp, player->maxHP))
     {
@@ -28,7 +28,7 @@ int computeBaseDamage(Dog *player, Dog *enemy, Skill s)
     dmg += (rand() % 11) - 5;
 
     if (dmg < 1) dmg = 1;
-    if (dmg > 120) dmg = 120;
+    if (dmg > 240) dmg = 240;
 
     return dmg;
 }
