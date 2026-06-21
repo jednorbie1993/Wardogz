@@ -13,6 +13,7 @@ void loadArenaClassBEnemy(Dog *enemy, int enemyIndex);
 void loadArenaClassAEnemy(Dog *enemy, int enemyIndex);
 void loadArenaClassSEnemy(Dog *enemy, int enemyIndex);
 void loadArenaClassSSEnemy(Dog *enemy, int enemyIndex);
+void loadArenaClassSSSEnemy(Dog *enemy, int enemyIndex);
 
 void showArenaEnemyEntrance(Dog *enemy, char selectedRank);
 

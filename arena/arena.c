@@ -345,11 +345,11 @@ int arenaBattle(Dog *player, char selectedRank)
         int enemyIndex = rand() % 7;
         loadArenaClassSSEnemy(&enemy, enemyIndex);
     }
-    /*else if (selectedRank == 'Z')
+    else if (selectedRank == 'Z')
     {
-        int enemyIndex = rand() % 6;
+        int enemyIndex = rand() % 4;
         loadArenaClassSSSEnemy(&enemy, enemyIndex);
-    }*/
+    }
     else
     {
         system("cls");
