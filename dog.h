@@ -1,7 +1,7 @@
 #ifndef DOG_H
 #define DOG_H
 
-#define MAX_SKILLS 20
+#define MAX_SKILLS 200
 #define MAX_STAT 999
 #define MIN_STAT 0
 #define MAX_EQUIPPED_SKILLS 8
