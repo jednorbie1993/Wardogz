@@ -172,21 +172,23 @@ int chooseEnemyMove(Dog *enemy, Dog *player, int type)
 
 int useSkill(Dog *user, Dog *enemy, Skill skill)
 {
-
     // ================= HIT CHANCE CALC =================
-    int hitChance = skill.accuracy + (user->accuracy / 5) - (enemy->speed / 6);
-    if (hitChance < 20) hitChance = 20;
-    if (hitChance > 95) hitChance = 95;
+    int hitChance = 75 + ((user->accuracy - enemy->speed) / 25);
 
-    // ================= DODGE CHECK (ONCE ONLY) =================
-    int dodgeChance = enemy->speed / 8;
-    if (dodgeChance > 40) dodgeChance = 40;
+    // skill accuracy bonus/penalty
+    hitChance += (skill.accuracy - 80) / 4;
 
-    int dodgeRoll = rand() % 100;
+    if (hitChance < 45)
+        hitChance = 45;
 
-    if (dodgeRoll < dodgeChance)
+    if (hitChance > 95)
+        hitChance = 95;
+
+    int roll = rand() % 100;
+
+    if (roll >= hitChance)
     {
-        printf("%s used %s but %s DODGED!\n", user->name, skill.name, enemy->name);
+        printf("%s used %s but MISSED!\n", user->name, skill.name);
         return 0; // NO DAMAGE
     }
 
