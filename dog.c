@@ -333,11 +333,11 @@ void createDog(Dog *d)
     d->hp = 900;
     d->maxHP = 900;
     d->attack = 920;
-    d->speed = 100;
+    d->speed = 900;
 
-    d->defense = 315;
+    d->defense = 915;
     d->accuracy = 918; // 80% hit chance
-    d->intelligence = 120;
+    d->intelligence = 920;
 
     d->fatigue = 100; // full energy
     d->maxFatigue = 100;
@@ -376,7 +376,7 @@ void createDog(Dog *d)
     d->defeatedDiremaw = 0;
     d->defeatedBlackclaw = 0;
 
-    d->arenaRank = 'A';
+    d->arenaRank = 'S';
     d->arenaWins = 0;
     d->arenaLosses = 0;
     d->arenaDraws = 0;
