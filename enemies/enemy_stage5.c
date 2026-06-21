@@ -6,6 +6,29 @@
 #include "enemy_stage5.h"
 #include "../replay_system.h"
 
+// =========================
+// STAGE 5 BALANCE HELPERS
+// =========================
+// Enemy stats are high in Stage 5, so damage must be scaled.
+// This keeps 900 HP fights from ending in 1-2 hits.
+static int stage5Damage(Dog *user, Dog *target, int base, int diffDiv, int variance, int minDmg, int maxDmg)
+{
+    int diff = user->attack - target->defense;
+    int dmg = base + (diff / diffDiv);
+
+    if (variance > 0)
+        dmg += rand() % variance;
+
+    if (dmg < minDmg)
+        dmg = minDmg;
+
+    if (dmg > maxDmg)
+        dmg = maxDmg;
+
+    return dmg;
+}
+
+
 /*
     STAGE 5: BLACKSITE LABORATORY
     Zone 1 = index 16: Enhanced Strays
@@ -174,34 +197,34 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Razorfang");
-            enemy->attack += 22;
-            enemy->defense += 12;
-            enemy->speed += 14;
-            enemy->maxHP += 55;
+            enemy->attack = 520;
+            enemy->defense = 470;
+            enemy->speed = 500;
+            enemy->maxHP = 560;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Night Howler");
-            enemy->attack += 18;
-            enemy->defense += 8;
-            enemy->speed += 25;
-            enemy->maxHP += 45;
+            enemy->attack = 500;
+            enemy->defense = 440;
+            enemy->speed = 560;
+            enemy->maxHP = 540;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Ironjaw");
-            enemy->attack += 20;
-            enemy->defense += 25;
-            enemy->speed += 5;
-            enemy->maxHP += 80;
+            enemy->attack = 510;
+            enemy->defense = 560;
+            enemy->speed = 430;
+            enemy->maxHP = 620;
         }
         else
         {
             strcpy(enemy->name, "Alpha-X");
-            enemy->attack += 35;
-            enemy->defense += 22;
-            enemy->speed += 20;
-            enemy->maxHP += 120;
+            enemy->attack = 590;
+            enemy->defense = 540;
+            enemy->speed = 540;
+            enemy->maxHP = 700;
         }
 
         setEnhancedStraySkills(enemy);
@@ -215,34 +238,34 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Nightmaw");
-            enemy->attack += 24;
-            enemy->defense += 10;
-            enemy->speed += 20;
-            enemy->maxHP += 60;
+            enemy->attack = 570;
+            enemy->defense = 490;
+            enemy->speed = 580;
+            enemy->maxHP = 650;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Bloodhowl");
-            enemy->attack += 28;
-            enemy->defense += 12;
-            enemy->speed += 16;
-            enemy->maxHP += 80;
+            enemy->attack = 610;
+            enemy->defense = 510;
+            enemy->speed = 550;
+            enemy->maxHP = 700;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Ravagefang");
-            enemy->attack += 32;
-            enemy->defense += 18;
-            enemy->speed += 18;
-            enemy->maxHP += 100;
+            enemy->attack = 640;
+            enemy->defense = 550;
+            enemy->speed = 570;
+            enemy->maxHP = 760;
         }
         else
         {
             strcpy(enemy->name, "Lycan Rex");
-            enemy->attack += 40;
-            enemy->defense += 25;
-            enemy->speed += 25;
-            enemy->maxHP += 160;
+            enemy->attack = 700;
+            enemy->defense = 610;
+            enemy->speed = 630;
+            enemy->maxHP = 850;
         }
 
         setWildTerritorySkills(enemy);
@@ -259,34 +282,34 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "K-9 Warden");
-            enemy->attack += 30;
-            enemy->defense += 24;
-            enemy->speed += 10;
-            enemy->maxHP += 100;
+            enemy->attack = 650;
+            enemy->defense = 620;
+            enemy->speed = 500;
+            enemy->maxHP = 760;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Steelmaw Unit");
-            enemy->attack += 34;
-            enemy->defense += 30;
-            enemy->speed += 8;
-            enemy->maxHP += 120;
+            enemy->attack = 680;
+            enemy->defense = 680;
+            enemy->speed = 480;
+            enemy->maxHP = 820;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Blackclaw Agent");
-            enemy->attack += 38;
-            enemy->defense += 22;
-            enemy->speed += 22;
-            enemy->maxHP += 115;
+            enemy->attack = 700;
+            enemy->defense = 590;
+            enemy->speed = 650;
+            enemy->maxHP = 800;
         }
         else
         {
             strcpy(enemy->name, "Commander Cerberus");
-            enemy->attack += 48;
-            enemy->defense += 36;
-            enemy->speed += 24;
-            enemy->maxHP += 190;
+            enemy->attack = 760;
+            enemy->defense = 700;
+            enemy->speed = 660;
+            enemy->maxHP = 930;
         }
 
         setCombatPrototypeSkills(enemy);
@@ -303,34 +326,34 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Pyroclaw");
-            enemy->attack += 40;
-            enemy->defense += 20;
-            enemy->speed += 26;
-            enemy->maxHP += 130;
+            enemy->attack = 720;
+            enemy->defense = 600;
+            enemy->speed = 680;
+            enemy->maxHP = 840;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Frostmaw");
-            enemy->attack += 36;
-            enemy->defense += 34;
-            enemy->speed += 16;
-            enemy->maxHP += 150;
+            enemy->attack = 700;
+            enemy->defense = 720;
+            enemy->speed = 560;
+            enemy->maxHP = 880;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Voltfang");
-            enemy->attack += 42;
-            enemy->defense += 22;
-            enemy->speed += 34;
-            enemy->maxHP += 140;
+            enemy->attack = 740;
+            enemy->defense = 610;
+            enemy->speed = 760;
+            enemy->maxHP = 860;
         }
         else
         {
             strcpy(enemy->name, "Apex Chimera");
-            enemy->attack += 55;
-            enemy->defense += 40;
-            enemy->speed += 30;
-            enemy->maxHP += 230;
+            enemy->attack = 820;
+            enemy->defense = 760;
+            enemy->speed = 720;
+            enemy->maxHP = 980;
         }
 
         setElementalApexSkills(enemy);
@@ -353,10 +376,10 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
 
         strcpy(enemy->name, "Project Cerberus");
 
-        enemy->attack += 22;
-        enemy->defense += 22;
-        enemy->speed += 18;
-        enemy->maxHP += 240;
+        enemy->attack = 850;
+        enemy->defense = 790;
+        enemy->speed = 740;
+        enemy->maxHP = 999;
 
         enemy->regenerationTurn = 10 + (rand() % 3);
         enemy->regenerationUsed = 0;
@@ -367,10 +390,10 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
     else
     {
         strcpy(enemy->name, "Unknown Blacksite Dog");
-        enemy->attack += 20;
-        enemy->defense += 20;
-        enemy->speed += 20;
-        enemy->maxHP += 80;
+        enemy->attack = 560;
+        enemy->defense = 520;
+        enemy->speed = 520;
+        enemy->maxHP = 650;
 
         setEnhancedStraySkills(enemy);
     }
@@ -388,47 +411,40 @@ int useReinforcedBite(Dog *user, Dog *target)
     int hits = (rand() % 3) + 1;
     int total = 0;
 
-    printf("%s uses Reinforced Bite!\n", user->name);
+    printf("%s uses Reinforced Bite!", user->name);
 
     for (int i = 0; i < hits; i++)
     {
-        int dmg = (user->attack * 1.1) + 6 + (rand() % 5);
-
-        if (target->defense > 0)
-            dmg -= target->defense / 45;
-
-        if (dmg < 2)
-            dmg = 2;
+        int dmg = stage5Damage(user, target, 32, 16, 6, 18, 55);
 
         target->hp -= dmg;
+        target->hp = clamp(target->hp);
         total += dmg;
 
-        printf("Hit %d! -%d HP\n", i + 1, dmg);
+        printf("Hit %d! -%d HP", i + 1, dmg);
     }
 
-    printf("Total damage: -%d HP\n", total);
+    printf("Total damage: -%d HP", total);
     return total;
 }
 
 int useCombatRush(Dog *user, Dog *target)
 {
-    int dmg = user->attack + 10 + (rand() % 8);
+    int dmg = stage5Damage(user, target, 58, 14, 10, 30, 115);
 
     if (user->speed > target->speed)
     {
         dmg += 10;
-        printf("%s outsped the target!\n", user->name);
+        printf("%s outsped the target!", user->name);
     }
 
-    if (target->defense > 0)
-        dmg -= target->defense / 40;
-
-    if (dmg < 3)
-        dmg = 3;
+    if (dmg > 125)
+        dmg = 125;
 
     target->hp -= dmg;
+    target->hp = clamp(target->hp);
 
-    printf("%s uses Combat Rush! -%d HP\n", user->name, dmg);
+    printf("%s uses Combat Rush! -%d HP", user->name, dmg);
     return dmg;
 }
 
@@ -436,6 +452,11 @@ int usePredatorInstinct(Dog *user, Dog *target)
 {
     user->attack += 6;
     user->speed += 5;
+
+    if (user->attack > 999)
+        user->attack = 999;
+    if (user->speed > 999)
+        user->speed = 999;
 
     printf("%s activates Predator Instinct!\n", user->name);
     printf("Attack +6 | Speed +5\n");
@@ -445,19 +466,17 @@ int usePredatorInstinct(Dog *user, Dog *target)
 
 int useEnhancedJawCrush(Dog *user, Dog *target)
 {
-    int dmg = (user->attack * 1.5) + 12 + (rand() % 10);
-
-    if (target->defense > 0)
-        dmg -= target->defense / 35;
-
-    if (dmg < 5)
-        dmg = 5;
+    int dmg = stage5Damage(user, target, 78, 12, 12, 45, 145);
 
     target->hp -= dmg;
-    user->attack += 4;
+    target->hp = clamp(target->hp);
 
-    printf("%s uses Enhanced Jaw Crush! -%d HP\n", user->name, dmg);
-    printf("%s's reinforced jaw grows stronger! Attack +4\n", user->name);
+    user->attack += 4;
+    if (user->attack > 999)
+        user->attack = 999;
+
+    printf("%s uses Enhanced Jaw Crush! -%d HP", user->name, dmg);
+    printf("%s's reinforced jaw grows stronger! Attack +4", user->name);
 
     return dmg;
 }
@@ -468,18 +487,13 @@ int useEnhancedJawCrush(Dog *user, Dog *target)
 
 int useRazorSlash(Dog *user, Dog *target)
 {
-    int dmg = user->attack + 14 + (rand() % 8);
-
-    if (target->defense > 0)
-        dmg -= target->defense / 45;
-
-    if (dmg < 4)
-        dmg = 4;
+    int dmg = stage5Damage(user, target, 62, 13, 10, 32, 120);
 
     target->hp -= dmg;
+    target->hp = clamp(target->hp);
 
-    printf("%s uses Razor Slash! -%d HP\n", user->name, dmg);
-    printf("Sharp claws tear through the target!\n");
+    printf("%s uses Razor Slash! -%d HP", user->name, dmg);
+    printf("Sharp claws tear through the target!");
 
     return dmg;
 }
@@ -488,6 +502,11 @@ int useBloodFrenzy(Dog *user, Dog *target)
 {
     user->attack += 8;
     user->speed += 4;
+
+    if (user->attack > 999)
+        user->attack = 999;
+    if (user->speed > 999)
+        user->speed = 999;
 
     printf("%s enters Blood Frenzy!\n", user->name);
     printf("Attack +8 | Speed +4\n");
@@ -500,25 +519,20 @@ int useFangStorm(Dog *user, Dog *target)
     int hits = 3;
     int total = 0;
 
-    printf("%s uses Fang Storm!\n", user->name);
+    printf("%s uses Fang Storm!", user->name);
 
     for (int i = 0; i < hits; i++)
     {
-        int dmg = (user->attack * 0.8) + 8 + (rand() % 5);
-
-        if (target->defense > 0)
-            dmg -= target->defense / 50;
-
-        if (dmg < 3)
-            dmg = 3;
+        int dmg = stage5Damage(user, target, 28, 18, 6, 16, 52);
 
         target->hp -= dmg;
+        target->hp = clamp(target->hp);
         total += dmg;
 
-        printf("Fang hit %d! -%d HP\n", i + 1, dmg);
+        printf("Fang hit %d! -%d HP", i + 1, dmg);
     }
 
-    printf("Total damage: -%d HP\n", total);
+    printf("Total damage: -%d HP", total);
     return total;
 }
 
@@ -528,43 +542,36 @@ int useFangStorm(Dog *user, Dog *target)
 
 int useTacticalBite(Dog *user, Dog *target)
 {
-    int dmg = user->attack + 16 + (rand() % 9);
+    int dmg = stage5Damage(user, target, 68, 13, 10, 35, 130);
 
     if (user->speed >= target->speed)
         dmg += 6;
 
-    if (target->defense > 0)
-        dmg -= target->defense / 42;
-
-    if (dmg < 5)
-        dmg = 5;
+    if (dmg > 140)
+        dmg = 140;
 
     target->hp -= dmg;
+    target->hp = clamp(target->hp);
 
-    printf("%s uses Tactical Bite! -%d HP\n", user->name, dmg);
-    printf("The unit attacks with trained precision.\n");
+    printf("%s uses Tactical Bite! -%d HP", user->name, dmg);
+    printf("The unit attacks with trained precision.");
 
     return dmg;
 }
 
 int useArmorBreak(Dog *user, Dog *target)
 {
-    int dmg = user->attack + 12 + (rand() % 8);
-
-    if (target->defense > 0)
-        dmg -= target->defense / 50;
-
-    if (dmg < 4)
-        dmg = 4;
+    int dmg = stage5Damage(user, target, 58, 14, 10, 30, 115);
 
     target->hp -= dmg;
+    target->hp = clamp(target->hp);
 
     target->defense -= 5;
     if (target->defense < 0)
         target->defense = 0;
 
-    printf("%s uses Armor Break! -%d HP\n", user->name, dmg);
-    printf("%s's defense was lowered by 5!\n", target->name);
+    printf("%s uses Armor Break! -%d HP", user->name, dmg);
+    printf("%s's defense was lowered by 5!", target->name);
 
     return dmg;
 }
@@ -572,6 +579,8 @@ int useArmorBreak(Dog *user, Dog *target)
 int useSuppressionHowl(Dog *user, Dog *target)
 {
     user->defense += 8;
+    if (user->defense > 999)
+        user->defense = 999;
 
     target->attack -= 4;
     if (target->attack < 1)
@@ -586,21 +595,19 @@ int useSuppressionHowl(Dog *user, Dog *target)
 
 int useBlacksiteExecution(Dog *user, Dog *target)
 {
-    int dmg = (user->attack * 1.6) + 18 + (rand() % 12);
+    int dmg = stage5Damage(user, target, 88, 12, 14, 50, 160);
 
     if (target->hp < target->maxHP / 2)
         dmg += 12;
 
-    if (target->defense > 0)
-        dmg -= target->defense / 35;
-
-    if (dmg < 8)
-        dmg = 8;
+    if (dmg > 175)
+        dmg = 175;
 
     target->hp -= dmg;
+    target->hp = clamp(target->hp);
 
-    printf("%s uses Blacksite Execution! -%d HP\n", user->name, dmg);
-    printf("The combat prototype follows its final order.\n");
+    printf("%s uses Blacksite Execution! -%d HP", user->name, dmg);
+    printf("The combat prototype follows its final order.");
 
     return dmg;
 }
@@ -611,44 +618,34 @@ int useBlacksiteExecution(Dog *user, Dog *target)
 
 int usePlasmaBite(Dog *user, Dog *target)
 {
-    int dmg = user->attack + 20 + (rand() % 12);
-
-    if (target->defense > 0)
-        dmg -= target->defense / 45;
-
-    if (dmg < 8)
-        dmg = 8;
+    int dmg = stage5Damage(user, target, 72, 13, 12, 40, 135);
 
     target->hp -= dmg;
+    target->hp = clamp(target->hp);
 
     target->defense -= 3;
     if (target->defense < 0)
         target->defense = 0;
 
-    printf("%s uses Plasma Bite! -%d HP\n", user->name, dmg);
-    printf("The heated bite weakens %s's defense by 3!\n", target->name);
+    printf("%s uses Plasma Bite! -%d HP", user->name, dmg);
+    printf("The heated bite weakens %s's defense by 3!", target->name);
 
     return dmg;
 }
 
 int useCryoLock(Dog *user, Dog *target)
 {
-    int dmg = user->attack + 14 + (rand() % 9);
-
-    if (target->defense > 0)
-        dmg -= target->defense / 48;
-
-    if (dmg < 6)
-        dmg = 6;
+    int dmg = stage5Damage(user, target, 62, 14, 10, 35, 125);
 
     target->hp -= dmg;
+    target->hp = clamp(target->hp);
 
     target->speed -= 6;
     if (target->speed < 1)
         target->speed = 1;
 
-    printf("%s uses Cryo Lock! -%d HP\n", user->name, dmg);
-    printf("%s's speed was lowered by 6!\n", target->name);
+    printf("%s uses Cryo Lock! -%d HP", user->name, dmg);
+    printf("%s's speed was lowered by 6!", target->name);
 
     return dmg;
 }
@@ -658,6 +655,11 @@ int useThunderSurge(Dog *user, Dog *target)
     user->attack += 6;
     user->speed += 8;
 
+    if (user->attack > 999)
+        user->attack = 999;
+    if (user->speed > 999)
+        user->speed = 999;
+
     printf("%s activates Thunder Surge!\n", user->name);
     printf("Attack +6 | Speed +8\n");
 
@@ -666,21 +668,19 @@ int useThunderSurge(Dog *user, Dog *target)
 
 int useApexOverdrive(Dog *user, Dog *target)
 {
-    int dmg = (user->attack * 1.8) + 22 + (rand() % 14);
+    int dmg = stage5Damage(user, target, 95, 12, 16, 60, 175);
 
     if (user->hp < user->maxHP / 2)
         dmg += 16;
 
-    if (target->defense > 0)
-        dmg -= target->defense / 34;
-
-    if (dmg < 10)
-        dmg = 10;
+    if (dmg > 190)
+        dmg = 190;
 
     target->hp -= dmg;
+    target->hp = clamp(target->hp);
 
-    printf("%s uses Apex Overdrive! -%d HP\n", user->name, dmg);
-    printf("Elemental energy overloads the chamber.\n");
+    printf("%s uses Apex Overdrive! -%d HP", user->name, dmg);
+    printf("Elemental energy overloads the chamber.");
 
     return dmg;
 }
@@ -691,6 +691,13 @@ int useMutationOverdrive(Dog *user, Dog *target)
     user->defense += 6;
     user->speed += 5;
 
+    if (user->attack > 999)
+        user->attack = 999;
+    if (user->defense > 999)
+        user->defense = 999;
+    if (user->speed > 999)
+        user->speed = 999;
+
     printf("%s activates Mutation Overdrive!\n", user->name);
     printf("Attack +10 | Defense +6 | Speed +5\n");
 
@@ -699,18 +706,13 @@ int useMutationOverdrive(Dog *user, Dog *target)
 
 int useHumanoidJawCrush(Dog *user, Dog *target)
 {
-    int dmg = (user->attack * 1.1) + 10 + (rand() % 8);
-
-    if (target->defense > 0)
-        dmg -= target->defense / 35;
-
-    if (dmg < 8)
-        dmg = 8;
+    int dmg = stage5Damage(user, target, 82, 12, 12, 45, 150);
 
     target->hp -= dmg;
+    target->hp = clamp(target->hp);
 
-    printf("%s uses Humanoid Jaw Crush! -%d HP\n", user->name, dmg);
-    printf("The humanoid mutant clamps down with unnatural force.\n");
+    printf("%s uses Humanoid Jaw Crush! -%d HP", user->name, dmg);
+    printf("The humanoid mutant clamps down with unnatural force.");
 
     return dmg;
 }
@@ -720,31 +722,29 @@ int useTimelineMaul(Dog *user, Dog *target)
     int hits = 3;
     int total = 0;
 
-    printf("%s uses Timeline Maul!\n", user->name);
+    printf("%s uses Timeline Maul!", user->name);
 
     for (int i = 0; i < hits; i++)
     {
-        int dmg = (user->attack * 0.45) + 6 + (rand() % 5);
-
-        if (target->defense > 0)
-            dmg -= target->defense / 50;
-
-        if (dmg < 4)
-            dmg = 4;
+        int dmg = stage5Damage(user, target, 34, 18, 7, 20, 60);
 
         target->hp -= dmg;
+        target->hp = clamp(target->hp);
         total += dmg;
 
-        printf("Timeline hit %d! -%d HP\n", i + 1, dmg);
+        printf("Timeline hit %d! -%d HP", i + 1, dmg);
     }
 
-    printf("Total damage: -%d HP\n", total);
+    printf("Total damage: -%d HP", total);
     return total;
 }
 
 int useCursedInstinct(Dog *user, Dog *target)
 {
     user->attack += 6;
+    if (user->attack > 999)
+        user->attack = 999;
+
     target->defense -= 6;
 
     if (target->defense < 0)

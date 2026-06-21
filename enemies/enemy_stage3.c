@@ -6,6 +6,27 @@
 #include "enemy_stage3.h"
 #include "../replay_system.h"
 
+// =========================
+// BALANCE HELPERS
+// =========================
+static int capMilitaryDamage(int dmg, int minDmg, int maxDmg)
+{
+    if (dmg < minDmg)
+        dmg = minDmg;
+
+    if (dmg > maxDmg)
+        dmg = maxDmg;
+
+    return dmg;
+}
+
+static void applyMilitaryDamage(Dog *target, int dmg)
+{
+    target->hp -= dmg;
+    target->hp = clamp(target->hp);
+}
+
+
 void createBlackclaw(Dog *enemy)
 {
     createEnemy(enemy);
@@ -15,10 +36,10 @@ void createBlackclaw(Dog *enemy)
     enemy->zoneType = ZONE_MILITARY;
     enemy->personalityType = PERSONALITY_ALPHA;
 
-    enemy->attack += 28;
-    enemy->defense += 18;
-    enemy->speed += 22;
-    enemy->maxHP += 80;
+    enemy->attack += 65;
+    enemy->defense += 50;
+    enemy->speed += 45;
+    enemy->maxHP += 210;
     enemy->hp = enemy->maxHP;
 
     enemy->numSkills = 3;
@@ -65,18 +86,18 @@ void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Military Dogz Scout");
-            enemy->attack += 5;
-            enemy->defense += 3;
-            enemy->maxHP += 15;
+            enemy->attack += 20;
+            enemy->defense += 16;
+            enemy->maxHP += 75;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Military Dogz Patrol");
-            enemy->attack += 7;
-            enemy->speed += 4;
-            enemy->defense += 4;
-            enemy->maxHP += 20;
+            enemy->attack += 24;
+            enemy->speed += 14;
+            enemy->defense += 18;
+            enemy->maxHP += 85;
             enemy->hp = enemy->maxHP;
         }
     }
@@ -89,34 +110,34 @@ void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Military Dogz Sergeant");
-            enemy->attack += 8;
-            enemy->defense += 6;
-            enemy->maxHP += 25;
+            enemy->attack += 30;
+            enemy->defense += 24;
+            enemy->maxHP += 110;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Military Dogz Sniper");
-            enemy->attack += 10;
-            enemy->speed += 5;
-            enemy->maxHP += 22;
+            enemy->attack += 34;
+            enemy->speed += 22;
+            enemy->maxHP += 105;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Military Dogz Gunner");
-            enemy->attack += 9;
-            enemy->defense += 8;
-            enemy->maxHP += 30;
+            enemy->attack += 33;
+            enemy->defense += 30;
+            enemy->maxHP += 125;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 3)
         {
             strcpy(enemy->name, "Military Dogz Captain");
-            enemy->attack += 12;
-            enemy->speed += 6;
-            enemy->defense += 7;
-            enemy->maxHP += 35;
+            enemy->attack += 38;
+            enemy->speed += 24;
+            enemy->defense += 28;
+            enemy->maxHP += 135;
             enemy->hp = enemy->maxHP;
         }
     }
@@ -129,35 +150,35 @@ void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Military Dogz Marksman");
-            enemy->attack += 13;
-            enemy->speed += 7;
-            enemy->maxHP += 28;
+            enemy->attack += 42;
+            enemy->speed += 28;
+            enemy->maxHP += 145;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Military Dogz Elite Sniper");
-            enemy->attack += 15;
-            enemy->speed += 8;
-            enemy->maxHP += 32;
+            enemy->attack += 46;
+            enemy->speed += 32;
+            enemy->maxHP += 155;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Military Dogz Spotter");
-            enemy->attack += 11;
-            enemy->defense += 9;
-            enemy->speed += 6;
-            enemy->maxHP += 30;
+            enemy->attack += 40;
+            enemy->defense += 34;
+            enemy->speed += 24;
+            enemy->maxHP += 150;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 3)
         {
             strcpy(enemy->name, "Military Dogz Sharpshooter");
-            enemy->attack += 16;
-            enemy->speed += 9;
-            enemy->defense += 8;
-            enemy->maxHP += 38;
+            enemy->attack += 50;
+            enemy->speed += 36;
+            enemy->defense += 32;
+            enemy->maxHP += 170;
             enemy->hp = enemy->maxHP;
         }
     }
@@ -170,27 +191,27 @@ void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Military Dogz Guard");
-            enemy->attack += 14;
-            enemy->defense += 10;
-            enemy->maxHP += 35;
+            enemy->attack += 52;
+            enemy->defense += 42;
+            enemy->maxHP += 185;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Military Dogz Lieutenant");
-            enemy->attack += 17;
-            enemy->speed += 7;
-            enemy->defense += 11;
-            enemy->maxHP += 40;
+            enemy->attack += 58;
+            enemy->speed += 30;
+            enemy->defense += 46;
+            enemy->maxHP += 205;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Military Dogz Commander");
-            enemy->attack += 20;
-            enemy->speed += 10;
-            enemy->defense += 12;
-            enemy->maxHP += 50;
+            enemy->attack += 68;
+            enemy->speed += 38;
+            enemy->defense += 52;
+            enemy->maxHP += 240;
             enemy->hp = enemy->maxHP;
         }
     }
@@ -199,10 +220,13 @@ void loadStage3Enemies(Dog *enemy, int zoneIndex, int i)
 }
 int useAmbushStrike(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 1.8 + (rand() % 8);
-    target->hp -= dmg;
+    int diff = user->attack - target->defense;
+    int dmg = 55 + (diff / 10) + (rand() % 11);
 
-    printf("%s uses Ambush Strike! -%d\n", user->name, dmg);
+    dmg = capMilitaryDamage(dmg, 35, 130);
+    applyMilitaryDamage(target, dmg);
+
+    printf("%s uses Ambush Strike! -%d", user->name, dmg);
     return dmg;
 }
 
@@ -210,23 +234,30 @@ int useSelfDestruct(Dog *user, Dog *target)
 {
     if (user->hp > (user->maxHP * 0.2))
     {
-        printf("%s tried Self Destruct but failed!\n", user->name);
+        printf("%s tried Self Destruct but failed!", user->name);
         return 0;
     }
 
-    int dmg = user->attack * 3;
-    target->hp -= dmg;
+    int dmg = 120 + (user->attack / 12) + (rand() % 21);
+
+    dmg = capMilitaryDamage(dmg, 120, 180);
+    applyMilitaryDamage(target, dmg);
+
     user->hp = 0;
 
-    printf("%s SELF DESTRUCT! MASSIVE EXPLOSION -%d\n", user->name, dmg);
+    printf("%s SELF DESTRUCT! MASSIVE EXPLOSION -%d", user->name, dmg);
     return dmg;
 }
 
 int usePrecisionShot(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 1.4 + (rand() % 5);
-    target->hp -= dmg;
-    printf("%s uses Precision Shot! -%d\n", user->name, dmg);
+    int diff = user->attack - target->defense;
+    int dmg = 45 + (diff / 12) + (rand() % 9);
+
+    dmg = capMilitaryDamage(dmg, 28, 110);
+    applyMilitaryDamage(target, dmg);
+
+    printf("%s uses Precision Shot! -%d", user->name, dmg);
     return dmg;
 }
 
@@ -240,27 +271,41 @@ int useTacticalGuard(Dog *user, Dog *target)
 
 int useReinforcement(Dog *user, Dog *target)
 {
-    int heal = 10 + (rand() % 6);
+    int heal = 18 + (rand() % 13);
+
     user->hp += heal;
-    printf("%s calls Reinforcements! +%d HP\n", user->name, heal);
+
+    if (user->hp > user->maxHP)
+        user->hp = user->maxHP;
+
+    printf("%s calls Reinforcements! +%d HP", user->name, heal);
     return heal;
 }
 
 // NEW SKILLS
 int useBarrageFire(Dog *user, Dog *target)
 {
-    int dmg = (user->attack * 1.2) + (rand() % 8);
-    target->hp -= dmg;
-    printf("%s unleashes Barrage Fire! -%d\n", user->name, dmg);
+    int diff = user->attack - target->defense;
+    int dmg = 38 + (diff / 12) + (rand() % 12);
+
+    dmg = capMilitaryDamage(dmg, 25, 105);
+    applyMilitaryDamage(target, dmg);
+
+    printf("%s unleashes Barrage Fire! -%d", user->name, dmg);
     return dmg;
 }
 
 int useMilitaryCharge(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 1.6;
-    target->hp -= dmg;
+    int diff = user->attack - target->defense;
+    int dmg = 50 + (diff / 10) + (rand() % 10);
+
+    dmg = capMilitaryDamage(dmg, 35, 125);
+    applyMilitaryDamage(target, dmg);
+
     user->speed += 3;
-    printf("%s charges with Military Force! -%d (Speed +3)\n", user->name, dmg);
+
+    printf("%s charges with Military Force! -%d (Speed +3)", user->name, dmg);
     return dmg;
 }
 
@@ -299,23 +344,23 @@ void setEnemySkillsMilitary(Dog *enemy, int zoneIndex)
 
     // Progressive military buffs per zone
     if (zoneIndex == 8) { // Zone 1
-        enemy->attack += 3;
-        enemy->defense += 3;
-        enemy->speed += 2;
+        enemy->attack += 12;
+        enemy->defense += 10;
+        enemy->speed += 6;
     }
     else if (zoneIndex == 9) { // Zone 2
-        enemy->attack += 5;
-        enemy->defense += 4;
-        enemy->speed += 3;
+        enemy->attack += 16;
+        enemy->defense += 13;
+        enemy->speed += 8;
     }
     else if (zoneIndex == 10) { // Zone 3
-        enemy->attack += 7;
-        enemy->defense += 5;
-        enemy->speed += 4;
+        enemy->attack += 20;
+        enemy->defense += 16;
+        enemy->speed += 10;
     }
     else if (zoneIndex == 11) { // Zone 4 (Strongest)
-        enemy->attack += 10;
-        enemy->defense += 7;
-        enemy->speed += 5;
+        enemy->attack += 26;
+        enemy->defense += 20;
+        enemy->speed += 12;
     }
 }

@@ -6,4 +6,4 @@
 // A  = max around 600
 // S  = 700–800 depende build
 // SS = around 900
-// SSS = 900–999
+// SSS = 900–999/

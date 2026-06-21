@@ -8,17 +8,33 @@
 // WILD TERRITORY ENEMIES
 // =========================
 
+
+// =========================
+// DAMAGE BALANCE HELPER
+// =========================
+static int limitWildDamage(int dmg, int minDmg, int maxDmg)
+{
+    if (dmg < minDmg)
+        dmg = minDmg;
+
+    if (dmg > maxDmg)
+        dmg = maxDmg;
+
+    return dmg;
+}
+
 void createDiremaw(Dog *enemy)
 {
     strcpy(enemy->name, "Diremaw");
 
-    enemy->hp = 240;
-    enemy->maxHP = 240;
-    enemy->attack = 50;
-    enemy->defense = 45;
-    enemy->speed = 40;
-    enemy->accuracy = 88;
-    enemy->intelligence = 30;
+    // Secret Stage 2 enemy: tougher stats, but skill damage is capped below.
+    enemy->hp = 340;
+    enemy->maxHP = 340;
+    enemy->attack = 85;
+    enemy->defense = 75;
+    enemy->speed = 65;
+    enemy->accuracy = 90;
+    enemy->intelligence = 38;
 
     enemy->zoneType = ZONE_NORMAL;
     enemy->personalityType = PERSONALITY_DESPERATE;
@@ -50,23 +66,26 @@ void loadStage2Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "River Scout");
-            enemy->attack += 4;
-            enemy->speed += 2;
+            enemy->attack += 18;
+            enemy->speed += 8;
+            enemy->defense += 6;
+            enemy->maxHP += 35;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Pack Hunter");
-            enemy->attack += 6;
-            enemy->speed += 3;
-            enemy->maxHP += 10;
+            enemy->attack += 23;
+            enemy->speed += 10;
+            enemy->defense += 8;
+            enemy->maxHP += 50;
         }
         else
         {
             strcpy(enemy->name, "River Alpha");
-            enemy->attack += 7;
-            enemy->speed += 3;
-            enemy->maxHP += 12;
-            enemy->defense += 3;
+            enemy->attack += 28;
+            enemy->speed += 12;
+            enemy->maxHP += 70;
+            enemy->defense += 12;
         }
 
         setEnemySkillsWild(enemy, zoneIndex, i);
@@ -80,21 +99,29 @@ void loadStage2Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Forest Stalker");
-            enemy->speed += 4;
-            enemy->accuracy += 5;
+            enemy->attack += 20;
+            enemy->speed += 16;
+            enemy->accuracy += 6;
+            enemy->defense += 6;
+            enemy->maxHP += 40;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Ambush Leader");
-            enemy->speed += 6;
+            enemy->speed += 20;
             enemy->accuracy += 8;
-            enemy->attack += 3;
+            enemy->attack += 26;
+            enemy->defense += 8;
+            enemy->maxHP += 55;
         }
         else
         {
             strcpy(enemy->name, "Shadow Pack");
-            enemy->speed += 4;
-            enemy->accuracy += 5;
+            enemy->attack += 20;
+            enemy->speed += 16;
+            enemy->accuracy += 6;
+            enemy->defense += 6;
+            enemy->maxHP += 40;
             enemy->attack += 3;
             enemy->maxHP += 8;
         }
@@ -110,17 +137,20 @@ void loadStage2Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Bloodfang Scout");
-            enemy->attack += 7;
-            enemy->speed += 6;
-            enemy->accuracy += 5;
+            enemy->attack += 32;
+            enemy->speed += 18;
+            enemy->accuracy += 7;
+            enemy->defense += 10;
+            enemy->maxHP += 70;
         }
         else
         {
             strcpy(enemy->name, "Ravine Stalker");
-            enemy->attack += 6;
-            enemy->speed += 4;
+            enemy->attack += 36;
+            enemy->speed += 20;
             enemy->accuracy += 8;
-            enemy->maxHP += 15;
+            enemy->defense += 12;
+            enemy->maxHP += 90;
         }
 
         setEnemySkillsWild(enemy, zoneIndex, i);
@@ -134,30 +164,35 @@ void loadStage2Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Trial Challenger");
-            enemy->attack += 8;
-            enemy->speed += 7;
+            enemy->attack += 36;
+            enemy->speed += 22;
+            enemy->defense += 12;
+            enemy->maxHP += 85;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Trial Hunter");
-            enemy->attack += 9;
-            enemy->speed += 8;
-            enemy->accuracy += 6;
+            enemy->attack += 40;
+            enemy->speed += 24;
+            enemy->accuracy += 7;
+            enemy->defense += 14;
+            enemy->maxHP += 95;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Trial Alpha");
-            enemy->attack += 10;
-            enemy->speed += 9;
-            enemy->maxHP += 15;
+            enemy->attack += 45;
+            enemy->speed += 26;
+            enemy->defense += 16;
+            enemy->maxHP += 115;
         }
         else
         {
             strcpy(enemy->name, "Trial Beast");
-            enemy->attack += 12;
-            enemy->speed += 11;
-            enemy->maxHP += 35;
-            enemy->defense += 7;
+            enemy->attack += 52;
+            enemy->speed += 30;
+            enemy->maxHP += 150;
+            enemy->defense += 22;
         }
 
         setEnemySkillsWild(enemy, zoneIndex, i);
@@ -171,31 +206,34 @@ void loadStage2Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Mountain Guard");
-            enemy->defense += 7;
-            enemy->maxHP += 18;
+            enemy->attack += 38;
+            enemy->defense += 22;
+            enemy->speed += 12;
+            enemy->maxHP += 120;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Peak Warrior");
-            enemy->defense += 10;
-            enemy->maxHP += 25;
-            enemy->attack += 5;
+            enemy->defense += 28;
+            enemy->maxHP += 145;
+            enemy->attack += 45;
+            enemy->speed += 14;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Summit Enforcer");
-            enemy->defense += 15;
-            enemy->maxHP += 35;
-            enemy->attack += 8;
-            enemy->speed += 3;
+            enemy->defense += 34;
+            enemy->maxHP += 170;
+            enemy->attack += 52;
+            enemy->speed += 18;
         }
         else
         {
             strcpy(enemy->name, "Mountain King");
-            enemy->defense += 20;
-            enemy->maxHP += 50;
-            enemy->attack += 12;
-            enemy->speed += 6;
+            enemy->defense += 42;
+            enemy->maxHP += 210;
+            enemy->attack += 62;
+            enemy->speed += 22;
         }
 
         setEnemySkillsWild(enemy, zoneIndex, i);
@@ -207,9 +245,10 @@ void loadStage2Enemies(Dog *enemy, int zoneIndex, int i)
     else
     {
         strcpy(enemy->name, "Unknown Stray");
-        enemy->attack += 20;
+        enemy->attack += 35;
         enemy->speed += 20;
-        enemy->maxHP += 50;
+        enemy->defense += 15;
+        enemy->maxHP += 100;
     }
 
     // sync HP
@@ -229,7 +268,8 @@ int usePackAttack(Dog *user, Dog *target)
 
     for (int i = 0; i < hits; i++)
     {
-        int dmg = (user->attack * 0.35) + (rand() % 4);
+        int dmg = (user->attack / 4) + 6 + (rand() % 4);
+        dmg = limitWildDamage(dmg, 8, 26);
         target->hp -= dmg;
         total += dmg;
         printf("Hit %d: -%d\n", i + 1, dmg);
@@ -240,7 +280,8 @@ int usePackAttack(Dog *user, Dog *target)
 
 int useAmbush(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 1.2 + (rand() % 6);
+    int dmg = 28 + (user->attack / 3) + (rand() % 8);
+    dmg = limitWildDamage(dmg, 25, 75);
     target->hp -= dmg;
 
     printf("%s ambushes from shadows! -%d\n", user->name, dmg);
@@ -255,7 +296,8 @@ int useHowlDebuff(Dog *user, Dog *target)
     target->accuracyModifier -= 20;
     target->accDebuffTurns = 3;
 
-    int dmg = user->attack / 5;
+    int dmg = 10 + (user->attack / 8);
+    dmg = limitWildDamage(dmg, 10, 35);
     target->hp -= dmg;
 
     printf("%s HOWLS! Accuracy DOWN! -%d\n", user->name, dmg);
@@ -265,7 +307,8 @@ int useHowlDebuff(Dog *user, Dog *target)
 
 int useFeralRush(Dog *user, Dog *target)
 {
-    int dmg = (user->attack * 1.05) + (rand() % 4);
+    int dmg = 24 + (user->attack / 3) + (rand() % 7);
+    dmg = limitWildDamage(dmg, 22, 70);
     target->hp -= dmg;
 
     target->bleedTurns += 2;
@@ -278,7 +321,8 @@ int useFeralRush(Dog *user, Dog *target)
 
 int useMaulingBite(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 1.1 + (rand() % 5);
+    int dmg = 26 + (user->attack / 3) + (rand() % 7);
+    dmg = limitWildDamage(dmg, 24, 80);
     target->hp -= dmg;
 
     printf("%s uses Mauling Bite! -%d\n", user->name, dmg);
@@ -288,7 +332,8 @@ int useMaulingBite(Dog *user, Dog *target)
 
 int useRabidClaw(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 0.9 + (rand() % 5);
+    int dmg = 22 + (user->attack / 4) + (rand() % 7);
+    dmg = limitWildDamage(dmg, 20, 70);
     target->hp -= dmg;
 
     target->isBleeding = 1;
@@ -302,7 +347,7 @@ int useRabidClaw(Dog *user, Dog *target)
 
 int useBloodScent(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 1.0 + (rand() % 5);
+    int dmg = 24 + (user->attack / 3) + (rand() % 7);
 
     if (target->isBleeding)
     {
@@ -310,6 +355,7 @@ int useBloodScent(Dog *user, Dog *target)
         printf("%s smells blood! Bonus damage!\n", user->name);
     }
 
+    dmg = limitWildDamage(dmg, 22, 85);
     target->hp -= dmg;
 
     printf("%s uses Blood Scent! -%d\n", user->name, dmg);
@@ -319,7 +365,8 @@ int useBloodScent(Dog *user, Dog *target)
 
 int useWildPounce(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 1.15 + (rand() % 6);
+    int dmg = 28 + (user->attack / 3) + (rand() % 8);
+    dmg = limitWildDamage(dmg, 25, 85);
     target->hp -= dmg;
 
     user->speed += 5;
@@ -331,7 +378,8 @@ int useWildPounce(Dog *user, Dog *target)
 
 int useBoneBreaker(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 1.25 + (rand() % 6);
+    int dmg = 34 + (user->attack / 3) + (rand() % 8);
+    dmg = limitWildDamage(dmg, 30, 95);
     target->hp -= dmg;
 
     target->defense -= 5;
@@ -353,7 +401,8 @@ int usePredatorFrenzy(Dog *user, Dog *target)
 
     for (int i = 0; i < hits; i++)
     {
-        int dmg = user->attack * 0.45 + (rand() % 4);
+        int dmg = 12 + (user->attack / 5) + (rand() % 5);
+        dmg = limitWildDamage(dmg, 12, 35);
         target->hp -= dmg;
         total += dmg;
 
@@ -394,6 +443,7 @@ void setEnemySkillsWild(Dog *enemy, int zoneIndex, int enemyLevel)
     enemy->skills[2].power = 12;
     enemy->numSkills = 3;
 
-    enemy->attack += 1;
-    enemy->speed += 1;
+    enemy->attack += 4 + enemyLevel;
+    enemy->defense += 2 + (enemyLevel / 2);
+    enemy->speed += 3;
 }

@@ -3,13 +3,21 @@
 #include <string.h>
 #include <windows.h>
 
+#include "arena_enemy.h"
+#include "arena_enemy2.h"
+#include "arena_enemy3.h"
+#include "arena_enemy4.h"
+#include "arena_enemy5.h"
+#include "arena_enemy6.h"
+#include "arena_enemy7.h"
+#include "arena_enemy8.h"
 #include "arena.h"
 #include "../battle.h"
 #include "../skill.h"
 #include "../stat.h"
 #include "../cinematic.h"
 #include "../enemies/enemy.h"
-#include "arena_enemy.h"
+
 
 void showHPBarPlayer(int hp, int maxHp);
 void showHPBarEnemy(int hp, int maxHp);
@@ -26,16 +34,26 @@ const char *getArenaClassName(char rank)
 {
     switch (rank)
     {
-        case 'F': return "F";
-        case 'E': return "E";
-        case 'D': return "D";
-        case 'C': return "C";
-        case 'B': return "B";
-        case 'A': return "A";
-        case 'S': return "S";
-        case 'X': return "SS";
-        case 'Z': return "SSS";
-        default: return "?";
+    case 'F':
+        return "F";
+    case 'E':
+        return "E";
+    case 'D':
+        return "D";
+    case 'C':
+        return "C";
+    case 'B':
+        return "B";
+    case 'A':
+        return "A";
+    case 'S':
+        return "S";
+    case 'X':
+        return "SS";
+    case 'Z':
+        return "SSS";
+    default:
+        return "?";
     }
 }
 
@@ -43,16 +61,26 @@ const char *getArenaRankName(char rank)
 {
     switch (rank)
     {
-        case 'F': return "Open Grounds";
-        case 'E': return "Street Pit";
-        case 'D': return "Junkyard Arena";
-        case 'C': return "Victory Coliseum";
-        case 'B': return "Royal Octagon";
-        case 'A': return "Crown Arena";
-        case 'S': return "Legend Island";
-        case 'X': return "Mythic Dome";
-        case 'Z': return "Final Apex";
-        default: return "Unranked";
+    case 'F':
+        return "Open Grounds";
+    case 'E':
+        return "Street Pit";
+    case 'D':
+        return "Junkyard Arena";
+    case 'C':
+        return "Victory Coliseum";
+    case 'B':
+        return "Royal Octagon";
+    case 'A':
+        return "Crown Arena";
+    case 'S':
+        return "Legend Island";
+    case 'X':
+        return "Mythic Dome";
+    case 'Z':
+        return "Final Apex";
+    default:
+        return "Unranked";
     }
 }
 
@@ -60,16 +88,26 @@ const char *getArenaTitle(char rank)
 {
     switch (rank)
     {
-        case 'F': return "Open Challenger";
-        case 'E': return "Street Fighter";
-        case 'D': return "Scrap Contender";
-        case 'C': return "Coliseum Warrior";
-        case 'B': return "Royal Contender";
-        case 'A': return "Crown Champion";
-        case 'S': return "Living Legend";
-        case 'X': return "Mythic Champion";
-        case 'Z': return "World Legend";
-        default: return "No Title";
+    case 'F':
+        return "Open Challenger";
+    case 'E':
+        return "Street Fighter";
+    case 'D':
+        return "Scrap Contender";
+    case 'C':
+        return "Coliseum Warrior";
+    case 'B':
+        return "Royal Contender";
+    case 'A':
+        return "Crown Champion";
+    case 'S':
+        return "Living Legend";
+    case 'X':
+        return "Mythic Champion";
+    case 'Z':
+        return "World Legend";
+    default:
+        return "No Title";
     }
 }
 
@@ -79,16 +117,26 @@ int getRequiredWins(char rank)
 {
     switch (rank)
     {
-        case 'F': return 3;
-        case 'E': return 5;
-        case 'D': return 1; //6
-        case 'C': return 1; //6
-        case 'B': return 1; //8
-        case 'A': return 1; //8
-        case 'S': return 9;
-        case 'X': return 4; // SS
-        case 'Z': return 1; // SSS final 1v1
-        default: return 3;
+    case 'F':
+        return 3;
+    case 'E':
+        return 5;
+    case 'D':
+        return 1; // 6
+    case 'C':
+        return 1; // 6
+    case 'B':
+        return 1; // 8
+    case 'A':
+        return 1; // 8
+    case 'S':
+        return 1; // 9
+    case 'X':
+        return 4; // SS
+    case 'Z':
+        return 1; // SSS final 1v1
+    default:
+        return 3;
     }
 }
 
@@ -96,16 +144,26 @@ int getRankIndex(char rank)
 {
     switch (rank)
     {
-        case 'F': return 0;
-        case 'E': return 1;
-        case 'D': return 2;
-        case 'C': return 3;
-        case 'B': return 4;
-        case 'A': return 5;
-        case 'S': return 6;
-        case 'X': return 7; // SS
-        case 'Z': return 8; // SSS
-        default: return 0;
+    case 'F':
+        return 0;
+    case 'E':
+        return 1;
+    case 'D':
+        return 2;
+    case 'C':
+        return 3;
+    case 'B':
+        return 4;
+    case 'A':
+        return 5;
+    case 'S':
+        return 6;
+    case 'X':
+        return 7; // SS
+    case 'Z':
+        return 8; // SSS
+    default:
+        return 0;
     }
 }
 
@@ -195,7 +253,7 @@ void rankUpArena(Dog *player)
 
     else if (player->arenaRank == 'Z')
         printf("Reward: Skill Slots increased to 8\n");
-    }
+}
 
 // ================= ARENA BATTLE CORE =================
 
@@ -265,18 +323,33 @@ int arenaBattle(Dog *player, char selectedRank)
     else if (selectedRank == 'C')
     {
         int enemyIndex = rand() % 8;
-        loadArenaClassDEnemy(&enemy, enemyIndex);
+        loadArenaClassCEnemy(&enemy, enemyIndex);
     }
     else if (selectedRank == 'B')
     {
         int enemyIndex = rand() % 10;
-        loadArenaClassDEnemy(&enemy, enemyIndex);
+        loadArenaClassBEnemy(&enemy, enemyIndex);
     }
     else if (selectedRank == 'A')
     {
         int enemyIndex = rand() % 10;
-        loadArenaClassDEnemy(&enemy, enemyIndex);
-    }                        
+        loadArenaClassAEnemy(&enemy, enemyIndex);
+    }
+    else if (selectedRank == 'S')
+    {
+        int enemyIndex = rand() % 11;
+        loadArenaClassSEnemy(&enemy, enemyIndex);
+    }
+    else if (selectedRank == 'X')
+    {
+        int enemyIndex = rand() % 7;
+        loadArenaClassSSEnemy(&enemy, enemyIndex);
+    }
+    /*else if (selectedRank == 'Z')
+    {
+        int enemyIndex = rand() % 6;
+        loadArenaClassSSSEnemy(&enemy, enemyIndex);
+    }*/
     else
     {
         system("cls");

@@ -68,13 +68,13 @@ void createGrimfang(Dog *enemy)
 {
     strcpy(enemy->name, "Grimfang");
 
-    enemy->hp = 200;
-    enemy->maxHP = 200;
-    enemy->attack = 45;
-    enemy->defense = 40;
-    enemy->speed = 35;
-    enemy->accuracy = 90;
-    enemy->intelligence = 35;
+    enemy->hp = 260;
+    enemy->maxHP = 260;
+    enemy->attack = 62;
+    enemy->defense = 55;
+    enemy->speed = 48;
+    enemy->accuracy = 92;
+    enemy->intelligence = 40;
 
     enemy->zoneType = ZONE_CITY;
     enemy->personalityType = PERSONALITY_ALPHA;
@@ -104,21 +104,29 @@ void loadStage1Enemies(Dog *enemy, int zoneIndex, int enemyIndex)
         if (enemyIndex == 0)
         {
             strcpy(enemy->name, "Skinny Stray");
+            enemy->attack += 4;
+            enemy->defense += 3;
+            enemy->speed += 3;
+            enemy->maxHP += 12;
+            enemy->hp = enemy->maxHP;
             enemy->personalityType = PERSONALITY_WEAK;
         }
         else if (enemyIndex == 1)
         {
             strcpy(enemy->name, "Scrap Fighter");
-            enemy->attack += 3;
-            enemy->defense += 2;
+            enemy->attack += 8;
+            enemy->defense += 6;
+            enemy->maxHP += 18;
+            enemy->hp = enemy->maxHP;
             enemy->personalityType = PERSONALITY_DESPERATE;
         }
         else
         {
             strcpy(enemy->name, "Alley Alpha");
-            enemy->attack += 6;
-            enemy->defense += 4;
-            enemy->maxHP += 20;
+            enemy->attack += 13;
+            enemy->defense += 10;
+            enemy->speed += 4;
+            enemy->maxHP += 45;
             enemy->hp = enemy->maxHP;
             enemy->personalityType = PERSONALITY_ALPHA;
         }
@@ -128,20 +136,26 @@ void loadStage1Enemies(Dog *enemy, int zoneIndex, int enemyIndex)
         if (enemyIndex == 0)
         {
             strcpy(enemy->name, "Rust Hound");
-            enemy->defense += 3;
+            enemy->defense += 8;
+            enemy->maxHP += 20;
+            enemy->hp = enemy->maxHP;
             enemy->personalityType = PERSONALITY_TANK;
         }
         else if (enemyIndex == 1)
         {
             strcpy(enemy->name, "Guard Dog");
-            enemy->defense += 5;
+            enemy->defense += 12;
+            enemy->attack += 5;
+            enemy->maxHP += 28;
+            enemy->hp = enemy->maxHP;
             enemy->personalityType = PERSONALITY_TANK;
         }
         else
         {
             strcpy(enemy->name, "Iron Jaw");
-            enemy->defense += 8;
-            enemy->maxHP += 25;
+            enemy->defense += 18;
+            enemy->attack += 9;
+            enemy->maxHP += 55;
             enemy->hp = enemy->maxHP;
             enemy->personalityType = PERSONALITY_TANK;
         }
@@ -151,20 +165,28 @@ void loadStage1Enemies(Dog *enemy, int zoneIndex, int enemyIndex)
         if (enemyIndex == 0)
         {
             strcpy(enemy->name, "Night Stray");
-            enemy->speed += 3;
+            enemy->speed += 8;
+            enemy->attack += 5;
+            enemy->maxHP += 18;
+            enemy->hp = enemy->maxHP;
         }
         else if (enemyIndex == 1)
         {
             strcpy(enemy->name, "Sneak Biter");
-            enemy->accuracy += 5;
+            enemy->accuracy += 8;
+            enemy->attack += 7;
+            enemy->speed += 5;
+            enemy->maxHP += 22;
+            enemy->hp = enemy->maxHP;
             enemy->personalityType = PERSONALITY_DESPERATE;
         }
         else
         {
             strcpy(enemy->name, "Street King");
-            enemy->speed += 5;
-            enemy->attack += 5;
-            enemy->maxHP += 15;
+            enemy->speed += 12;
+            enemy->attack += 12;
+            enemy->defense += 6;
+            enemy->maxHP += 45;
             enemy->hp = enemy->maxHP;
             enemy->personalityType = PERSONALITY_ALPHA;
         }
@@ -362,6 +384,14 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
     useStage1EnemySkill(player, enemy, skill, enemyDamage);
 
     applyStage1Personality(player, enemy, enemyDamage);
+
+    // Damage safety cap for Stage 1.
+    // Keeps early-game fights fair even after enemy stat increases.
+    if (*enemyDamage < 3)
+        *enemyDamage = 3;
+
+    if (*enemyDamage > 55)
+        *enemyDamage = 55;
 
     return 1;
 }

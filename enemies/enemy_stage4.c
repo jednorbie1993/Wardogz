@@ -6,6 +6,38 @@
 #include "enemy_stage4.h"
 #include "../replay_system.h"
 
+/*
+    BALANCED BIO-LAB DAMAGE
+    - Stage 4 enemy stats were raised so enemies feel tougher.
+    - Skill damage was changed from raw attack multipliers to capped scaling.
+    - This prevents sudden 700+ damage while keeping battles longer.
+*/
+static int bioScaledDamage(Dog *user, Dog *target, int base, int atkDiv, int defDiv, int minDmg, int maxDmg)
+{
+    int dmg = base + (user->attack / atkDiv) + (rand() % 11);
+
+    if (target->defense > 0)
+        dmg -= target->defense / defDiv;
+
+    if (dmg < minDmg)
+        dmg = minDmg;
+
+    if (dmg > maxDmg)
+        dmg = maxDmg;
+
+    return dmg;
+}
+
+static void clampDogHP(Dog *d)
+{
+    if (d->hp < 0)
+        d->hp = 0;
+
+    if (d->hp > d->maxHP)
+        d->hp = d->maxHP;
+}
+
+
 void createOmegaPrime(Dog *enemy)
 {
     createEnemy(enemy);
@@ -15,10 +47,10 @@ void createOmegaPrime(Dog *enemy)
     enemy->zoneType = ZONE_BIOLAB;
     enemy->personalityType = PERSONALITY_ALPHA;
 
-    enemy->attack += 38;
-    enemy->defense += 25;
-    enemy->speed += 18;
-    enemy->maxHP += 120;
+    enemy->attack += 260;
+    enemy->defense += 210;
+    enemy->speed += 120;
+    enemy->maxHP += 650;
     enemy->hp = enemy->maxHP;
 
     enemy->numSkills = 4;
@@ -52,8 +84,6 @@ void loadStage4Enemies(Dog *enemy, int zoneIndex, int i)
     enemy->numSkills = 6;
     enemy->zoneType = ZONE_BIOLAB;
 
-    setEnemySkillsBio(enemy, zoneIndex);
-
     // Zone limits
     if (zoneIndex == 12 && i > 1) i = 1;      // Outer Facility (2 enemies)
     if (zoneIndex == 13 && i > 3) i = 3;      // Research Hallways (4 enemies)
@@ -68,18 +98,19 @@ void loadStage4Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Security K-9");
-            enemy->attack += 8;
-            enemy->defense += 6;
-            enemy->maxHP += 25;
+            enemy->attack += 95;
+            enemy->defense += 75;
+            enemy->speed += 20;
+            enemy->maxHP += 220;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Drone-Assisted K-9");
-            enemy->attack += 10;
-            enemy->speed += 8;
-            enemy->defense += 4;
-            enemy->maxHP += 20;
+            enemy->attack += 105;
+            enemy->speed += 45;
+            enemy->defense += 70;
+            enemy->maxHP += 210;
             enemy->hp = enemy->maxHP;
         }
     }
@@ -92,35 +123,37 @@ void loadStage4Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Test Subject 001");
-            enemy->attack += 12;
-            enemy->defense += 8;
-            enemy->maxHP += 30;
+            enemy->attack += 120;
+            enemy->defense += 90;
+            enemy->speed += 24;
+            enemy->maxHP += 260;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Experiment Alpha");
-            enemy->attack += 14;
-            enemy->defense += 10;
-            enemy->maxHP += 35;
+            enemy->attack += 132;
+            enemy->defense += 100;
+            enemy->speed += 28;
+            enemy->maxHP += 285;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Failed Enhancement");
-            enemy->attack += 16;
-            enemy->speed += 6;
-            enemy->defense += 6;
-            enemy->maxHP += 28;
+            enemy->attack += 138;
+            enemy->speed += 42;
+            enemy->defense += 82;
+            enemy->maxHP += 270;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 3)
         {
             strcpy(enemy->name, "Unstable Subject");
-            enemy->attack += 18;
-            enemy->speed += 10;
-            enemy->defense += 4;
-            enemy->maxHP += 25;
+            enemy->attack += 145;
+            enemy->speed += 55;
+            enemy->defense += 78;
+            enemy->maxHP += 300;
             enemy->hp = enemy->maxHP;
         }
     }
@@ -133,35 +166,37 @@ void loadStage4Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Hybrid Unit K-7");
-            enemy->attack += 18;
-            enemy->defense += 14;
-            enemy->maxHP += 45;
+            enemy->attack += 155;
+            enemy->defense += 125;
+            enemy->speed += 30;
+            enemy->maxHP += 340;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Bio-Mech Hound");
-            enemy->attack += 16;
-            enemy->defense += 16;
-            enemy->maxHP += 50;
+            enemy->attack += 148;
+            enemy->defense += 140;
+            enemy->speed += 24;
+            enemy->maxHP += 360;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "Rage Subject");
-            enemy->attack += 22;
-            enemy->speed += 8;
-            enemy->defense += 8;
-            enemy->maxHP += 40;
+            enemy->attack += 170;
+            enemy->speed += 50;
+            enemy->defense += 105;
+            enemy->maxHP += 330;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 3)
         {
             strcpy(enemy->name, "Prototype K-9");
-            enemy->attack += 20;
-            enemy->defense += 14;
-            enemy->speed += 6;
-            enemy->maxHP += 55;
+            enemy->attack += 165;
+            enemy->defense += 130;
+            enemy->speed += 40;
+            enemy->maxHP += 380;
             enemy->hp = enemy->maxHP;
         }
     }
@@ -174,26 +209,28 @@ void loadStage4Enemies(Dog *enemy, int zoneIndex, int i)
         if (i == 0)
         {
             strcpy(enemy->name, "Project Omega");
-            enemy->attack += 24;
-            enemy->defense += 16;
-            enemy->maxHP += 60;
+            enemy->attack += 190;
+            enemy->defense += 150;
+            enemy->speed += 42;
+            enemy->maxHP += 430;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 1)
         {
             strcpy(enemy->name, "Facility Alpha");
-            enemy->attack += 28;
-            enemy->defense += 18;
-            enemy->maxHP += 70;
+            enemy->attack += 205;
+            enemy->defense += 165;
+            enemy->speed += 48;
+            enemy->maxHP += 470;
             enemy->hp = enemy->maxHP;
         }
         else if (i == 2)
         {
             strcpy(enemy->name, "PROTOTYPE ZERO");
-            enemy->attack += 32;
-            enemy->defense += 20;
-            enemy->speed += 8;
-            enemy->maxHP += 80;
+            enemy->attack += 225;
+            enemy->defense += 180;
+            enemy->speed += 65;
+            enemy->maxHP += 520;
             enemy->hp = enemy->maxHP;
         }
     }
@@ -207,9 +244,12 @@ void loadStage4Enemies(Dog *enemy, int zoneIndex, int i)
 
 int useMutationSurge(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 1.3 + (rand() % 6);
+    int dmg = bioScaledDamage(user, target, 32, 5, 42, 18, 95);
+
     target->hp -= dmg;
-    printf("%s uses Mutation Surge! -%d\n", user->name, dmg);
+    clampDogHP(target);
+
+    printf("%s uses Mutation Surge! -%d HP\n", user->name, dmg);
     return dmg;
 }
 
@@ -223,8 +263,14 @@ int useBioShield(Dog *user, Dog *target)
 
 int useCellRegen(Dog *user, Dog *target)
 {
-    int heal = 15 + (rand() % 10);
+    int heal = 25 + (user->maxHP / 25) + (rand() % 12);
+
+    if (heal > 70)
+        heal = 70;
+
     user->hp += heal;
+    clampDogHP(user);
+
     printf("%s uses Cell Regeneration! +%d HP\n", user->name, heal);
     return heal;
 }
@@ -237,19 +283,25 @@ int useContainedExplosion(Dog *user, Dog *target)
         return 0;
     }
 
-    int dmg = user->attack * 3;
+    int dmg = bioScaledDamage(user, target, 70, 4, 38, 45, 160);
+
     target->hp -= dmg;
+    clampDogHP(target);
+
     user->hp = 0;
 
-    printf("%s CONTAINMENT BREACH! MASSIVE EXPLOSION -%d\n", user->name, dmg);
+    printf("%s CONTAINMENT BREACH! Controlled explosion -%d HP\n", user->name, dmg);
     return dmg;
 }
 
 int useAcidSpit(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 1.4 + (rand() % 8);
+    int dmg = bioScaledDamage(user, target, 28, 5, 45, 16, 90);
     int dot = 3 + (rand() % 4);
+
     target->hp -= dmg;
+    clampDogHP(target);
+
     printf("%s spits Acid! -%d HP\n", user->name, dmg);
     printf("%s takes %d corrosive damage next turn!\n", target->name, dot);
     return dmg;
@@ -257,10 +309,16 @@ int useAcidSpit(Dog *user, Dog *target)
 
 int useNeuroToxin(Dog *user, Dog *target)
 {
-    int dmg = user->attack * 1.2;
+    int dmg = bioScaledDamage(user, target, 24, 6, 48, 14, 80);
     int speedDrop = 3;
+
     target->hp -= dmg;
+    clampDogHP(target);
+
     target->speed -= speedDrop;
+    if (target->speed < 1)
+        target->speed = 1;
+
     printf("%s releases Neuro Toxin! -%d HP (Speed -%d)\n", user->name, dmg, speedDrop);
     return dmg;
 }
@@ -295,23 +353,23 @@ void setEnemySkillsBio(Dog *enemy, int zoneIndex)
 
     // Progressive bio buffs per zone
     if (zoneIndex == 12) { // Outer Facility
-        enemy->attack += 5;
-        enemy->defense += 4;
-        enemy->speed += 3;
-    }
-    else if (zoneIndex == 13) { // Research Hallways
         enemy->attack += 8;
         enemy->defense += 6;
-        enemy->speed += 5;
+        enemy->speed += 4;
     }
-    else if (zoneIndex == 14) { // Containment Labs
+    else if (zoneIndex == 13) { // Research Hallways
         enemy->attack += 12;
-        enemy->defense += 8;
+        enemy->defense += 9;
         enemy->speed += 6;
     }
-    else if (zoneIndex == 15) { // Core Chamber (Strongest)
-        enemy->attack += 15;
-        enemy->defense += 10;
+    else if (zoneIndex == 14) { // Containment Labs
+        enemy->attack += 16;
+        enemy->defense += 12;
         enemy->speed += 8;
+    }
+    else if (zoneIndex == 15) { // Core Chamber (Strongest)
+        enemy->attack += 22;
+        enemy->defense += 16;
+        enemy->speed += 10;
     }
 }

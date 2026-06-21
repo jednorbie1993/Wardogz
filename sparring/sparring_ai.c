@@ -193,19 +193,40 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
     // ================= DAMAGE SKILLS =================
     if (skill.type == SKILL_DAMAGE)
     {
-        int base = skill.power + (user->attack / 15);
+        /*int base = skill.power + (user->attack / 15);
         int reduce = enemy->defense / 18;
         int variance = rand() % 6;
-        int dmg = base - reduce + variance;
+        int dmg = base - reduce + variance;*/
+        int diff = user->attack - enemy->defense;
 
-        if (dmg < 10) dmg = 10;
-        enemy->hp -= dmg;
+        int dmg = 70 + (diff / 10) + skill.power + ((rand() % 21) - 10);
+
+        if (dmg < 30)
+            dmg = 30;
+
+        if (dmg > 140)
+            dmg = 140;
 
         if (rand() % 100 < 10)
         {
+            dmg += dmg / 2;
+
+            if (dmg > 180)
+                dmg = 180;
+
+            printf("CRITICAL HIT!\n");
+        }
+
+        enemy->hp -= dmg;
+
+        if (enemy->hp < 0)
+            enemy->hp = 0;
+            
+        /*if (rand() % 100 < 10)
+        {
             dmg += 5;
             printf("CRITICAL HIT! +%d\n", 5);
-        }
+        }*/
 
         printf("%s used %s! Dealt %d damage!\n", user->name, skill.name, dmg);
 
