@@ -106,6 +106,17 @@ void applyHealSkill(Dog *player, Skill s)
 void checkSkillUnlock(Dog *d)
 {
     // ================= SECRET ENEMY SKILLS =================
+    if (d->defeatedGrimfangX && d->skillCount < MAX_SKILLS && !hasSkill(d, "X Fang"))
+    {
+        strcpy(d->skills[d->skillCount].name, "X Fang");
+        d->skills[d->skillCount].power = 32;
+        d->skills[d->skillCount].cost = 15;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+        d->skills[d->skillCount].id = SKILL_X_FANG;
+
+        printf("NEW SECRET SKILL UNLOCKED: X Fang!\n");
+        d->skillCount++;
+    }
     if (d->defeatedGrimfang && d->skillCount < MAX_SKILLS && !hasSkill(d, "Shadow Bite"))
     {
         strcpy(d->skills[d->skillCount].name, "Shadow Bite");
