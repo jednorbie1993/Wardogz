@@ -275,7 +275,11 @@ int main()
                 }
 
                 // ================= FATIGUE RECOVERY =================
-                int fatigueGain = 20 + (rand() % 6);
+                int fatigueGain = 20 + (player.stageClearBonus * 50) + (rand() % 6);
+
+                if (fatigueGain > 300)
+                    fatigueGain = 300;
+                
 
                 if (player.fatigue < player.maxFatigue)
                 {
