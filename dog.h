@@ -44,6 +44,7 @@ typedef enum {
     SKILL_BLOOD_TRAIL,
     SKILL_SHADOW_MAW,
     SKILL_SHADOW_BITE,
+    SKILL_X_FANG,
 
     // wild skills
     SKILL_PACK_ATTACK,
@@ -147,6 +148,7 @@ typedef struct {
 
     int fatigue;
     int maxFatigue;
+    int stageClearBonus;
 
     int isConfused;
     int confuseTurns;
@@ -162,7 +164,7 @@ typedef struct {
     int accDebuffTurns;
     int accuracyModifier;
 
-    int numSkills;                // 🔥 IBINALIK
+    int numSkills;                
     int isCountering;
     int counterDamage;
 
@@ -170,7 +172,11 @@ typedef struct {
     PersonalityType personalityType;
     int guardTurns;
 
-    int sparringProgress[5];      // 🔥 IBINALIK
+    int sparringProgress[5];      
+
+    int powerTrainingCount;
+    int speedTrainingCount;
+    int balanceTrainingCount;
 
     Skill skills[MAX_SKILLS];
     int skillCount;
@@ -182,6 +188,7 @@ typedef struct {
     int defeatedDiremaw;
     int defeatedBlackclaw;
     int defeatedOmega;
+    int defeatedGrimfangX;
 
     int mutationTriggered;
     int regenerationTurn;
@@ -206,8 +213,8 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
 void displayBattleStatus(Dog player, Dog enemy);
 void trainDog(Dog *d, int type);
 
-void waitForEnter();              // 🔥 IBINALIK
-void pauseAndClear();             // 🔥 IBINALIK
+void waitForEnter();              
+void pauseAndClear();            
 
 void playerAttack(Dog *player, Dog *enemy);
 int playerTurn(Dog *player, Dog *enemy, int *defending);
