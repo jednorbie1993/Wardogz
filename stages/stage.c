@@ -51,6 +51,23 @@ void startStage(Dog *player, int progress[])
             (progress[19] >= 4) +
             (progress[20] >= 1);
 
+        player->stageClearBonus = 0;
+
+        if (urbanComplete >= 3)
+            player->stageClearBonus++;
+
+        if (wildComplete >= 5)
+            player->stageClearBonus++;
+
+        if (militaryComplete >= 4)
+            player->stageClearBonus++;
+
+        if (bioLabComplete >= 4)
+            player->stageClearBonus++;
+
+        if (blacksiteComplete >= 5)
+            player->stageClearBonus++;    
+
         printf("=== SELECT STAGE ===\n\n");
 
         printf("1. Urban Strays (%d/3)\n", urbanComplete);

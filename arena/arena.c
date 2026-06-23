@@ -132,7 +132,7 @@ int getRequiredWins(char rank)
     case 'S':
         return 1; // 9
     case 'X':
-        return 4; // SS
+        return 1; // SS
     case 'Z':
         return 1; // SSS final 1v1
     default:

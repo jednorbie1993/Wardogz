@@ -10,6 +10,7 @@ int chooseReplayEnemyIndex(int zoneIndex, int progress[], int isWildTerritory)
     static int wildReplayCount = 0;
     static int militaryReplayCount = 0;
     static int bioReplayCount = 0;
+    static int blacksiteReplayCount = 0;
 
     if (progress[zoneIndex] >= maxEnemies)
     {
@@ -63,15 +64,24 @@ int chooseReplayEnemyIndex(int zoneIndex, int progress[], int isWildTerritory)
             if (bioReplayCount % 10 == 0)
                 return SECRET_OMEGA_INDEX;
 
-            if (rand() % 100 < 98)
+            if (rand() % 100 < 18)
                 return SECRET_OMEGA_INDEX;
 
             if (rand() % 100 < 20)
                 return maxEnemies;
         }
-               // Other replay zones
-        if (!isWildTerritory && zoneIndex >= 12 && zoneIndex <= 15)
+
+        // Stage 5 / Blacksite Laboratory secret
+        if (!isWildTerritory && zoneIndex >= 16 && zoneIndex <= 20)
         {
+            blacksiteReplayCount++;
+
+            if (blacksiteReplayCount % 12 == 0)
+                return SECRET_GRIMFANG_X_INDEX;
+
+            if (rand() % 100 < 18)
+                return SECRET_GRIMFANG_X_INDEX;
+
             if (rand() % 100 < 20)
                 return maxEnemies;
         }
@@ -119,6 +129,14 @@ void applyReplayEliteBonus(Dog *enemy, int zoneIndex, int enemyIndex)
         enemy->defense += 10;
         enemy->speed += 8;
         enemy->maxHP += 45;
+    }
+    else if (zoneIndex >= 16 && zoneIndex <= 20)
+    {
+        strcat(enemy->name, " Blacksite Elite");
+        enemy->attack += 20;
+        enemy->defense += 14;
+        enemy->speed += 12;
+        enemy->maxHP += 60;
     }
 
     enemy->hp = enemy->maxHP;

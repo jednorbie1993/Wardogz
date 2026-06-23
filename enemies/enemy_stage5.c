@@ -56,6 +56,41 @@ static int stage5Damage(Dog *user, Dog *target, int base, int diffDiv, int varia
 // =========================
 // SKILL SETTERS
 // =========================
+void createGrimfangX(Dog *enemy)
+{
+    createEnemy(enemy);
+
+    strcpy(enemy->name, "Grimfang-X");
+
+    enemy->zoneType = ZONE_MUTANT;
+    enemy->personalityType = PERSONALITY_ALPHA;
+
+    enemy->attack += 330;
+    enemy->defense += 260;
+    enemy->speed += 300;
+    enemy->accuracy += 250;
+    enemy->intelligence += 180;
+    enemy->maxHP += 700;
+    enemy->hp = enemy->maxHP;
+
+    enemy->numSkills = 4;
+
+    enemy->skills[0].id = SKILL_PLASMA_BITE;
+    strcpy(enemy->skills[0].name, "Plasma Bite");
+    enemy->skills[0].power = 34;
+
+    enemy->skills[1].id = SKILL_CRYO_LOCK;
+    strcpy(enemy->skills[1].name, "Cryo Lock");
+    enemy->skills[1].power = 30;
+
+    enemy->skills[2].id = SKILL_THUNDER_SURGE;
+    strcpy(enemy->skills[2].name, "Thunder Surge");
+    enemy->skills[2].power = 0;
+
+    enemy->skills[3].id = SKILL_APEX_OVERDRIVE;
+    strcpy(enemy->skills[3].name, "Apex Overdrive");
+    enemy->skills[3].power = 48;
+}
 
 void setEnhancedStraySkills(Dog *enemy)
 {
@@ -181,6 +216,12 @@ void setFinalContainmentSkills(Dog *enemy)
 void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
 {
     createEnemy(enemy);
+
+    if (i == SECRET_GRIMFANG_X_INDEX)
+    {
+        createGrimfangX(enemy);
+        return;
+    }
 
     enemy->zoneType = ZONE_MUTANT;
     enemy->personalityType = PERSONALITY_ALPHA;
