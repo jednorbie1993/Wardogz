@@ -626,7 +626,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             continue;
         }
 
-        // 🔥 PLAYER ACTIONS
+        // PLAYER ACTIONS
         if (choice == 1) // Attack
         {
 
@@ -769,11 +769,22 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
         }
         else if (choice == 3) // Heal
         {
-            player->hp += 20;
+            int tier = player->maxHP / 100;
+
+            if (tier < 1)
+                tier = 1;
+
+            int minHeal = 15 * tier;
+            int maxHeal = minHeal + 15;
+
+            int healAmount = minHeal + rand() % (maxHeal - minHeal + 1);
+
+            player->hp += healAmount;
+
             if (player->hp > player->maxHP)
                 player->hp = player->maxHP;
 
-            printf("Healed +20 HP!\n");
+            printf("Healed +%d HP!\n", healAmount);
             waitForEnter();
         }
         else if (choice == 4) // Surrender
