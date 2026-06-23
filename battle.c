@@ -108,6 +108,22 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
 
         return;
     }
+    if (strcmp(enemy->name, "Grimfang-X") == 0)
+    {
+        typeText("\"They rebuilt my bones... but not my loyalty.\"", 25);
+
+        printf("\n\n");
+
+        typeText("[BLACKSITE SECRET SUBJECT DETECTED]", 25);
+        printf("\n");
+
+        typeText("Grimfang-X emerged!", 25);
+
+        printf("\n");
+        waitForEnter();
+
+        return;
+    }
 
     if (strcmp(enemy->name, "Commander Cerberus") == 0)
     {
@@ -173,20 +189,20 @@ void showHPBarPlayer(int hp, int maxHp)
 {
     static int lastHP = -1;
 
-    // 🔥 RESET SIGNAL (for new battle)
+    //  RESET SIGNAL (for new battle)
     if (hp == -1)
     {
         lastHP = -1;
         return;
     }
 
-    // 👉 Clamp safety
+    //  Clamp safety
     if (hp < 0)
         hp = 0;
     if (hp > maxHp)
         hp = maxHp;
 
-    // 👉 FIRST DRAW (instant, no animation)
+    //  FIRST DRAW (instant, no animation)
     if (lastHP == -1)
     {
         lastHP = hp;
@@ -201,7 +217,7 @@ void showHPBarPlayer(int hp, int maxHp)
         return;
     }
 
-    // 👉 NO ANIMATION MODE
+    //  NO ANIMATION MODE
     if (!animationOn)
     {
         int bars = (hp * 10) / maxHp;
@@ -230,10 +246,10 @@ void showHPBarPlayer(int hp, int maxHp)
         printf("] (%d/%d)   ", current, maxHp);
 
         fflush(stdout);
-        Sleep(20);
+        Sleep(1);
     }
 
-    // 👉 FINAL EXACT VALUE
+    // FINAL EXACT VALUE
     int bars = (hp * 10) / maxHp;
 
     printf("\rPLAYER: [");
@@ -307,7 +323,7 @@ void showHPBarEnemy(int hp, int maxHp)
         printf("] (%d/%d)   ", current, maxHp);
 
         fflush(stdout);
-        Sleep(20);
+        Sleep(1);
     }
 
     // 👉 FINAL EXACT VALUE
@@ -449,6 +465,10 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
     if (strcmp(enemy->name, "Omega Prime") == 0)
     {
         player->defeatedOmega = 1;
+    }
+    if (strcmp(enemy->name, "Grimfang-X") == 0)
+    {
+        player->defeatedGrimfangX = 1;
     }
 
     applyBattleStatGain(player);
@@ -613,21 +633,54 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             system("cls");
             displayBattleStatus(*player, enemy);
 
-            printf("Skills:\n");
+            printf("Skills:\n\n");
 
-            for (int j = 0; j < player->maxSkillSlots; j++)
+            int half = (player->maxSkillSlots + 1) / 2;
+
+            for (int i = 0; i < half; i++)
             {
-                if (player->equipped[j] != -1)
+                int left = i;
+                int right = i + half;
+
+                // LEFT
+                if (player->equipped[left] != -1)
                 {
-                    int idx = player->equipped[j];
-                    printf("%d. %s (P:%d C:%d)\n", j + 1,
-                           player->skills[idx].name,
-                           player->skills[idx].power,
-                           player->skills[idx].cost);
+                    int idx = player->equipped[left];
+
+                    printf("%d. %-20s",
+                        left + 1,
+                        player->skills[idx].name);
                 }
                 else
-                    printf("%d. ---\n", j + 1);
+                {
+                    printf("%d. %-20s",
+                        left + 1,
+                        "---");
+                }
+
+                // RIGHT
+                if (right < player->maxSkillSlots)
+                {
+                    if (player->equipped[right] != -1)
+                    {
+                        int idx = player->equipped[right];
+
+                        printf("%d. %-20s",
+                            right + 1,
+                            player->skills[idx].name);
+                    }
+                    else
+                    {
+                        printf("%d. %-20s",
+                            right + 1,
+                            "---");
+                    }
+                }
+
+                printf("\n");
             }
+
+            printf("\nChoice: ");
 
             fgets(buffer, sizeof(buffer), stdin);
             if (sscanf(buffer, "%d", &move) != 1 || move < 1 || move > player->maxSkillSlots)
