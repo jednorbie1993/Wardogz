@@ -161,8 +161,61 @@ void preBattleScene(int zoneIndex)
     getchar();
 }
 
+
+int getTrainingFatigueBonus(int trainingCount)
+{
+    if (trainingCount >= 30)
+        return 300;
+    else if (trainingCount >= 20)
+        return 200;
+    else if (trainingCount >= 10)
+        return 100;
+
+    return 0;
+}
+
+void updateTrainingMaxFatigue(Dog *d)
+{
+    int fatigueBonus = 0;
+
+    fatigueBonus += getTrainingFatigueBonus(d->powerTrainingCount);
+    fatigueBonus += getTrainingFatigueBonus(d->speedTrainingCount);
+    fatigueBonus += getTrainingFatigueBonus(d->balanceTrainingCount);
+
+    d->maxFatigue = 100 + fatigueBonus;
+
+    if (d->maxFatigue > 1000)
+        d->maxFatigue = 1000;
+
+    if (d->fatigue > d->maxFatigue)
+        d->fatigue = d->maxFatigue;
+}
+
+void showTrainingMasteryMessage(int type, int count)
+{
+    char trainingName[20];
+
+    if (type == 1)
+        strcpy(trainingName, "POWER");
+    else if (type == 2)
+        strcpy(trainingName, "SPEED");
+    else if (type == 3)
+        strcpy(trainingName, "BALANCE");
+    else
+        return;
+
+    if (count == 10)
+        printf("%s TRAINING MASTERY I! Max Fatigue +100!\n", trainingName);
+    else if (count == 20)
+        printf("%s TRAINING MASTERY II! Max Fatigue +200!\n", trainingName);
+    else if (count == 30)
+        printf("%s TRAINING MASTERY III! Max Fatigue +300!\n", trainingName);
+}
+
 void trainDog(Dog *d, int type)
 {
+    int oldHP = d->maxHP;
+
     printf("\nTraining");
 
     for (int i = 0; i < 3; i++)
@@ -316,6 +369,39 @@ void trainDog(Dog *d, int type)
         }
 
     }
+    int oldHundreds = oldHP / 100;
+    int newHundreds = d->maxHP / 100;
+
+    if (newHundreds > oldHundreds)
+    {
+        printf("Your endurance has improved!\n");
+    }
+    // ================= TRAINING COUNT =================
+    if (type == 1)
+    {
+        d->powerTrainingCount++;
+        showTrainingMasteryMessage(type, d->powerTrainingCount);
+    }
+    else if (type == 2)
+    {
+        d->speedTrainingCount++;
+        showTrainingMasteryMessage(type, d->speedTrainingCount);
+    }
+    else if (type == 3)
+    {
+        d->balanceTrainingCount++;
+        showTrainingMasteryMessage(type, d->balanceTrainingCount);
+    }
+
+    // ================= UPDATE MAX FATIGUE =================
+    updateTrainingMaxFatigue(d);
+
+    printf("Training Count: Power %d/30 | Speed %d/30 | Balance %d/30\n",
+           d->powerTrainingCount,
+           d->speedTrainingCount,
+           d->balanceTrainingCount);
+
+    printf("Max Fatigue: %d\n", d->maxFatigue);
 
     // ================= FATIGUE COST =================
     d->fatigue = clampFatigue(d->fatigue - randRange(5, 12), d->maxFatigue);
@@ -347,6 +433,11 @@ void createDog(Dog *d)
     d->isCountering = 0;
     d->counterDamage = 0;
 
+    d->powerTrainingCount = 0;
+    d->speedTrainingCount = 0;
+    d->balanceTrainingCount = 0;
+    d->stageClearBonus = 0;
+
     d->isBleeding = 0;
     d->bleedTurns = 0;
     d->bleedDamage = 0;  //  ADD THIS
@@ -375,8 +466,10 @@ void createDog(Dog *d)
     d->defeatedGrimfang = 0;
     d->defeatedDiremaw = 0;
     d->defeatedBlackclaw = 0;
+    d->defeatedOmega = 0;
+    d->defeatedGrimfangX = 0;
 
-    d->arenaRank = 'S';
+    d->arenaRank = 'X';
     d->arenaWins = 0;
     d->arenaLosses = 0;
     d->arenaDraws = 0;
@@ -435,15 +528,29 @@ void skillMenu(Dog *d)
             system("cls");
             printf("--- ALL SKILLS ---\n");
 
-            for (int i = 0; i < d->skillCount; i++)
-            {
-                printf("%d. %s (Power:%d Cost:%d)\n",
-                       i + 1,
-                       d->skills[i].name,
-                       d->skills[i].power,
-                       d->skills[i].cost);
-            }
+            int half = (d->skillCount + 1) / 2;
 
+            for (int i = 0; i < half; i++)
+            {
+                printf("%2d. %-18s (P:%2d/C:%2d)",
+                        i + 1,
+                        d->skills[i].name,
+                        d->skills[i].power,
+                        d->skills[i].cost);
+
+                if (i + half < d->skillCount)
+                {
+                    int right = i + half;
+
+                    printf("   %2d. %-18s (P:%2d/C:%2d)",
+                        right + 1,
+                        d->skills[right].name,
+                        d->skills[right].power,
+                        d->skills[right].cost);
+                }
+
+                printf("\n");
+            }
             waitForEnter();
         }
 
@@ -510,13 +617,28 @@ void skillMenu(Dog *d)
             system("cls");
             printf("\n--- AVAILABLE SKILLS ---\n");
 
-            for (int i = 0; i < d->skillCount; i++)
+            int half = (d->skillCount + 1) / 2;
+
+            for (int i = 0; i < half; i++)
             {
-                printf("%d. %s (P:%d C:%d)\n",
-                       i + 1,
-                       d->skills[i].name,
-                       d->skills[i].power,
-                       d->skills[i].cost);
+                int right = i + half;
+
+                printf("%2d. %-18s (P:%2d/C:%2d)",
+                    i + 1,
+                    d->skills[i].name,
+                    d->skills[i].power,
+                    d->skills[i].cost);
+
+                if (right < d->skillCount)
+                {
+                    printf("   %2d. %-18s (P:%2d/C:%2d)",
+                        right + 1,
+                        d->skills[right].name,
+                        d->skills[right].power,
+                        d->skills[right].cost);
+                }
+
+                printf("\n");
             }
 
             printf("Choice: ");
@@ -567,7 +689,7 @@ void printDog(Dog d)
     printf("Accuracy: %d\n", d.accuracy);
     printf("Intelligence: %d\n", d.intelligence);
 
-    printf("Fatigue: %d/100\n", d.fatigue); // ✅ DITO LANG
+    printf("Fatigue: %d/%d\n", d.fatigue, d.maxFatigue);
 
     printf("Arena Rank: Class %c\n", d.arenaRank);
     printf("Arena Title: %s\n", getArenaTitle(d.arenaRank));
