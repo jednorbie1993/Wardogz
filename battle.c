@@ -596,7 +596,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
         if (cerberusTimerActive)
         {
             DWORD elapsed = GetTickCount() - cerberusStartTime;
-            int remaining = 120 - (int)(elapsed / 1000);
+            int remaining = 300 - (int)(elapsed / 1000); // 5 minutes
 
             if (remaining < 0)
                 remaining = 0;
@@ -839,7 +839,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
         {
             DWORD elapsed = GetTickCount() - cerberusStartTime;
 
-            if (elapsed >= 120000)
+            if (elapsed >= 300000)
             {
                 system("cls");
                 typeText("[BLACKSITE SELF-DESTRUCT]\n\n", 25);
