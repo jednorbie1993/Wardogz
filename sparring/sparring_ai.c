@@ -8,6 +8,7 @@
 #include "characters/jeward.h"
 #include "characters/snoop.h"
 #include "characters/tiny.h"
+#include "../skill.h"
 
 int chooseEnemyMove(Dog *enemy, Dog *player, int type)
 {
@@ -219,10 +220,16 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
             printf("CRITICAL HIT!\n");
         }
 
-        enemy->hp -= dmg;
+        int finalDamage = dmg;
+
+        applySpecialEffects(user, enemy, skill, &finalDamage);
+
+        enemy->hp -= finalDamage;
 
         if (enemy->hp < 0)
             enemy->hp = 0;
+
+        printf("%s used %s! Dealt %d damage!\n", user->name, skill.name, finalDamage);
             
         /*if (rand() % 100 < 10)
         {
