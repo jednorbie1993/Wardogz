@@ -407,7 +407,7 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
         /*
             Final boss only: progress is 0/1 in stage5.c.
             This is the humanoid mutant dog that should be defeated
-            before the 10-12 turn regeneration and 2-minute meltdown timer.
+            before the 22-24 turn regeneration and 2-minute meltdown timer.
             Regen/timer logic should be handled inside battle.c because
             enemy_stage5.c only loads enemy data and skills.
         */
@@ -422,7 +422,7 @@ void loadStage5Enemies(Dog *enemy, int zoneIndex, int i)
         enemy->speed = 740;
         enemy->maxHP = 999;
 
-        enemy->regenerationTurn = 10 + (rand() % 3);
+        enemy->regenerationTurn = 22 + (rand() % 3); // 22-24 turns
         enemy->regenerationUsed = 0;
 
         setFinalContainmentSkills(enemy);

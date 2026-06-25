@@ -187,8 +187,8 @@ void runStage5(Dog *player, int progress[])
             typeText("Its body is built like a weapon... but it breathes like something alive.\n\n", 25);
 
             typeText("SYSTEM: Regeneration cycle unstable.\n", 25);
-            typeText("SYSTEM: Subject will fully heal after 10 to 12 turns.\n", 25);
-            typeText("SYSTEM: Blacksite self-destruct timer active: 2 minutes.\n", 25);
+            typeText("SYSTEM: Subject will fully heal after 22 to 24 turns.\n", 25);
+            typeText("SYSTEM: Blacksite self-destruct timer active: 5 minutes.\n", 25);
             waitForEnter();
         }
         // REPLAY INTRO ONLY
