@@ -237,7 +237,7 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
             printf("CRITICAL HIT! +%d\n", 5);
         }*/
 
-        printf("%s used %s! Dealt %d damage!\n", user->name, skill.name, dmg);
+        //printf("%s used %s! Dealt %d damage!\n", user->name, skill.name, dmg);
 
         // APPLY COOLDOWN
         for (int i = 0; i < user->skillCount; i++)
