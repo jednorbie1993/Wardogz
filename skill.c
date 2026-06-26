@@ -3,34 +3,82 @@
 #include <stdlib.h>
 #include "dog.h"
 #include <windows.h>
+#include "stat.h"
 #include "skill.h"
 #include "cinematic.h"
 
-int computeBaseDamage(Dog *player, Dog *enemy, Skill s)
+// ================= DAMAGE TIERS =================
+// Hindi na kailangan magdagdag sa dog.h.
+// Dito lang muna naka-classify ang attack skills.
+#define TIER_NORMAL   1
+#define TIER_STRONG   2
+#define TIER_ULTIMATE 3
+
+int getSkillTier(Skill s)
 {
-    int penalty = getFatiguePenalty(player->fatigue);
+    // Ultimate skills
+    if (strcmp(s.name, "Ragnarok Fang") == 0)
+        return TIER_ULTIMATE;
 
-    float atkRatio = (float)(player->attack - penalty) / 999.0f;
-    if (atkRatio < 0.1f)
-        atkRatio = 0.1f;
-
-    int dmg = (int)(atkRatio * 120) + 30 + s.power;
-
-    float defRatio = (float)enemy->defense / 999.0f;
-    dmg -= (int)(defRatio * 35);
-
-    if (isCritical(player->hp, player->maxHP))
+    // Strong / late-game / secret attack skills
+    if (strcmp(s.name, "Shadow Bite") == 0 ||
+        strcmp(s.name, "Dire Bite") == 0 ||
+        strcmp(s.name, "Ambush Strike") == 0 ||
+        strcmp(s.name, "Omega Bite") == 0 ||
+        strcmp(s.name, "X Fang") == 0 ||
+        strcmp(s.name, "Blood Frenzy") == 0 ||
+        strcmp(s.name, "Phantom Rush") == 0 ||
+        strcmp(s.name, "Shadow Blitz") == 0 ||
+        strcmp(s.name, "Zero Phantom") == 0 ||
+        strcmp(s.name, "Fatal Aim") == 0 ||
+        strcmp(s.name, "Judgement Eye") == 0 ||
+        strcmp(s.name, "Snoop Phantom") == 0 ||
+        strcmp(s.name, "Tiny Blitz") == 0 ||
+        strcmp(s.name, "Chubby Bulldozer") == 0 ||
+        strcmp(s.name, "Jeward Precision") == 0)
     {
-        dmg += 10;
-        printf("CRITICAL HIT!\n");
+        return TIER_STRONG;
     }
 
-    dmg += (rand() % 11) - 5;
+    // Default attack skills
+    return TIER_NORMAL;
+}
+
+int computeBaseDamage(Dog *player, Dog *enemy, Skill s)
+{
+    int tier = getSkillTier(s);
+    int dmg;
+
+    if (tier == TIER_ULTIMATE)
+    {
+        dmg = randRange(180, 250);
+    }
+    else if (tier == TIER_STRONG)
+    {
+        dmg = randRange(120, 180);
+    }
+    else
+    {
+        dmg = randRange(80, 140);
+    }
+
+    // Small stat influence only, para hindi sobrang laki kapag 999 stats.
+    int penalty = getFatiguePenalty(player->fatigue);
+    int atk = player->attack - penalty;
+    if (atk < 1)
+        atk = 1;
+
+    int statBonus = (atk - enemy->defense) / 40;
+
+    if (statBonus > 20)
+        statBonus = 20;
+    if (statBonus < -20)
+        statBonus = -20;
+
+    dmg += statBonus;
 
     if (dmg < 1)
         dmg = 1;
-    if (dmg > 240)
-        dmg = 240;
 
     return dmg;
 }
@@ -559,26 +607,21 @@ void applySpecialEffects(Dog *player, Dog *enemy, Skill s, int *damage)
         int hits = 1 + rand() % 3;
         printf("%d HIT DESTRUCTION!\n", hits);
 
-        // Base damage: Ultimate 180-250
-        *damage = 180 + rand() % 71;
-
-        // Critical chance 25%, bonus +50 to +100
-        if (rand() % 100 < 25)
-        {
-            int critBonus = 50 + rand() % 51;
-            *damage += critBonus;
-            printf("RAGNAROK CRITICAL! +%d damage!\n", critBonus);
-        }
+        // Damage range is already handled by computeBaseDamage(): 180-250.
+        // Critical stays in battle.c para hindi doble critical.
 
         // DEF down chance 60%
-        int defReduce = 19 + rand() % 12; // 19-30
+        if (rand() % 100 < 60)
+        {
+            int defReduce = 19 + rand() % 12; // 19-30
 
-        enemy->defense -= defReduce;
+            enemy->defense -= defReduce;
 
-        if (enemy->defense < 0)
-            enemy->defense = 0;
+            if (enemy->defense < 0)
+                enemy->defense = 0;
 
-        printf("Enemy DEF -%d!\n", defReduce);
+            printf("Enemy DEF -%d!\n", defReduce);
+        }
 
         // Bleed chance 30%
         if (rand() % 100 < 30)
@@ -590,7 +633,7 @@ void applySpecialEffects(Dog *player, Dog *enemy, Skill s, int *damage)
         }
     }
 
-    // ================= 🔥 SPARRING TECHNIQUES =================
+    // ================= SPARRING TECHNIQUES =================
     else if (strcmp(s.name, "Ossas Counter") == 0)
     {
         printf("OSSAS COUNTER STANCE!\n");
