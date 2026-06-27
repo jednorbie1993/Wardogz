@@ -8,7 +8,7 @@
 #include "../stat.h"
 
 void initSparringProgress(Dog *d) {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         d->sparringProgress[i] = 0;
     }
 }
@@ -17,7 +17,7 @@ void updateSparringProgress(Dog *d, int enemyIndex, int win) {
     system("cls");
 
     // HARDCODE THE NAMES ARRAY HERE
-    const char* sparringEnemies[5] = {"Ossas", "Chubby", "Jewar", "Tiny", "Snoopy"};
+    const char* sparringEnemies[6] = {"Ossas", "Chubby", "Jewar", "Tiny", "Snoopy", "Rival"};
 
     printf("=== SPARRING RESULTS ===\n");
 
@@ -36,7 +36,7 @@ void updateSparringProgress(Dog *d, int enemyIndex, int win) {
 
     // Show all progress
     printf("\n--- ALL PROGRESS ---\n");
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 6; i++) {
         printf("%s: %d/10", sparringEnemies[i], d->sparringProgress[i]);
         if (d->sparringProgress[i] == 10) printf(" [DONE]");
         printf("\n");
@@ -96,12 +96,14 @@ void applySparReward(Dog *player, int type)
         acc = randGain(1, 2);
         atk = randGain(1, 2);
     }
-    else // fallback / rival
+    else if (type == 6) // Rival Match
     {
-        hp = randGain(2, 5);
-        atk = randGain(2, 5);
-        def = randGain(2, 5);
-        spd = randGain(2, 5);
+        hp    = randGain(2, 5);
+        atk   = randGain(2, 5);
+        def   = randGain(2, 5);
+        spd   = randGain(2, 5);
+        acc   = randGain(2, 5);
+        intel = randGain(2, 5);
     }
 
     player->maxHP += hp;
@@ -155,9 +157,9 @@ void sparringMenu(Dog *player)
         printf(" (Speed Training)\n");
 
         if (player->dogType == 1)
-            printf("6. Kane      (Rival Match)\n");
+            printf("6. Kane      (%d/10) (Rival Match)\n", player->sparringProgress[5]);
         else
-            printf("6. Jamber    (Rival Match)\n");
+            printf("6. Jamber    (%d/10) (Rival Match)\n", player->sparringProgress[5]);
 
         printf("7. Return\n");
         printf("Choice: ");
@@ -175,13 +177,13 @@ void sparringMenu(Dog *player)
 
         t = atoi(input);
 
-        if (t == 6)
+        if (t == 7)
         {
             system("cls");
             break;
         }
 
-        if (t < 1 || t > 5)
+        if (t < 1 || t > 6)
         {
             printf("Invalid choice!\n");
             waitForEnter();
@@ -189,10 +191,21 @@ void sparringMenu(Dog *player)
         }
 
         // SIMPLE: HARDCODED NAMES ARRAY
-        const char* names[5] = {"Ossas", "Chubby", "Jewar", "Tiny", "Snoopy"};
+        const char* names[6] = {"Ossas", "Chubby", "Jewar", "Tiny", "Snoopy", "Rival"};
         int enemyIndex = t - 1;
 
-        printf("\nSparring %s! Let's go!\n", names[enemyIndex]);
+        if (t == 6)
+        {
+            if (player->dogType == 1)
+                printf("\nRival Match: Kane! Let's go!\n");
+            else
+                printf("\nRival Match: Jamber! Let's go!\n");
+        }
+        else
+        {
+            printf("\nSparring %s! Let's go!\n", names[enemyIndex]);
+        }
+
         waitForEnter();
 
         // BATTLE
