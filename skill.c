@@ -17,9 +17,12 @@
 int getSkillTier(Skill s)
 {
     // Ultimate skills
-    if (strcmp(s.name, "Ragnarok Fang") == 0)
+    if (strcmp(s.name, "Ragnarok Fang") == 0 ||
+        strcmp(s.name, "Judgement Eye") == 0 ||
+        strcmp(s.name, "Zero Phantom") == 0) 
+    {    
         return TIER_ULTIMATE;
-
+    }
     // Strong / late-game / secret attack skills
     if (strcmp(s.name, "Shadow Bite") == 0 ||
         strcmp(s.name, "Dire Bite") == 0 ||
@@ -29,9 +32,7 @@ int getSkillTier(Skill s)
         strcmp(s.name, "Blood Frenzy") == 0 ||
         strcmp(s.name, "Phantom Rush") == 0 ||
         strcmp(s.name, "Shadow Blitz") == 0 ||
-        strcmp(s.name, "Zero Phantom") == 0 ||
         strcmp(s.name, "Fatal Aim") == 0 ||
-        strcmp(s.name, "Judgement Eye") == 0 ||
         strcmp(s.name, "Snoop Phantom") == 0 ||
         strcmp(s.name, "Tiny Blitz") == 0 ||
         strcmp(s.name, "Chubby Bulldozer") == 0 ||
@@ -883,14 +884,14 @@ void applySpecialEffects(Dog *player, Dog *enemy, Skill s, int *damage)
     }
     // ================= SECRET SET BONUS =================
     if (
-        hasSecretComboSet(player) &&
         (
             strcmp(s.name, "Shadow Bite") == 0 ||
             strcmp(s.name, "Dire Bite") == 0 ||
             strcmp(s.name, "Ambush Strike") == 0 ||
             strcmp(s.name, "Omega Bite") == 0 ||
             strcmp(s.name, "X Fang") == 0
-        )
+        ) &&
+        hasSecretComboSet(player)
     )
     {
         printf("\n[SECRET PACK COMBO ACTIVATED]\n");
