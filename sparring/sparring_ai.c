@@ -173,6 +173,17 @@ int chooseEnemyMove(Dog *enemy, Dog *player, int type)
 
 int useSkill(Dog *user, Dog *enemy, Skill skill)
 {
+    if (user->isStunned && user->stunTurns > 0)
+    {
+        printf("%s is STUNNED and cannot move!\n", user->name);
+
+        user->stunTurns--;
+
+        if (user->stunTurns <= 0)
+            user->isStunned = 0;
+
+        return 0;
+    }
     // ================= HIT CHANCE CALC =================
     int hitChance = 75 + ((user->accuracy - enemy->speed) / 25);
 
@@ -222,7 +233,11 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
 
         int finalDamage = dmg;
 
-        applySpecialEffects(user, enemy, skill, &finalDamage);
+        // IMPORTANT:
+        // Do NOT call the main battle applySpecialEffects() here.
+        // Sparring uses temporary skills like Hip Check, Bite, Scratch, Charge.
+        // Calling the global skill system can trigger main-battle unlock messages
+        // or side effects during Rival sparring.
 
         enemy->hp -= finalDamage;
 
