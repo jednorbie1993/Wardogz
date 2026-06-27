@@ -16,17 +16,28 @@ void initSparringProgress(Dog *d) {
 void updateSparringProgress(Dog *d, int enemyIndex, int win) {
     system("cls");
 
-    // HARDCODE THE NAMES ARRAY HERE
     const char* sparringEnemies[6] = {"Ossas", "Chubby", "Jewar", "Tiny", "Snoopy", "Rival"};
+
+    if (enemyIndex < 0 || enemyIndex >= 6)
+    {
+        printf("Invalid sparring enemy index!\n");
+        waitForEnter();
+        return;
+    }
 
     printf("=== SPARRING RESULTS ===\n");
 
     if (win) {
-        d->sparringProgress[enemyIndex]++;
+        int oldProgress = d->sparringProgress[enemyIndex];
+
+        if (d->sparringProgress[enemyIndex] < 10)
+            d->sparringProgress[enemyIndex]++;
+
         printf("WIN! %s progress: %d/10", sparringEnemies[enemyIndex], d->sparringProgress[enemyIndex]);
 
-        if (d->sparringProgress[enemyIndex] == 10) {
-            printf("  TECHNIQUE UNLOCKED!\n");
+        if (oldProgress < 10 && d->sparringProgress[enemyIndex] == 10) {
+            //printf("  TECHNIQUE UNLOCKED!\n");
+            checkSparringUnlock(d);
         } else {
             printf("\n");
         }
@@ -34,15 +45,6 @@ void updateSparringProgress(Dog *d, int enemyIndex, int win) {
         printf("LOSS! %s progress: %d/10 (no gain)\n", sparringEnemies[enemyIndex], d->sparringProgress[enemyIndex]);
     }
 
-    // Show all progress
-    printf("\n--- ALL PROGRESS ---\n");
-    for (int i = 0; i < 6; i++) {
-        printf("%s: %d/10", sparringEnemies[i], d->sparringProgress[i]);
-        if (d->sparringProgress[i] == 10) printf(" [DONE]");
-        printf("\n");
-    }
-
-    checkSparringUnlock(d);
     waitForEnter();
 }
 
@@ -136,26 +138,21 @@ void sparringMenu(Dog *player)
 
         printf("==== SPARRING TRAINING ====\n");
         // SHOW PROGRESS
-        printf("1. Ossas     (%d/10)", player->sparringProgress[0]);
-        if (player->sparringProgress[0] == 10) printf(" [DONE]");
-        printf(" (Attack Training)\n");
+        printf("1. Ossas     (%d/10) (Attack Training)", player->sparringProgress[0]);
+        printf("\n");
 
-        printf("2. Chubby    (%d/10)", player->sparringProgress[1]);
-        if (player->sparringProgress[1] == 10) printf(" [DONE]");
-        printf(" (Defense Training)\n");
+        printf("2. Chubby    (%d/10) (Defense Training)", player->sparringProgress[1]);
+        printf("\n");
 
-        printf("3. Jewar     (%d/10)", player->sparringProgress[2]);
-        if (player->sparringProgress[2] == 10) printf(" [DONE]");
-        printf(" (Accuracy Training)\n");
+        printf("3. Jewar     (%d/10) (Accuracy Training)", player->sparringProgress[2]);
+        printf("\n");
 
-        printf("4. Tiny      (%d/10)", player->sparringProgress[3]);
-        if (player->sparringProgress[3] == 10) printf(" [DONE]");
-        printf(" (Intelligence Training)\n");
+        printf("4. Tiny      (%d/10) (Intelligence Training)", player->sparringProgress[3]);
+        printf("\n");
 
-        printf("5. Snoopy    (%d/10)", player->sparringProgress[4]);
-        if (player->sparringProgress[4] == 10) printf(" [DONE]");
-        printf(" (Speed Training)\n");
-
+        printf("5. Snoopy    (%d/10) (Speed Training)", player->sparringProgress[4]);
+        printf("\n");
+        player->sparringProgress[5] = 9;
         if (player->dogType == 1)
             printf("6. Kane      (%d/10) (Rival Match)\n", player->sparringProgress[5]);
         else
