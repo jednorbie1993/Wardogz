@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "sparring_unlocks.h"
+#include "../stat.h"
 
 void initSparringProgress(Dog *d) {
     for (int i = 0; i < 5; i++) {
@@ -54,60 +55,71 @@ void updateCooldowns(Dog *d)
     }
 }
 
+int randGain(int min, int max)
+{
+    return min + rand() % (max - min + 1);
+}
+
 void applySparReward(Dog *player, int type)
 {
-    int used[6] = {0};
+    int hp = 0, atk = 0, def = 0, spd = 0, acc = 0, intel = 0;
 
-    printf("YOU WIN!\n\n");
+    printf("\n=== STATS INCREASED ===\n");
 
-    for (int i = 0; i < 4; i++)
+    if (type == 1) // Ossas
     {
-        int stat;
-
-        do
-        {
-            stat = rand() % 6; // 0=HP 1=ATK 2=DEF 3=SPD 4=ACC 5=INT
-        }
-        while (used[stat]);
-
-        used[stat] = 1;
-
-        int gain = rand() % 5 + 1; // +1 ~ +5
-
-        switch (stat)
-        {
-            case 0:
-                player->maxHP += gain;
-                player->hp += gain;
-                printf("HP  +%d\n", gain);
-                break;
-
-            case 1:
-                player->attack += gain;
-                printf("ATK +%d\n", gain);
-                break;
-
-            case 2:
-                player->defense += gain;
-                printf("DEF +%d\n", gain);
-                break;
-
-            case 3:
-                player->speed += gain;
-                printf("SPD +%d\n", gain);
-                break;
-
-            case 4:
-                player->accuracy += gain;
-                printf("ACC +%d\n", gain);
-                break;
-
-            case 5:
-                player->intelligence += gain;
-                printf("INT +%d\n", gain);
-                break;
-        }
+        atk = randGain(3, 6);
+        hp  = randGain(1, 3);
+        def = randGain(1, 2);
     }
+    else if (type == 2) // Chubby
+    {
+        def = randGain(3, 6);
+        hp  = randGain(2, 4);
+        atk = randGain(1, 2);
+    }
+    else if (type == 3) // Jewar
+    {
+        acc = randGain(3, 6);
+        spd = randGain(1, 2);
+        intel = randGain(1, 2);
+    }
+    else if (type == 4) // Tiny
+    {
+        intel = randGain(3, 6);
+        acc = randGain(1, 2);
+        hp = randGain(1, 3);
+    }
+    else if (type == 5) // Snoopy
+    {
+        spd = randGain(3, 6);
+        acc = randGain(1, 2);
+        atk = randGain(1, 2);
+    }
+    else // fallback / rival
+    {
+        hp = randGain(2, 5);
+        atk = randGain(2, 5);
+        def = randGain(2, 5);
+        spd = randGain(2, 5);
+    }
+
+    player->maxHP += hp;
+    player->hp += hp;
+    player->attack += atk;
+    player->defense += def;
+    player->speed += spd;
+    player->accuracy += acc;
+    player->intelligence += intel;
+
+    if (hp > 0) printf("HP  +%-2d   ", hp);
+    if (atk > 0) printf("ATK +%-2d   ", atk);
+    if (def > 0) printf("DEF +%-2d   ", def);
+    if (spd > 0) printf("SPD +%-2d   ", spd);
+    if (acc > 0) printf("ACC +%-2d   ", acc);
+    if (intel > 0) printf("INT +%-2d   ", intel);
+
+    printf("\n");
 
     waitForEnter();
 }
@@ -142,7 +154,12 @@ void sparringMenu(Dog *player)
         if (player->sparringProgress[4] == 10) printf(" [DONE]");
         printf(" (Speed Training)\n");
 
-        printf("6. Return\n");
+        if (player->dogType == 1)
+            printf("6. Kane      (Rival Match)\n");
+        else
+            printf("6. Jamber    (Rival Match)\n");
+
+        printf("7. Return\n");
         printf("Choice: ");
 
         char input[10];
