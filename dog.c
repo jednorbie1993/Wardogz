@@ -473,6 +473,9 @@ void createDog(Dog *d)
     d->arenaWins = 0;
     d->arenaLosses = 0;
     d->arenaDraws = 0;
+    d->hipCheckUses = 0;
+    d->isStunned = 0;
+    d->stunTurns = 0;
     d->arenaProgress = 0;
     d->arenaRequiredWins = 1;
     d->maxRest = 3;
