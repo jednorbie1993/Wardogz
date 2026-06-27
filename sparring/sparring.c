@@ -23,14 +23,14 @@ void createSparPlayer(Dog *orig, Dog *spar)
     // copy basic info (name, etc.)
     strcpy(spar->name, orig->name);
 
-    spar->maxHP = 100;
-    spar->hp = 100;
+    spar->maxHP = orig->maxHP;
+    spar->hp = spar->maxHP;
 
-    spar->attack = 900;
-    spar->defense = 100;
-    spar->speed = 100;
-    spar->accuracy = 100;
-    spar->intelligence = 100;
+    spar->attack = orig->attack;
+    spar->defense = orig->defense;
+    spar->speed = orig->speed;
+    spar->accuracy = orig->accuracy;
+    spar->intelligence = orig->intelligence;
 
     spar->isStunned = 0;
     spar->stunTurns = 0;
@@ -92,14 +92,16 @@ void showSparringIntro(Dog *enemy, int type)
         printf("%s appears! Smart strategist!\n", enemy->name);
     else if (type == 5)
         printf("%s appears! Speed demon!\n", enemy->name);
+    else if (type == 6)
+        printf("%s appears! Your lifelong rival!\n", enemy->name);
 
     pauseAndClear();
 }
 
 int sparringBattle(Dog *player, int type)
 {
-    Dog enemy;
-    Dog sparPlayer;
+    Dog enemy = {0};
+    Dog sparPlayer = {0};
 
     createSparPlayer(player, &sparPlayer); // FAIR STATS
     if (type == 1)
@@ -132,6 +134,43 @@ int sparringBattle(Dog *player, int type)
         assignSnoopySkills(&enemy);
 
     }
+    else if (type == 6)
+    {
+        createSparPlayer(player, &enemy);
+
+        if (player->dogType == 1)
+        {
+            strcpy(enemy.name, "Kane");
+            enemy.speed += 25;
+            enemy.accuracy += 20;
+
+            printf("Kane: Let's see how much faster you've become.\n");
+        }
+        else
+        {
+            strcpy(enemy.name, "Jamber");
+            enemy.attack += 25;
+            enemy.maxHP += 30;
+            enemy.hp = enemy.maxHP;
+
+            printf("Jamber: Show me your strength. Don't hold back!\n");
+        }
+    }
+
+    int bonus = 0;
+
+    // Normal sparring partners only use progress scaling.
+    // Rival Match has progress, but no +30 scaling bonus.
+    if (type >= 1 && type <= 5)
+        bonus = player->sparringProgress[type - 1] * 30;
+
+    enemy.hp = enemy.maxHP;
+    enemy.maxHP += bonus;
+    enemy.attack += bonus;
+    enemy.defense += bonus;
+    enemy.speed += bonus;
+    enemy.accuracy += bonus;
+    enemy.intelligence += bonus;
 
     sparPlayer.hp = sparPlayer.maxHP;
     enemy.hp = enemy.maxHP;
@@ -215,7 +254,19 @@ int sparringBattle(Dog *player, int type)
 
             // ================= PLAYER TURN =================
             printf("\n--- PLAYER TURN ---\n");
+
             useSkill(&sparPlayer, &enemy, tempSkill);
+
+            int fatigueCost = 3 + rand() % 6;   // random 3–8
+
+            player->fatigue = clampFatigue(
+                player->fatigue - fatigueCost,
+                player->maxFatigue
+            );
+
+            sparPlayer.fatigue = player->fatigue;
+
+            //printf("Fatigue -%d\n", fatigueCost);
 
             printf("\nPress Enter to continue...");
             getchar();
@@ -259,8 +310,12 @@ int sparringBattle(Dog *player, int type)
         printf("YOU WIN SPARRING!\n");
 
         // SPARRING PROGRESS SYSTEM
-        int enemyIndex = type - 1; // 1 = Ossas, 2 = Chubby, etc.
-        updateSparringProgress(player, enemyIndex, 1); // WIN = +1 progress
+        // Type 1-5 = normal partners, Type 6 = Rival Match.
+        if (type >= 1 && type <= 6)
+        {
+            int enemyIndex = type - 1;
+            updateSparringProgress(player, enemyIndex, 1); // WIN = +1 progress
+        }
 
         applySparReward(player, type);
         return 1; // WIN
@@ -268,8 +323,17 @@ int sparringBattle(Dog *player, int type)
     else
     {
         printf("YOU LOST SPARRING...\n");
-        int enemyIndex = type - 1;
-        updateSparringProgress(player, enemyIndex, 0); // LOSE
+
+        if (type >= 1 && type <= 6)
+        {
+            int enemyIndex = type - 1;
+            updateSparringProgress(player, enemyIndex, 0); // LOSE
+        }
+        else
+        {
+            waitForEnter();
+        }
+
         return 0;
     }
 }
