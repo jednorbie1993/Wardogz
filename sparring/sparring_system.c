@@ -56,18 +56,59 @@ void updateCooldowns(Dog *d)
 
 void applySparReward(Dog *player, int type)
 {
-    if (type == 1)
-        player->attack += 1;
-    if (type == 2)
-        player->defense += 1;
-    if (type == 3)
-        player->accuracy += 1;
-    if (type == 4)
-        player->intelligence += 1;
-    if (type == 5)
-        player->speed += 1;
+    int used[6] = {0};
 
-    printf("Spar reward applied!\n");
+    printf("YOU WIN!\n\n");
+
+    for (int i = 0; i < 4; i++)
+    {
+        int stat;
+
+        do
+        {
+            stat = rand() % 6; // 0=HP 1=ATK 2=DEF 3=SPD 4=ACC 5=INT
+        }
+        while (used[stat]);
+
+        used[stat] = 1;
+
+        int gain = rand() % 5 + 1; // +1 ~ +5
+
+        switch (stat)
+        {
+            case 0:
+                player->maxHP += gain;
+                player->hp += gain;
+                printf("HP  +%d\n", gain);
+                break;
+
+            case 1:
+                player->attack += gain;
+                printf("ATK +%d\n", gain);
+                break;
+
+            case 2:
+                player->defense += gain;
+                printf("DEF +%d\n", gain);
+                break;
+
+            case 3:
+                player->speed += gain;
+                printf("SPD +%d\n", gain);
+                break;
+
+            case 4:
+                player->accuracy += gain;
+                printf("ACC +%d\n", gain);
+                break;
+
+            case 5:
+                player->intelligence += gain;
+                printf("INT +%d\n", gain);
+                break;
+        }
+    }
+
     waitForEnter();
 }
 
