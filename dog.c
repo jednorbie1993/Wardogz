@@ -18,6 +18,27 @@ int systemLog = 0;
 int animationOn = 1; //  NEW (default ON)
 
 
+// Intelligence critical bonus support.
+// battle.c sets this before attacks using setCriticalUserIntelligence().
+// Keeps the old isCritical(currentHP, maxHP) signature safe for existing code.
+static int currentCritIntBonus = 0;
+
+void setCriticalUserIntelligence(Dog *user)
+{
+    if (user == NULL)
+    {
+        currentCritIntBonus = 0;
+        return;
+    }
+
+    // +1% Critical Chance every 100 INT
+    currentCritIntBonus = user->intelligence / 100;
+
+    // Safety cap so INT cannot make crit chance too overpowered.
+    if (currentCritIntBonus > 15)
+        currentCritIntBonus = 15;
+}
+
 int isCritical(int currentHP, int maxHP)
 {
     int critChance;
@@ -32,6 +53,13 @@ int isCritical(int currentHP, int maxHP)
         // NORMAL
         critChance = (rand() % 8) + 8; // 8–15%
     }
+
+    // INT bonus is added directly to the same crit chance.
+    critChance += currentCritIntBonus;
+
+    // Final crit chance cap.
+    if (critChance > 40)
+        critChance = 40;
 
     int roll = rand() % 100;
 
@@ -212,6 +240,41 @@ void showTrainingMasteryMessage(int type, int count)
         printf("%s TRAINING MASTERY III! Max Fatigue +300!\n", trainingName);
 }
 
+void applyPartnerStatBonus(Dog *d,
+                           int *hpGain,
+                           int *atkGain,
+                           int *defGain,
+                           int *spdGain,
+                           int *accGain,
+                           int *intGain)
+{
+    // dogType: 1 = Jamber, 2 = Kane
+    // No extra printf here. Bonus is added directly to the same gain values.
+
+    if (d->dogType == 1) // Jamber: HP / ATK / DEF
+    {
+        if (hpGain != NULL)
+            *hpGain += randRange(1, 10);
+
+        if (atkGain != NULL)
+            *atkGain += randRange(1, 10);
+
+        if (defGain != NULL)
+            *defGain += randRange(1, 10);
+    }
+    else if (d->dogType == 2) // Kane: SPD / ACC / INT
+    {
+        if (spdGain != NULL)
+            *spdGain += randRange(1, 10);
+
+        if (accGain != NULL)
+            *accGain += randRange(1, 10);
+
+        if (intGain != NULL)
+            *intGain += randRange(1, 10);
+    }
+}
+
 void trainDog(Dog *d, int type)
 {
     int oldHP = d->maxHP;
@@ -272,6 +335,8 @@ void trainDog(Dog *d, int type)
             int g2 = randRange(11, 20);
             int g3 = randRange(11, 20);
 
+            applyPartnerStatBonus(d, &g1, &g2, &g3, NULL, NULL, NULL);
+
             d->maxHP = clamp(d->maxHP + g1);
             d->attack = clamp(d->attack + g2);
             d->defense = clamp(d->defense + g3);
@@ -283,6 +348,8 @@ void trainDog(Dog *d, int type)
             int g1 = randRange(11, 20);
             int g2 = randRange(11, 20);
             int g3 = randRange(11, 20);
+
+            applyPartnerStatBonus(d, NULL, NULL, NULL, &g1, &g2, &g3);
 
             d->speed = clamp(d->speed + g1);
             d->accuracy = clamp(d->accuracy + g2);
@@ -297,6 +364,8 @@ void trainDog(Dog *d, int type)
             int g3 = randRange(11, 20);
             int g4 = randRange(11, 20);
             int g5 = randRange(11, 20);
+
+            applyPartnerStatBonus(d, &g1, &g2, &g3, &g4, NULL, &g5);
 
             d->maxHP = clamp(d->maxHP + g1);
             d->attack = clamp(d->attack + g2);
@@ -332,6 +401,8 @@ void trainDog(Dog *d, int type)
             int g2 = randRange(minGain, maxGain);
             int g3 = randRange(minGain, maxGain);
 
+            applyPartnerStatBonus(d, &g1, &g2, &g3, NULL, NULL, NULL);
+
             d->maxHP = clamp(d->maxHP + g1);
             d->attack = clamp(d->attack + g2);
             d->defense = clamp(d->defense + g3);
@@ -343,6 +414,8 @@ void trainDog(Dog *d, int type)
             int g1 = randRange(minGain, maxGain);
             int g2 = randRange(minGain, maxGain);
             int g3 = randRange(minGain, maxGain);
+
+            applyPartnerStatBonus(d, NULL, NULL, NULL, &g1, &g2, &g3);
 
             d->speed = clamp(d->speed + g1);
             d->accuracy = clamp(d->accuracy + g2);
@@ -357,6 +430,8 @@ void trainDog(Dog *d, int type)
             int g3 = randRange(minGain, maxGain);
             int g4 = randRange(minGain, maxGain);
             int g5 = randRange(minGain, maxGain);
+
+            applyPartnerStatBonus(d, &g1, &g2, &g3, &g4, NULL, &g5);
 
             d->maxHP = clamp(d->maxHP + g1);
             d->attack = clamp(d->attack + g2);
@@ -411,10 +486,10 @@ void trainDog(Dog *d, int type)
 
 void createDog(Dog *d)
 {
-    printf("Enter your dog's name: ");
+    /*printf("Enter your dog's name: ");
 
     fgets(d->name, 50, stdin);
-    d->name[strcspn(d->name, "\n")] = 0;
+    d->name[strcspn(d->name, "\n")] = 0;*/
 
     d->hp = 900;
     d->maxHP = 900;
@@ -452,6 +527,20 @@ void createDog(Dog *d)
     d->skills[1].power = 3;
     d->skills[1].cost = 3;
     d->skills[1].type = SKILL_ATTACK;
+
+    /*strcpy(d->skills[0].name, "Hip Check");
+    d->skills[0].power = 9;
+    d->skills[0].cost = 8;
+    d->skills[0].type = SKILL_DAMAGE;
+    d->skills[0].cooldown = 1;
+    d->skills[0].cdLeft = 0;
+
+    strcpy(d->skills[1].name, "Rival Breaker");
+    d->skills[1].power = 18;
+    d->skills[1].cost = 10;
+    d->skills[1].type = SKILL_DAMAGE;
+    d->skills[1].cooldown = 0;
+    d->skills[1].cdLeft = 0;*/
 
     d->maxSkillSlots = 4;
 
@@ -682,35 +771,37 @@ void skillMenu(Dog *d)
 
 void printDog(Dog d)
 {
-    printf("--- Dog Info ---\n");
-    printf("Name: %s\n", d.name);
-    printf("HP: %d\n", d.hp);
-    printf("Attack: %d\n", d.attack);
-    printf("Speed: %d\n", d.speed);
+    printf("===== WARDOGZ INFO =====\n\n");
 
-    printf("Defense: %d\n", d.defense);
-    printf("Accuracy: %d\n", d.accuracy);
-    printf("Intelligence: %d\n", d.intelligence);
+    printf("Trainer      : %s\n", d.trainerName);
+    printf("Partner      : %s\n", d.name);
 
-    printf("Fatigue: %d/%d\n", d.fatigue, d.maxFatigue);
+    //printf("\n");
 
-    printf("Arena Rank: Class %c\n", d.arenaRank);
-    printf("Arena Title: %s\n", getArenaTitle(d.arenaRank));
+    printf("HP           : %d/%d\n", d.hp, d.maxHP);
+    printf("Attack       : %d\n", d.attack);
+    printf("Defense      : %d\n", d.defense);
+    printf("Speed        : %d\n", d.speed);
+    printf("Accuracy     : %d\n", d.accuracy);
+    printf("Intelligence : %d\n", d.intelligence);
 
-    printf("Arena Record: %dW - %dL - %dD\n",
-        d.arenaWins,
-        d.arenaLosses,
-        d.arenaDraws);
+    //printf("\n");
+
+    printf("Fatigue      : %d/%d\n", d.fatigue, d.maxFatigue);
+
+    //printf("\n");
+
+    printf("Arena Rank   : Class %c\n", d.arenaRank);
+    printf("Arena Title  : %s\n", getArenaTitle(d.arenaRank));
+
+    printf("Arena Record : %dW - %dL - %dD\n",
+           d.arenaWins,
+           d.arenaLosses,
+           d.arenaDraws);
 
     if (d.arenaRank == 'Z' && d.arenaProgress >= d.arenaRequiredWins)
     {
-        printf("Arena Status: WORLD LEGEND\n");
-    }
-    else
-    {
-        printf("Arena Progress: %d/%d\n",
-            d.arenaProgress,
-            d.arenaRequiredWins);
+        printf("Arena Status : WORLD LEGEND\n");
     }
 }
 
