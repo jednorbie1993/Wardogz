@@ -797,43 +797,42 @@ void skillMenu(Dog *d)
 
 void printDog(Dog d)
 {
-    char line[128];
-
     printBorder();
     printBlankLine();
     printCentered("WARDOGZ INFO");
     printBlankLine();
 
-    printf("%45s%-13s : %s\n", "", "Trainer", d.trainerName);
-    printf("%45s%-13s : %s\n", "", "Partner", d.name);
+    printf("%50s%-13s : %s\n", "", "Trainer", d.trainerName);
+    printf("%50s%-13s : %s\n", "", "Partner", d.name);
 
-    printf("\n");
+    printBlankLine();
 
-    printf("%35s%-13s : %d/%d\n", "", "HP", d.hp, d.maxHP);
-    printf("%35s%-13s : %d\n", "", "Attack", d.attack);
-    printf("%35s%-13s : %d\n", "", "Defense", d.defense);
-    printf("%35s%-13s : %d\n", "", "Speed", d.speed);
-    printf("%35s%-13s : %d\n", "", "Accuracy", d.accuracy);
-    printf("%35s%-13s : %d\n", "", "Intelligence", d.intelligence);
+    printf("%50s%-13s : %d/%d\n", "", "HP", d.hp, d.maxHP);
+    printf("%50s%-13s : %d\n", "", "Attack", d.attack);
+    printf("%50s%-13s : %d\n", "", "Defense", d.defense);
+    printf("%50s%-13s : %d\n", "", "Speed", d.speed);
+    printf("%50s%-13s : %d\n", "", "Accuracy", d.accuracy);
+    printf("%50s%-13s : %d\n", "", "Intelligence", d.intelligence);
 
-    printf("\n");
+    printBlankLine();
 
-    printf("%35s%-13s : %d/%d\n", "", "Fatigue", d.fatigue, d.maxFatigue);
+    printf("%50s%-13s : %d/%d\n", "", "Fatigue", d.fatigue, d.maxFatigue);
 
-    printf("\n");
+    printBlankLine();
 
-    printf("%35s%-13s : Class %c\n", "", "Arena Rank", d.arenaRank);
-    printf("%35s%-13s : %s\n", "", "Arena Title", getArenaTitle(d.arenaRank));
-    printf("%35s%-13s : %dW - %dL - %dD\n","","Arena Record",
-        d.arenaWins,
-        d.arenaLosses,
-        d.arenaDraws);
-    printCentered(line);
+    printf("%50s%-13s : Class %c\n", "", "Arena Rank", d.arenaRank);
+    printf("%50s%-13s : %s\n", "", "Arena Title", getArenaTitle(d.arenaRank));
+
+    printf("%50s%-13s : %dW - %dL - %dD\n",
+           "",
+           "Arena Record",
+           d.arenaWins,
+           d.arenaLosses,
+           d.arenaDraws);
 
     if (d.arenaRank == 'Z' && d.arenaProgress >= d.arenaRequiredWins)
     {
-        sprintf(line, "%-13s : WORLD LEGEND", "Arena Status");
-        printCentered(line);
+        printf("%50s%-13s : WORLD LEGEND\n", "", "Arena Status");
     }
 }
 
