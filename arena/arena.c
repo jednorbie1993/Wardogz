@@ -406,10 +406,15 @@ int arenaBattle(Dog *player, char selectedRank)
                 if (player->equipped[j] != -1)
                 {
                     int idx = player->equipped[j];
-                    printf("%d. %s (P:%d C:%d)\n", j + 1,
+                    printf("%d. %s (P:%d C:%d)", j + 1,
                            player->skills[idx].name,
                            player->skills[idx].power,
                            player->skills[idx].cost);
+
+                    if (player->skills[idx].cdLeft > 0)
+                        printf(" [CD %d]", player->skills[idx].cdLeft);
+
+                    printf("\n");
                 }
                 else
                     printf("%d. ---\n", j + 1);
@@ -433,6 +438,26 @@ int arenaBattle(Dog *player, char selectedRank)
                 continue;
             }
 
+            // =========================
+            // PLAYER SKILL COOLDOWN CHECK
+            // Works even if old save has cooldown = 0
+            // =========================
+            if (strcmp(player->skills[skillIdx].name, "Hip Check") == 0 &&
+                player->skills[skillIdx].cdLeft > 0)
+            {
+                printf("Hip Check is on cooldown! Use another move this turn.\n");
+                waitForEnter();
+                continue;
+            }
+
+            if (strcmp(player->skills[skillIdx].name, "Rolling Tackle") == 0 &&
+                player->skills[skillIdx].cdLeft > 0)
+            {
+                printf("Rolling Tackle is on cooldown! Use another move this turn.\n");
+                waitForEnter();
+                continue;
+            }
+
             Skill s = player->skills[skillIdx];
 
             system("cls");
@@ -449,6 +474,15 @@ int arenaBattle(Dog *player, char selectedRank)
             }
 
             useSkill(player, &enemy, s);
+
+            // =========================
+            // SET PLAYER COOLDOWN AFTER USE
+            // cdLeft = 2 blocks the next player turn once
+            // =========================
+            if (strcmp(player->skills[skillIdx].name, "Hip Check") == 0)
+                player->skills[skillIdx].cdLeft = 2;
+            else if (strcmp(player->skills[skillIdx].name, "Rolling Tackle") == 0)
+                player->skills[skillIdx].cdLeft = 3;
 
             if (enemy.hp < 0)
                 enemy.hp = 0;
@@ -490,6 +524,15 @@ int arenaBattle(Dog *player, char selectedRank)
         player->fatigue += 2;
         if (player->fatigue > player->maxFatigue)
             player->fatigue = player->maxFatigue;
+
+        // =========================
+        // REDUCE PLAYER SKILL COOLDOWNS AFTER A FULL TURN
+        // =========================
+        for (int i = 0; i < player->skillCount; i++)
+        {
+            if (player->skills[i].cdLeft > 0)
+                player->skills[i].cdLeft--;
+        }
     }
 
     system("cls");
