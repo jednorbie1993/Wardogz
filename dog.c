@@ -13,6 +13,7 @@
 #include "cinematic.h"
 #include "sparring/sparring_system.h"
 #include "arena/arena.h"
+#include "console.h"
 
 int systemLog = 0;
 int animationOn = 1; //  NEW (default ON)
@@ -65,7 +66,7 @@ int isCritical(int currentHP, int maxHP)
 
     if (systemLog)
     {
-        printf("[CRIT ] Roll: %-3d | Chance : %-3d\n", roll, critChance);
+        printCenteredFormat("[CRIT ] Roll: %-3d | Chance : %-3d", roll, critChance);
     }
 
     return roll < critChance;
@@ -104,7 +105,7 @@ void zoneStoryIntro(int zoneIndex, int progress)
         typeText("You are far from the city now.\n", 25);
     }
 
-    printf("\n");
+    printBlankLine();
  
 }
 
@@ -185,7 +186,8 @@ void preBattleScene(int zoneIndex)
         Sleep(25);
     }
 
-    printf("\n\nPress Enter to continue...");
+    printBlankLine();
+    printCenteredNoNewline("Press Enter to continue...");
     getchar();
 }
 
@@ -233,11 +235,11 @@ void showTrainingMasteryMessage(int type, int count)
         return;
 
     if (count == 10)
-        printf("%s TRAINING MASTERY I! Max Fatigue +100!\n", trainingName);
+        printCenteredFormat("%s TRAINING MASTERY I! Max Fatigue +100!", trainingName);
     else if (count == 20)
-        printf("%s TRAINING MASTERY II! Max Fatigue +200!\n", trainingName);
+        printCenteredFormat("%s TRAINING MASTERY II! Max Fatigue +200!", trainingName);
     else if (count == 30)
-        printf("%s TRAINING MASTERY III! Max Fatigue +300!\n", trainingName);
+        printCenteredFormat("%s TRAINING MASTERY III! Max Fatigue +300!", trainingName);
 }
 
 void applyPartnerStatBonus(Dog *d,
@@ -279,7 +281,7 @@ void trainDog(Dog *d, int type)
 {
     int oldHP = d->maxHP;
 
-    printf("\nTraining");
+    printCenteredNoNewline("Training");
 
     for (int i = 0; i < 3; i++)
     {
@@ -292,8 +294,8 @@ void trainDog(Dog *d, int type)
     // ================= HARD BLOCK: NO ENERGY =================
     if (d->fatigue <= 0)
     {
-        printf("Your dog is completely exhausted!\n");
-        printf("You must REST before training again.\n");
+        printCentered("Your dog is completely exhausted!");
+        printCentered("You must REST before training again.");
 
         d->fatigue = 0;
         waitForEnter();
@@ -314,7 +316,7 @@ void trainDog(Dog *d, int type)
 
     if (rollFail < failChance)
     {
-        printf("Too exhausted... Training failed!\n");
+        printCentered("Too exhausted... Training failed!");
 
         d->fatigue = clampFatigue(d->fatigue - 5, d->maxFatigue);
 
@@ -327,7 +329,7 @@ void trainDog(Dog *d, int type)
     // ================= TRAINING SUCCESS =================
     if (greatChance < 10)
     {
-        printf("GREAT TRAINING!\n");
+        printCentered("GREAT TRAINING!");
 
         if (type == 1)
         {
@@ -341,7 +343,7 @@ void trainDog(Dog *d, int type)
             d->attack = clamp(d->attack + g2);
             d->defense = clamp(d->defense + g3);
 
-            printf("HP +%d | ATK +%d | DEF +%d\n", g1, g2, g3);
+            printCenteredFormat("HP +%d | ATK +%d | DEF +%d", g1, g2, g3);
         }
         else if (type == 2)
         {
@@ -355,7 +357,7 @@ void trainDog(Dog *d, int type)
             d->accuracy = clamp(d->accuracy + g2);
             d->intelligence = clamp(d->intelligence + g3);
 
-            printf("SPD +%d | ACC +%d | INT +%d\n", g1, g2, g3);
+            printCenteredFormat("SPD +%d | ACC +%d | INT +%d", g1, g2, g3);
         }
         else
         {
@@ -373,14 +375,14 @@ void trainDog(Dog *d, int type)
             d->speed = clamp(d->speed + g4);
             d->intelligence = clamp(d->intelligence + g5);
 
-            printf("HP +%d ATK +%d DEF +%d SPD +%d INT +%d\n",
-                   g1, g2, g3, g4, g5);
+            printCenteredFormat("HP +%d | ATK +%d | DEF +%d | SPD +%d | INT +%d",
+                              g1, g2, g3, g4, g5);
         }
 
     }
     else
     {
-        printf("Training successful!\n");
+        printCentered("Training successful!");
 
         int minGain, maxGain;
 
@@ -407,7 +409,7 @@ void trainDog(Dog *d, int type)
             d->attack = clamp(d->attack + g2);
             d->defense = clamp(d->defense + g3);
 
-            printf("HP +%d | ATK +%d | DEF +%d\n", g1, g2, g3);
+            printCenteredFormat("HP +%d | ATK +%d | DEF +%d", g1, g2, g3);
         }
         else if (type == 2)
         {
@@ -421,7 +423,7 @@ void trainDog(Dog *d, int type)
             d->accuracy = clamp(d->accuracy + g2);
             d->intelligence = clamp(d->intelligence + g3);
 
-            printf("SPD +%d | ACC +%d | INT +%d\n", g1, g2, g3);
+            printCenteredFormat("SPD +%d | ACC +%d | INT +%d", g1, g2, g3);
         }
         else
         {
@@ -439,8 +441,8 @@ void trainDog(Dog *d, int type)
             d->speed = clamp(d->speed + g4);
             d->intelligence = clamp(d->intelligence + g5);
 
-            printf("HP +%d ATK +%d DEF +%d SPD +%d INT +%d\n",
-                   g1, g2, g3, g4, g5);
+            printCenteredFormat("HP +%d | ATK +%d | DEF +%d | SPD +%d | INT +%d",
+                              g1, g2, g3, g4, g5);
         }
 
     }
@@ -449,7 +451,7 @@ void trainDog(Dog *d, int type)
 
     if (newHundreds > oldHundreds)
     {
-        printf("Your endurance has improved!\n");
+        printCentered("Your endurance has improved!");
     }
     // ================= TRAINING COUNT =================
     if (type == 1)
@@ -471,12 +473,12 @@ void trainDog(Dog *d, int type)
     // ================= UPDATE MAX FATIGUE =================
     updateTrainingMaxFatigue(d);
 
-    printf("Training Count: Power %d/30 | Speed %d/30 | Balance %d/30\n",
-           d->powerTrainingCount,
-           d->speedTrainingCount,
-           d->balanceTrainingCount);
+    printCenteredFormat("Training Count: Power %d/30 | Speed %d/30 | Balance %d/30",
+                        d->powerTrainingCount,
+                        d->speedTrainingCount,
+                        d->balanceTrainingCount);
 
-    printf("Max Fatigue: %d\n", d->maxFatigue);
+    printCenteredFormat("Max Fatigue: %d", d->maxFatigue);
 
     // ================= FATIGUE COST =================
     d->fatigue = clampFatigue(d->fatigue - randRange(5, 12), d->maxFatigue);
@@ -491,14 +493,14 @@ void createDog(Dog *d)
     fgets(d->name, 50, stdin);
     d->name[strcspn(d->name, "\n")] = 0;*/
 
-    d->hp = 900;
-    d->maxHP = 900;
-    d->attack = 920;
-    d->speed = 900;
+    d->hp = 100;
+    d->maxHP = 100;
+    d->attack = 20;
+    d->speed = 20;
 
-    d->defense = 915;
-    d->accuracy = 918; // 80% hit chance
-    d->intelligence = 920;
+    d->defense = 20;
+    d->accuracy = 20; // 80% hit chance
+    d->intelligence = 20;
 
     d->fatigue = 100; // full energy
     d->maxFatigue = 100;
@@ -558,7 +560,7 @@ void createDog(Dog *d)
     d->defeatedOmega = 0;
     d->defeatedGrimfangX = 0;
 
-    d->arenaRank = 'X';
+    d->arenaRank = 'F';
     d->arenaWins = 0;
     d->arenaLosses = 0;
     d->arenaDraws = 0;
@@ -566,7 +568,7 @@ void createDog(Dog *d)
     d->isStunned = 0;
     d->stunTurns = 0;
     d->arenaProgress = 0;
-    d->arenaRequiredWins = 1;
+    d->arenaRequiredWins = 3;
     d->maxRest = 3;
 
     initSparringProgress(d);
@@ -592,12 +594,16 @@ void skillMenu(Dog *d)
     {
         system("cls");
 
-        printf("===== SKILL MENU =====\n");
-        printf("1. View All Skills\n");
-        printf("2. Current Skills\n");
-        printf("3. Equip Skills\n");
-        printf("4. Back\n");
-        printf("Choice: ");
+        printBorder();
+        printBlankLine();
+        printCentered("SKILL MENU");
+        printBlankLine();
+        printMenuItem(1, "View All Skills");
+        printMenuItem(2, "Current Skills");
+        printMenuItem(3, "Equip Skills");
+        printMenuItem(4, "Back");
+        printBlankLine();
+        printf("%35sChoice: ", "");
 
         char input[20];
         int choice;
@@ -607,7 +613,7 @@ void skillMenu(Dog *d)
 
         if (input[0] == '\0')
         {
-            printf("Invalid choice!\n");
+            printCentered("Invalid choice!");
             waitForEnter();
             continue;
         }
@@ -618,7 +624,10 @@ void skillMenu(Dog *d)
         if (choice == 1)
         {
             system("cls");
-            printf("--- ALL SKILLS ---\n");
+            printBorder();
+            printBlankLine();
+            printCentered("ALL SKILLS");
+            printBlankLine();
 
             int half = (d->skillCount + 1) / 2;
 
@@ -641,7 +650,7 @@ void skillMenu(Dog *d)
                         d->skills[right].cost);
                 }
 
-                printf("\n");
+                printBlankLine();
             }
             waitForEnter();
         }
@@ -650,22 +659,25 @@ void skillMenu(Dog *d)
         else if (choice == 2)
         {
             system("cls");
-            printf("--- CURRENT SKILLS ---\n");
+            printBorder();
+            printBlankLine();
+            printCentered("CURRENT SKILLS");
+            printBlankLine();
 
             for (int i = 0; i < d->maxSkillSlots; i++)
             {
                 if (d->equipped[i] != -1)
                 {
                     int idx = d->equipped[i];
-                    printf("Slot %d: %s (P:%d C:%d)\n",
-                           i + 1,
-                           d->skills[idx].name,
-                           d->skills[idx].power,
-                           d->skills[idx].cost);
+                    printCenteredFormat("Slot %d: %s (P:%d C:%d)",
+                                        i + 1,
+                                        d->skills[idx].name,
+                                        d->skills[idx].power,
+                                        d->skills[idx].cost);
                 }
                 else
                 {
-                    printf("Slot %d: [EMPTY]\n", i + 1);
+                    printCenteredFormat("Slot %d: [EMPTY]", i + 1);
                 }
             }
 
@@ -680,34 +692,41 @@ void skillMenu(Dog *d)
             system("cls");
 
             // 👉 show current first (very important UX)
-            printf("--- CURRENT SKILLS ---\n");
+            printBorder();
+            printBlankLine();
+            printCentered("CURRENT SKILLS");
+            printBlankLine();
             for (int i = 0; i < d->maxSkillSlots; i++)
             {
                 if (d->equipped[i] != -1)
                 {
                     int idx = d->equipped[i];
-                    printf("Slot %d: %s\n", i + 1, d->skills[idx].name);
+                    printCenteredFormat("Slot %d: %s", i + 1, d->skills[idx].name);
                 }
                 else
                 {
-                    printf("Slot %d: [EMPTY]\n", i + 1);
+                    printCenteredFormat("Slot %d: [EMPTY]", i + 1);
                 }
             }
 
-            printf("\nChoose slot (1-%d): ", d->maxSkillSlots);
+            printBlankLine();
+            printf("%35sChoose slot (1-%d): ", "", d->maxSkillSlots);
             scanf("%d", &slot);
             while (getchar() != '\n')
                 ;
 
             if (slot < 1 || slot > d->maxSkillSlots)
             {
-                printf("Invalid slot!\n");
+                printCentered("Invalid slot!");
                 waitForEnter();
                 continue;
             }
 
             system("cls");
-            printf("\n--- AVAILABLE SKILLS ---\n");
+            printBorder();
+            printBlankLine();
+            printCentered("AVAILABLE SKILLS");
+            printBlankLine();
 
             int half = (d->skillCount + 1) / 2;
 
@@ -730,24 +749,24 @@ void skillMenu(Dog *d)
                         d->skills[right].cost);
                 }
 
-                printf("\n");
+                printBlankLine();
             }
 
-            printf("Choice: ");
+            printf("%35sChoice: ", "");
             scanf("%d", &pick);
             while (getchar() != '\n')
                 ;
 
             if (pick < 1 || pick > d->skillCount)
             {
-                printf("Invalid skill!\n");
+                printCentered("Invalid skill!");
                 waitForEnter();
                 continue;
             }
 
             d->equipped[slot - 1] = pick - 1;
 
-            printf("Skill equipped to Slot %d!\n", slot);
+            printCenteredFormat("Skill equipped to Slot %d!", slot);
             waitForEnter();
         }
 
@@ -759,7 +778,7 @@ void skillMenu(Dog *d)
 
         else
         {
-            printf("Invalid choice!\n");
+            printCentered("Invalid choice!");
             waitForEnter();
         }
     }
@@ -771,37 +790,40 @@ void skillMenu(Dog *d)
 
 void printDog(Dog d)
 {
-    printf("===== WARDOGZ INFO =====\n\n");
+    printBorder();
+    printBlankLine();
+    printCentered("WARDOGZ INFO");
+    printBlankLine();
 
-    printf("Trainer      : %s\n", d.trainerName);
-    printf("Partner      : %s\n", d.name);
-
-    //printf("\n");
-
-    printf("HP           : %d/%d\n", d.hp, d.maxHP);
-    printf("Attack       : %d\n", d.attack);
-    printf("Defense      : %d\n", d.defense);
-    printf("Speed        : %d\n", d.speed);
-    printf("Accuracy     : %d\n", d.accuracy);
-    printf("Intelligence : %d\n", d.intelligence);
+    printCenteredFormat("Trainer      : %s", d.trainerName);
+    printCenteredFormat("Partner      : %s", d.name);
 
     //printf("\n");
 
-    printf("Fatigue      : %d/%d\n", d.fatigue, d.maxFatigue);
+    printCenteredFormat("HP           : %d/%d", d.hp, d.maxHP);
+    printCenteredFormat("Attack       : %d", d.attack);
+    printCenteredFormat("Defense      : %d", d.defense);
+    printCenteredFormat("Speed        : %d", d.speed);
+    printCenteredFormat("Accuracy     : %d", d.accuracy);
+    printCenteredFormat("Intelligence : %d", d.intelligence);
 
     //printf("\n");
 
-    printf("Arena Rank   : Class %c\n", d.arenaRank);
-    printf("Arena Title  : %s\n", getArenaTitle(d.arenaRank));
+    printCenteredFormat("Fatigue      : %d/%d", d.fatigue, d.maxFatigue);
 
-    printf("Arena Record : %dW - %dL - %dD\n",
-           d.arenaWins,
-           d.arenaLosses,
-           d.arenaDraws);
+    //printf("\n");
+
+    printCenteredFormat("Arena Rank   : Class %c", d.arenaRank);
+    printCenteredFormat("Arena Title  : %s", getArenaTitle(d.arenaRank));
+
+    printCenteredFormat("Arena Record : %dW - %dL - %dD",
+                        d.arenaWins,
+                        d.arenaLosses,
+                        d.arenaDraws);
 
     if (d.arenaRank == 'Z' && d.arenaProgress >= d.arenaRequiredWins)
     {
-        printf("Arena Status : WORLD LEGEND\n");
+        printCentered("Arena Status : WORLD LEGEND");
     }
 }
 
@@ -816,14 +838,16 @@ void typeText(const char *text, int delay)
 }
 void waitForEnter()
 {
-    printf("\nPress Enter to continue...");
+    printBlankLine();
+    printCenteredNoNewline("Press Enter to continue...");
     while (getchar() != '\n')
         ; // wait until Enter lang
 }
 
 void pauseAndClear()
 {
-    printf("\nPress Enter to continue...");
+    printBlankLine();
+    printCenteredNoNewline("Press Enter to continue...");
 
     getchar(); // no loop, no fflush, simple lang
 
