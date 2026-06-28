@@ -630,27 +630,38 @@ void skillMenu(Dog *d)
             printBlankLine();
 
             int half = (d->skillCount + 1) / 2;
+            char line[150];
 
             for (int i = 0; i < half; i++)
             {
-                printf("%2d. %-18s (P:%2d/C:%2d)",
+                if (i + half < d->skillCount)
+                {
+                    int right = i + half;
+
+                    sprintf(line,
+                        "%2d. %-18s (P:%2d/C:%2d)   %2d. %-18s (P:%2d/C:%2d)",
+                        i + 1,
+                        d->skills[i].name,
+                        d->skills[i].power,
+                        d->skills[i].cost,
+                        right + 1,
+                        d->skills[right].name,
+                        d->skills[right].power,
+                        d->skills[right].cost);
+
+                    printCentered(line);
+                }
+                else
+                {
+                    sprintf(line,
+                        "%2d. %-18s (P:%2d/C:%2d)",
                         i + 1,
                         d->skills[i].name,
                         d->skills[i].power,
                         d->skills[i].cost);
 
-                if (i + half < d->skillCount)
-                {
-                    int right = i + half;
-
-                    printf("   %2d. %-18s (P:%2d/C:%2d)",
-                        right + 1,
-                        d->skills[right].name,
-                        d->skills[right].power,
-                        d->skills[right].cost);
+                    printCentered(line);
                 }
-
-                printBlankLine();
             }
             waitForEnter();
         }
@@ -784,46 +795,45 @@ void skillMenu(Dog *d)
     }
 }
 
-
-
-
-
 void printDog(Dog d)
 {
+    char line[128];
+
     printBorder();
     printBlankLine();
     printCentered("WARDOGZ INFO");
     printBlankLine();
 
-    printCenteredFormat("Trainer      : %s", d.trainerName);
-    printCenteredFormat("Partner      : %s", d.name);
+    printf("%45s%-13s : %s\n", "", "Trainer", d.trainerName);
+    printf("%45s%-13s : %s\n", "", "Partner", d.name);
 
-    //printf("\n");
+    printf("\n");
 
-    printCenteredFormat("HP           : %d/%d", d.hp, d.maxHP);
-    printCenteredFormat("Attack       : %d", d.attack);
-    printCenteredFormat("Defense      : %d", d.defense);
-    printCenteredFormat("Speed        : %d", d.speed);
-    printCenteredFormat("Accuracy     : %d", d.accuracy);
-    printCenteredFormat("Intelligence : %d", d.intelligence);
+    printf("%35s%-13s : %d/%d\n", "", "HP", d.hp, d.maxHP);
+    printf("%35s%-13s : %d\n", "", "Attack", d.attack);
+    printf("%35s%-13s : %d\n", "", "Defense", d.defense);
+    printf("%35s%-13s : %d\n", "", "Speed", d.speed);
+    printf("%35s%-13s : %d\n", "", "Accuracy", d.accuracy);
+    printf("%35s%-13s : %d\n", "", "Intelligence", d.intelligence);
 
-    //printf("\n");
+    printf("\n");
 
-    printCenteredFormat("Fatigue      : %d/%d", d.fatigue, d.maxFatigue);
+    printf("%35s%-13s : %d/%d\n", "", "Fatigue", d.fatigue, d.maxFatigue);
 
-    //printf("\n");
+    printf("\n");
 
-    printCenteredFormat("Arena Rank   : Class %c", d.arenaRank);
-    printCenteredFormat("Arena Title  : %s", getArenaTitle(d.arenaRank));
-
-    printCenteredFormat("Arena Record : %dW - %dL - %dD",
-                        d.arenaWins,
-                        d.arenaLosses,
-                        d.arenaDraws);
+    printf("%35s%-13s : Class %c\n", "", "Arena Rank", d.arenaRank);
+    printf("%35s%-13s : %s\n", "", "Arena Title", getArenaTitle(d.arenaRank));
+    printf("%35s%-13s : %dW - %dL - %dD\n","","Arena Record",
+        d.arenaWins,
+        d.arenaLosses,
+        d.arenaDraws);
+    printCentered(line);
 
     if (d.arenaRank == 'Z' && d.arenaProgress >= d.arenaRequiredWins)
     {
-        printCentered("Arena Status : WORLD LEGEND");
+        sprintf(line, "%-13s : WORLD LEGEND", "Arena Status");
+        printCentered(line);
     }
 }
 
