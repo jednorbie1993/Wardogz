@@ -64,6 +64,24 @@ void printCenteredFormat(const char *format, ...)
     printCentered(buffer);
 }
 
+
+void printMenuItem(int num, const char *text)
+{
+    printf("%35s%2d. %-25s\n", "", num, text);
+}
+
+void printMenuItemFormat(int num, const char *format, ...)
+{
+    char buffer[256];
+    va_list args;
+
+    va_start(args, format);
+    vsnprintf(buffer, sizeof(buffer), format, args);
+    va_end(args);
+
+    printMenuItem(num, buffer);
+}
+
 void printBorder()
 {
     printCentered("------------------------------------------------------------------------------------------------------");
@@ -83,24 +101,24 @@ void showMainMenu(GameData *game, Dog *player)
     printCentered("WARDOGZ MENU");
     printBlankLine();
 
-    printCentered("1. Wardogz");
-    printCentered("2. Train Dog");
-    printCentered("3. Battle");
-    printCenteredFormat("4. Rest (%d/%d)", game->restCount, player->maxRest);
-    printCentered("5. Options");
+    printMenuItem(1, "Wardogz");
+    printMenuItem(2, "Train Dog");
+    printMenuItem(3, "Battle");
+    printMenuItemFormat(4, "Rest (%d/%d)", game->restCount, player->maxRest);
+    printMenuItem(5, "Options");
 
     if (player->campaignCompleted)
     {
-        printCentered("6. Credits");
-        printCentered("7. Exit");
+        printMenuItem(6, "Credits");
+        printMenuItem(7, "Exit");
     }
     else
     {
-        printCentered("6. Exit");
+        printMenuItem(6, "Exit");
     }
 
     printBlankLine();
-    printCenteredNoNewline("Enter choice: ");
+    printf("%35sEnter choice: ", "");
 }
 
 void showWardogzSubMenu()
@@ -112,12 +130,12 @@ void showWardogzSubMenu()
     printCentered("WARDOGZ");
     printBlankLine();
 
-    printCentered("1. View Stats");
-    printCentered("2. Skills");
-    printCentered("3. Back");
+    printMenuItem(1, "View Stats");
+    printMenuItem(2, "Skills");
+    printMenuItem(3, "Back");
 
     printBlankLine();
-    printCenteredNoNewline("Choice: ");
+    printf("%35sChoice: ", "");
 }
 
 void showTrainMenu()
@@ -129,14 +147,14 @@ void showTrainMenu()
     printCentered("TRAIN DOG");
     printBlankLine();
 
-    printCentered("1. Power Training");
-    printCentered("2. Speed Training");
-    printCentered("3. Balance Training");
-    printCentered("4. Sparring Training");
-    printCentered("5. Return");
+    printMenuItem(1, "Power Training");
+    printMenuItem(2, "Speed Training");
+    printMenuItem(3, "Balance Training");
+    printMenuItem(4, "Sparring Training");
+    printMenuItem(5, "Return");
 
     printBlankLine();
-    printCenteredNoNewline("Choice: ");
+    printf("%35sChoice: ", "");
 }
 
 void showBattleMenu()
@@ -148,12 +166,12 @@ void showBattleMenu()
     printCentered("BATTLE");
     printBlankLine();
 
-    printCentered("1. Campaign");
-    printCentered("2. Arena");
-    printCentered("3. Back");
+    printMenuItem(1, "Campaign");
+    printMenuItem(2, "Arena");
+    printMenuItem(3, "Back");
 
     printBlankLine();
-    printCenteredNoNewline("Choice: ");
+    printf("%35sChoice: ", "");
 }
 
 void showOptionsMenu()
@@ -165,12 +183,12 @@ void showOptionsMenu()
     printCentered("OPTIONS");
     printBlankLine();
 
-    printCenteredFormat("1. System Log (%s)", systemLog ? "ON" : "OFF");
-    printCenteredFormat("2. Animation (%s)", animationOn ? "ON" : "OFF");
-    printCentered("3. Back");
+    printMenuItemFormat(1, "System Log (%s)", systemLog ? "ON" : "OFF");
+    printMenuItemFormat(2, "Animation (%s)", animationOn ? "ON" : "OFF");
+    printMenuItem(3, "Back");
 
     printBlankLine();
-    printCenteredNoNewline("Enter choice: ");
+    printf("%35sEnter choice: ", "");
 }
 
 int main()
