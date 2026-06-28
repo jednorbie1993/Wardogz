@@ -17,6 +17,7 @@
 
 // extern globals from dog.c
 extern int animationOn;
+void setCriticalUserIntelligence(Dog *user);
 
 int cinematicMode = 1;
 
@@ -213,7 +214,7 @@ void showHPBarPlayer(int hp, int maxHp)
         for (int i = 0; i < 10; i++)
             printf(i < bars ? "#" : "-");
 
-        printf("] (%d/%d)\n", hp, maxHp);
+        printf("] (%d/%d)", hp, maxHp);
         return;
     }
 
@@ -226,7 +227,7 @@ void showHPBarPlayer(int hp, int maxHp)
         for (int i = 0; i < 10; i++)
             printf(i < bars ? "#" : "-");
 
-        printf("] (%d/%d)\n", hp, maxHp);
+        printf("] (%d/%d)", hp, maxHp);
 
         lastHP = hp;
         return;
@@ -256,7 +257,7 @@ void showHPBarPlayer(int hp, int maxHp)
     for (int i = 0; i < 10; i++)
         printf(i < bars ? "#" : "-");
 
-    printf("] (%d/%d)\n", hp, maxHp);
+    printf("] (%d/%d)", hp, maxHp);
 
     lastHP = hp;
 }
@@ -290,7 +291,7 @@ void showHPBarEnemy(int hp, int maxHp)
         for (int i = 0; i < 10; i++)
             printf(i < bars ? "#" : "-");
 
-        printf("] (%d/%d)\n", hp, maxHp);
+        printf("] (%d/%d)", hp, maxHp);
         return;
     }
 
@@ -303,7 +304,7 @@ void showHPBarEnemy(int hp, int maxHp)
         for (int i = 0; i < 10; i++)
             printf(i < bars ? "#" : "-");
 
-        printf("] (%d/%d)\n", hp, maxHp);
+        printf("] (%d/%d)", hp, maxHp);
 
         lastHP = hp;
         return;
@@ -333,7 +334,7 @@ void showHPBarEnemy(int hp, int maxHp)
     for (int i = 0; i < 10; i++)
         printf(i < bars ? "#" : "-");
 
-    printf("] (%d/%d)\n", hp, maxHp);
+    printf("] (%d/%d)", hp, maxHp);
 
     lastHP = hp;
 }
@@ -342,8 +343,20 @@ void showHPBarEnemy(int hp, int maxHp)
 void displayBattleStatus(Dog player, Dog enemy)
 {
     printf("====================================\n");
+
     showHPBarPlayer(player.hp, player.maxHP);
+
+    if (player.isStunned && player.stunTurns > 0)
+        printf(" (STUN %d)", player.stunTurns);
+
+    printf("\n");
+
     showHPBarEnemy(enemy.hp, enemy.maxHP);
+
+    if (enemy.isStunned && enemy.stunTurns > 0)
+        printf(" (STUN %d)", enemy.stunTurns);
+
+    printf("\n");
     printf("====================================\n");
 }
 
@@ -446,7 +459,7 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
         waitForEnter();
     }
 
-    printf("\n YOU WIN! \n");
+    printf("\n ---VICTORY!--- \n");
 
 
     if (strcmp(enemy->name, "Grimfang") == 0)
@@ -700,6 +713,26 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
                 continue;
             }
 
+            // =========================
+            // SKILL COOLDOWN CHECK
+            // Name-based fallback para gumana kahit old save / cooldown = 0
+            // =========================
+            if (strcmp(player->skills[skillIdx].name, "Hip Check") == 0 &&
+                player->skills[skillIdx].cdLeft > 0)
+            {
+                printf("Hip Check is on cooldown! Use another move this turn.\n");
+                waitForEnter();
+                continue;
+            }
+
+            if (strcmp(player->skills[skillIdx].name, "Rolling Tackle") == 0 &&
+                player->skills[skillIdx].cdLeft > 0)
+            {
+                printf("Rolling Tackle is on cooldown! Use another move this turn.\n");
+                waitForEnter();
+                continue;
+            }
+
             Skill s = player->skills[skillIdx];
 
             if (player->fatigue < s.cost)
@@ -712,7 +745,18 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
 
                 cinematicDots("Player attacking");
 
+                setCriticalUserIntelligence(player);
                 useSkill(player, &enemy, s);
+
+                // =========================
+                // SET COOLDOWN AFTER USING SPECIAL SKILLS
+                // cdLeft = 2 means: next player turn blocked once,
+                // then after using another move it becomes usable again.
+                // =========================
+                if (strcmp(player->skills[skillIdx].name, "Hip Check") == 0)
+                    player->skills[skillIdx].cdLeft = 2;
+                else if (strcmp(player->skills[skillIdx].name, "Rolling Tackle") == 0)
+                    player->skills[skillIdx].cdLeft = 3;
 
                 waitForEnter();
 
@@ -733,7 +777,18 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
 
                 cinematicDots("Player attacking");
 
+                setCriticalUserIntelligence(player);
                 useSkill(player, &enemy, s);
+
+                // =========================
+                // SET COOLDOWN AFTER USING SPECIAL SKILLS
+                // cdLeft = 2 means: next player turn blocked once,
+                // then after using another move it becomes usable again.
+                // =========================
+                if (strcmp(player->skills[skillIdx].name, "Hip Check") == 0)
+                    player->skills[skillIdx].cdLeft = 2;
+                else if (strcmp(player->skills[skillIdx].name, "Rolling Tackle") == 0)
+                    player->skills[skillIdx].cdLeft = 3;
 
                 waitForEnter();
 
@@ -801,11 +856,35 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
         if (player->hp > 0 && enemy.hp > 0)
         {
             Sleep(500);
-            int result = enemyAttack(player, &enemy, &defending);
-            if (result == 0)
-                player->hp = 0;
-            if (result == 1)
-                enemy.hp = 0;
+
+            // Arena backup stun check.
+            // Kahit may stun check na sa enemyAttack(), dito muna natin hinaharang
+            // para siguradong hindi na makakapasok sa enemy skill/attack logic.
+            if (enemy.isStunned && enemy.stunTurns > 0)
+            {
+                system("cls");
+                displayBattleStatus(*player, enemy);
+
+                printf("\n--- ENEMY TURN ---\n");
+                printf("%s is STUNNED and cannot move!\n", enemy.name);
+
+                enemy.stunTurns--;
+
+                if (enemy.stunTurns <= 0)
+                    enemy.isStunned = 0;
+
+                waitForEnter();
+            }
+            else
+            {
+                setCriticalUserIntelligence(&enemy);
+                int result = enemyAttack(player, &enemy, &defending);
+
+                if (result == 0)
+                    player->hp = 0;
+                if (result == 1)
+                    enemy.hp = 0;
+            }
 
             defending = 0;
         }
@@ -816,6 +895,11 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             player->fatigue = player->maxFatigue;
 
         battleTurn++;
+        for (int i = 0; i < player->skillCount; i++)
+        {
+            if (player->skills[i].cdLeft > 0)
+                player->skills[i].cdLeft--;
+        }
 
         if (strcmp(enemy.name, "Project Cerberus") == 0)
         {
