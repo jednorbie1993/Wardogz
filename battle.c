@@ -14,12 +14,75 @@
 #include "dialogue/battle_dialogue.h"
 #include "replay_system.h"
 #include "enemies/enemy_stage5.h"
+#include "console.h"
 
 // extern globals from dog.c
 extern int animationOn;
 void setCriticalUserIntelligence(Dog *user);
 
 int cinematicMode = 1;
+
+
+static void printBattleInputPrompt(const char *text)
+{
+    printf("%35s%s", "", text);
+}
+
+static void typeTextCentered(const char *text, int delay)
+{
+    int len = strlen(text);
+    int spaces = (CONSOLE_WIDTH - len) / 2;
+
+    if (spaces < 0)
+        spaces = 0;
+
+    for (int i = 0; i < spaces; i++)
+        printf(" ");
+
+    for (int i = 0; text[i] != '\0'; i++)
+    {
+        printf("%c", text[i]);
+        fflush(stdout);
+        Sleep(delay);
+    }
+}
+
+static void printCenteredHPLine(const char *label, int hp, int maxHp)
+{
+    char line[120];
+    int bars = (hp * 10) / maxHp;
+    char bar[11];
+
+    for (int i = 0; i < 10; i++)
+        bar[i] = (i < bars) ? '#' : '-';
+
+    bar[10] = '\0';
+
+    sprintf(line, "%-6s: [%s] (%d/%d)", label, bar, hp, maxHp);
+    printCenteredNoNewline(line);
+}
+
+static void printCenteredHPLineAnimated(const char *label, int hp, int maxHp)
+{
+    char line[120];
+    int bars = (hp * 10) / maxHp;
+    char bar[11];
+
+    for (int i = 0; i < 10; i++)
+        bar[i] = (i < bars) ? '#' : '-';
+
+    bar[10] = '\0';
+
+    sprintf(line, "%-6s: [%s] (%d/%d)   ", label, bar, hp, maxHp);
+
+    int len = strlen(line);
+    int spaces = (CONSOLE_WIDTH - len) / 2;
+
+    if (spaces < 0)
+        spaces = 0;
+
+    printf("\r%*s%s", spaces, "", line);
+}
 
 void cinematicPause(int ms)
 {
@@ -29,7 +92,8 @@ void cinematicPause(int ms)
 
 void cinematicDots(const char *text)
 {
-    printf("\n%s", text);
+    printBlankLine();
+    printCenteredNoNewline(text);
 
     if (!cinematicMode)
     {
@@ -49,7 +113,7 @@ void cinematicDots(const char *text)
 
 void battleDivider()
 {
-    printf("====================================\n");
+    printBorder();
 }
 
 void showEnemyEntrance(Dog *enemy, int zoneIndex)
@@ -57,11 +121,11 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
     printf("\n");
     if (strcmp(enemy->name, "Grimfang") == 0)
     {
-        typeText("\"The streets belong to the strongest.\"", 25);
+        typeTextCentered("\"The streets belong to the strongest.\"", 25);
 
         printf("\n\n");
 
-        typeText("Grimfang emerged!", 25);
+        typeTextCentered("Grimfang emerged!", 25);
 
         printf("\n");
         waitForEnter();
@@ -71,11 +135,11 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
 
     if (strcmp(enemy->name, "Diremaw") == 0)
     {
-        typeText("\"The wild doesn't care who you are. It only decides who remains.\"", 25);
+        typeTextCentered("\"The wild doesn't care who you are. It only decides who remains.\"", 25);
 
         printf("\n\n");
 
-        typeText("Diremaw emerged!", 25);
+        typeTextCentered("Diremaw emerged!", 25);
 
         printf("\n");
         waitForEnter();
@@ -85,11 +149,11 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
 
     if (strcmp(enemy->name, "Blackclaw") == 0)
     {
-        typeText("\"We were weapons... until we learned who the real enemy was.\"", 25);
+        typeTextCentered("\"We were weapons... until we learned who the real enemy was.\"", 25);
 
         printf("\n\n");
 
-        typeText("Blackclaw emerged!", 25);
+        typeTextCentered("Blackclaw emerged!", 25);
 
         printf("\n");
         waitForEnter();
@@ -98,11 +162,11 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
     }
     if (strcmp(enemy->name, "Omega Prime") == 0)
     {
-        typeText("\"The experiment is complete... and you are the final test.\"", 25);
+        typeTextCentered("\"The experiment is complete... and you are the final test.\"", 25);
 
         printf("\n\n");
 
-        typeText("Omega Prime emerged!", 25);
+        typeTextCentered("Omega Prime emerged!", 25);
 
         printf("\n");
         waitForEnter();
@@ -111,14 +175,14 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
     }
     if (strcmp(enemy->name, "Grimfang-X") == 0)
     {
-        typeText("\"They rebuilt my bones... but not my loyalty.\"", 25);
+        typeTextCentered("\"They rebuilt my bones... but not my loyalty.\"", 25);
 
         printf("\n\n");
 
-        typeText("[BLACKSITE SECRET SUBJECT DETECTED]", 25);
+        typeTextCentered("[BLACKSITE SECRET SUBJECT DETECTED]", 25);
         printf("\n");
 
-        typeText("Grimfang-X emerged!", 25);
+        typeTextCentered("Grimfang-X emerged!", 25);
 
         printf("\n");
         waitForEnter();
@@ -128,11 +192,11 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
 
     if (strcmp(enemy->name, "Commander Cerberus") == 0)
     {
-        typeText("\"Prototype command unit online. Target acquired.\"", 25);
+        typeTextCentered("\"Prototype command unit online. Target acquired.\"", 25);
 
         printf("\n\n");
 
-        typeText("Commander Cerberus deployed!", 25);
+        typeTextCentered("Commander Cerberus deployed!", 25);
 
         printf("\n");
         waitForEnter();
@@ -142,17 +206,17 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
 
     if (strcmp(enemy->name, "Project Cerberus") == 0)
     {
-        typeText("\"The final subject is awake.\"", 25);
+        typeTextCentered("\"The final subject is awake.\"", 25);
 
         printf("\n\n");
 
-        typeText("[FINAL CONTAINMENT BREACH]", 25);
+        typeTextCentered("[FINAL CONTAINMENT BREACH]", 25);
         printf("\n");
-        typeText("Project Cerberus steps out of the chamber.", 25);
+        typeTextCentered("Project Cerberus steps out of the chamber.", 25);
         printf("\n");
-        typeText("Its body looks more humanoid than dog.", 25);
+        typeTextCentered("Its body looks more humanoid than dog.", 25);
         printf("\n");
-        typeText("Mutation veins pulse across its frame.", 25);
+        typeTextCentered("Mutation veins pulse across its frame.", 25);
 
         printf("\n");
         waitForEnter();
@@ -163,22 +227,22 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
     if (zoneIndex >= 16 && zoneIndex <= 20)
     {
         typeText(enemy->name, 25);
-        typeText(" deployed!", 20);
+        typeTextCentered(" deployed!", 20);
     }
     else if (zoneIndex >= 8 && zoneIndex <= 11)
     {
         typeText(enemy->name, 25);
-        typeText(" arrived!", 20);
+        typeTextCentered(" arrived!", 20);
     }
     else if (zoneIndex >= 3 && zoneIndex <= 7)
     {
         typeText(enemy->name, 25);
-        typeText(" emerged!", 20);
+        typeTextCentered(" emerged!", 20);
     }
     else
     {
         typeText(enemy->name, 25);
-        typeText(" appeared!", 20);
+        typeTextCentered(" appeared!", 20);
     }
 
     printf("\n");
@@ -190,75 +254,34 @@ void showHPBarPlayer(int hp, int maxHp)
 {
     static int lastHP = -1;
 
-    //  RESET SIGNAL (for new battle)
     if (hp == -1)
     {
         lastHP = -1;
         return;
     }
 
-    //  Clamp safety
     if (hp < 0)
         hp = 0;
     if (hp > maxHp)
         hp = maxHp;
 
-    //  FIRST DRAW (instant, no animation)
-    if (lastHP == -1)
+    if (lastHP == -1 || !animationOn)
     {
-        lastHP = hp;
-
-        int bars = (hp * 10) / maxHp;
-
-        printf("\rPLAYER: [");
-        for (int i = 0; i < 10; i++)
-            printf(i < bars ? "#" : "-");
-
-        printf("] (%d/%d)", hp, maxHp);
-        return;
-    }
-
-    //  NO ANIMATION MODE
-    if (!animationOn)
-    {
-        int bars = (hp * 10) / maxHp;
-
-        printf("\rPLAYER: [");
-        for (int i = 0; i < 10; i++)
-            printf(i < bars ? "#" : "-");
-
-        printf("] (%d/%d)", hp, maxHp);
-
+        printCenteredHPLine("PLAYER", hp, maxHp);
         lastHP = hp;
         return;
     }
 
-    // 👉 ANIMATION MODE
     int step = (hp > lastHP) ? 1 : -1;
 
     for (int current = lastHP; current != hp; current += step)
     {
-        int bars = (current * 10) / maxHp;
-
-        printf("\rPLAYER: [");
-        for (int i = 0; i < 10; i++)
-            printf(i < bars ? "#" : "-");
-
-        printf("] (%d/%d)   ", current, maxHp);
-
+        printCenteredHPLineAnimated("PLAYER", current, maxHp);
         fflush(stdout);
         Sleep(1);
     }
 
-    // FINAL EXACT VALUE
-    int bars = (hp * 10) / maxHp;
-
-    printf("\rPLAYER: [");
-    for (int i = 0; i < 10; i++)
-        printf(i < bars ? "#" : "-");
-
-    printf("] (%d/%d)", hp, maxHp);
-
+    printCenteredHPLineAnimated("PLAYER", hp, maxHp);
     lastHP = hp;
 }
 
@@ -267,82 +290,41 @@ void showHPBarEnemy(int hp, int maxHp)
 {
     static int lastHP = -1;
 
-    // 🔥 RESET SIGNAL (para sa new battle)
     if (hp == -1)
     {
         lastHP = -1;
         return;
     }
 
-    // 👉 Clamp safety
     if (hp < 0)
         hp = 0;
     if (hp > maxHp)
         hp = maxHp;
 
-    // 👉 FIRST DRAW (no animation, instant)
-    if (lastHP == -1)
+    if (lastHP == -1 || !animationOn)
     {
-        lastHP = hp;
-
-        int bars = (hp * 10) / maxHp;
-
-        printf("\rENEMY : [");
-        for (int i = 0; i < 10; i++)
-            printf(i < bars ? "#" : "-");
-
-        printf("] (%d/%d)", hp, maxHp);
-        return;
-    }
-
-    // 👉 NO ANIMATION MODE
-    if (!animationOn)
-    {
-        int bars = (hp * 10) / maxHp;
-
-        printf("\rENEMY : [");
-        for (int i = 0; i < 10; i++)
-            printf(i < bars ? "#" : "-");
-
-        printf("] (%d/%d)", hp, maxHp);
-
+        printCenteredHPLine("ENEMY", hp, maxHp);
         lastHP = hp;
         return;
     }
 
-    // 👉 ANIMATION
     int step = (hp > lastHP) ? 1 : -1;
 
     for (int current = lastHP; current != hp; current += step)
     {
-        int bars = (current * 10) / maxHp;
-
-        printf("\rENEMY : [");
-        for (int i = 0; i < 10; i++)
-            printf(i < bars ? "#" : "-");
-
-        printf("] (%d/%d)   ", current, maxHp);
-
+        printCenteredHPLineAnimated("ENEMY", current, maxHp);
         fflush(stdout);
         Sleep(1);
     }
 
-    // 👉 FINAL EXACT VALUE
-    int bars = (hp * 10) / maxHp;
-
-    printf("\rENEMY : [");
-    for (int i = 0; i < 10; i++)
-        printf(i < bars ? "#" : "-");
-
-    printf("] (%d/%d)", hp, maxHp);
-
+    printCenteredHPLineAnimated("ENEMY", hp, maxHp);
     lastHP = hp;
 }
 
 // ================= DISPLAY =================
 void displayBattleStatus(Dog player, Dog enemy)
 {
-    printf("====================================\n");
+    printBorder();
 
     showHPBarPlayer(player.hp, player.maxHP);
 
@@ -357,7 +339,7 @@ void displayBattleStatus(Dog player, Dog enemy)
         printf(" (STUN %d)", enemy.stunTurns);
 
     printf("\n");
-    printf("====================================\n");
+    printBorder();
 }
 
 void criticalHPScene(Dog *player)
@@ -368,21 +350,22 @@ void criticalHPScene(Dog *player)
     int msg = rand() % 3;
 
     if (msg == 0)
-        printf("%s is barely standing...\n", player->name);
+        printCenteredFormat("%s is barely standing...", player->name);
     else if (msg == 1)
-        printf("Blood drips onto the ground...\n");
+        printCentered("Blood drips onto the ground...");
     else
-        printf("%s struggles to keep fighting...\n", player->name);
+        printCenteredFormat("%s struggles to keep fighting...", player->name);
 
 }
 // ================= LOSE =================
 
 void loseSequence(Dog *player, Dog *enemy)
 {
-    printf("\nYOU LOST...\n");
+    printBlankLine();
+    printCentered("YOU LOST...");
     Sleep(500);
 
-    printf("Recovering");
+    printCenteredNoNewline("Recovering");
     for (int i = 0; i < 3; i++)
     {
         printf(".");
@@ -393,7 +376,8 @@ void loseSequence(Dog *player, Dog *enemy)
     player->hp = player->maxHP;
     enemy->hp = enemy->maxHP;
 
-    printf("\nYou are back to full HP!\n");
+    printBlankLine();
+    printCentered("You are back to full HP!");
 }
 
 int handlePlayerDefeat(Dog *player, Dog *enemy, int baseDef, int baseSpd)
@@ -406,15 +390,25 @@ int handlePlayerDefeat(Dog *player, Dog *enemy, int baseDef, int baseSpd)
     int loseMsg = rand() % 3;
 
     if (loseMsg == 0)
-        printf("\nYou collapse from exhaustion...\n");
+    {
+        printBlankLine();
+        printCentered("You collapse from exhaustion...");
+    }
     else if (loseMsg == 1)
-        printf("\nYour vision starts to fade...\n");
+    {
+        printBlankLine();
+        printCentered("Your vision starts to fade...");
+    }
     else
-        printf("\nYou can no longer continue fighting...\n");
+    {
+        printBlankLine();
+        printCentered("You can no longer continue fighting...");
+    }
 
     Sleep(900);
 
-    printf("\n YOU LOSE \n");
+    printBlankLine();
+    printCentered("YOU LOSE");
 
     player->fatigue = clampFatigue(player->fatigue + 20, player->maxFatigue);
 
@@ -438,28 +432,38 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
     int defeatMsg = rand() % 3;
 
     if (defeatMsg == 0)
-        printf("\nFinishing blow!\n");
+    {
+        printBlankLine();
+        printCentered("Finishing blow!");
+    }
     else if (defeatMsg == 1)
-        printf("\n%s can no longer fight...\n", enemy->name);
+    {
+        printBlankLine();
+        printCenteredFormat("%s can no longer fight...", enemy->name);
+    }
     else
-        printf("\n%s collapsed...\n", enemy->name);
+    {
+        printBlankLine();
+        printCenteredFormat("%s collapsed...", enemy->name);
+    }
 
     Sleep(700);
 
     if (strcmp(enemy->name, "Blackclaw") == 0)
     {
-        typeText("Blackclaw lowers his head.", 25);
+        typeTextCentered("Blackclaw lowers his head.", 25);
         printf("\n");
 
         waitForEnter();
         printf("\n");
 
-        typeText("\"The battlefield... belongs to no one.\"", 25);
+        typeTextCentered("\"The battlefield... belongs to no one.\"", 25);
         printf("\n");
         waitForEnter();
     }
 
-    printf("\n ---VICTORY!--- \n");
+    printBlankLine();
+    printCentered("--- VICTORY! ---");
 
 
     if (strcmp(enemy->name, "Grimfang") == 0)
@@ -542,7 +546,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
 
     if (player->hp <= 0)
     {
-        printf("You must rest before you battle again!\n");
+        printCentered("You must rest before you battle again!");
         return -1;
     }
 
@@ -614,27 +618,29 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             if (remaining < 0)
                 remaining = 0;
 
-            printf("[SELF DESTRUCT TIMER] %02d:%02d\n", remaining / 60, remaining % 60);
+            printCenteredFormat("[SELF DESTRUCT TIMER] %02d:%02d", remaining / 60, remaining % 60);
         }
 
         if (player->hp <= 20)
         {
-            printf("\n [DANGER] Critical HP!\n");
+            printBlankLine();
+            printCentered("[DANGER] Critical HP!");
         }
 
-        printf("\n--- YOUR TURN ---\n");
+        printBlankLine();
+        printCentered("--- YOUR TURN ---");
         if (player->fatigue <= 20)
-            printf("Exhausted!\n");
+            printCentered("Exhausted!");
 
-        printf("1. Attack  2. Defend  3. Heal  4. Surrender\n");
-        printf("Choice: ");
+        printCentered("1. Attack  2. Defend  3. Heal  4. Surrender");
+        printBattleInputPrompt("Choice: ");
 
         char buffer[10];
         fgets(buffer, sizeof(buffer), stdin);
 
         if (sscanf(buffer, "%d", &choice) != 1 || choice < 1 || choice > 4)
         {
-            printf("Invalid!\n");
+            printCentered("Invalid!");
             waitForEnter();
             continue;
         }
@@ -646,7 +652,8 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             system("cls");
             displayBattleStatus(*player, enemy);
 
-            printf("Skills:\n\n");
+            printCentered("SKILLS");
+            printBlankLine();
 
             int half = (player->maxSkillSlots + 1) / 2;
 
@@ -654,51 +661,53 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             {
                 int left = i;
                 int right = i + half;
+                char leftName[30];
+                char rightName[30];
+                char line[120];
 
-                // LEFT
                 if (player->equipped[left] != -1)
                 {
                     int idx = player->equipped[left];
-
-                    printf("%d. %-20s",
-                        left + 1,
-                        player->skills[idx].name);
+                    strcpy(leftName, player->skills[idx].name);
                 }
                 else
                 {
-                    printf("%d. %-20s",
-                        left + 1,
-                        "---");
+                    strcpy(leftName, "---");
                 }
 
-                // RIGHT
                 if (right < player->maxSkillSlots)
                 {
                     if (player->equipped[right] != -1)
                     {
                         int idx = player->equipped[right];
-
-                        printf("%d. %-20s",
-                            right + 1,
-                            player->skills[idx].name);
+                        strcpy(rightName, player->skills[idx].name);
                     }
                     else
                     {
-                        printf("%d. %-20s",
-                            right + 1,
-                            "---");
+                        strcpy(rightName, "---");
                     }
+
+                    sprintf(line, "%2d. %-20s   %2d. %-20s",
+                            left + 1,
+                            leftName,
+                            right + 1,
+                            rightName);
+                }
+                else
+                {
+                    sprintf(line, "%2d. %-20s", left + 1, leftName);
                 }
 
-                printf("\n");
+                printCentered(line);
             }
 
-            printf("\nChoice: ");
+            printBlankLine();
+            printBattleInputPrompt("Choice: ");
 
             fgets(buffer, sizeof(buffer), stdin);
             if (sscanf(buffer, "%d", &move) != 1 || move < 1 || move > player->maxSkillSlots)
             {
-                printf("Invalid skill!\n");
+                printCentered("Invalid skill!");
                 waitForEnter();
                 continue;
             }
@@ -708,7 +717,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             int skillIdx = player->equipped[move - 1];
             if (skillIdx == -1)
             {
-                printf("No skill!\n");
+                printCentered("No skill!");
                 waitForEnter();
                 continue;
             }
@@ -720,7 +729,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             if (strcmp(player->skills[skillIdx].name, "Hip Check") == 0 &&
                 player->skills[skillIdx].cdLeft > 0)
             {
-                printf("Hip Check is on cooldown! Use another move this turn.\n");
+                printCentered("Hip Check is on cooldown! Use another move this turn.");
                 waitForEnter();
                 continue;
             }
@@ -728,7 +737,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             if (strcmp(player->skills[skillIdx].name, "Rolling Tackle") == 0 &&
                 player->skills[skillIdx].cdLeft > 0)
             {
-                printf("Rolling Tackle is on cooldown! Use another move this turn.\n");
+                printCentered("Rolling Tackle is on cooldown! Use another move this turn.");
                 waitForEnter();
                 continue;
             }
@@ -737,7 +746,8 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
 
             if (player->fatigue < s.cost)
             {
-                printf("\nLow energy! Weak attack!\n");
+                printBlankLine();
+                printCentered("Low energy! Weak attack!");
                 cinematicPause(500);
 
                 system("cls");
@@ -798,10 +808,10 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
                 system("cls");
                 displayBattleStatus(*player, enemy);
 
-                printf("\n");
+                printBlankLine();
 
                 playEnemyBattleDialogue(zoneIndex, enemy.name);
-                printf("\n");
+                printBlankLine();
 
                 criticalHPScene(player);
                 criticalHPScene(&enemy);
@@ -819,7 +829,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
         else if (choice == 2) // Defend
         {
             defending = 1;
-            printf("Defending!\n");
+            printCentered("Defending!");
             waitForEnter();
         }
         else if (choice == 3) // Heal
@@ -839,12 +849,13 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             if (player->hp > player->maxHP)
                 player->hp = player->maxHP;
 
-            printf("Healed +%d HP!\n", healAmount);
+            printCenteredFormat("Healed +%d HP!", healAmount);
             waitForEnter();
         }
         else if (choice == 4) // Surrender
         {
-            printf("\nSurrendered...\n");
+            printBlankLine();
+            printCentered("Surrendered...");
             waitForEnter();
 
             player->defense = baseDef;
@@ -865,8 +876,9 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
                 system("cls");
                 displayBattleStatus(*player, enemy);
 
-                printf("\n--- ENEMY TURN ---\n");
-                printf("%s is STUNNED and cannot move!\n", enemy.name);
+                printBlankLine();
+                printCentered("--- ENEMY TURN ---");
+                printCenteredFormat("%s is STUNNED and cannot move!", enemy.name);
 
                 enemy.stunTurns--;
 
@@ -909,8 +921,8 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
                 system("cls");
                 displayBattleStatus(*player, enemy);
 
-                typeText("\n[MUTATION OVERDRIVE]\n", 25);
-                typeText("Project Cerberus fully regenerates!\n", 25);
+                typeTextCentered("\n[MUTATION OVERDRIVE]\n", 25);
+                typeTextCentered("Project Cerberus fully regenerates!\n", 25);
 
                 enemy.hp = enemy.maxHP;
                 enemy.regenerationUsed = 1;
@@ -926,9 +938,9 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             if (elapsed >= 300000)
             {
                 system("cls");
-                typeText("[BLACKSITE SELF-DESTRUCT]\n\n", 25);
-                typeText("The final chamber overloads.\n", 25);
-                typeText("You failed to stop Project Cerberus in time.\n", 25);
+                typeTextCentered("[BLACKSITE SELF-DESTRUCT]\n\n", 25);
+                typeTextCentered("The final chamber overloads.\n", 25);
+                typeTextCentered("You failed to stop Project Cerberus in time.\n", 25);
                 waitForEnter();
 
                 player->hp = 0;
