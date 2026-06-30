@@ -28,3 +28,10 @@
 */
 
 git show --name-only HEAD
+
+main
+battle
+dog.c
+stage.C
+stage1.C
+enemy.C
