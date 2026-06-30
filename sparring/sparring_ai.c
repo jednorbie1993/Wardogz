@@ -293,6 +293,21 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
             enemy->isStunned = 1; enemy->stunTurns = 2;
             printf("%s STUNNED!\n", enemy->name);
         }
+        if (strcmp(skill.name, "Rival Breaker") == 0)
+        {
+            enemy->defense -= 10;
+            if (enemy->defense < 0)
+                enemy->defense = 0;
+
+            if (rand() % 100 < 35)
+            {
+                enemy->isStunned = 1;
+                enemy->stunTurns = 1;
+                printf("%s STUNNED!\n", enemy->name);
+            }
+
+            printf("Enemy DEF reduced!\n");
+        }
         if (strcmp(skill.name, "Charge") == 0)
         {
             int recoil = dmg / 5; user->hp -= recoil;
@@ -313,7 +328,7 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
     else if (skill.type == SKILL_BUFF)
     {
         user->attack += skill.power;
-        printf("%s attack UP!\n", user->name);
+        printf("%s defense UP!\n", user->name);
         return 1;
     }
     else if (skill.type == SKILL_DEBUFF)
