@@ -47,6 +47,8 @@ static void typeTextCentered(const char *text, int delay)
     }
 }
 
+#define HP_LINE_WIDTH 40
+
 static void printCenteredHPLine(const char *label, int hp, int maxHp)
 {
     char line[120];
@@ -58,8 +60,12 @@ static void printCenteredHPLine(const char *label, int hp, int maxHp)
 
     bar[10] = '\0';
 
-    sprintf(line, "%-6s: [%s] (%d/%d)", label, bar, hp, maxHp);
-    printCenteredNoNewline(line);
+    sprintf(line, "%-8s [%s] [%4d/%4d]", label, bar, hp, maxHp);
+
+    int spaces = (CONSOLE_WIDTH - HP_LINE_WIDTH) / 2;
+    if (spaces < 0) spaces = 0;
+
+    printf("%*s%-*s", spaces, "", HP_LINE_WIDTH, line);
 }
 
 static void printCenteredHPLineAnimated(const char *label, int hp, int maxHp)
@@ -73,15 +79,14 @@ static void printCenteredHPLineAnimated(const char *label, int hp, int maxHp)
 
     bar[10] = '\0';
 
-    sprintf(line, "%-6s: [%s] (%d/%d)   ", label, bar, hp, maxHp);
+    sprintf(line, "%-8s [%s] [%4d/%4d]", label, bar, hp, maxHp);
 
-    int len = strlen(line);
-    int spaces = (CONSOLE_WIDTH - len) / 2;
-
+    int spaces = (CONSOLE_WIDTH - HP_LINE_WIDTH) / 2;
     if (spaces < 0)
         spaces = 0;
 
-    printf("\r%*s%s", spaces, "", line);
+    printf("\r%*s%-*s", spaces, "", HP_LINE_WIDTH, line);
+    fflush(stdout);
 }
 
 void cinematicPause(int ms)
