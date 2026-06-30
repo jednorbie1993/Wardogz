@@ -8,6 +8,7 @@
 #include "../cinematic.h"
 #include "../battle.h"
 #include "../replay_system.h"
+#include "../console.h"
 
 void setEnemySkillsStage1(Dog *enemy)
 {
@@ -207,9 +208,8 @@ void applyStage1Personality(Dog *player, Dog *enemy, int *enemyDamage)
 
         if (rand() % 100 < 20)
         {
-            printf("\n");
-            typeText(enemy->name, 30);
-            typeText(" is ENRAGED!\n", 30);
+            printBlankLine();
+            printCenteredFormat("%s is ENRAGED!", enemy->name);
 
             *enemyDamage += 8;
 
@@ -233,15 +233,10 @@ void applyStage1Personality(Dog *player, Dog *enemy, int *enemyDamage)
 
             int randomLine = rand() % 5;
 
-            printf("\n");
-
-            typeText(enemy->name, 30);
-            typeText(" is mutating!\n", 30);
-
-            typeText(mutationLines[randomLine], 30);
-            printf("\n");
-
-            typeText("Attack increased!\n", 30);
+            printBlankLine();
+            printCenteredFormat("%s is mutating!", enemy->name);
+            printCentered(mutationLines[randomLine]);
+            printCentered("Attack increased!");
 
             *enemyDamage += 3;
 
@@ -258,7 +253,8 @@ void applyStage1Personality(Dog *player, Dog *enemy, int *enemyDamage)
 
         if (rand() % 100 < 30)
         {
-            printf("\nEnemy HARDENED!\n");
+            printBlankLine();
+            printCentered("Enemy HARDENED!");
 
             *enemyDamage = (*enemyDamage * 70) / 100;
 
@@ -273,7 +269,8 @@ void applyStage1Personality(Dog *player, Dog *enemy, int *enemyDamage)
         {
             *enemyDamage += 5;
 
-            printf("\nEnemy is DESPERATE!\n");
+            printBlankLine();
+            printCentered("Enemy is DESPERATE!");
 
             waitForEnter();
             system("cls");
@@ -308,7 +305,7 @@ void useStage1EnemySkill(Dog *player, Dog *enemy, Skill skill, int *enemyDamage)
             player->bleedTurns = 2;
             player->bleedDamage = 3;
 
-            printf("You started bleeding!\n");
+            printCentered("You started bleeding!");
         }
         break;
 
@@ -320,7 +317,7 @@ void useStage1EnemySkill(Dog *player, Dog *enemy, Skill skill, int *enemyDamage)
         *enemyDamage += skill.power;
         enemy->attack += 2;
 
-        printf("%s grows more aggressive!\n", enemy->name);
+        printCenteredFormat("%s grows more aggressive!", enemy->name);
         break;
 
     default:
@@ -333,7 +330,7 @@ void useStage1EnemySkill(Dog *player, Dog *enemy, Skill skill, int *enemyDamage)
     case SKILL_SAVAGE_RUSH:
         *enemyDamage += skill.power;
         enemy->hp -= 6;
-        printf("%s took 6 recoil damage!\n", enemy->name);
+        printCenteredFormat("%s took 6 recoil damage!", enemy->name);
         break;
 
     case SKILL_BLOOD_TRAIL:
@@ -344,7 +341,7 @@ void useStage1EnemySkill(Dog *player, Dog *enemy, Skill skill, int *enemyDamage)
             player->isBleeding = 1;
             player->bleedTurns = 3;
             player->bleedDamage = 4;
-            printf("You are bleeding from Blood Trail!\n");
+            printCentered("You are bleeding from Blood Trail!");
         }
         break;
 
@@ -356,7 +353,7 @@ void useStage1EnemySkill(Dog *player, Dog *enemy, Skill skill, int *enemyDamage)
             player->isBleeding = 1;
             player->bleedTurns = 3;
             player->bleedDamage = 5;
-            printf("Shadow Maw caused heavy bleeding!\n");
+            printCentered("Shadow Maw caused heavy bleeding!");
         }
         break;
     }
@@ -372,14 +369,9 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
     int skillChoice = rand() % enemy->numSkills;
     Skill skill = enemy->skills[skillChoice];
 
-    printf("\n");
-
-    typeText(enemy->name, 25);
-    typeText(" used ", 20);
-    typeText(skill.name, 35);
-    printf("!\n");
-
-    cinematicDots("Enemy attacking");
+    printBlankLine();
+    printCenteredFormat("%s used %s!", enemy->name, skill.name);
+    printCentered("Enemy attacking...");
 
     useStage1EnemySkill(player, enemy, skill, enemyDamage);
 
