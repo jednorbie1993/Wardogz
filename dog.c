@@ -179,6 +179,15 @@ void preBattleScene(int zoneIndex)
 
     printf("\n");
 
+    int len = strlen(messages[r]);
+    int spaces = (CONSOLE_WIDTH - len) / 2;
+
+    if (spaces < 0)
+        spaces = 0;
+
+    for (int i = 0; i < spaces; i++)
+        printf(" ");
+
     for (int i = 0; messages[r][i] != '\0'; i++)
     {
         printf("%c", messages[r][i]);
