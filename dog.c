@@ -675,20 +675,31 @@ void skillMenu(Dog *d)
             printCentered("CURRENT SKILLS");
             printBlankLine();
 
+            char line[150];
+
             for (int i = 0; i < d->maxSkillSlots; i++)
             {
                 if (d->equipped[i] != -1)
                 {
                     int idx = d->equipped[i];
-                    printCenteredFormat("Slot %d: %s (P:%d C:%d)",
-                                        i + 1,
-                                        d->skills[idx].name,
-                                        d->skills[idx].power,
-                                        d->skills[idx].cost);
+
+                    sprintf(line,
+                        "Slot %2d. %-18s (P:%2d/C:%2d)",
+                        i + 1,
+                        d->skills[idx].name,
+                        d->skills[idx].power,
+                        d->skills[idx].cost);
+
+                    printCentered(line);
                 }
                 else
                 {
-                    printCenteredFormat("Slot %d: [EMPTY]", i + 1);
+                    sprintf(line,
+                        "Slot %2d. %-18s",
+                        i + 1,
+                        "[EMPTY]");
+
+                    printCentered(line);
                 }
             }
 
@@ -707,16 +718,31 @@ void skillMenu(Dog *d)
             printBlankLine();
             printCentered("CURRENT SKILLS");
             printBlankLine();
+            char currentLine[150];
+
             for (int i = 0; i < d->maxSkillSlots; i++)
             {
                 if (d->equipped[i] != -1)
                 {
                     int idx = d->equipped[i];
-                    printCenteredFormat("Slot %d: %s", i + 1, d->skills[idx].name);
+
+                    sprintf(currentLine,
+                        "Slot %2d. %-18s (P:%2d/C:%2d)",
+                        i + 1,
+                        d->skills[idx].name,
+                        d->skills[idx].power,
+                        d->skills[idx].cost);
+
+                    printCentered(currentLine);
                 }
                 else
                 {
-                    printCenteredFormat("Slot %d: [EMPTY]", i + 1);
+                    sprintf(currentLine,
+                        "Slot %2d. %-18s",
+                        i + 1,
+                        "[EMPTY]");
+
+                    printCentered(currentLine);
                 }
             }
 
@@ -740,27 +766,38 @@ void skillMenu(Dog *d)
             printBlankLine();
 
             int half = (d->skillCount + 1) / 2;
+            char skillLine[150];
 
             for (int i = 0; i < half; i++)
             {
-                int right = i + half;
-
-                printf("%2d. %-18s (P:%2d/C:%2d)",
-                    i + 1,
-                    d->skills[i].name,
-                    d->skills[i].power,
-                    d->skills[i].cost);
-
-                if (right < d->skillCount)
+                if (i + half < d->skillCount)
                 {
-                    printf("   %2d. %-18s (P:%2d/C:%2d)",
+                    int right = i + half;
+
+                    sprintf(skillLine,
+                        "%2d. %-18s (P:%2d/C:%2d)   %2d. %-18s (P:%2d/C:%2d)",
+                        i + 1,
+                        d->skills[i].name,
+                        d->skills[i].power,
+                        d->skills[i].cost,
                         right + 1,
                         d->skills[right].name,
                         d->skills[right].power,
                         d->skills[right].cost);
-                }
 
-                printBlankLine();
+                    printCentered(skillLine);
+                }
+                else
+                {
+                    sprintf(skillLine,
+                        "%2d. %-18s (P:%2d/C:%2d)",
+                        i + 1,
+                        d->skills[i].name,
+                        d->skills[i].power,
+                        d->skills[i].cost);
+
+                    printCentered(skillLine);
+                }
             }
 
             printf("%35sChoice: ", "");
@@ -802,28 +839,28 @@ void printDog(Dog d)
     printCentered("WARDOGZ INFO");
     printBlankLine();
 
-    printf("%50s%-13s : %s\n", "", "Trainer", d.trainerName);
-    printf("%50s%-13s : %s\n", "", "Partner", d.name);
+    printf("%43s%-13s : %s\n", "", "Trainer", d.trainerName);
+    printf("%43s%-13s : %s\n", "", "Partner", d.name);
 
     printBlankLine();
 
-    printf("%50s%-13s : %d/%d\n", "", "HP", d.hp, d.maxHP);
-    printf("%50s%-13s : %d\n", "", "Attack", d.attack);
-    printf("%50s%-13s : %d\n", "", "Defense", d.defense);
-    printf("%50s%-13s : %d\n", "", "Speed", d.speed);
-    printf("%50s%-13s : %d\n", "", "Accuracy", d.accuracy);
-    printf("%50s%-13s : %d\n", "", "Intelligence", d.intelligence);
+    printf("%43s%-13s : %d/%d\n", "", "HP", d.hp, d.maxHP);
+    printf("%43s%-13s : %d\n", "", "Attack", d.attack);
+    printf("%43s%-13s : %d\n", "", "Defense", d.defense);
+    printf("%43s%-13s : %d\n", "", "Speed", d.speed);
+    printf("%43s%-13s : %d\n", "", "Accuracy", d.accuracy);
+    printf("%43s%-13s : %d\n", "", "Intelligence", d.intelligence);
 
     printBlankLine();
 
-    printf("%50s%-13s : %d/%d\n", "", "Fatigue", d.fatigue, d.maxFatigue);
+    printf("%43s%-13s : %d/%d\n", "", "Fatigue", d.fatigue, d.maxFatigue);
 
     printBlankLine();
 
-    printf("%50s%-13s : Class %c\n", "", "Arena Rank", d.arenaRank);
-    printf("%50s%-13s : %s\n", "", "Arena Title", getArenaTitle(d.arenaRank));
+    printf("%43s%-13s : Class %c\n", "", "Arena Rank", d.arenaRank);
+    printf("%43s%-13s : %s\n", "", "Arena Title", getArenaTitle(d.arenaRank));
 
-    printf("%50s%-13s : %dW - %dL - %dD\n",
+    printf("%43s%-13s : %dW - %dL - %dD\n",
            "",
            "Arena Record",
            d.arenaWins,
@@ -832,7 +869,7 @@ void printDog(Dog d)
 
     if (d.arenaRank == 'Z' && d.arenaProgress >= d.arenaRequiredWins)
     {
-        printf("%50s%-13s : WORLD LEGEND\n", "", "Arena Status");
+        printf("%43s%-13s : WORLD LEGEND\n", "", "Arena Status");
     }
 }
 
