@@ -35,3 +35,4 @@ dog.c
 stage.C
 stage1.C
 enemy.C
+battle_dialogue
