@@ -309,7 +309,7 @@ int main()
                 printCentered("You're too tired to rest anymore!");
                 waitForEnter();
             }
-            else if (player->fatigue >= 100 && player->hp >= player->maxHP)
+            else if (player->fatigue >= player->maxFatigue && player->hp >= player->maxHP)
             {
                 printCentered("You're already fully rested!");
                 waitForEnter();
