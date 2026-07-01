@@ -36,3 +36,7 @@ stage.C
 stage1.C
 enemy.C
 battle_dialogue
+sparring_ai.c 
+
+
+.\build.bat
