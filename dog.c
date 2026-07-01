@@ -76,37 +76,51 @@ void zoneStoryIntro(int zoneIndex, int progress)
 {
     system("cls");
 
-    // BACK ALLEY
+    const char *lines[3];
+    int count = 0;
+
     if (zoneIndex == 0 && progress == 0)
     {
-        typeText("The alley reeks of rust and old blood.\n", 25);
-        typeText("Weak strays wander these streets...\n", 25);
-        typeText("But something stronger lurks deeper inside.\n", 25);
+        lines[0] = "The alley reeks of rust and old blood.";
+        lines[1] = "Weak strays wander these streets...";
+        lines[2] = "But something stronger lurks deeper inside.";
+        count = 3;
     }
-
-    // JUNKYARD
     else if (zoneIndex == 1 && progress == 0)
     {
-        typeText("Mountains of scrap tower around you.\n", 25);
-        typeText("The junkyard dogs fight without fear.\n", 25);
+        lines[0] = "Mountains of scrap tower around you.";
+        lines[1] = "The junkyard dogs fight without fear.";
+        count = 2;
     }
-
-    // ABANDONED BLOCK
     else if (zoneIndex == 2 && progress == 0)
     {
-        typeText("The abandoned block feels lifeless.\n", 25);
-        typeText("But hidden eyes follow your every step.\n", 25);
+        lines[0] = "The abandoned block feels lifeless.";
+        lines[1] = "But hidden eyes follow your every step.";
+        count = 2;
     }
-
-    // RIVER PACK HIDEOUT
     else if (zoneIndex == 3 && progress == 0)
     {
-        typeText("The river carries the scent of wild packs.\n", 25);
-        typeText("You are far from the city now.\n", 25);
+        lines[0] = "The river carries the scent of wild packs.";
+        lines[1] = "You are far from the city now.";
+        count = 2;
+    }
+
+    for (int j = 0; j < count; j++)
+    {
+        int len = strlen(lines[j]);
+        int spaces = (CONSOLE_WIDTH - len) / 2;
+
+        if (spaces < 0)
+            spaces = 0;
+
+        for (int i = 0; i < spaces; i++)
+            printf(" ");
+
+        typeText(lines[j], 25);
+        printf("\n");
     }
 
     printBlankLine();
- 
 }
 
 void preBattleScene(int zoneIndex)
@@ -194,6 +208,8 @@ void preBattleScene(int zoneIndex)
         fflush(stdout);
         Sleep(25);
     }
+    
+    printf("\n");
 
     printBlankLine();
     printCenteredNoNewline("Press Enter to continue...");
