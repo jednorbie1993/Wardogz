@@ -141,6 +141,8 @@ typedef enum
 // ================= DOG STRUCT =================
 typedef struct {
     char name[50];
+    char trainerName[50];
+    int dogType;
 
     int hp, maxHP;
     int attack, defense, speed;
@@ -172,7 +174,7 @@ typedef struct {
     PersonalityType personalityType;
     int guardTurns;
 
-    int sparringProgress[5];      
+    int sparringProgress[6];      
 
     int powerTrainingCount;
     int speedTrainingCount;
@@ -200,6 +202,7 @@ typedef struct {
     int arenaWins;
     int arenaLosses;
     int arenaDraws;
+    int hipCheckUses;
     int arenaProgress;
     int arenaRequiredWins;
     int maxRest;
