@@ -231,23 +231,27 @@ void showEnemyEntrance(Dog *enemy, int zoneIndex)
 
     if (zoneIndex >= 16 && zoneIndex <= 20)
     {
-        typeText(enemy->name, 25);
-        typeTextCentered(" deployed!", 20);
+        char line[120];
+        sprintf(line, "%s deployed!", enemy->name);
+        typeTextCentered(line, 20);
     }
     else if (zoneIndex >= 8 && zoneIndex <= 11)
     {
-        typeText(enemy->name, 25);
-        typeTextCentered(" arrived!", 20);
+        char line[120];
+        sprintf(line, "%s arrived!", enemy->name);
+        typeTextCentered(line, 20);
     }
     else if (zoneIndex >= 3 && zoneIndex <= 7)
     {
-        typeText(enemy->name, 25);
-        typeTextCentered(" emerged!", 20);
+        char line[120];
+        sprintf(line, "%s emerged!", enemy->name);
+        typeTextCentered(line, 20);
     }
     else
     {
-        typeText(enemy->name, 25);
-        typeTextCentered(" appeared!", 20);
+        char line[120];
+        sprintf(line, "%s appeared!", enemy->name);
+        typeTextCentered(line, 20);
     }
 
     printf("\n");
@@ -638,6 +642,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             printCentered("Exhausted!");
 
         printCentered("1. Attack  2. Defend  3. Heal  4. Surrender");
+        printf("\n");
         printBattleInputPrompt("Choice: ");
 
         char buffer[10];
