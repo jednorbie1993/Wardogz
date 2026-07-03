@@ -636,8 +636,9 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             printCentered("[DANGER] Critical HP!");
         }
 
-        printBlankLine();
+        //printBlankLine();
         printCentered("--- YOUR TURN ---");
+        printBlankLine();
         if (player->fatigue <= 20)
             printCentered("Exhausted!");
 
