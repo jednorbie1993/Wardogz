@@ -16,6 +16,7 @@
 #include "save.h"
 #include "console.h"
 
+
 void showMainMenu(GameData *game, Dog *player)
 {
     system("cls");
