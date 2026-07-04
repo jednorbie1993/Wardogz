@@ -33,9 +33,13 @@ git show --name-only HEAD
 main
 battle
 dog.c
+skill.c
 stage.C
 stage1.C
+stage2.c
 enemy.C
+enemy_stage1
+enemy_stage2
 battle_dialogue
 sparring_ai.c
 stat.c
