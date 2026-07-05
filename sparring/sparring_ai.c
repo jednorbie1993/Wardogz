@@ -9,6 +9,7 @@
 #include "characters/snoop.h"
 #include "characters/tiny.h"
 #include "../skill.h"
+#include "../console.h"
 
 int chooseEnemyMove(Dog *enemy, Dog *player, int type)
 {
@@ -175,7 +176,7 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
 {
     if (user->isStunned && user->stunTurns > 0)
     {
-        printf("%s is STUNNED and cannot move!\n", user->name);
+        printCenteredFormat("%s is STUNNED and cannot move!", user->name);
 
         user->stunTurns--;
 
@@ -200,7 +201,7 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
 
     if (roll >= hitChance)
     {
-        printf("%s used %s but MISSED!\n", user->name, skill.name);
+        printCenteredFormat("%s used %s but MISSED!", user->name, skill.name);
         return 0; // NO DAMAGE
     }
 
@@ -228,7 +229,7 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
             if (dmg > 180)
                 dmg = 180;
 
-            printf("CRITICAL HIT!\n");
+            printCentered("CRITICAL HIT!");
         }
 
         int finalDamage = dmg;
@@ -244,7 +245,7 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
         if (enemy->hp < 0)
             enemy->hp = 0;
 
-        printf("%s used %s! Dealt %d damage!\n", user->name, skill.name, finalDamage);
+        printCenteredFormat("%s used %s! Dealt %d damage!", user->name, skill.name, finalDamage);
             
         /*if (rand() % 100 < 10)
         {
@@ -291,7 +292,7 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
         if (strcmp(skill.name, "Hip Check") == 0 && rand() % 100 < 40)
         {
             enemy->isStunned = 1; enemy->stunTurns = 2;
-            printf("%s STUNNED!\n", enemy->name);
+            printCenteredFormat("%s STUNNED!", enemy->name);
         }
         if (strcmp(skill.name, "Rival Breaker") == 0)
         {
@@ -303,15 +304,18 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
             {
                 enemy->isStunned = 1;
                 enemy->stunTurns = 1;
-                printf("%s STUNNED!\n", enemy->name);
+                printCenteredFormat("%s STUNNED!", enemy->name);
             }
 
-            printf("Enemy DEF reduced!\n");
+            printCentered("Enemy DEF reduced!");
         }
         if (strcmp(skill.name, "Charge") == 0)
         {
-            int recoil = dmg / 5; user->hp -= recoil;
-            printf("%s recoil: %d\n", user->name, recoil);
+            int recoil = dmg / 5;
+            user->hp -= recoil;
+            if (user->hp < 0)
+                user->hp = 0;
+            printCenteredFormat("%s recoil: %d", user->name, recoil);
         }
 
         return 1;
@@ -322,20 +326,20 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
     {
         int heal = (user->intelligence / 5) + skill.power;
         user->hp = (user->hp + heal > user->maxHP) ? user->maxHP : user->hp + heal;
-        printf("%s healed %d HP!\n", user->name, heal);
+        printCenteredFormat("%s healed %d HP!", user->name, heal);
         return 1;
     }
     else if (skill.type == SKILL_BUFF)
     {
         user->attack += skill.power;
-        printf("%s defense UP!\n", user->name);
+        printCenteredFormat("%s defense UP!", user->name);
         return 1;
     }
     else if (skill.type == SKILL_DEBUFF)
     {
         enemy->attack -= skill.power;
         if (enemy->attack < 1) enemy->attack = 1;
-        printf("%s attack DOWN!\n", enemy->name);
+        printCenteredFormat("%s attack DOWN!", enemy->name);
         return 1;
     }
 
