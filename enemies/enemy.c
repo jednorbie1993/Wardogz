@@ -5,9 +5,30 @@
 #include <windows.h>
 #include "enemy.h"
 #include "../cinematic.h"
+#include "../console.h"
 #include "enemy_stage5.h"
 
 extern int systemLog;
+
+static void typeTextCentered(const char *text, int delay)
+{
+    int len = strlen(text);
+    int spaces = (CONSOLE_WIDTH - len) / 2;
+
+    if (spaces < 0)
+        spaces = 0;
+
+    for (int i = 0; i < spaces; i++)
+        printf(" ");
+
+    for (int i = 0; text[i] != '\0'; i++)
+    {
+        printf("%c", text[i]);
+        fflush(stdout);
+        Sleep(delay);
+    }
+}
+
 
 // =========================
 // CREATE ENEMY
@@ -31,6 +52,8 @@ void createEnemy(Dog *e)
     e->isBleeding = 0;
     e->bleedTurns = 0;
     e->bleedDamage = 0;
+    e->isStunned = 0;
+    e->stunTurns = 0;
 
     e->accuracyModifier = 0;
     e->numSkills = 0;
@@ -57,7 +80,7 @@ void enemyQuickAttack(Dog *player, Dog *enemy)
     player->hp -= dmg;
     player->hp = clamp(player->hp);
 
-    printf("Enemy quickly attacks! You took %d damage!\n", dmg);
+    printCenteredFormat("Enemy quickly attacks! You took %d damage!", dmg);
 }
 
 // =========================
@@ -65,6 +88,26 @@ void enemyQuickAttack(Dog *player, Dog *enemy)
 // =========================
 int enemyAttack(Dog *player, Dog *enemy, int *defending)
 {
+    // =========================
+    // STUN CHECK
+    // =========================
+    if (enemy->isStunned && enemy->stunTurns > 0)
+    {
+        system("cls");
+        displayBattleStatus(*player, *enemy);
+
+        printBlankLine();
+        printCentered("--- ENEMY TURN ---");
+        printCenteredFormat("%s is STUNNED and cannot move!", enemy->name);
+
+        enemy->stunTurns--;
+
+        if (enemy->stunTurns <= 0)
+            enemy->isStunned = 0;
+
+        waitForEnter();
+        return -1;
+    }
 
     // =========================
     // WILD SKILLS SYSTEM
@@ -73,13 +116,13 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     {
         if (enemy->zoneType == ZONE_RAVINE && rand() % 100 < 15)
         {
-            printf("Ambush bonus! Speed increased!\n");
+            printCentered("Ambush bonus! Speed increased!");
             enemy->speed += 3;
         }
 
         if (enemy->zoneType == ZONE_TRIAL && enemy->hp < enemy->maxHP / 2)
         {
-            printf("Trial Rage activated!\n");
+            printCentered("Trial Rage activated!");
             enemy->attack += 3;
         }
 
@@ -199,7 +242,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         int randomLine = rand() % 3;
 
         if (enemy->zoneType == ZONE_BIOLAB)
-            printf("%s\n", bioLabLines[randomLine]);
+            printCentered(bioLabLines[randomLine]);
         else if (enemy->zoneType == ZONE_MUTANT)
         {
             if (strcmp(enemy->name, "Project Cerberus") == 0)
@@ -211,15 +254,15 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
                     "Timeline curse resonating."
                 };
 
-                printf("%s\n", cerberusLines[randomLine]);
+                printCentered(cerberusLines[randomLine]);
             }
             else
             {
-                printf("%s\n", mutantLines[randomLine]);
+                printCentered(mutantLines[randomLine]);
             }
         }
         else
-            printf("%s\n", wildLines[randomLine]);
+            printCentered(wildLines[randomLine]);
 
         /*if (enemy->zoneType == ZONE_BIOLAB)
             printf("%s mutates violently...\n", enemy->name);
@@ -231,7 +274,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         // SAFETY CHECK (IMPORTANT)
         if (skillChoice < 0 || skillChoice >= MAX_SKILLS)
         {
-            printf("%s hesitates...\n", enemy->name);
+            printCenteredFormat("%s hesitates...", enemy->name);
             skillChoice = 0;
         }
 
@@ -447,15 +490,15 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
                 int r = rand() % 3;
 
                 if (enemy->zoneType == ZONE_MUTANT)
-                    printf("%s %s\n", enemy->name, mutantActions[r]);
+                    printCenteredFormat("%s %s", enemy->name, mutantActions[r]);
                 else if (enemy->zoneType == ZONE_BIOLAB)
-                    printf("%s %s\n", enemy->name, bioActions[r]);
+                    printCenteredFormat("%s %s", enemy->name, bioActions[r]);
                 else if (enemy->zoneType == ZONE_MILITARY)
-                    printf("%s %s\n", enemy->name, militaryActions[r]);
+                    printCenteredFormat("%s %s", enemy->name, militaryActions[r]);
                 else
-                    printf("%s attacks fiercely!\n", enemy->name);
+                    printCenteredFormat("%s attacks fiercely!", enemy->name);
 
-                printf("You took %d damage!\n", dmg);
+                printCenteredFormat("You took %d damage!", dmg);
 
                 break;
             }
@@ -484,19 +527,24 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
             int randomLine = rand() % 5;
 
-            printf("\n");
+            printBlankLine();
 
-            typeText(enemy->name, 30);
-            typeText(" is mutating!\n", 30);
+            {
+                char mutationText[120];
+                sprintf(mutationText, "%s is mutating!", enemy->name);
+                typeTextCentered(mutationText, 30);
+                printBlankLine();
+            }
 
             if (strcmp(enemy->name, "Project Cerberus") == 0)
-                typeText(cerberusMutationLines[randomLine], 30);
+                typeTextCentered(cerberusMutationLines[randomLine], 30);
             else
-                typeText(mutationLines[randomLine], 30);
+                typeTextCentered(mutationLines[randomLine], 30);
 
-            printf("\n");
+            printBlankLine();
 
-            typeText("Attack increased!\n", 30);
+            typeTextCentered("Attack increased!", 30);
+            printBlankLine();
 
             if (strcmp(enemy->name, "Project Cerberus") == 0)
                 enemy->attack += 5;
@@ -514,7 +562,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         {
             player->accuracy += 20;
             player->accuracyModifier = 0;
-            printf("Accuracy recovering...\n");
+            printCentered("Accuracy recovering...");
         }
 
         if (player->bleedTurns > 0)
@@ -522,14 +570,14 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             player->hp -= player->bleedDamage;
             player->hp = clamp(player->hp);
 
-            printf("Bleed: -%d HP\n", player->bleedDamage);
+            printCenteredFormat("Bleed: -%d HP", player->bleedDamage);
 
             player->bleedTurns--;
 
             if (player->bleedTurns <= 0)
             {
                 player->bleedDamage = 0;
-                printf("Bleeding stopped.\n");
+                printCentered("Bleeding stopped.");
             }
         }
 
@@ -544,7 +592,8 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
     displayBattleStatus(*player, *enemy);
 
-    printf("\n--- ENEMY TURN ---\n");
+    printBlankLine();
+    printCentered("--- ENEMY TURN ---");
 
     int enemyDamage = (enemy->attack / 6) + 4;
 
@@ -568,7 +617,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     {
         int bleedDmg = (rand() % 5) + 3;
 
-        printf("Enemy BLEEDING: -%d HP\n", bleedDmg);
+        printCenteredFormat("Enemy BLEEDING: -%d HP", bleedDmg);
 
         enemy->hp -= bleedDmg;
         enemy->hp = clamp(enemy->hp);
@@ -578,14 +627,14 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         if (enemy->bleedTurns <= 0)
         {
             enemy->isBleeding = 0;
-            printf("Bleeding stopped.\n");
+            printCentered("Bleeding stopped.");
         }
 
         waitForEnter();
 
         if (enemy->hp <= 0)
         {
-            printf("Enemy DIED from bleeding!\n");
+            printCentered("Enemy DIED from bleeding!");
             return 1;
         }
     }
@@ -593,13 +642,14 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     // =========================
     // CONFUSION CHECK
     // =========================
+    
     if (enemy->isConfused && enemy->confuseTurns > 0)
     {
-        printf("%s is CONFUSED!\n", enemy->name);
+        printCenteredFormat("%s is CONFUSED!", enemy->name);
 
         if (rand() % 100 < 50)
         {
-            printf("Confused enemy MISSED!\n");
+            printCentered("Confused enemy MISSED!");
 
             enemy->confuseTurns--;
 
@@ -623,7 +673,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
     if (roll >= hitChance)
     {
-        printf("Enemy MISSED!\n");
+        printCentered("Enemy MISSED!");
         waitForEnter();
         return -1;
     }
@@ -645,15 +695,15 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         {
             int counterDmg = (player->attack / 2) + (player->intelligence / 4);
 
-            printf("COUNTER ATTACK!\n");
-            printf("Counter: %d damage!\n", counterDmg);
+            printCentered("COUNTER ATTACK!");
+            printCenteredFormat("Counter: %d damage!", counterDmg);
 
             enemy->hp -= counterDmg;
             enemy->hp = clamp(enemy->hp);
 
             if (enemy->hp <= 0)
             {
-                printf("Enemy defeated by COUNTER!\n");
+                printCentered("Enemy defeated by COUNTER!");
                 waitForEnter();
                 return 1;
             }
@@ -665,7 +715,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             player->hp -= enemyDamage;
             player->hp = clamp(player->hp);
 
-            printf("Defended! Took %d damage\n", enemyDamage);
+            printCenteredFormat("Defended! Took %d damage", enemyDamage);
         }
 
         *defending = 0;
@@ -681,7 +731,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
             if (rand() % 100 < triggerChance)
             {
-                printf("OSSAS COUNTER TRIGGERS!\n");
+                printCentered("OSSAS COUNTER TRIGGERS!");
 
                 int reflect = player->counterDamage;
 
@@ -691,13 +741,13 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
                 enemy->hp -= reflect;
                 enemy->hp = clamp(enemy->hp);
 
-                printf("Reflected %d damage!\n", reflect);
+                printCenteredFormat("Reflected %d damage!", reflect);
 
                 enemyDamage /= 2;
             }
             else
             {
-                printf("Ossas Counter failed!\n");
+                printCentered("Ossas Counter failed!");
             }
 
             player->isCountering = 0;
@@ -707,7 +757,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         player->hp -= enemyDamage;
         player->hp = clamp(player->hp);
 
-        printf("%s dealt %d damage!\n", enemy->name, enemyDamage);
+        printCenteredFormat("%s dealt %d damage!", enemy->name, enemyDamage);
     }
 
     // =========================
@@ -715,7 +765,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     // =========================
     if (player->hp <= 0)
     {
-        printf("You were defeated...\n");
+        printCentered("You were defeated...");
         waitForEnter();
         return 0;
     }
