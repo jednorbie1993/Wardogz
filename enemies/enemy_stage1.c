@@ -371,7 +371,7 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
 
     printBlankLine();
     printCenteredFormat("%s used %s!", enemy->name, skill.name);
-    printCentered("Enemy attacking...");
+    cinematicDots("Enemy attacking");
 
     useStage1EnemySkill(player, enemy, skill, enemyDamage);
 
