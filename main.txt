@@ -37,6 +37,7 @@ skill.c
 stage.C
 stage1.C
 stage2.c
+stage3.c
 enemy.C
 enemy_stage1
 enemy_stage2
