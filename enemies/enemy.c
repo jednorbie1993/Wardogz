@@ -278,6 +278,55 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             skillChoice = 0;
         }
 
+        // =========================
+        // OSSAS COUNTER CHECK VS SKILL
+        // =========================
+        if (player->isCountering && player->counterDamage > 0)
+        {
+            int triggerChance = 65 + (player->intelligence / 20);
+
+            if (triggerChance > 85)
+                triggerChance = 85;
+
+            if (rand() % 100 < triggerChance)
+            {
+                int reflect = (player->attack * 3) + (player->intelligence * 2);
+                reflect += rand() % 21;
+
+                if (reflect > 320)
+                    reflect = 320;
+
+                if (reflect < 1)
+                    reflect = 1;
+
+                if (reflect > enemy->hp)
+                    reflect = enemy->hp;
+
+                printCentered("OSSAS COUNTER TRIGGERS!");
+                printCenteredFormat("Reflected %d damage!", reflect);
+
+                enemy->hp -= reflect;
+                enemy->hp = clamp(enemy->hp);
+
+                if (enemy->hp <= 0)
+                {
+                    player->isCountering = 0;
+                    player->counterDamage = 0;
+
+                    printCentered("Enemy defeated by OSSAS COUNTER!");
+                    waitForEnter();
+                    return 1;
+                }
+            }
+            else
+            {
+                printCentered("Ossas Counter failed!");
+            }
+
+            player->isCountering = 0;
+            player->counterDamage = 0;
+        }
+
         SkillID skillId = enemy->skills[skillChoice].id;
 
         switch (skillId)
