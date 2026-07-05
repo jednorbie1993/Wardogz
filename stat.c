@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "stat.h"
 #include "dog.h"
+#include "console.h"
 
 int randRange(int min, int max)
 {
@@ -68,20 +69,31 @@ int getFatiguePenalty(int fatigue)
 void applyStatGain(Dog *d, int atk, int hp, int def, int spd, int acc, int intel)
 {
     d->attack = clamp(d->attack + atk);
+
     float ratio = (float)d->hp / d->maxHP;
 
     d->maxHP = clamp(d->maxHP + hp);
     d->hp = (int)(d->maxHP * ratio);
+
     d->defense = clamp(d->defense + def);
     d->speed = clamp(d->speed + spd);
     d->accuracy = clamp(d->accuracy + acc);
     d->intelligence = clamp(d->intelligence + intel);
 }
 
+static void printBattleStatGainLine(const char *statName, int gain)
+{
+    printCenteredFormat("%-3s +%d", statName, gain);
+}
+
 void applyBattleStatGain(Dog *d)
 {
     int chosen[6] = {0}; // track kung alin na napili
     int count = 0;
+
+    /*printBlankLine();
+    printCentered("=== STATS INCREASED ===");*/
+    printBlankLine();
 
     while (count < 3)
     {
@@ -98,8 +110,9 @@ void applyBattleStatGain(Dog *d)
             {
             case 0:
                 d->attack = clamp(d->attack + gain);
-                printf("ATK +%d\n", gain);
+                printBattleStatGainLine("ATK", gain);
                 break;
+
             case 1:
             {
                 float ratio = (float)d->hp / d->maxHP;
@@ -107,24 +120,28 @@ void applyBattleStatGain(Dog *d)
                 d->maxHP = clamp(d->maxHP + gain);
                 d->hp = (int)(d->maxHP * ratio);
 
-                printf("HP +%d\n", gain);
+                printBattleStatGainLine("HP", gain);
                 break;
             }
+
             case 2:
                 d->defense = clamp(d->defense + gain);
-                printf("DEF +%d\n", gain);
+                printBattleStatGainLine("DEF", gain);
                 break;
+
             case 3:
                 d->speed = clamp(d->speed + gain);
-                printf("SPD +%d\n", gain);
+                printBattleStatGainLine("SPD", gain);
                 break;
+
             case 4:
                 d->accuracy = clamp(d->accuracy + gain);
-                printf("ACC +%d\n", gain);
+                printBattleStatGainLine("ACC", gain);
                 break;
+
             case 5:
                 d->intelligence = clamp(d->intelligence + gain);
-                printf("INT +%d\n", gain);
+                printBattleStatGainLine("INT", gain);
                 break;
             }
         }
