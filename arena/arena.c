@@ -17,6 +17,7 @@
 #include "../stat.h"
 #include "../cinematic.h"
 #include "../enemies/enemy.h"
+#include "../console.h"
 
 
 void showHPBarPlayer(int hp, int maxHp);
@@ -122,15 +123,15 @@ int getRequiredWins(char rank)
     case 'E':
         return 5;
     case 'D':
-        return 1; // 6
+        return 6; // 6
     case 'C':
-        return 1; // 6
+        return 6; // 6
     case 'B':
-        return 1; // 8
+        return 8; // 8
     case 'A':
-        return 1; // 8
+        return 8; // 8
     case 'S':
-        return 1; // 9
+        return 9; // 9
     case 'X':
         return 1; // SS
     case 'Z':
@@ -178,6 +179,7 @@ int isFinalArenaCleared(Dog *player)
            player->arenaProgress >= player->arenaRequiredWins;
 }
 
+
 void rankUpArena(Dog *player)
 {
     if (player->arenaRank == 'F')
@@ -222,37 +224,33 @@ void rankUpArena(Dog *player)
     }
     else
     {
-        printf("\nYou already cleared the highest Arena Class!\n");
+        printCentered("You already cleared the highest Arena Class!");
         return;
     }
 
     player->arenaProgress = 0;
     player->arenaRequiredWins = getRequiredWins(player->arenaRank);
 
-    printf("\n===== RANK UP! =====\n");
-    printf("New Rank: Class %s\n", getArenaClassName(player->arenaRank));
-    printf("New Venue: %s\n", getArenaRankName(player->arenaRank));
-    printf("New Title: %s\n", getArenaTitle(player->arenaRank));
+    printBlankLine();
+    printCentered("===== RANK UP! =====");
+    printCenteredFormat("New Rank: Class %s", getArenaClassName(player->arenaRank));
+    printCenteredFormat("New Venue: %s", getArenaRankName(player->arenaRank));
+    printCenteredFormat("New Title: %s", getArenaTitle(player->arenaRank));
 
     if (player->arenaRank == 'E')
-        printf("Reward: Rest Capacity +1\n");
+        printCentered("Reward: Rest Capacity +1");
     else if (player->arenaRank == 'D')
-        printf("Reward: Rest Capacity +1\n");
-
+        printCentered("Reward: Rest Capacity +1");
     else if (player->arenaRank == 'C')
-        printf("Reward: Rest Capacity +1\n");
-
+        printCentered("Reward: Rest Capacity +1");
     else if (player->arenaRank == 'A')
-        printf("Reward: Skill Slots increased to 5\n");
-
+        printCentered("Reward: Skill Slots increased to 5");
     else if (player->arenaRank == 'S')
-        printf("Reward: Skill Slots increased to 6\n");
-
+        printCentered("Reward: Skill Slots increased to 6");
     else if (player->arenaRank == 'X')
-        printf("Reward: Skill Slots increased to 7\n");
-
+        printCentered("Reward: Skill Slots increased to 7");
     else if (player->arenaRank == 'Z')
-        printf("Reward: Skill Slots increased to 8\n");
+        printCentered("Reward: Skill Slots increased to 8");
 }
 
 // ================= ARENA BATTLE CORE =================
@@ -269,28 +267,32 @@ void applyArenaWinProgress(Dog *player, char selectedRank)
         {
             if (player->arenaRank == 'Z')
             {
-                printf("\n===== FINAL ARENA CLEARED! =====\n");
-                printf("You defeated the SSS 1v1 champion!\n");
-                printf("Arena Status: WORLD APEX LEGEND\n");
+                printBlankLine();
+                printCentered("===== FINAL ARENA CLEARED! =====");
+                printCentered("You defeated the SSS 1v1 champion!");
+                printCentered("Arena Status: WORLD APEX LEGEND");
             }
             else
             {
-                printf("\nProgress: %d/%d\n",
-                       player->arenaProgress,
-                       player->arenaRequiredWins);
+                printBlankLine();
+                printCenteredFormat("Progress: %d/%d",
+                                    player->arenaProgress,
+                                    player->arenaRequiredWins);
                 rankUpArena(player);
             }
         }
         else
         {
-            printf("\nArena Progress: %d/%d\n",
-                   player->arenaProgress,
-                   player->arenaRequiredWins);
+            printBlankLine();
+            printCenteredFormat("Arena Progress: %d/%d",
+                                player->arenaProgress,
+                                player->arenaRequiredWins);
         }
     }
     else
     {
-        printf("\nVictory recorded.\n");
+        printBlankLine();
+        printCentered("Victory recorded.");
     }
 }
 
@@ -298,7 +300,7 @@ int arenaBattle(Dog *player, char selectedRank)
 {
     if (player->hp <= 0)
     {
-        printf("You must rest before entering the Arena!\n");
+        printCentered("You must rest before entering the Arena!");
         waitForEnter();
         return -1;
     }
@@ -353,7 +355,7 @@ int arenaBattle(Dog *player, char selectedRank)
     else
     {
         system("cls");
-        printf("Class %s real battle is not built yet.\n", getArenaClassName(selectedRank));
+        printCenteredFormat("Class %s real battle is not built yet.", getArenaClassName(selectedRank));
         waitForEnter();
         return -1;
     }
@@ -378,19 +380,21 @@ int arenaBattle(Dog *player, char selectedRank)
         system("cls");
         displayBattleStatus(*player, enemy);
 
-        printf("===== ARENA BATTLE =====\n");
-        printf("Opponent: %s\n\n", enemy.name);
-
-        printf("--- YOUR TURN ---\n");
-        printf("1. Attack  2. Defend  3. Heal  4. Surrender\n");
-        printf("Choice: ");
+        //printBorder();
+        printCentered("ARENA BATTLE");
+        printCenteredFormat("Opponent: %s", enemy.name);
+        printBlankLine();
+        printCentered("--- YOUR TURN ---");
+        printCentered("1. Attack    2. Defend    3. Heal    4. Surrender");
+        printBlankLine();
+        printf("%35sChoice: ", "");
 
         char input[10];
         fgets(input, sizeof(input), stdin);
 
         if (sscanf(input, "%d", &choice) != 1 || choice < 1 || choice > 4)
         {
-            printf("Invalid choice!\n");
+            printCentered("Invalid choice!");
             waitForEnter();
             continue;
         }
@@ -400,32 +404,47 @@ int arenaBattle(Dog *player, char selectedRank)
             system("cls");
             displayBattleStatus(*player, enemy);
 
-            printf("Skills:\n");
+            printBorder();
+            printCentered("SKILLS");
+            printBlankLine();
+
             for (int j = 0; j < player->maxSkillSlots; j++)
             {
                 if (player->equipped[j] != -1)
                 {
                     int idx = player->equipped[j];
-                    printf("%d. %s (P:%d C:%d)", j + 1,
-                           player->skills[idx].name,
-                           player->skills[idx].power,
-                           player->skills[idx].cost);
 
                     if (player->skills[idx].cdLeft > 0)
-                        printf(" [CD %d]", player->skills[idx].cdLeft);
-
-                    printf("\n");
+                    {
+                        printCenteredFormat("%d. %-18s (P:%d C:%d) [CD %d]",
+                                            j + 1,
+                                            player->skills[idx].name,
+                                            player->skills[idx].power,
+                                            player->skills[idx].cost,
+                                            player->skills[idx].cdLeft);
+                    }
+                    else
+                    {
+                        printCenteredFormat("%d. %-18s (P:%d C:%d)",
+                                            j + 1,
+                                            player->skills[idx].name,
+                                            player->skills[idx].power,
+                                            player->skills[idx].cost);
+                    }
                 }
                 else
-                    printf("%d. ---\n", j + 1);
+                {
+                    printCenteredFormat("%d. ---", j + 1);
+                }
             }
 
-            printf("Choice: ");
+            printBlankLine();
+            printf("%35sChoice: ", "");
             fgets(input, sizeof(input), stdin);
 
             if (sscanf(input, "%d", &move) != 1 || move < 1 || move > player->maxSkillSlots)
             {
-                printf("Invalid skill!\n");
+                printCentered("Invalid skill!");
                 waitForEnter();
                 continue;
             }
@@ -433,7 +452,7 @@ int arenaBattle(Dog *player, char selectedRank)
             int skillIdx = player->equipped[move - 1];
             if (skillIdx == -1)
             {
-                printf("No skill equipped!\n");
+                printCentered("No skill equipped!");
                 waitForEnter();
                 continue;
             }
@@ -445,7 +464,7 @@ int arenaBattle(Dog *player, char selectedRank)
             if (strcmp(player->skills[skillIdx].name, "Hip Check") == 0 &&
                 player->skills[skillIdx].cdLeft > 0)
             {
-                printf("Hip Check is on cooldown! Use another move this turn.\n");
+                printCentered("Hip Check is on cooldown! Use another move this turn.");
                 waitForEnter();
                 continue;
             }
@@ -453,7 +472,7 @@ int arenaBattle(Dog *player, char selectedRank)
             if (strcmp(player->skills[skillIdx].name, "Rolling Tackle") == 0 &&
                 player->skills[skillIdx].cdLeft > 0)
             {
-                printf("Rolling Tackle is on cooldown! Use another move this turn.\n");
+                printCentered("Rolling Tackle is on cooldown! Use another move this turn.");
                 waitForEnter();
                 continue;
             }
@@ -465,7 +484,8 @@ int arenaBattle(Dog *player, char selectedRank)
 
             if (player->fatigue < s.cost)
             {
-                printf("\nLow energy! Weak attack!\n");
+                printBlankLine();
+                printCentered("Low energy! Weak attack!");
                 player->fatigue = 0;
             }
             else
@@ -492,7 +512,7 @@ int arenaBattle(Dog *player, char selectedRank)
         else if (choice == 2)
         {
             defending = 1;
-            printf("Defending!\n");
+            printCentered("Defending!");
             waitForEnter();
         }
         else if (choice == 3)
@@ -501,12 +521,13 @@ int arenaBattle(Dog *player, char selectedRank)
             if (player->hp > player->maxHP)
                 player->hp = player->maxHP;
 
-            printf("Healed +20 HP!\n");
+            printCentered("Healed +20 HP!");
             waitForEnter();
         }
         else if (choice == 4)
         {
-            printf("\nYou surrendered the arena match.\n");
+            printBlankLine();
+            printCentered("You surrendered the arena match.");
             player->arenaLosses++;
             player->defense = baseDef;
             player->speed = baseSpd;
@@ -540,7 +561,8 @@ int arenaBattle(Dog *player, char selectedRank)
 
     if (player->hp <= 0)
     {
-        printf("\nYOU LOST THE ARENA MATCH...\n");
+        printBlankLine();
+        printCentered("YOU LOST THE ARENA MATCH...");
         player->arenaLosses++;
         player->fatigue = clampFatigue(player->fatigue + 15, player->maxFatigue);
 
@@ -551,8 +573,9 @@ int arenaBattle(Dog *player, char selectedRank)
         return 0;
     }
 
-    printf("\nYOU WIN THE ARENA MATCH!\n");
-    printf("%s can no longer fight.\n", enemy.name);
+    printBlankLine();
+    printCentered("YOU WIN THE ARENA MATCH!");
+    printCenteredFormat("%s can no longer fight.", enemy.name);
 
     applyArenaWinProgress(player, selectedRank);
     applyBattleStatGain(player);
@@ -572,23 +595,33 @@ void showArenaRecord(Dog *player)
 {
     system("cls");
 
-    printf("===== ARENA STATS =====\n\n");
-    printf("Highest Class: %s - %s\n",
+    printBorder();
+    printBlankLine();
+    printCentered("ARENA STATS");
+    printBlankLine();
+
+    printf("%38s%-15s : Class %s - %s\n",
+           "",
+           "Highest Class",
            getArenaClassName(player->arenaRank),
            getArenaRankName(player->arenaRank));
-    printf("Title: %s\n", getArenaTitle(player->arenaRank));
-    printf("Record: %dW - %dL - %dD\n",
+    printf("%38s%-15s : %s\n", "", "Title", getArenaTitle(player->arenaRank));
+    printf("%38s%-15s : %dW - %dL - %dD\n",
+           "",
+           "Record",
            player->arenaWins,
            player->arenaLosses,
            player->arenaDraws);
 
     if (isFinalArenaCleared(player))
     {
-        printf("Arena Status: WORLD APEX LEGEND\n");
+        printf("%38s%-15s : WORLD APEX LEGEND\n", "", "Arena Status");
     }
     else
     {
-        printf("Progress: %d/%d (Class %s)\n",
+        printf("%38s%-15s : %d/%d (Class %s)\n",
+               "",
+               "Progress",
                player->arenaProgress,
                player->arenaRequiredWins,
                getArenaClassName(player->arenaRank));
@@ -608,28 +641,33 @@ void enterArena(Dog *player, char selectedRank)
     {
         system("cls");
 
-        printf("===== %s =====\n", getArenaRankName(selectedRank));
-        printf("Class %s - %s\n",
-               getArenaClassName(selectedRank),
-               getArenaTitle(selectedRank));
+        printBorder();
+        printBlankLine();
+        printCentered(getArenaRankName(selectedRank));
+        printCenteredFormat("Class %s - %s",
+                            getArenaClassName(selectedRank),
+                            getArenaTitle(selectedRank));
+        printBlankLine();
 
         if (selectedRank == player->arenaRank)
         {
             if (isFinalArenaCleared(player))
-                printf("Progress: CLEARED\n\n");
+                printCentered("Progress: CLEARED");
             else
-                printf("Progress: %d/%d\n\n",
-                       player->arenaProgress,
-                       player->arenaRequiredWins);
+                printCenteredFormat("Progress: %d/%d",
+                                    player->arenaProgress,
+                                    player->arenaRequiredWins);
         }
         else
         {
-            printf("Progress: Cleared Class\n\n");
+            printCentered("Progress: Cleared Class");
         }
 
-        printf("1. Start Match\n");
-        printf("2. Back\n");
-        printf("Choice: ");
+        printBlankLine();
+        printMenuItem(1, "Start Match");
+        printMenuItem(2, "Back");
+        printBlankLine();
+        printf("%35sChoice: ", "");
 
         fgets(input, sizeof(input), stdin);
         choice = atoi(input);
@@ -644,7 +682,7 @@ void enterArena(Dog *player, char selectedRank)
         }
         else
         {
-            printf("Invalid choice!\n");
+            printCentered("Invalid choice!");
             waitForEnter();
         }
     }
@@ -661,36 +699,57 @@ void selectArenaMenu(Dog *player)
     {
         system("cls");
 
-        printf("===== SELECT ARENA =====\n\n");
+        printBorder();
+        printBlankLine();
+        printCentered("SELECT ARENA");
+        printBlankLine();
 
-        printf("1. Open Grounds       [Class F]\n");
+        printMenuItem(1, "Open Grounds       [Class F]");
 
         if (isRankUnlocked(player->arenaRank, 'E'))
-            printf("2. Street Pit         [Class E]\n");
+            printMenuItem(2, "Street Pit         [Class E]");
+        else
+            printMenuItem(2, "Street Pit         [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'D'))
-            printf("3. Junkyard Arena     [Class D]\n");
+            printMenuItem(3, "Junkyard Arena     [Class D]");
+        else
+            printMenuItem(3, "Junkyard Arena     [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'C'))
-            printf("4. Victory Coliseum   [Class C]\n");
+            printMenuItem(4, "Victory Coliseum   [Class C]");
+        else
+            printMenuItem(4, "Victory Coliseum   [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'B'))
-            printf("5. Royal Octagon      [Class B]\n");
+            printMenuItem(5, "Royal Octagon      [Class B]");
+        else
+            printMenuItem(5, "Royal Octagon      [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'A'))
-            printf("6. Crown Arena        [Class A]\n");
+            printMenuItem(6, "Crown Arena        [Class A]");
+        else
+            printMenuItem(6, "Crown Arena        [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'S'))
-            printf("7. Legend Island      [Class S]\n");
+            printMenuItem(7, "Legend Island      [Class S]");
+        else
+            printMenuItem(7, "Legend Island      [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'X'))
-            printf("8. Mythic Dome        [Class SS]\n");
+            printMenuItem(8, "Mythic Dome        [Class SS]");
+        else
+            printMenuItem(8, "Mythic Dome        [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'Z'))
-            printf("9. Final Apex         [Class SSS]\n");
+            printMenuItem(9, "Final Apex         [Class SSS]");
+        else
+            printMenuItem(9, "Final Apex         [Locked]");
 
-        printf("\n0. Back\n");
-        printf("Choice: ");
+        printBlankLine();
+        printMenuItem(0, "Back");
+        printBlankLine();
+        printf("%35sChoice: ", "");
 
         fgets(input, sizeof(input), stdin);
         choice = atoi(input);
@@ -717,7 +776,7 @@ void selectArenaMenu(Dog *player)
             break;
         else
         {
-            printf("Class locked or invalid choice!\n");
+            printCentered("Class locked or invalid choice!");
             waitForEnter();
         }
     }
@@ -734,11 +793,15 @@ void arenaMenu(Dog *player)
     {
         system("cls");
 
-        printf("===== ARENA =====\n\n");
-        printf("1. Fight Arena\n");
-        printf("2. Arena Stats\n");
-        printf("3. Exit\n");
-        printf("Choice: ");
+        printBorder();
+        printBlankLine();
+        printCentered("ARENA");
+        printBlankLine();
+        printMenuItem(1, "Fight Arena");
+        printMenuItem(2, "Arena Stats");
+        printMenuItem(3, "Exit");
+        printBlankLine();
+        printf("%35sChoice: ", "");
 
         fgets(input, sizeof(input), stdin);
         choice = atoi(input);
@@ -751,7 +814,7 @@ void arenaMenu(Dog *player)
             break;
         else
         {
-            printf("Invalid choice! Select 1-3 only.\n");
+            printCentered("Invalid choice! Select 1-3 only.");
             waitForEnter();
         }
     }
