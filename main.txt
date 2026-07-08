@@ -38,13 +38,18 @@ stage.C
 stage1.C
 stage2.c
 stage3.c
+stage4.c
+stage5.c
 enemy.C
 enemy_stage1
 enemy_stage2
 enemy_stage3
+enemy_stage4
+enemy_stage5
 battle_dialogue
 sparring_ai.c
 stat.c
+arena
 
 
 .\build.bat
