@@ -498,6 +498,7 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
     }
 
     applyBattleStatGain(player);
+    printBlankLine(); //printf("\n");
     checkSkillUnlock(player);
 
     int maxEnemies[21] =
