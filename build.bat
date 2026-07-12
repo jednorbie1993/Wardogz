@@ -1,23 +1,6 @@
 @echo off
 
-@echo off
-
 gcc *.c enemies/*.c stages/*.c dialogue/*.c sparring/*.c sparring/characters/*.c arena/*.c -o wardogz.exe
-
-if %errorlevel% neq 0 (
-    echo.
-    echo BUILD FAILED
-    pause
-    exit /b
-)
-
-echo.
-echo BUILD SUCCESS
-echo.
-
-wardogz.exe
-
-pause
 
 if %errorlevel% neq 0 (
     echo.
