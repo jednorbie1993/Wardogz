@@ -50,6 +50,8 @@ battle_dialogue
 sparring_ai.c
 stat.c
 arena
+intro.C
+build.bat
 
 
 .\build.bat
