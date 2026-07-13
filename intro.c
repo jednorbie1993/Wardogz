@@ -67,12 +67,12 @@ static void titleScreen()
     printf("========================================================\n");
     printf("                     WARDOGZ\n");
     printf("========================================================\n");
-    printf("                 Press ENTER to Start\n");
+    printf("               Press ENTER to Start\n");
     printf("========================================================\n");
 
     char temp[20];
     fgets(temp, sizeof(temp), stdin);
-    
+
     Beep(800, 150);
 }
 
@@ -282,6 +282,8 @@ void introStory(Dog *player)
     {
         strcpy(player->name, "Jamber");
 
+        player->dogType = 1; 
+
         /* Power Type starter bonus */
         player->attack += 10;
         player->maxHP += 20;
@@ -299,6 +301,8 @@ void introStory(Dog *player)
     else
     {
         strcpy(player->name, "Kane");
+
+        player->dogType = 2;
 
         /* Speed Type starter bonus */
         player->speed += 10;
