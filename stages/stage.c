@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +10,7 @@
 #include "stage5.h"
 #include "../dog.h"
 #include "../cinematic.h"
+#include "../console.h"
 
 void startStage(Dog *player, int progress[])
 {
@@ -66,41 +66,45 @@ void startStage(Dog *player, int progress[])
             player->stageClearBonus++;
 
         if (blacksiteComplete >= 5)
-            player->stageClearBonus++;    
+            player->stageClearBonus++;
 
-        printf("=== SELECT STAGE ===\n\n");
+        printBorder();
+        printBlankLine();
+        printCentered("SELECT STAGE");
+        printBlankLine();
 
-        printf("1. Urban Strays (%d/3)\n", urbanComplete);
+        printMenuItemFormat(1, "Urban Strays (%d/3)", urbanComplete);
 
         if (urbanComplete >= 3)
-            printf("2. Wild Territory (%d/5)\n", wildComplete);
+            printMenuItemFormat(2, "Wild Territory (%d/5)", wildComplete);
         else
-            printf("2. Wild Territory (Locked)\n");
+            printMenuItem(2, "Wild Territory (Locked)");
 
         if (wildComplete >= 5)
-            printf("3. Military Zone (%d/4)\n", militaryComplete);
+            printMenuItemFormat(3, "Military Zone (%d/4)", militaryComplete);
         else
-            printf("3. Military Zone (Locked)\n");
+            printMenuItem(3, "Military Zone (Locked)");
 
         if (militaryComplete >= 4)
-            printf("4. Bio-Containment Zone (%d/4)\n", bioLabComplete);
+            printMenuItemFormat(4, "Bio-Containment Zone (%d/4)", bioLabComplete);
         else
-            printf("4. Bio-Containment Zone (Locked)\n");
+            printMenuItem(4, "Bio-Containment Zone (Locked)");
 
         if (bioLabComplete >= 4)
-            printf("5. Blacksite Laboratory (%d/5)\n", blacksiteComplete);
+            printMenuItemFormat(5, "Blacksite Laboratory (%d/5)", blacksiteComplete);
         else
-            printf("5. Blacksite Laboratory (Locked)\n");
+            printMenuItem(5, "Blacksite Laboratory (Locked)");
 
-        printf("6. Back\n\n");
-        printf("Choice: ");
+        printMenuItem(6, "Back");
+        printBlankLine();
+        printf("%35sChoice: ", "");
 
         char input[10];
         fgets(input, sizeof(input), stdin);
 
         if (input[0] == '\n')
         {
-            printf("Please select a number.\n");
+            printCentered("Please select a number.");
             waitForEnter();
             continue;
         }
@@ -109,7 +113,7 @@ void startStage(Dog *player, int progress[])
 
         if (stageChoice < 1 || stageChoice > 6)
         {
-            printf("Invalid choice! Select 1-6 only.\n");
+            printCentered("Invalid choice! Select 1-6 only.");
             waitForEnter();
             continue;
         }
@@ -125,7 +129,7 @@ void startStage(Dog *player, int progress[])
         {
             if (urbanComplete < 3)
             {
-                printf("Complete Urban Strays first!\n");
+                printCentered("Complete Urban Strays first!");
                 waitForEnter();
                 continue;
             }
@@ -136,7 +140,7 @@ void startStage(Dog *player, int progress[])
         {
             if (wildComplete < 5)
             {
-                printf("Complete Wild Territory first!\n");
+                printCentered("Complete Wild Territory first!");
                 waitForEnter();
                 continue;
             }
@@ -147,7 +151,7 @@ void startStage(Dog *player, int progress[])
         {
             if (militaryComplete < 4)
             {
-                printf("Complete Military Zone first!\n");
+                printCentered("Complete Military Zone first!");
                 waitForEnter();
                 continue;
             }
@@ -158,7 +162,7 @@ void startStage(Dog *player, int progress[])
         {
             if (bioLabComplete < 4)
             {
-                printf("Complete Bio-Containment Zone first!\n");
+                printCentered("Complete Bio-Containment Zone first!");
                 waitForEnter();
                 continue;
             }
