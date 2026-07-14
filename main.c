@@ -131,8 +131,11 @@ int main()
         player->campaignCompleted = 0;
         game.restCount = 0;
 
-        for (int i = 0; i < 19; i++)
+        for (int i = 0; i < 21; i++)
+        {
             game.progress[i] = 0;
+        }
+
 
         saveGame(&game);
     }
