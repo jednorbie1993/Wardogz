@@ -152,7 +152,7 @@ void sparringMenu(Dog *player)
 
         printf("5. Snoopy    (%d/10) (Speed Training)", player->sparringProgress[4]);
         printf("\n");
-        player->sparringProgress[5] = 9;
+        //player->sparringProgress[5] = 9;
         if (player->dogType == 1)
             printf("6. Kane      (%d/10) (Rival Match)\n", player->sparringProgress[5]);
         else

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "enemy.h"
 #include "../replay_system.h"
+#include "../console.h"
 
 // =========================
 // WILD TERRITORY ENEMIES
@@ -21,6 +22,18 @@ static int limitWildDamage(int dmg, int minDmg, int maxDmg)
         dmg = maxDmg;
 
     return dmg;
+}
+
+static void applyWildSkillDamage(Dog *target, int dmg)
+{
+    /*
+        Stage 2 helper:
+        - Skill functions still subtract HP here.
+        - enemy.c can read the HP difference after the skill.
+        - Do NOT call this function inside itself.
+    */
+    target->hp -= dmg;
+    target->hp = clamp(target->hp);
 }
 
 void createDiremaw(Dog *enemy)
@@ -264,15 +277,15 @@ int usePackAttack(Dog *user, Dog *target)
     int hits = 2;
     int total = 0;
 
-    printf("%s calls pack!\n", user->name);
+    printCenteredFormat("%s calls pack!", user->name);
 
     for (int i = 0; i < hits; i++)
     {
         int dmg = (user->attack / 4) + 6 + (rand() % 4);
         dmg = limitWildDamage(dmg, 8, 26);
-        target->hp -= dmg;
+        applyWildSkillDamage(target, dmg);
         total += dmg;
-        printf("Hit %d: -%d\n", i + 1, dmg);
+        printCenteredFormat("Hit %d: -%d", i + 1, dmg);
     }
 
     return total;
@@ -282,9 +295,9 @@ int useAmbush(Dog *user, Dog *target)
 {
     int dmg = 28 + (user->attack / 3) + (rand() % 8);
     dmg = limitWildDamage(dmg, 25, 75);
-    target->hp -= dmg;
+    applyWildSkillDamage(target, dmg);
 
-    printf("%s ambushes from shadows! -%d\n", user->name, dmg);
+    printCenteredFormat("%s ambushes from shadows! -%d", user->name, dmg);
 
     user->speed += 5;
 
@@ -298,9 +311,9 @@ int useHowlDebuff(Dog *user, Dog *target)
 
     int dmg = 10 + (user->attack / 8);
     dmg = limitWildDamage(dmg, 10, 35);
-    target->hp -= dmg;
+    applyWildSkillDamage(target, dmg);
 
-    printf("%s HOWLS! Accuracy DOWN! -%d\n", user->name, dmg);
+    printCenteredFormat("%s HOWLS! Accuracy DOWN! -%d", user->name, dmg);
 
     return dmg;
 }
@@ -309,12 +322,12 @@ int useFeralRush(Dog *user, Dog *target)
 {
     int dmg = 24 + (user->attack / 3) + (rand() % 7);
     dmg = limitWildDamage(dmg, 22, 70);
-    target->hp -= dmg;
+    applyWildSkillDamage(target, dmg);
 
     target->bleedTurns += 2;
     target->bleedDamage = 1;
 
-    printf("%s FERAL RUSH! -%d +BLEED!\n", user->name, dmg);
+    printCenteredFormat("%s FERAL RUSH! -%d +BLEED!", user->name, dmg);
 
     return dmg;
 }
@@ -323,9 +336,9 @@ int useMaulingBite(Dog *user, Dog *target)
 {
     int dmg = 26 + (user->attack / 3) + (rand() % 7);
     dmg = limitWildDamage(dmg, 24, 80);
-    target->hp -= dmg;
+    applyWildSkillDamage(target, dmg);
 
-    printf("%s uses Mauling Bite! -%d\n", user->name, dmg);
+    printCenteredFormat("%s uses Mauling Bite! -%d", user->name, dmg);
 
     return dmg;
 }
@@ -334,13 +347,13 @@ int useRabidClaw(Dog *user, Dog *target)
 {
     int dmg = 22 + (user->attack / 4) + (rand() % 7);
     dmg = limitWildDamage(dmg, 20, 70);
-    target->hp -= dmg;
+    applyWildSkillDamage(target, dmg);
 
     target->isBleeding = 1;
     target->bleedTurns = 3;
     target->bleedDamage = 5;
 
-    printf("%s uses Rabid Claw! -%d +BLEED!\n", user->name, dmg);
+    printCenteredFormat("%s uses Rabid Claw! -%d +BLEED!", user->name, dmg);
 
     return dmg;
 }
@@ -352,13 +365,13 @@ int useBloodScent(Dog *user, Dog *target)
     if (target->isBleeding)
     {
         dmg += 12;
-        printf("%s smells blood! Bonus damage!\n", user->name);
+        printCenteredFormat("%s smells blood! Bonus damage!", user->name);
     }
 
     dmg = limitWildDamage(dmg, 22, 85);
-    target->hp -= dmg;
+    applyWildSkillDamage(target, dmg);
 
-    printf("%s uses Blood Scent! -%d\n", user->name, dmg);
+    printCenteredFormat("%s uses Blood Scent! -%d", user->name, dmg);
 
     return dmg;
 }
@@ -367,11 +380,11 @@ int useWildPounce(Dog *user, Dog *target)
 {
     int dmg = 28 + (user->attack / 3) + (rand() % 8);
     dmg = limitWildDamage(dmg, 25, 85);
-    target->hp -= dmg;
+    applyWildSkillDamage(target, dmg);
 
     user->speed += 5;
 
-    printf("%s uses Wild Pounce! -%d Speed UP!\n", user->name, dmg);
+    printCenteredFormat("%s uses Wild Pounce! -%d Speed UP!", user->name, dmg);
 
     return dmg;
 }
@@ -380,14 +393,14 @@ int useBoneBreaker(Dog *user, Dog *target)
 {
     int dmg = 34 + (user->attack / 3) + (rand() % 8);
     dmg = limitWildDamage(dmg, 30, 95);
-    target->hp -= dmg;
+    applyWildSkillDamage(target, dmg);
 
     target->defense -= 5;
 
     if (target->defense < 0)
         target->defense = 0;
 
-    printf("%s uses Bone Breaker! -%d Defense DOWN!\n", user->name, dmg);
+    printCenteredFormat("%s uses Bone Breaker! -%d Defense DOWN!", user->name, dmg);
 
     return dmg;
 }
@@ -397,20 +410,20 @@ int usePredatorFrenzy(Dog *user, Dog *target)
     int hits = 1 + rand() % 3;
     int total = 0;
 
-    printf("%s uses Predator Frenzy!\n", user->name);
+    printCenteredFormat("%s uses Predator Frenzy!", user->name);
 
     for (int i = 0; i < hits; i++)
     {
         int dmg = 12 + (user->attack / 5) + (rand() % 5);
         dmg = limitWildDamage(dmg, 12, 35);
-        target->hp -= dmg;
+        applyWildSkillDamage(target, dmg);
         total += dmg;
 
-        printf("Hit %d: -%d\n", i + 1, dmg);
+        printCenteredFormat("Hit %d: -%d", i + 1, dmg);
     }
 
-    user->hp -= 8;
-    printf("%s took 8 recoil damage!\n", user->name);
+    applyWildSkillDamage(user, 8);
+    printCenteredFormat("%s took 8 recoil damage!", user->name);
 
     return total;
 }

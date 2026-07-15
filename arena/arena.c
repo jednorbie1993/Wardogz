@@ -404,38 +404,53 @@ int arenaBattle(Dog *player, char selectedRank)
             system("cls");
             displayBattleStatus(*player, enemy);
 
-            printBorder();
             printCentered("SKILLS");
             printBlankLine();
 
-            for (int j = 0; j < player->maxSkillSlots; j++)
-            {
-                if (player->equipped[j] != -1)
-                {
-                    int idx = player->equipped[j];
+            int half = (player->maxSkillSlots + 1) / 2;
 
-                    if (player->skills[idx].cdLeft > 0)
-                    {
-                        printCenteredFormat("%d. %-18s (P:%d C:%d) [CD %d]",
-                                            j + 1,
-                                            player->skills[idx].name,
-                                            player->skills[idx].power,
-                                            player->skills[idx].cost,
-                                            player->skills[idx].cdLeft);
-                    }
-                    else
-                    {
-                        printCenteredFormat("%d. %-18s (P:%d C:%d)",
-                                            j + 1,
-                                            player->skills[idx].name,
-                                            player->skills[idx].power,
-                                            player->skills[idx].cost);
-                    }
+            for (int i = 0; i < half; i++)
+            {
+                int left = i;
+                int right = i + half;
+                char leftName[30];
+                char rightName[30];
+                char line[120];
+
+                if (player->equipped[left] != -1)
+                {
+                    int idx = player->equipped[left];
+                    strcpy(leftName, player->skills[idx].name);
                 }
                 else
                 {
-                    printCenteredFormat("%d. ---", j + 1);
+                    strcpy(leftName, "---");
                 }
+
+                if (right < player->maxSkillSlots)
+                {
+                    if (player->equipped[right] != -1)
+                    {
+                        int idx = player->equipped[right];
+                        strcpy(rightName, player->skills[idx].name);
+                    }
+                    else
+                    {
+                        strcpy(rightName, "---");
+                    }
+
+                    sprintf(line, "%2d. %-20s   %2d. %-20s",
+                            left + 1,
+                            leftName,
+                            right + 1,
+                            rightName);
+                }
+                else
+                {
+                    sprintf(line, "%2d. %-20s", left + 1, leftName);
+                }
+
+                printCentered(line);
             }
 
             printBlankLine();
@@ -708,43 +723,27 @@ void selectArenaMenu(Dog *player)
 
         if (isRankUnlocked(player->arenaRank, 'E'))
             printMenuItem(2, "Street Pit         [Class E]");
-        else
-            printMenuItem(2, "Street Pit         [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'D'))
             printMenuItem(3, "Junkyard Arena     [Class D]");
-        else
-            printMenuItem(3, "Junkyard Arena     [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'C'))
             printMenuItem(4, "Victory Coliseum   [Class C]");
-        else
-            printMenuItem(4, "Victory Coliseum   [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'B'))
             printMenuItem(5, "Royal Octagon      [Class B]");
-        else
-            printMenuItem(5, "Royal Octagon      [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'A'))
             printMenuItem(6, "Crown Arena        [Class A]");
-        else
-            printMenuItem(6, "Crown Arena        [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'S'))
             printMenuItem(7, "Legend Island      [Class S]");
-        else
-            printMenuItem(7, "Legend Island      [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'X'))
             printMenuItem(8, "Mythic Dome        [Class SS]");
-        else
-            printMenuItem(8, "Mythic Dome        [Locked]");
 
         if (isRankUnlocked(player->arenaRank, 'Z'))
             printMenuItem(9, "Final Apex         [Class SSS]");
-        else
-            printMenuItem(9, "Final Apex         [Locked]");
 
         printBlankLine();
         printMenuItem(0, "Back");
@@ -776,7 +775,7 @@ void selectArenaMenu(Dog *player)
             break;
         else
         {
-            printCentered("Class locked or invalid choice!");
+            printCentered("Invalid choice or class not unlocked yet!");
             waitForEnter();
         }
     }

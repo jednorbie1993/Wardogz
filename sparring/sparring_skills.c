@@ -50,3 +50,26 @@ Skill createHipCheckSkill(void)
     return skill;
 }
 
+Skill createPowerRushSkill(void)
+{
+    Skill skill;
+
+    strcpy(skill.name, "Power Rush");
+    skill.type = SKILL_DAMAGE;
+    skill.power = 15;
+    skill.accuracy = 80;
+
+    return skill;
+}
+
+Skill createGuardBreakSkill(void)
+{
+    Skill skill;
+
+    strcpy(skill.name, "Guard Break");
+    skill.type = SKILL_DAMAGE;
+    skill.power = 13;
+    skill.accuracy = 90;
+
+    return skill;
+}

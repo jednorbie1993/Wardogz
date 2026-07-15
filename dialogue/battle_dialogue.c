@@ -2,7 +2,27 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../cinematic.h"
+#include "../console.h"
 #include "battle_dialogue.h"
+
+static void typeCenteredDialogue(const char *enemyName, const char *line, int delay)
+{
+    char buffer[256];
+    snprintf(buffer, sizeof(buffer), "%s: %s", enemyName, line);
+
+    int len = strlen(buffer);
+    int spaces = (CONSOLE_WIDTH - len) / 2;
+
+    if (spaces < 0)
+        spaces = 0;
+
+    for (int i = 0; i < spaces; i++)
+        printf(" ");
+
+    typeText(enemyName, delay);
+    typeText(": ", delay);
+    typeText(line, delay);
+}
 
 void playEnemyBattleDialogue(int zoneIndex, char enemyName[])
 {
@@ -195,60 +215,63 @@ void playEnemyBattleDialogue(int zoneIndex, char enemyName[])
     };
 
     int randomLine = rand() % 10;
-
-    typeText(enemyName, 25);
-    printf(": ");
+    char *selectedLine = NULL;
+    int delay = 22;
 
     if (strcmp(enemyName, "Grimfang-X") == 0)
     {
-        typeText(grimfangXLines[randomLine], 22);
+        selectedLine = grimfangXLines[randomLine];
     }
     else if (strcmp(enemyName, "Grimfang") == 0)
     {
-        typeText(grimfangLines[randomLine], 22);
+        selectedLine = grimfangLines[randomLine];
     }
     else if (strcmp(enemyName, "Diremaw") == 0)
     {
-        typeText(diremawLines[randomLine], 22);
+        selectedLine = diremawLines[randomLine];
     }
     else if (strcmp(enemyName, "Blackclaw") == 0)
     {
-        typeText(blackclawLines[randomLine], 22);
+        selectedLine = blackclawLines[randomLine];
     }
     else if (zoneIndex == 20)
     {
-        typeText(omegaLines[randomLine], 22);
+        selectedLine = omegaLines[randomLine];
     }
     else if (zoneIndex == 19)
     {
-        typeText(perfectBioLines[randomLine], 22);
+        selectedLine = perfectBioLines[randomLine];
     }
     else if (zoneIndex == 18)
     {
-        typeText(blacksiteMilitaryLines[randomLine], 22);
+        selectedLine = blacksiteMilitaryLines[randomLine];
     }
     else if (zoneIndex == 17)
     {
-        typeText(feralMutationLines[randomLine], 22);
+        selectedLine = feralMutationLines[randomLine];
     }
     else if (zoneIndex == 16)
     {
-        typeText(enhancedStrayLines[randomLine], 22);
+        selectedLine = enhancedStrayLines[randomLine];
     }
     else if (zoneIndex >= 12)
     {
-        typeText(bioLabLines[randomLine], 22);
+        selectedLine = bioLabLines[randomLine];
     }
     else if (zoneIndex >= 8)
     {
-        typeText(militaryLines[randomLine], 22);
+        selectedLine = militaryLines[randomLine];
     }
     else if (zoneIndex >= 3)
     {
-        typeText(wildLines[randomLine], 20);
+        selectedLine = wildLines[randomLine];
+        delay = 20;
     }
     else
     {
-        typeText(backAlleyLines[randomLine], 20);
+        selectedLine = backAlleyLines[randomLine];
+        delay = 20;
     }
+
+    typeCenteredDialogue(enemyName, selectedLine, delay);
 }

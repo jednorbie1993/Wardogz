@@ -46,6 +46,65 @@ void createSparPlayer(Dog *orig, Dog *spar)
     }
 }
 
+void createRival(Dog *orig, Dog *rival)
+{
+    strcpy(rival->name, orig->name);
+
+    rival->maxHP = orig->maxHP;
+    rival->hp = rival->maxHP;
+
+    rival->attack = orig->attack;
+    rival->defense = orig->defense;
+    rival->speed = orig->speed;
+    rival->accuracy = orig->accuracy;
+    rival->intelligence = orig->intelligence;
+
+    rival->isStunned = 0;
+    rival->stunTurns = 0;
+    rival->isBleeding = 0;
+    rival->bleedTurns = 0;
+    rival->isConfused = 0;
+    rival->confuseTurns = 0;
+
+    // IMPORTANT: walang skills na kinokopya
+    rival->skillCount = 0;
+}
+
+void setRivalSkill(Dog *d, int slot, const char *name, int power, int accuracy, int type, int cooldown)
+{
+    strcpy(d->skills[slot].name, name);
+    d->skills[slot].power = power;
+    d->skills[slot].accuracy = accuracy;
+    d->skills[slot].type = type;
+    d->skills[slot].cooldown = cooldown;
+    d->skills[slot].cdLeft = 0;
+    d->skills[slot].aiScore = 0;
+}
+
+void assignRivalSkills(Dog *d, int dogType)
+{
+    d->skillCount = 6;
+
+    if (dogType == 1) // Kane = speed/accuracy rival
+    {
+        setRivalSkill(d, 0, "Quick Fang",   24, 90, SKILL_DAMAGE, 0);
+        setRivalSkill(d, 1, "Dash Bite",    30, 85, SKILL_DAMAGE, 1);
+        setRivalSkill(d, 2, "Counter Rush", 34, 80, SKILL_DAMAGE, 2);
+        setRivalSkill(d, 3, "Focus Howl",   10, 95, SKILL_BUFF,   3);
+        setRivalSkill(d, 4, "Hip Smash",    28, 82, SKILL_DAMAGE, 2);
+        setRivalSkill(d, 5, "Rival Burst",  42, 78, SKILL_DAMAGE, 3);
+    }
+    else // Jamber = power/HP rival
+    {
+        setRivalSkill(d, 0, "Heavy Bite",   26, 86, SKILL_DAMAGE, 0);
+        setRivalSkill(d, 1, "Power Tackle", 32, 82, SKILL_DAMAGE, 1);
+        setRivalSkill(d, 2, "Guard Break",  12, 88, SKILL_DEBUFF, 2);
+        setRivalSkill(d, 3, "Iron Focus",   10, 95, SKILL_BUFF,   3);
+        setRivalSkill(d, 4, "Hip Smash",    30, 80, SKILL_DAMAGE, 2);
+        setRivalSkill(d, 5, "Rival Burst",  44, 76, SKILL_DAMAGE, 3);
+    }
+}
+
 void assignSkills(Dog *d, int type)
 {
 
@@ -136,25 +195,33 @@ int sparringBattle(Dog *player, int type)
     }
     else if (type == 6)
     {
-        createSparPlayer(player, &enemy);
+        createRival(player, &enemy);
+
+        enemy.skillCount = 6;
 
         if (player->dogType == 1)
-        {
             strcpy(enemy.name, "Kane");
-            enemy.speed += 25;
-            enemy.accuracy += 20;
-
-            printf("Kane: Let's see how much faster you've become.\n");
-        }
         else
-        {
             strcpy(enemy.name, "Jamber");
-            enemy.attack += 25;
-            enemy.maxHP += 30;
-            enemy.hp = enemy.maxHP;
 
-            printf("Jamber: Show me your strength. Don't hold back!\n");
-        }
+        // Optional stat bonus
+        enemy.attack += 25;
+        enemy.defense += 25;
+        enemy.speed += 25;
+        enemy.accuracy += 25;
+        enemy.intelligence += 25;
+
+        enemy.hp = enemy.maxHP;
+
+        // Fixed Rival Skills
+        enemy.skills[0] = createBiteSkill();
+        enemy.skills[1] = createScratchSkill();
+        enemy.skills[2] = createChargeSkill();
+        enemy.skills[3] = createHipCheckSkill();
+        enemy.skills[4] = createPowerRushSkill();      
+        enemy.skills[5] = createGuardBreakSkill();    
+
+        printf("%s: Let's see how much you've improved.\n", enemy.name);
     }
 
     int bonus = 0;
@@ -220,6 +287,7 @@ int sparringBattle(Dog *player, int type)
             printf("2. Scratch\n");
             printf("3. Charge\n");
             printf("4. Hip Check\n");
+            printf("Choice: ");
 
             int choice;
             char moveInput[10];
@@ -253,6 +321,9 @@ int sparringBattle(Dog *player, int type)
             }
 
             // ================= PLAYER TURN =================
+            system("cls");
+            printSparringStatus(&sparPlayer, &enemy);
+
             printf("\n--- PLAYER TURN ---\n");
 
             useSkill(&sparPlayer, &enemy, tempSkill);

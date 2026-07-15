@@ -5,6 +5,7 @@
 #include "../dog.h"
 #include "enemy_stage3.h"
 #include "../replay_system.h"
+#include "../console.h"
 
 // =========================
 // BALANCE HELPERS
@@ -226,7 +227,7 @@ int useAmbushStrike(Dog *user, Dog *target)
     dmg = capMilitaryDamage(dmg, 35, 130);
     applyMilitaryDamage(target, dmg);
 
-    printf("%s uses Ambush Strike! -%d", user->name, dmg);
+    printCenteredFormat("%s uses Ambush Strike! -%d", user->name, dmg);
     return dmg;
 }
 
@@ -234,7 +235,7 @@ int useSelfDestruct(Dog *user, Dog *target)
 {
     if (user->hp > (user->maxHP * 0.2))
     {
-        printf("%s tried Self Destruct but failed!", user->name);
+        printCenteredFormat("%s tried Self Destruct but failed!", user->name);
         return 0;
     }
 
@@ -245,7 +246,7 @@ int useSelfDestruct(Dog *user, Dog *target)
 
     user->hp = 0;
 
-    printf("%s SELF DESTRUCT! MASSIVE EXPLOSION -%d", user->name, dmg);
+    printCenteredFormat("%s SELF DESTRUCT! MASSIVE EXPLOSION -%d", user->name, dmg);
     return dmg;
 }
 
@@ -257,7 +258,7 @@ int usePrecisionShot(Dog *user, Dog *target)
     dmg = capMilitaryDamage(dmg, 28, 110);
     applyMilitaryDamage(target, dmg);
 
-    printf("%s uses Precision Shot! -%d", user->name, dmg);
+    printCenteredFormat("%s uses Precision Shot! -%d", user->name, dmg);
     return dmg;
 }
 
@@ -265,7 +266,7 @@ int useTacticalGuard(Dog *user, Dog *target)
 {
     user->defense += 5;
     user->guardTurns = 3;
-    printf("%s raises Tactical Guard!\n", user->name);
+    printCenteredFormat("%s raises Tactical Guard!", user->name);
     return 0;
 }
 
@@ -278,7 +279,7 @@ int useReinforcement(Dog *user, Dog *target)
     if (user->hp > user->maxHP)
         user->hp = user->maxHP;
 
-    printf("%s calls Reinforcements! +%d HP", user->name, heal);
+    printCenteredFormat("%s calls Reinforcements! +%d HP", user->name, heal);
     return heal;
 }
 
@@ -291,7 +292,7 @@ int useBarrageFire(Dog *user, Dog *target)
     dmg = capMilitaryDamage(dmg, 25, 105);
     applyMilitaryDamage(target, dmg);
 
-    printf("%s unleashes Barrage Fire! -%d", user->name, dmg);
+    printCenteredFormat("%s unleashes Barrage Fire! -%d", user->name, dmg);
     return dmg;
 }
 
@@ -305,7 +306,7 @@ int useMilitaryCharge(Dog *user, Dog *target)
 
     user->speed += 3;
 
-    printf("%s charges with Military Force! -%d (Speed +3)", user->name, dmg);
+    printCenteredFormat("%s charges with Military Force! -%d (Speed +3)", user->name, dmg);
     return dmg;
 }
 

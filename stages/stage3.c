@@ -9,6 +9,7 @@
 #include "../enemies/enemy.h"
 #include "../enemies/enemy_stage3.h"
 #include "../replay_system.h"
+#include "../console.h"
 
 int getZoneMax(int zoneIndex)
 {
@@ -27,33 +28,37 @@ void runStage3(Dog *player, int progress[])
     {
         system("cls");
 
-        printf("=== STAGE 3: MILITARY ZONE ===\n\n");
+        printBorder();
+        printBlankLine();
+        printCentered("STAGE 3: MILITARY ZONE");
+        printBlankLine();
 
-        printf("1. Military Outpost (%d/2)\n", progress[8]);
-        
+        printMenuItemFormat(1, "Military Outpost (%d/2)", progress[8]);
+
         if (progress[8] >= 2)
-            printf("2. Tactical Training Grounds (%d/4)\n", progress[9]);
+            printMenuItemFormat(2, "Tactical Training Grounds (%d/4)", progress[9]);
         else
-            printf("2. Tactical Training Grounds (LOCKED)\n");
+            printMenuItem(2, "Tactical Training Grounds (LOCKED)");
 
         if (progress[9] >= 4)
-            printf("3. Sniper Valley (%d/4)\n", progress[10]);
+            printMenuItemFormat(3, "Sniper Valley (%d/4)", progress[10]);
         else
-            printf("3. Sniper Valley (LOCKED)\n");
+            printMenuItem(3, "Sniper Valley (LOCKED)");
 
         if (progress[10] >= 4)
-            printf("4. Commander Base (%d/3)\n", progress[11]);
+            printMenuItemFormat(4, "Commander Base (%d/3)", progress[11]);
         else
-            printf("4. Commander Base (LOCKED)\n");
+            printMenuItem(4, "Commander Base (LOCKED)");
 
-        printf("5. Back\n");
-        printf("Choice: ");
+        printMenuItem(5, "Back");
+        printBlankLine();
+        printf("%35sChoice: ", "");
 
         fgets(input, sizeof(input), stdin);
 
         if (input[0] == '\n')
         {
-            printf("Please select a number.\n");
+            printCentered("Please select a number.");
             waitForEnter();
             continue;
         }
@@ -62,7 +67,7 @@ void runStage3(Dog *player, int progress[])
 
         if (zoneChoice < 1 || zoneChoice > 5)
         {
-            printf("Invalid choice! Select 1-5 only.\n");
+            printCentered("Invalid choice! Select 1-5 only.");
             waitForEnter();
             continue;
         }
@@ -85,19 +90,19 @@ void runStage3(Dog *player, int progress[])
         // =========================
         if (zoneChoice == 2 && progress[8] < 2)
         {
-            printf("Complete Military Outpost first!\n");
+            printCentered("Complete Military Outpost first!");
             waitForEnter();
             continue;
         }
         if (zoneChoice == 3 && progress[9] < 4)
         {
-            printf("Complete Tactical Training Grounds first!\n");
+            printCentered("Complete Tactical Training Grounds first!");
             waitForEnter();
             continue;
         }
         if (zoneChoice == 4 && progress[10] < 4)
         {
-            printf("Complete Sniper Valley first!\n");
+            printCentered("Complete Sniper Valley first!");
             waitForEnter();
             continue;
         }
@@ -147,7 +152,9 @@ void runStage3(Dog *player, int progress[])
         // =========================
         if (i == zoneMax - 1)
         {
-            printf("\n*** ELITE MILITARY DOGZ BOSS DETECTED! ***\n");
+            printBlankLine();
+            printCentered("*** ELITE MILITARY DOGZ BOSS DETECTED! ***");
+
             enemy.attack += 15;
             enemy.defense += 12;
             enemy.speed += 8;
@@ -167,7 +174,7 @@ void runStage3(Dog *player, int progress[])
         if (player->hp <= 0)
         {
             system("cls");
-            typeText("Recover HP before engaging Military Dogz!\n", 25);
+            printCentered("Recover HP before engaging Military Dogz!");
             waitForEnter();
             continue;
         }
@@ -198,26 +205,29 @@ void runStage3(Dog *player, int progress[])
         {
             if (progress[zoneIndex] < zoneMax)
             {
-                progress[zoneIndex]++;
-                printf("Zone Progress: %d/%d\n", progress[zoneIndex], zoneMax);
+                //progress[zoneIndex]++;
+                printCenteredFormat("Zone Progress: %d/%d", progress[zoneIndex], zoneMax);
                 waitForEnter();
             }
         }
 
         // =========================
-        // DEFEAT MESSAGE
+        // DEFEAT MESSAGE / SURRENDER
         // =========================
         if (result == 2)
         {
             system("cls");
-            char *defeatMsg[] = {
-                "Military Dogz tactics too strong...\n",
-                "Their formation overwhelmed me...\n",
-                "Need better strategy against elites...\n",
-                "Commander Dogz precision is deadly...\n"
+
+            char *defeatMsg[] =
+            {
+                "Military Dogz tactics too strong...",
+                "Their formation overwhelmed me...",
+                "Need better strategy against elites...",
+                "Commander Dogz precision is deadly..."
             };
+
             int msg = rand() % 4;
-            typeText(defeatMsg[msg], 25);
+            printCentered(defeatMsg[msg]);
             waitForEnter();
         }
     }

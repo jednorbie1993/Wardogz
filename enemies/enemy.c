@@ -31,6 +31,79 @@ static void typeTextCentered(const char *text, int delay)
 
 
 // =========================
+// DEFEND COUNTER HELPERS
+// =========================
+static int tryDefendCounter(Dog *player, Dog *enemy)
+{
+    /*
+        Return values:
+        0 = counter failed, enemy skill continues but damage is reduced later
+        1 = counter succeeded, enemy skill is blocked
+        2 = counter succeeded and enemy died
+    */
+    int counterChance = 25 + (player->intelligence / 20);
+
+    if (player->fatigue <= 20)
+        counterChance = 0;
+
+    if (counterChance > 45)
+        counterChance = 45;
+
+    if (rand() % 100 < counterChance)
+    {
+        int counterDmg = (player->attack * 2) + (player->intelligence / 2);
+
+        counterDmg += rand() % 16;
+
+        if (counterDmg < 210)
+            counterDmg = 210;
+
+        if (counterDmg > 300)
+            counterDmg = 300;
+
+        if (counterDmg > enemy->hp)
+            counterDmg = enemy->hp;
+
+        printCentered("DEFEND COUNTER!");
+        printCenteredFormat("Counter dealt %d damage!", counterDmg);
+
+        enemy->hp -= counterDmg;
+        enemy->hp = clamp(enemy->hp);
+
+        if (enemy->hp <= 0)
+        {
+            printCentered("Enemy defeated by DEFEND COUNTER!");
+            return 2;
+        }
+
+        printCentered("Enemy skill was blocked!");
+        return 1;
+    }
+
+    printCentered("Defend counter failed!");
+    return 0;
+}
+
+static void reduceSkillDamageAfterFailedDefend(Dog *player, int hpBefore)
+{
+    int rawDamage = hpBefore - player->hp;
+
+    if (rawDamage <= 0)
+        return;
+
+    int reducedDamage = (rawDamage * 60) / 100;
+
+    if (reducedDamage < 1)
+        reducedDamage = 1;
+
+    player->hp = hpBefore - reducedDamage;
+    player->hp = clamp(player->hp);
+
+    printCenteredFormat("Defended! Took %d damage", reducedDamage);
+}
+
+
+// =========================
 // CREATE ENEMY
 // =========================
 void createEnemy(Dog *e)
@@ -290,11 +363,14 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
             if (rand() % 100 < triggerChance)
             {
-                int reflect = (player->attack * 3) + (player->intelligence * 2);
-                reflect += rand() % 21;
+                int reflect = (player->attack * 2) + player->intelligence;
+                reflect += rand() % 16;
 
-                if (reflect > 320)
-                    reflect = 320;
+                if (reflect < 180)
+                    reflect = 180;
+
+                if (reflect > 300)
+                    reflect = 300;
 
                 if (reflect < 1)
                     reflect = 1;
@@ -325,6 +401,29 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
 
             player->isCountering = 0;
             player->counterDamage = 0;
+        }
+
+        int hpBeforeSkill = player->hp;
+        int defendWasActive = 0;
+        int defendCounterResult = 0;
+
+        if (*defending)
+        {
+            defendWasActive = 1;
+            defendCounterResult = tryDefendCounter(player, enemy);
+            *defending = 0;
+
+            if (defendCounterResult == 2)
+            {
+                waitForEnter();
+                return 1;
+            }
+
+            if (defendCounterResult == 1)
+            {
+                waitForEnter();
+                return -1;
+            }
         }
 
         SkillID skillId = enemy->skills[skillChoice].id;
@@ -552,6 +651,9 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
                 break;
             }
         }
+        if (defendWasActive && defendCounterResult == 0 && hpBeforeSkill > player->hp)
+            reduceSkillDamageAfterFailedDefend(player, hpBeforeSkill);
+
         if (enemy->zoneType == ZONE_MUTANT &&
             enemy->hp < enemy->maxHP * 0.70 &&
             !enemy->mutationTriggered)
@@ -728,44 +830,55 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
     }
 
     // =========================
-    // DEFEND SYSTEM
+    // DEFEND SYSTEM - STAGE 1
     // =========================
     if (*defending)
     {
-        int counterChance = player->intelligence / 2;
+        int counterChance = 25 + (player->intelligence / 20);
 
         if (player->fatigue <= 20)
             counterChance = 0;
 
-        if (counterChance > 25)
-            counterChance = 25;
+        if (counterChance > 45)
+            counterChance = 45;
 
+        // Defend always reduces incoming Stage 1 damage.
+        enemyDamage = (enemyDamage * 60) / 100;
+
+        if (enemyDamage < 1)
+            enemyDamage = 1;
+
+        printCenteredFormat("Defended! Took %d damage", enemyDamage);
+
+        // Counter is a bonus while defending, not a replacement for damage reduction.
         if (rand() % 100 < counterChance)
         {
-            int counterDmg = (player->attack / 2) + (player->intelligence / 4);
+            int counterDmg = (player->attack * 2) + (player->intelligence / 2);
 
-            printCentered("COUNTER ATTACK!");
-            printCenteredFormat("Counter: %d damage!", counterDmg);
+            counterDmg += rand() % 16;
+
+            if (counterDmg < 210)
+                counterDmg = 210;
+
+            if (counterDmg > 300)
+                counterDmg = 300;
+
+            printCentered("DEFEND COUNTER!");
+            printCenteredFormat("Counter dealt %d damage!", counterDmg);
 
             enemy->hp -= counterDmg;
             enemy->hp = clamp(enemy->hp);
 
             if (enemy->hp <= 0)
             {
-                printCentered("Enemy defeated by COUNTER!");
+                printCentered("Enemy defeated by DEFEND COUNTER!");
                 waitForEnter();
                 return 1;
             }
         }
-        else
-        {
-            enemyDamage = (enemyDamage * 60) / 100;
 
-            player->hp -= enemyDamage;
-            player->hp = clamp(player->hp);
-
-            printCenteredFormat("Defended! Took %d damage", enemyDamage);
-        }
+        player->hp -= enemyDamage;
+        player->hp = clamp(player->hp);
 
         *defending = 0;
     }

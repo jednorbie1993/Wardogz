@@ -9,63 +9,220 @@
 #include "../enemies/enemy.h"
 #include "../enemies/enemy_stage4.h"
 #include "../replay_system.h"
+#include "../console.h"
+
+static void typeCentered(const char *text, int delay)
+{
+    int len = strlen(text);
+    int spaces = (CONSOLE_WIDTH - len) / 2;
+
+    if (spaces < 0)
+        spaces = 0;
+
+    for (int i = 0; i < spaces; i++)
+        printf(" ");
+
+    typeText(text, delay);
+    printf("\n");
+}
 
 int getZoneMaxStage4(int zoneIndex)
 {
-    if (zoneIndex == 12) return 2;   // Outer Facility
+    if (zoneIndex == 12) return 2;  // Outer Facility
     if (zoneIndex == 13) return 4;  // Research Hallways
     if (zoneIndex == 14) return 4;  // Containment Labs
-    if (zoneIndex == 15) return 3; // Core Chamber
+    if (zoneIndex == 15) return 3;  // Core Chamber
+
     return 2;
+}
+
+static void showStage4Menu(int progress[])
+{
+    printBorder();
+    printBlankLine();
+    printCentered("STAGE 4: BIO-CONTAINMENT ZONE");
+    printBlankLine();
+
+    printMenuItemFormat(1, "Outer Facility (%d/2)", progress[12]);
+
+    if (progress[12] >= 2)
+        printMenuItemFormat(2, "Research Hallways (%d/4)", progress[13]);
+    else
+        printMenuItem(2, "Research Hallways (LOCKED)");
+
+    if (progress[13] >= 4)
+        printMenuItemFormat(3, "Containment Labs (%d/4)", progress[14]);
+    else
+        printMenuItem(3, "Containment Labs (LOCKED)");
+
+    if (progress[14] >= 4)
+        printMenuItemFormat(4, "Core Chamber (%d/3)", progress[15]);
+    else
+        printMenuItem(4, "Core Chamber (LOCKED)");
+
+    printMenuItem(5, "Back");
+    printBlankLine();
+
+    printf("%35sChoice: ", "");
+}
+
+static int getStage4Choice()
+{
+    char input[10];
+
+    fgets(input, sizeof(input), stdin);
+
+    if (input[0] == '\n')
+        return -1;
+
+    return atoi(input);
+}
+
+static int getStage4ZoneIndex(int zoneChoice)
+{
+    if (zoneChoice == 1) return 12;
+    if (zoneChoice == 2) return 13;
+    if (zoneChoice == 3) return 14;
+    if (zoneChoice == 4) return 15;
+
+    return -1;
+}
+
+static int isStage4ZoneUnlocked(int zoneChoice, int progress[])
+{
+    if (zoneChoice == 2 && progress[12] < 2)
+    {
+        printCentered("[ACCESS DENIED] Complete Outer Facility first!");
+        waitForEnter();
+        return 0;
+    }
+
+    if (zoneChoice == 3 && progress[13] < 4)
+    {
+        printCentered("[ACCESS DENIED] Complete Research Hallways first!");
+        waitForEnter();
+        return 0;
+    }
+
+    if (zoneChoice == 4 && progress[14] < 4)
+    {
+        printCentered("[ACCESS DENIED] Complete Containment Labs first!");
+        waitForEnter();
+        return 0;
+    }
+
+    return 1;
+}
+
+static void showStage4Intro(int zoneIndex)
+{
+    system("cls");
+    printBorder();
+    printBlankLine();
+
+    if (zoneIndex == 12)
+    {
+        typeCentered("[BIO-LAB EXTERIOR]", 20);
+        typeCentered("Warning: Unauthorized personnel detected.", 25);
+    }
+    else if (zoneIndex == 13)
+    {
+        typeCentered("[RESEARCH HALLWAY]", 20);
+        typeCentered("Note: Subject tests in progress...", 25);
+    }
+    else if (zoneIndex == 14)
+    {
+        typeCentered("[CONTAINMENT LAB]", 20);
+        typeCentered("WARNING: Containment breach imminent!", 28);
+    }
+    else if (zoneIndex == 15)
+    {
+        typeCentered("[CORE CHAMBER - RESTRICTED AREA]", 25);
+        typeCentered("WARNING: MAXIMUM SECURITY ACTIVE!", 30);
+    }
+
+    waitForEnter();
+}
+
+static void showStage4RestWarning()
+{
+    system("cls");
+    printBorder();
+    printBlankLine();
+    typeCentered("Recover HP before engaging bio-subjects!", 25);
+    waitForEnter();
+}
+
+static void showPrototypeZeroIntro()
+{
+    system("cls");
+
+    printBorder();
+    printBlankLine();
+    typeCentered("!!! PROTOTYPE ZERO ACTIVATED !!!", 25);
+    printBlankLine();
+    typeCentered("Prototype Zero: \"I AM THE FUTURE OF K-9.\"", 25);
+    typeCentered("You have witnessed too much.", 25);
+    typeCentered("I will complete the program myself.\"", 28);
+
+    waitForEnter();
+}
+
+static void showStage4Complete()
+{
+    system("cls");
+
+    printBorder();
+    printBlankLine();
+    typeCentered("STAGE 4: BIO-CONTAINMENT COMPLETE", 20);
+    printBlankLine();
+    typeCentered("WARNING: Containment failure detected.", 28);
+    typeCentered("Mutant samples have been stolen.", 28);
+    typeCentered("The FINAL STAGE is now open.", 28);
+
+    waitForEnter();
+}
+
+static void showStage4DefeatMessage()
+{
+    char *defeatMsg[] =
+    {
+        "Subject escaped containment...",
+        "Their hybrid strength is overwhelming...",
+        "Need more firepower for these prototypes...",
+        "The lab has taken another test subject...",
+        "Project success rate increases..."
+    };
+
+    int msg = rand() % 5;
+
+    system("cls");
+    printBorder();
+    printBlankLine();
+    typeCentered(defeatMsg[msg], 25);
+    waitForEnter();
 }
 
 void runStage4(Dog *player, int progress[])
 {
-    int zoneChoice;
-    char input[10];
-
     while (1)
     {
         system("cls");
 
-        printf("====================================\n");
-        printf("  STAGE 4: BIO-CONTAINMENT ZONE\n");
-        printf("====================================\n\n");
+        showStage4Menu(progress);
 
-        printf("1. Outer Facility (%d/2)\n", progress[12]);
-        
-        if (progress[12] >= 2)
-            printf("2. Research Hallways (%d/4)\n", progress[13]);
-        else
-            printf("2. Research Hallways (LOCKED)\n");
+        int zoneChoice = getStage4Choice();
 
-        if (progress[13] >= 4)
-            printf("3. Containment Labs (%d/4)\n", progress[14]);
-        else
-            printf("3. Containment Labs (LOCKED)\n");
-
-        if (progress[14] >= 4)
-            printf("4. Core Chamber (%d/3)\n", progress[15]);
-        else
-            printf("4. Core Chamber (LOCKED)\n");
-
-        printf("5. Back\n");
-        printf("\nChoice: ");
-
-        fgets(input, sizeof(input), stdin);
-
-        if (input[0] == '\n')
+        if (zoneChoice == -1)
         {
-            printf("\nPlease select a number.");
+            printCentered("Please select a number.");
             waitForEnter();
             continue;
         }
 
-        zoneChoice = atoi(input);
-
         if (zoneChoice < 1 || zoneChoice > 5)
         {
-            printf("\nInvalid choice! Select 1-5 only.");
+            printCentered("Invalid choice! Select 1-5 only.");
             waitForEnter();
             continue;
         }
@@ -73,111 +230,29 @@ void runStage4(Dog *player, int progress[])
         if (zoneChoice == 5)
             return;
 
-        // =========================
-        // ZONE INDEX MAPPING
-        // =========================
-        int zoneIndex;
-        if (zoneChoice == 1) zoneIndex = 12;
-        else if (zoneChoice == 2) zoneIndex = 13;
-        else if (zoneChoice == 3) zoneIndex = 14;
-        else if (zoneChoice == 4) zoneIndex = 15;
-        else continue;
+        int zoneIndex = getStage4ZoneIndex(zoneChoice);
 
-        // =========================
-        // LOCK CHECKS
-        // =========================
-        if (zoneChoice == 2 && progress[12] < 2)
-        {
-            printf("\n[ACCESS DENIED] Complete Outer Facility first!");
-            waitForEnter();
+        if (!isStage4ZoneUnlocked(zoneChoice, progress))
             continue;
-        }
-        if (zoneChoice == 3 && progress[13] < 4)
-        {
-            printf("\n[ACCESS DENIED] Complete Research Hallways first!");
-            waitForEnter();
-            continue;
-        }
-        if (zoneChoice == 4 && progress[14] < 4)
-        {
-            printf("\n[ACCESS DENIED] Complete Containment Labs first!");
-            waitForEnter();
-            continue;
-        }
 
-        // =========================
-        // INTRO SCENE
-        // =========================
-        system("cls");
-        if (zoneIndex == 12)
-        {
-            typeText("[BIO-LAB EXTERIOR]\n", 20);
-            typeText("Warning: Unauthorized personnel detected.\n", 25);
-        }
-        else if (zoneIndex == 13)
-        {
-            typeText("[RESEARCH HALLWAY]\n", 20);
-            typeText("Note: Subject tests in progress...\n", 25);
-        }
-        else if (zoneIndex == 14)
-        {
-            typeText("[CONTAINMENT LAB]\n", 20);
-            typeText("WARNING: Containment breach imminent!\n", 28);
-        }
-        else if (zoneIndex == 15)
-        {
-            typeText("[CORE CHAMBER - RESTRICTED AREA]\n", 25);
-            typeText("WARNING: MAXIMUM SECURITY ACTIVE!\n", 30);
-        }
-        waitForEnter();
+        showStage4Intro(zoneIndex);
 
-        // =========================
-        // CREATE ENEMY
-        // =========================
         Dog enemy;
         createEnemy(&enemy);
         enemy.zoneType = ZONE_BIOLAB;
 
-        int i;
         int zoneMax = getZoneMaxStage4(zoneIndex);
+        int i;
 
-        // =========================
-        // REPLAY MODE
-        // =========================
         if (progress[zoneIndex] >= zoneMax)
-        {
-            /*printf("\n[DATA LOG]: Containment subject recorded...\n");
-            
-            int enemyType = rand() % zoneMax;
-            Dog tempEnemy;
-            createEnemy(&tempEnemy);
-            loadStage4Enemies(&tempEnemy, zoneIndex, enemyType);
-            
-            printf("Subject %s detected!\n", tempEnemy.name);
-            if (systemLog)
-                printf(" (REPLAY MODE)\n");
-            
-            waitForEnter();*/
-            
             i = chooseReplayEnemyIndex(zoneIndex, progress, 0);
-        }
         else
-        {
             i = progress[zoneIndex];
-        }
 
-        // =========================
-        // ENEMY SETUP
-        // =========================
         loadStage4Enemies(&enemy, zoneIndex, i);
 
-        // =========================
-        // BOSS BUFF (Last enemy)
-        // =========================
         if (i == zoneMax - 1)
         {
-            /*printf("\n*** CONTAINMENT SUBJECT DETECTED! ***\n");
-            printf("*** SUBJECT SHOWS EXTREME AGGRESSION ***\n");*/
             enemy.attack += 18;
             enemy.defense += 14;
             enemy.speed += 10;
@@ -185,91 +260,36 @@ void runStage4(Dog *player, int progress[])
             enemy.hp = enemy.maxHP;
         }
 
-        // =========================
-        // FINAL INTRO
-        // =========================
-        /*printf("\nENGAGING: %s\n", enemy.name);
-        printf("HP: %d | ATK: %d | DEF: %d | SPD: %d\n", 
-               enemy.hp, enemy.attack, enemy.defense, enemy.speed);
-        waitForEnter();*/
-
-        // =========================
-        // PLAYER CHECK
-        // =========================
         if (player->hp <= 0)
         {
-            system("cls");
-            typeText("Recover HP before engaging bio-subjects!\n", 25);
-            waitForEnter();
+            showStage4RestWarning();
             continue;
         }
 
-        // =========================
-        // FINAL BOSS INTRO (Zone 15, last enemy)
-        // =========================
         if (zoneIndex == 15 && i == 2)
-        {
-            system("cls");
-            typeText("======================================\n", 15);
-            typeText("   !!! PROTOYPE ZERO ACTIVATED !!!\n", 25);
-            typeText("======================================\n\n", 15);
-            typeText("Prototype Zero: \"I AM THE FUTURE OF K-9.\"\n", 25);
-            typeText("You have witnessed too much.\n", 25);
-            typeText("I will complete the program myself.\"\n\n", 28);
-            waitForEnter();
-        }
+            showPrototypeZeroIntro();
 
-        // =========================
-        // BATTLE
-        // =========================
         int result = battleWithEnemyIndex(player, zoneIndex, progress, i);
 
         if (result == 0)
             continue;
 
-        // =========================
-        // VICTORY PROGRESS
-        // =========================
         if (result == 1)
         {
             if (progress[zoneIndex] < zoneMax)
             {
-                progress[zoneIndex]++;
-                printf("\n[DATA LOG]: Subject contained.");
-                printf("\nZone Progress: %d/%d\n", progress[zoneIndex], zoneMax);
+                //progress[zoneIndex]++;
+
+                printCentered("[DATA LOG]: Subject contained.");
+                printCenteredFormat("Zone Progress: %d/%d", progress[zoneIndex], zoneMax);
                 waitForEnter();
             }
-            
-            // Stage 4 Complete
+
             if (zoneIndex == 15 && progress[15] >= 3)
-            {
-                system("cls");
-                typeText("======================================\n", 15);
-                typeText("   STAGE 4: BIO-CONTAINMENT COMPLETE\n", 20);
-                typeText("======================================\n\n", 15);
-                typeText("WARNING: Containment failure detected.\n", 28);
-                typeText("Mutant samples have been stolen.\n", 28);
-                typeText("The FINAL STAGE is now open.\n\n", 28);
-                waitForEnter();
-            }
+                showStage4Complete();
         }
 
-        // =========================
-        // DEFEAT MESSAGE
-        // =========================
         if (result == 2)
-        {
-            system("cls");
-            char *defeatMsg[] = {
-                "Subject escaped containment...\n",
-                "Their hybrid strength is overwhelming...\n",
-                "Need more firepower for these prototypes...\n",
-                "The lab has taken another test subject...\n",
-                "Project success rate increases...\n"
-            };
-            int msg = rand() % 5;
-            typeText(defeatMsg[msg], 25);
-            waitForEnter();
-        }
+            showStage4DefeatMessage();
     }
 }

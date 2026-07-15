@@ -7,5 +7,7 @@ Skill createBiteSkill(void);
 Skill createScratchSkill(void);
 Skill createChargeSkill(void);
 Skill createHipCheckSkill(void);
+Skill createPowerRushSkill(void);
+Skill createGuardBreakSkill(void);
 
 #endif

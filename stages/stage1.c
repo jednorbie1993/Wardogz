@@ -5,27 +5,33 @@
 #include "../battle.h"
 #include "../dog.h"
 #include "../cinematic.h"
+#include "../console.h"
 
 #define STAGE1_MAX_ENEMIES 3
 
 static void showStage1Menu(int progress[])
 {
-    printf("=== STAGE 1: Urban Strays ===\n");
+    printBorder();
+    printBlankLine();
+    printCentered("STAGE 1: URBAN STRAYS");
+    printBlankLine();
 
-    printf("1. Back Alley (%d/3)\n", progress[0]);
+    printMenuItemFormat(1, "Back Alley (%d/3)", progress[0]);
 
     if (progress[0] >= 3)
-        printf("2. Junkyard (%d/3)\n", progress[1]);
+        printMenuItemFormat(2, "Junkyard (%d/3)", progress[1]);
     else
-        printf("2. Junkyard (Locked)\n");
+        printMenuItem(2, "Junkyard (Locked)");
 
     if (progress[1] >= 3)
-        printf("3. Abandoned Block (%d/3)\n", progress[2]);
+        printMenuItemFormat(3, "Abandoned Block (%d/3)", progress[2]);
     else
-        printf("3. Abandoned Block (Locked)\n");
+        printMenuItem(3, "Abandoned Block (Locked)");
 
-    printf("4. Back\n");
-    printf("Choice: ");
+    printMenuItem(4, "Back");
+
+    printBlankLine();
+    printf("%35sChoice: ", "");
 }
 
 static int getStage1Choice()
@@ -49,14 +55,14 @@ static int isStage1ZoneUnlocked(int zoneChoice, int progress[])
 {
     if (zoneChoice == 2 && progress[0] < STAGE1_MAX_ENEMIES)
     {
-        printf("Finish Zone 1 first!\n");
+        printCentered("Finish Zone 1 first!");
         waitForEnter();
         return 0;
     }
 
     if (zoneChoice == 3 && progress[1] < STAGE1_MAX_ENEMIES)
     {
-        printf("Finish Zone 2 first!\n");
+        printCentered("Finish Zone 2 first!");
         waitForEnter();
         return 0;
     }
@@ -67,7 +73,11 @@ static int isStage1ZoneUnlocked(int zoneChoice, int progress[])
 static void showPlayerMustRest()
 {
     system("cls");
-    typeText("You must rest before you battle again!\n", 25);
+
+    printBorder();
+    printBlankLine();
+    printCentered("You must rest before you battle again!");
+
     waitForEnter();
 }
 
@@ -75,29 +85,32 @@ static void showStage1ReplayIntro()
 {
     int replayLine = rand() % 4;
 
-    printf("\n");
+    printBorder();
+    printBlankLine();
+    printCentered("REPLAY MODE");
+    printBlankLine();
 
     switch (replayLine)
     {
         case 0:
-            printf("\"Territory never stays quiet.\"\n");
+            printCentered("\"Territory never stays quiet.\"");
             break;
 
         case 1:
-            printf("\"New strays always appear.\"\n");
+            printCentered("\"New strays always appear.\"");
             break;
 
         case 2:
-            printf("\"The streets always want blood.\"\n");
+            printCentered("\"The streets always want blood.\"");
             break;
 
         case 3:
-            printf("\"Another dog steps into the alley...\"\n");
+            printCentered("\"Another dog steps into the alley...\"");
             break;
     }
 
     if (systemLog)
-        printf(" (REPLAY MODE)\n");
+        printCentered("(REPLAY MODE)");
 
     waitForEnter();
 }
@@ -109,29 +122,37 @@ static void showStage1BossIntro(int zoneIndex, int progress[])
 
     system("cls");
 
+    printBorder();
+    printBlankLine();
+    printCentered("BOSS ENCOUNTER");
+    printBlankLine();
+
     if (zoneIndex == 0)
     {
-        typeText("Heavy footsteps echo through the alley.\n", 25);
-        typeText("The Alley Alpha finally appears.\n\n", 25);
+        printCentered("Heavy footsteps echo through the alley.");
+        printCentered("The Alley Alpha finally appears.");
 
-        typeText("Alley Alpha:\n", 30);
-        typeText("\"This territory belongs to ME.\"\n", 30);
+        printBlankLine();
+        printCentered("Alley Alpha:");
+        printCentered("\"This territory belongs to ME.\"");
     }
     else if (zoneIndex == 1)
     {
-        typeText("Metal scraps rattle in the darkness.\n", 25);
-        typeText("A massive dog steps out from the junkyard.\n\n", 25);
+        printCentered("Metal scraps rattle in the darkness.");
+        printCentered("A massive dog steps out from the junkyard.");
 
-        typeText("Iron Jaw:\n", 30);
-        typeText("\"Scrap or flesh... everything breaks.\"\n", 30);
+        printBlankLine();
+        printCentered("Iron Jaw:");
+        printCentered("\"Scrap or flesh... everything breaks.\"");
     }
     else if (zoneIndex == 2)
     {
-        typeText("The abandoned block falls completely silent.\n", 25);
-        typeText("A terrifying presence approaches slowly.\n\n", 25);
+        printCentered("The abandoned block falls completely silent.");
+        printCentered("A terrifying presence approaches slowly.");
 
-        typeText("Street King:\n", 30);
-        typeText("\"Only one king rules these streets.\"\n", 30);
+        printBlankLine();
+        printCentered("Street King:");
+        printCentered("\"Only one king rules these streets.\"");
     }
 
     waitForEnter();
@@ -143,36 +164,38 @@ static void showStage1SurrenderOutro()
 
     int outro = rand() % 4;
 
-    printf("\n");
+    printBorder();
+    printBlankLine();
+    printCentered("SURRENDERED");
+    printBlankLine();
 
     switch (outro)
     {
         case 0:
-            typeText("...That was too close.\n", 25);
-            typeText("Phew... lucky this time.\n", 25);
-            typeText("I need to be stronger.\n", 25);
+            printCentered("...That was too close.");
+            printCentered("Phew... lucky this time.");
+            printCentered("I need to be stronger.");
             break;
 
         case 1:
-            typeText("Tch... not enough.\n", 25);
-            typeText("I'll be back.\n", 25);
-            typeText("Next time, I finish this.\n", 25);
+            printCentered("Tch... not enough.");
+            printCentered("I'll be back.");
+            printCentered("Next time, I finish this.");
             break;
 
         case 2:
-            typeText("That dog... it's different.\n", 25);
-            typeText("I felt the pressure.\n", 25);
-            typeText("I need more training.\n", 25);
+            printCentered("That dog... it's different.");
+            printCentered("I felt the pressure.");
+            printCentered("I need more training.");
             break;
 
         case 3:
-            typeText("No way... that was intense.\n", 25);
-            typeText("I barely made it out.\n", 25);
-            typeText("Next time, I won't hesitate.\n", 25);
+            printCentered("No way... that was intense.");
+            printCentered("I barely made it out.");
+            printCentered("Next time, I won't hesitate.");
             break;
     }
 
-    printf("\n");
     waitForEnter();
 }
 
@@ -188,14 +211,14 @@ void runStage1(Dog *player, int progress[])
 
         if (zoneChoice == -1)
         {
-            printf("Please select a number.\n");
+            printCentered("Please select a number.");
             waitForEnter();
             continue;
         }
 
         if (!isStage1ChoiceValid(zoneChoice))
         {
-            printf("Invalid choice! Select 1-4 only.\n");
+            printCentered("Invalid choice! Select 1-4 only.");
             waitForEnter();
             continue;
         }

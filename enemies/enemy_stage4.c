@@ -5,6 +5,7 @@
 #include "../dog.h"
 #include "enemy_stage4.h"
 #include "../replay_system.h"
+#include "../console.h"
 
 /*
     BALANCED BIO-LAB DAMAGE
@@ -249,7 +250,7 @@ int useMutationSurge(Dog *user, Dog *target)
     target->hp -= dmg;
     clampDogHP(target);
 
-    printf("%s uses Mutation Surge! -%d HP\n", user->name, dmg);
+    printCenteredFormat("%s uses Mutation Surge! -%d HP", user->name, dmg);
     return dmg;
 }
 
@@ -257,7 +258,7 @@ int useBioShield(Dog *user, Dog *target)
 {
     user->defense += 6;
     user->guardTurns = 3;
-    printf("%s activates Bio Shield!\n", user->name);
+    printCenteredFormat("%s activates Bio Shield!", user->name);
     return 0;
 }
 
@@ -271,7 +272,7 @@ int useCellRegen(Dog *user, Dog *target)
     user->hp += heal;
     clampDogHP(user);
 
-    printf("%s uses Cell Regeneration! +%d HP\n", user->name, heal);
+    printCenteredFormat("%s uses Cell Regeneration! +%d HP", user->name, heal);
     return heal;
 }
 
@@ -279,7 +280,7 @@ int useContainedExplosion(Dog *user, Dog *target)
 {
     if (user->hp > (user->maxHP * 0.25))
     {
-        printf("%s containment field stable - cannot detonate!\n", user->name);
+        printCenteredFormat("%s containment field stable - cannot detonate!", user->name);
         return 0;
     }
 
@@ -290,7 +291,7 @@ int useContainedExplosion(Dog *user, Dog *target)
 
     user->hp = 0;
 
-    printf("%s CONTAINMENT BREACH! Controlled explosion -%d HP\n", user->name, dmg);
+    printCenteredFormat("%s CONTAINMENT BREACH! Controlled explosion -%d HP", user->name, dmg);
     return dmg;
 }
 
@@ -302,8 +303,8 @@ int useAcidSpit(Dog *user, Dog *target)
     target->hp -= dmg;
     clampDogHP(target);
 
-    printf("%s spits Acid! -%d HP\n", user->name, dmg);
-    printf("%s takes %d corrosive damage next turn!\n", target->name, dot);
+    printCenteredFormat("%s spits Acid! -%d HP", user->name, dmg);
+    printCenteredFormat("%s takes %d corrosive damage next turn!", target->name, dot);
     return dmg;
 }
 
@@ -319,7 +320,7 @@ int useNeuroToxin(Dog *user, Dog *target)
     if (target->speed < 1)
         target->speed = 1;
 
-    printf("%s releases Neuro Toxin! -%d HP (Speed -%d)\n", user->name, dmg, speedDrop);
+    printCenteredFormat("%s releases Neuro Toxin! -%d HP (Speed -%d)", user->name, dmg, speedDrop);
     return dmg;
 }
 

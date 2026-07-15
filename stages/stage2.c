@@ -8,6 +8,148 @@
 #include "../cinematic.h"
 #include "../enemies/enemy.h"
 #include "../replay_system.h"
+#include "../console.h"
+
+static void typeCenteredLine(const char *text, int delay)
+{
+    int len = strlen(text);
+    int spaces = (CONSOLE_WIDTH - len) / 2;
+
+    if (spaces < 0)
+        spaces = 0;
+
+    for (int i = 0; i < spaces; i++)
+        printf(" ");
+
+    typeText(text, delay);
+    printf("\n");
+}
+
+static void showStage2Menu(int progress[])
+{
+    printBorder();
+    printBlankLine();
+    printCentered("STAGE 2: WILD TERRITORY");
+    printBlankLine();
+
+    printMenuItemFormat(1, "River Pack Hideout (%d/3)", progress[3]);
+
+    if (progress[3] >= 3)
+        printMenuItemFormat(2, "Forest Ambush Grounds (%d/3)", progress[4]);
+    else
+        printMenuItem(2, "Forest Ambush Grounds (Locked)");
+
+    if (progress[4] >= 3)
+        printMenuItemFormat(3, "Bloodfang Ravine (%d/2)", progress[5]);
+    else
+        printMenuItem(3, "Bloodfang Ravine (Locked)");
+
+    if (progress[5] >= 2)
+        printMenuItemFormat(4, "Alpha's Trial Grounds (%d/4)", progress[6]);
+    else
+        printMenuItem(4, "Alpha's Trial Grounds (Locked)");
+
+    if (progress[6] >= 4)
+        printMenuItemFormat(5, "Mountain Pack Den (%d/4)", progress[7]);
+    else
+        printMenuItem(5, "Mountain Pack Den (Locked)");
+
+    printMenuItem(6, "Back");
+    printBlankLine();
+    printf("%35sChoice: ", "");
+}
+
+static void showStage2ReplayIntro()
+{
+    int replayLine = rand() % 4;
+
+    printBlankLine();
+
+    switch (replayLine)
+    {
+        case 0:
+            printCentered("\"The wild never forgets.\"");
+            break;
+
+        case 1:
+            printCentered("\"Another pack rises from the shadows.\"");
+            break;
+
+        case 2:
+            printCentered("\"The forest still hungers.\"");
+            break;
+
+        case 3:
+            printCentered("\"Only the strong survive here.\"");
+            break;
+    }
+
+    if (systemLog)
+    {
+        printCentered("(REPLAY MODE)");
+    }
+
+    waitForEnter();
+}
+
+static void showPlayerMustRestStage2()
+{
+    system("cls");
+    typeCenteredLine("You must rest before you battle again!", 25);
+    waitForEnter();
+}
+
+static void showStage2BossIntro(int zoneIndex, int isBossFight)
+{
+    if (zoneIndex == 5 && isBossFight)
+    {
+        system("cls");
+
+        typeCenteredLine("The river current suddenly grows violent.", 25);
+        typeCenteredLine("The leader of the wild pack emerges.", 25);
+        printBlankLine();
+
+        typeCenteredLine("River Alpha:", 30);
+        typeCenteredLine("\"The weak drown here.\"", 30);
+
+        waitForEnter();
+    }
+}
+
+static void showStage2SurrenderOutro()
+{
+    system("cls");
+
+    int outro = rand() % 4;
+
+    printBlankLine();
+
+    switch (outro)
+    {
+        case 0:
+            typeCenteredLine("These wild dogs are ruthless...", 25);
+            typeCenteredLine("I need to adapt to their style.", 25);
+            break;
+
+        case 1:
+            typeCenteredLine("Grr... their teamwork is insane.", 25);
+            typeCenteredLine("I need new strategies.", 25);
+            break;
+
+        case 2:
+            typeCenteredLine("That pack formation... dangerous.", 25);
+            typeCenteredLine("I barely escaped.", 25);
+            break;
+
+        case 3:
+            typeCenteredLine("Wild territory lives up to its name.", 25);
+            typeCenteredLine("Next time, I'll be ready.", 25);
+            break;
+    }
+
+    printBlankLine();
+    waitForEnter();
+}
 
 void runStage2(Dog *player, int progress[])
 {
@@ -18,38 +160,13 @@ void runStage2(Dog *player, int progress[])
     {
         system("cls");
 
-        printf("=== STAGE 2: Wild Territory ===\n");
-
-        printf("1. River Pack Hideout (%d/3)\n", progress[3]);
-
-        if (progress[3] >= 3)
-            printf("2. Forest Ambush Grounds (%d/3)\n", progress[4]);
-        else
-            printf("2. Forest Ambush Grounds (Locked)\n");
-
-        if (progress[4] >= 3)
-            printf("3. Bloodfang Ravine (%d/2)\n", progress[5]);
-        else
-            printf("3. Bloodfang Ravine (Locked)\n");
-
-        if (progress[5] >= 2)
-            printf("4. Alpha's Trial Grounds (%d/4)\n", progress[6]);
-        else
-            printf("4. Alpha's Trial Grounds (Locked)\n");
-
-        if (progress[6] >= 4)
-            printf("5. Mountain Pack Den (%d/4)\n", progress[7]);
-        else
-            printf("5. Mountain Pack Den (Locked)\n");
-
-        printf("6. Back\n");
-        printf("Choice: ");
+        showStage2Menu(progress);
 
         fgets(input, sizeof(input), stdin);
 
         if (input[0] == '\n')
         {
-            printf("Please select a number.\n");
+            printCentered("Please select a number.");
             waitForEnter();
             continue;
         }
@@ -58,7 +175,7 @@ void runStage2(Dog *player, int progress[])
 
         if (zoneChoice < 1 || zoneChoice > 6)
         {
-            printf("Invalid choice! Select 1-6 only.\n");
+            printCentered("Invalid choice! Select 1-6 only.");
             waitForEnter();
             continue;
         }
@@ -75,28 +192,28 @@ void runStage2(Dog *player, int progress[])
 
         if (zoneChoice == 2 && progress[3] < 3)
         {
-            printf("Finish Zone 1 first!\n");
+            printCentered("Finish Zone 1 first!");
             waitForEnter();
             continue;
         }
 
         if (zoneChoice == 3 && progress[4] < 3)
         {
-            printf("Finish Zone 2 first!\n");
+            printCentered("Finish Zone 2 first!");
             waitForEnter();
             continue;
         }
 
         if (zoneChoice == 4 && progress[5] < 2)
         {
-            printf("Finish Zone 3 first!\n");
+            printCentered("Finish Zone 3 first!");
             waitForEnter();
             continue;
         }
 
         if (zoneChoice == 5 && progress[6] < 4)
         {
-            printf("Finish Zone 4 first!\n");
+            printCentered("Finish Zone 4 first!");
             waitForEnter();
             continue;
         }
@@ -124,55 +241,7 @@ void runStage2(Dog *player, int progress[])
 
         if (progress[zoneIndex] >= maxEnemies)
         {
-            /*printf("\n");
-
-            int enemyType = rand() % maxEnemies;
-
-            Dog tempEnemy;
-            createEnemy(&tempEnemy);
-
-            loadStage2Enemies(&tempEnemy, zoneIndex, enemyType);
-
-            char *verbs[] = {
-                "showed",
-                "appeared",
-                "arrived",
-                "emerged"};
-
-            int verb = rand() % 4;
-
-            printf("%s %s\n\n", tempEnemy.name, verbs[verb]);*/
-
-            // REPLAY QUOTES
-            int replayLine = rand() % 4;
-
-            printf("\n");
-
-            switch(replayLine)
-            {
-                case 0:
-                    printf("\"The wild never forgets.\"\n");
-                    break;
-
-                case 1:
-                    printf("\"Another pack rises from the shadows.\"\n");
-                    break;
-
-                case 2:
-                    printf("\"The forest still hungers.\"\n");
-                    break;
-
-                case 3:
-                    printf("\"Only the strong survive here.\"\n");
-                    break;
-            }
-
-            if (systemLog)
-            {
-                printf(" (REPLAY MODE)\n");
-            }
-
-            waitForEnter();
+            showStage2ReplayIntro();
 
             // ELITE CHANCE
             i = chooseReplayEnemyIndex(zoneIndex, progress, 1);
@@ -202,18 +271,15 @@ void runStage2(Dog *player, int progress[])
         // NORMAL ENCOUNTER
         if (progress[zoneIndex] < maxEnemies)
         {
-            printf("\nFighting: %s\n", enemy.name);
+            printBlankLine();
+            printCenteredFormat("Fighting: %s", enemy.name);
             waitForEnter();
         }
 
         // PLAYER DEAD CHECK
         if (player->hp <= 0)
         {
-            system("cls");
-
-            typeText("You must rest before you battle again!\n", 25);
-
-            waitForEnter();
+            showPlayerMustRestStage2();
             continue;
         }
 
@@ -223,18 +289,7 @@ void runStage2(Dog *player, int progress[])
 
         int isBossFight = (progress[zoneIndex] == maxEnemies - 1);
 
-        if (zoneIndex == 5 && isBossFight)
-        {
-            system("cls");
-
-            typeText("The river current suddenly grows violent.\n", 25);
-            typeText("The leader of the wild pack emerges.\n\n", 25);
-
-            typeText("River Alpha:\n", 30);
-            typeText("\"The weak drown here.\"\n", 30);
-
-            waitForEnter();
-        }
+        showStage2BossIntro(zoneIndex, isBossFight);
 
         // =========================
         // BATTLE
@@ -251,37 +306,7 @@ void runStage2(Dog *player, int progress[])
 
         if (result == 2)
         {
-            system("cls");
-
-            int outro = rand() % 4;
-
-            printf("\n");
-
-            switch (outro)
-            {
-                case 0:
-                    typeText("These wild dogs are ruthless...\n", 25);
-                    typeText("I need to adapt to their style.\n", 25);
-                    break;
-
-                case 1:
-                    typeText("Grr... their teamwork is insane.\n", 25);
-                    typeText("I need new strategies.\n", 25);
-                    break;
-
-                case 2:
-                    typeText("That pack formation... dangerous.\n", 25);
-                    typeText("I barely escaped.\n", 25);
-                    break;
-
-                case 3:
-                    typeText("Wild territory lives up to its name.\n", 25);
-                    typeText("Next time, I'll be ready.\n", 25);
-                    break;
-            }
-
-            printf("\n");
-            waitForEnter();
+            showStage2SurrenderOutro();
         }
     }
 }

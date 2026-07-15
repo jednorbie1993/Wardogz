@@ -377,6 +377,11 @@ int handleStage1EnemyBehavior(Dog *player, Dog *enemy, int *enemyDamage)
 
     applyStage1Personality(player, enemy, enemyDamage);
 
+    // NOTE:
+    // Stage 1 only calculates enemyDamage here.
+    // The actual Defend reduction is handled in enemy.c,
+    // so all Stage 1 enemy skills follow the same defend rule.
+
     // Damage safety cap for Stage 1.
     // Keeps early-game fights fair even after enemy stat increases.
     if (*enemyDamage < 3)

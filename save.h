@@ -9,7 +9,7 @@ typedef struct
 {
     Dog player;
     int restCount;
-    int progress[19];
+    int progress[21];
 } GameData;
 
 int saveGame(GameData *game);

@@ -53,4 +53,17 @@ void checkSparringUnlock(Dog *d)
         printf("SNOOP DEFEATED 10/10! UNLOCKED: Snoop Phantom!\n");
         d->skillCount++;
     }
+
+    // ================= RIVAL SPARRING SKILL =================
+    if (d->sparringProgress[5] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Rival Breaker"))
+    {
+        strcpy(d->skills[d->skillCount].name, "Rival Breaker");
+        d->skills[d->skillCount].power = 35;
+        d->skills[d->skillCount].cost = 20;
+        d->skills[d->skillCount].type = SKILL_ATTACK;
+
+        d->skillCount++;
+
+        printf("\nNEW SKILL UNLOCKED: Rival Breaker!\n");
+    }
 }

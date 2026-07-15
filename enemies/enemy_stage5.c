@@ -5,6 +5,7 @@
 #include "../dog.h"
 #include "enemy_stage5.h"
 #include "../replay_system.h"
+#include "../console.h"
 
 // =========================
 // STAGE 5 BALANCE HELPERS
@@ -452,7 +453,7 @@ int useReinforcedBite(Dog *user, Dog *target)
     int hits = (rand() % 3) + 1;
     int total = 0;
 
-    printf("%s uses Reinforced Bite!", user->name);
+    printCenteredFormat("%s uses Reinforced Bite!", user->name);
 
     for (int i = 0; i < hits; i++)
     {
@@ -462,10 +463,10 @@ int useReinforcedBite(Dog *user, Dog *target)
         target->hp = clamp(target->hp);
         total += dmg;
 
-        printf("Hit %d! -%d HP", i + 1, dmg);
+        printCenteredFormat("Hit %d! -%d HP", i + 1, dmg);
     }
 
-    printf("Total damage: -%d HP", total);
+    printCenteredFormat("Total damage: -%d HP", total);
     return total;
 }
 
@@ -476,7 +477,7 @@ int useCombatRush(Dog *user, Dog *target)
     if (user->speed > target->speed)
     {
         dmg += 10;
-        printf("%s outsped the target!", user->name);
+        printCenteredFormat("%s outsped the target!", user->name);
     }
 
     if (dmg > 125)
@@ -485,7 +486,7 @@ int useCombatRush(Dog *user, Dog *target)
     target->hp -= dmg;
     target->hp = clamp(target->hp);
 
-    printf("%s uses Combat Rush! -%d HP", user->name, dmg);
+    printCenteredFormat("%s uses Combat Rush! -%d HP", user->name, dmg);
     return dmg;
 }
 
@@ -499,8 +500,8 @@ int usePredatorInstinct(Dog *user, Dog *target)
     if (user->speed > 999)
         user->speed = 999;
 
-    printf("%s activates Predator Instinct!\n", user->name);
-    printf("Attack +6 | Speed +5\n");
+    printCenteredFormat("%s activates Predator Instinct!", user->name);
+    printCentered("Attack +6 | Speed +5");
 
     return 0;
 }
@@ -516,8 +517,8 @@ int useEnhancedJawCrush(Dog *user, Dog *target)
     if (user->attack > 999)
         user->attack = 999;
 
-    printf("%s uses Enhanced Jaw Crush! -%d HP", user->name, dmg);
-    printf("%s's reinforced jaw grows stronger! Attack +4", user->name);
+    printCenteredFormat("%s uses Enhanced Jaw Crush! -%d HP", user->name, dmg);
+    printCenteredFormat("%s's reinforced jaw grows stronger! Attack +4", user->name);
 
     return dmg;
 }
@@ -533,8 +534,8 @@ int useRazorSlash(Dog *user, Dog *target)
     target->hp -= dmg;
     target->hp = clamp(target->hp);
 
-    printf("%s uses Razor Slash! -%d HP", user->name, dmg);
-    printf("Sharp claws tear through the target!");
+    printCenteredFormat("%s uses Razor Slash! -%d HP", user->name, dmg);
+    printCentered("Sharp claws tear through the target!");
 
     return dmg;
 }
@@ -549,8 +550,8 @@ int useBloodFrenzy(Dog *user, Dog *target)
     if (user->speed > 999)
         user->speed = 999;
 
-    printf("%s enters Blood Frenzy!\n", user->name);
-    printf("Attack +8 | Speed +4\n");
+    printCenteredFormat("%s enters Blood Frenzy!", user->name);
+    printCentered("Attack +8 | Speed +4");
 
     return 0;
 }
@@ -560,7 +561,7 @@ int useFangStorm(Dog *user, Dog *target)
     int hits = 3;
     int total = 0;
 
-    printf("%s uses Fang Storm!", user->name);
+    printCenteredFormat("%s uses Fang Storm!", user->name);
 
     for (int i = 0; i < hits; i++)
     {
@@ -570,10 +571,10 @@ int useFangStorm(Dog *user, Dog *target)
         target->hp = clamp(target->hp);
         total += dmg;
 
-        printf("Fang hit %d! -%d HP", i + 1, dmg);
+        printCenteredFormat("Fang hit %d! -%d HP", i + 1, dmg);
     }
 
-    printf("Total damage: -%d HP", total);
+    printCenteredFormat("Total damage: -%d HP", total);
     return total;
 }
 
@@ -594,8 +595,8 @@ int useTacticalBite(Dog *user, Dog *target)
     target->hp -= dmg;
     target->hp = clamp(target->hp);
 
-    printf("%s uses Tactical Bite! -%d HP", user->name, dmg);
-    printf("The unit attacks with trained precision.");
+    printCenteredFormat("%s uses Tactical Bite! -%d HP", user->name, dmg);
+    printCentered("The unit attacks with trained precision.");
 
     return dmg;
 }
@@ -611,8 +612,8 @@ int useArmorBreak(Dog *user, Dog *target)
     if (target->defense < 0)
         target->defense = 0;
 
-    printf("%s uses Armor Break! -%d HP", user->name, dmg);
-    printf("%s's defense was lowered by 5!", target->name);
+    printCenteredFormat("%s uses Armor Break! -%d HP", user->name, dmg);
+    printCenteredFormat("%s's defense was lowered by 5!", target->name);
 
     return dmg;
 }
@@ -627,9 +628,9 @@ int useSuppressionHowl(Dog *user, Dog *target)
     if (target->attack < 1)
         target->attack = 1;
 
-    printf("%s releases a Suppression Howl!\n", user->name);
-    printf("%s gains Defense +8.\n", user->name);
-    printf("%s loses Attack -4.\n", target->name);
+    printCenteredFormat("%s releases a Suppression Howl!", user->name);
+    printCenteredFormat("%s gains Defense +8.", user->name);
+    printCenteredFormat("%s loses Attack -4.", target->name);
 
     return 0;
 }
@@ -647,8 +648,8 @@ int useBlacksiteExecution(Dog *user, Dog *target)
     target->hp -= dmg;
     target->hp = clamp(target->hp);
 
-    printf("%s uses Blacksite Execution! -%d HP", user->name, dmg);
-    printf("The combat prototype follows its final order.");
+    printCenteredFormat("%s uses Blacksite Execution! -%d HP", user->name, dmg);
+    printCentered("The combat prototype follows its final order.");
 
     return dmg;
 }
@@ -668,8 +669,8 @@ int usePlasmaBite(Dog *user, Dog *target)
     if (target->defense < 0)
         target->defense = 0;
 
-    printf("%s uses Plasma Bite! -%d HP", user->name, dmg);
-    printf("The heated bite weakens %s's defense by 3!", target->name);
+    printCenteredFormat("%s uses Plasma Bite! -%d HP", user->name, dmg);
+    printCenteredFormat("The heated bite weakens %s's defense by 3!", target->name);
 
     return dmg;
 }
@@ -685,8 +686,8 @@ int useCryoLock(Dog *user, Dog *target)
     if (target->speed < 1)
         target->speed = 1;
 
-    printf("%s uses Cryo Lock! -%d HP", user->name, dmg);
-    printf("%s's speed was lowered by 6!", target->name);
+    printCenteredFormat("%s uses Cryo Lock! -%d HP", user->name, dmg);
+    printCenteredFormat("%s's speed was lowered by 6!", target->name);
 
     return dmg;
 }
@@ -701,8 +702,8 @@ int useThunderSurge(Dog *user, Dog *target)
     if (user->speed > 999)
         user->speed = 999;
 
-    printf("%s activates Thunder Surge!\n", user->name);
-    printf("Attack +6 | Speed +8\n");
+    printCenteredFormat("%s activates Thunder Surge!", user->name);
+    printCentered("Attack +6 | Speed +8");
 
     return 0;
 }
@@ -720,8 +721,8 @@ int useApexOverdrive(Dog *user, Dog *target)
     target->hp -= dmg;
     target->hp = clamp(target->hp);
 
-    printf("%s uses Apex Overdrive! -%d HP", user->name, dmg);
-    printf("Elemental energy overloads the chamber.");
+    printCenteredFormat("%s uses Apex Overdrive! -%d HP", user->name, dmg);
+    printCentered("Elemental energy overloads the chamber.");
 
     return dmg;
 }
@@ -739,8 +740,8 @@ int useMutationOverdrive(Dog *user, Dog *target)
     if (user->speed > 999)
         user->speed = 999;
 
-    printf("%s activates Mutation Overdrive!\n", user->name);
-    printf("Attack +10 | Defense +6 | Speed +5\n");
+    printCenteredFormat("%s activates Mutation Overdrive!", user->name);
+    printCentered("Attack +10 | Defense +6 | Speed +5");
 
     return 0;
 }
@@ -752,8 +753,8 @@ int useHumanoidJawCrush(Dog *user, Dog *target)
     target->hp -= dmg;
     target->hp = clamp(target->hp);
 
-    printf("%s uses Humanoid Jaw Crush! -%d HP", user->name, dmg);
-    printf("The humanoid mutant clamps down with unnatural force.");
+    printCenteredFormat("%s uses Humanoid Jaw Crush! -%d HP", user->name, dmg);
+    printCentered("The humanoid mutant clamps down with unnatural force.");
 
     return dmg;
 }
@@ -763,7 +764,7 @@ int useTimelineMaul(Dog *user, Dog *target)
     int hits = 3;
     int total = 0;
 
-    printf("%s uses Timeline Maul!", user->name);
+    printCenteredFormat("%s uses Timeline Maul!", user->name);
 
     for (int i = 0; i < hits; i++)
     {
@@ -773,10 +774,10 @@ int useTimelineMaul(Dog *user, Dog *target)
         target->hp = clamp(target->hp);
         total += dmg;
 
-        printf("Timeline hit %d! -%d HP", i + 1, dmg);
+        printCenteredFormat("Timeline hit %d! -%d HP", i + 1, dmg);
     }
 
-    printf("Total damage: -%d HP", total);
+    printCenteredFormat("Total damage: -%d HP", total);
     return total;
 }
 
@@ -791,9 +792,9 @@ int useCursedInstinct(Dog *user, Dog *target)
     if (target->defense < 0)
         target->defense = 0;
 
-    printf("%s awakens Cursed Instinct!\n", user->name);
-    printf("%s gains Attack +6.\n", user->name);
-    printf("%s's Defense -6.\n", target->name);
+    printCenteredFormat("%s awakens Cursed Instinct!", user->name);
+    printCenteredFormat("%s gains Attack +6.", user->name);
+    printCenteredFormat("%s's Defense -6.", target->name);
 
     return 0;
 }

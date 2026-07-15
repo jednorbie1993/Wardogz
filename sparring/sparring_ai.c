@@ -174,6 +174,7 @@ int chooseEnemyMove(Dog *enemy, Dog *player, int type)
 
 int useSkill(Dog *user, Dog *enemy, Skill skill)
 {
+
     if (user->isStunned && user->stunTurns > 0)
     {
         printCenteredFormat("%s is STUNNED and cannot move!", user->name);
@@ -208,37 +209,57 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
     // ================= DAMAGE SKILLS =================
     if (skill.type == SKILL_DAMAGE)
     {
-        /*int base = skill.power + (user->attack / 15);
-        int reduce = enemy->defense / 18;
-        int variance = rand() % 6;
-        int dmg = base - reduce + variance;*/
-        int diff = user->attack - enemy->defense;
-
-        int dmg = 70 + (diff / 10) + skill.power + ((rand() % 21) - 10);
-
-        if (dmg < 30)
-            dmg = 30;
-
-        if (dmg > 140)
-            dmg = 140;
+        int dmg = computeBaseDamage(user, enemy, skill);
 
         if (rand() % 100 < 10)
         {
             dmg += dmg / 2;
 
-            if (dmg > 180)
-                dmg = 180;
+            int maxCrit = 250;
+
+            if (getSkillTier(skill) == TIER_ULTIMATE)
+                maxCrit = 360;
+
+            if (dmg > maxCrit)
+                dmg = maxCrit;
 
             printCentered("CRITICAL HIT!");
         }
 
         int finalDamage = dmg;
 
-        // IMPORTANT:
-        // Do NOT call the main battle applySpecialEffects() here.
-        // Sparring uses temporary skills like Hip Check, Bite, Scratch, Charge.
-        // Calling the global skill system can trigger main-battle unlock messages
-        // or side effects during Rival sparring.
+        // Main Battle / Arena skills need their real effects here.
+        // This useSkill() is shared by battle.c, arena.c, and sparring.c.
+        // We skip pure sparring character fights to avoid duplicate effects/unlock messages.
+        int isSparringCharacter =
+            strcmp(user->name, "Ossas") == 0 || strcmp(user->name, "Chubby") == 0 ||
+            strcmp(user->name, "Jeward") == 0 || strcmp(user->name, "Tiny") == 0 ||
+            strcmp(user->name, "Snoopy") == 0 || strcmp(enemy->name, "Ossas") == 0 ||
+            strcmp(enemy->name, "Chubby") == 0 || strcmp(enemy->name, "Jeward") == 0 ||
+            strcmp(enemy->name, "Tiny") == 0 || strcmp(enemy->name, "Snoopy") == 0;
+
+        if (strcmp(skill.name, "Ossas Counter") == 0)
+        {
+            applySpecialEffects(user, enemy, skill, &finalDamage);
+
+            for (int i = 0; i < user->skillCount; i++)
+            {
+                if (strcmp(user->skills[i].name, skill.name) == 0)
+                {
+                    user->skills[i].cdLeft = user->skills[i].cooldown;
+                    break;
+                }
+            }
+
+            return 1;
+        }
+        else if (!isSparringCharacter)
+        {
+            applySpecialEffects(user, enemy, skill, &finalDamage);
+        }
+
+        if (finalDamage < 0)
+            finalDamage = 0;
 
         enemy->hp -= finalDamage;
 

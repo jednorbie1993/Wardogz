@@ -10,6 +10,33 @@
 #include "../enemies/enemy_stage5.h"
 #include "../replay_system.h"
 #include "../credit.h"
+#include "../console.h"
+
+
+static void typeTextCentered(const char *text, int delay)
+{
+    int len = strlen(text);
+    int spaces = (CONSOLE_WIDTH - len) / 2;
+
+    if (spaces < 0)
+        spaces = 0;
+
+    for (int i = 0; i < spaces; i++)
+        printf(" ");
+
+    typeText(text, delay);
+}
+
+static void typeTextCenteredLine(const char *text, int delay)
+{
+    typeTextCentered(text, delay);
+    printf("\n");
+}
+
+static void typeTextCenteredBlank()
+{
+    printf("\n");
+}
 
 int getZoneMaxStage5(int zoneIndex)
 {
@@ -33,40 +60,42 @@ void runStage5(Dog *player, int progress[])
     {
         system("cls");
 
-        printf("====================================\n");
-        printf("  STAGE 5: BLACKSITE LABORATORY\n");
-        printf("====================================\n\n");
+        printBorder();
+        printBlankLine();
+        printCentered("STAGE 5: BLACKSITE LABORATORY");
+        printBlankLine();
 
-        printf("1. Enhanced Strays (%d/4)\n", progress[16]);
+        printMenuItemFormat(1, "Enhanced Strays (%d/4)", progress[16]);
 
         if (progress[16] >= 4)
-            printf("2. Feral Mutation Ward (%d/4)\n", progress[17]);
+            printMenuItemFormat(2, "Feral Mutation Ward (%d/4)", progress[17]);
         else
-            printf("2. Feral Mutation Ward (Locked)\n");
+            printMenuItem(2, "Feral Mutation Ward (Locked)");
 
         if (progress[17] >= 4)
-            printf("3. Combat Prototype Unit (%d/4)\n", progress[18]);
+            printMenuItemFormat(3, "Combat Prototype Unit (%d/4)", progress[18]);
         else
-            printf("3. Combat Prototype Unit (Locked)\n");
+            printMenuItem(3, "Combat Prototype Unit (Locked)");
 
         if (progress[18] >= 4)
-            printf("4. Elemental Apex Chamber (%d/4)\n", progress[19]);
+            printMenuItemFormat(4, "Elemental Apex Chamber (%d/4)", progress[19]);
         else
-            printf("4. Elemental Apex Chamber (Locked)\n");
+            printMenuItem(4, "Elemental Apex Chamber (Locked)");
 
         if (progress[19] >= 4)
-            printf("5. Final Containment: Project Cerberus (%d/1)\n", progress[20]);
+            printMenuItemFormat(5, "Final Containment: Project Cerberus (%d/1)", progress[20]);
         else
-            printf("5. Final Containment: Project Cerberus (Locked)\n");
+            printMenuItem(5, "Final Containment: Project Cerberus (Locked)");
 
-        printf("6. Back");
-        printf("\n\nChoice: ");
+        printMenuItem(6, "Back");
+        printBlankLine();
+        printf("%35sChoice: ", "");
 
         fgets(input, sizeof(input), stdin);
 
         if (input[0] == '\n')
         {
-            printf("\nPlease select a number.");
+            printCentered("Please select a number.");
             waitForEnter();
             continue;
         }
@@ -75,7 +104,7 @@ void runStage5(Dog *player, int progress[])
 
         if (zoneChoice < 1 || zoneChoice > 6)
         {
-            printf("\nInvalid choice! Select 1-6 only.");
+            printCentered("Invalid choice! Select 1-6 only.");
             waitForEnter();
             continue;
         }
@@ -85,28 +114,28 @@ void runStage5(Dog *player, int progress[])
 
         if (zoneChoice == 2 && progress[16] < 4)
         {
-            printf("\nComplete Enhanced Strays first!");
+            printCentered("Complete Enhanced Strays first!");
             waitForEnter();
             continue;
         }
 
         if (zoneChoice == 3 && progress[17] < 4)
         {
-            printf("\nComplete Feral Mutation Ward first!");
+            printCentered("Complete Feral Mutation Ward first!");
             waitForEnter();
             continue;
         }
 
         if (zoneChoice == 4 && progress[18] < 4)
         {
-            printf("\nComplete Combat Prototype Unit first!");
+            printCentered("Complete Combat Prototype Unit first!");
             waitForEnter();
             continue;
         }
 
         if (zoneChoice == 5 && progress[19] < 4)
         {
-            printf("\nComplete Elemental Apex Chamber first!");
+            printCentered("Complete Elemental Apex Chamber first!");
             waitForEnter();
             continue;
         }
@@ -130,65 +159,83 @@ void runStage5(Dog *player, int progress[])
         if (zoneIndex == 16 && progress[16] == 0)
         {
             system("cls");
-            typeText("[RESEARCH LOG - DR. BRICKY]\n\n", 25);
+            typeTextCenteredLine("[RESEARCH LOG - DR. BRICKY]", 25);
+            typeTextCenteredBlank();
 
-            typeText("\"At last... years of research, countless failures, and endless sacrifices have finally paid off.\"\n\n", 25);
-            typeText("\"The Stray Enhancement Project is complete.\"\n\n", 25);
-            typeText("\"What the world calls ordinary dogs... I see as untapped potential.\"\n\n", 25);
-            typeText("\"Strength. Intelligence. Adaptation.\"\n\n", 25);
-            typeText("\"Humanity has spent centuries trying to create the perfect soldier.\"\n\n", 25);
-            typeText("\"They were looking in the wrong species.\"\n\n", 25);
-            typeText("\"These subjects are no longer strays.\"\n\n", 25);
-            typeText("\"They are the future.\"\n\n", 25);
-            typeText("\"And soon... the entire world will witness my masterpiece.\"\n\n", 25);
+            typeTextCenteredLine("\"At last... years of research, countless failures, and endless sacrifices have finally paid off.\"", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("\"The Stray Enhancement Project is complete.\"", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("\"What the world calls ordinary dogs... I see as untapped potential.\"", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("\"Strength. Intelligence. Adaptation.\"", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("\"Humanity has spent centuries trying to create the perfect soldier.\"", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("\"They were looking in the wrong species.\"", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("\"These subjects are no longer strays.\"", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("\"They are the future.\"", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("\"And soon... the entire world will witness my masterpiece.\"", 25);
+            typeTextCenteredBlank();
 
-            typeText("- Dr. Bricky\n", 25);
+            typeTextCenteredLine("- Dr. Bricky", 25);
             waitForEnter();
         }
         // FIRST TIME INTRO ONLY - Zone 3
         else if (zoneIndex == 18 && progress[18] == 0)
         {
             system("cls");
-            typeText("[BLACKSITE SECURITY LOG]\n\n", 25);
-            typeText("The deeper wing of the laboratory opens.\n", 25);
-            typeText("These subjects are different... trained, disciplined, and weaponized.\n", 25);
-            typeText("They do not hunt like animals.\n", 25);
-            typeText("They move like soldiers.\n\n", 25);
-            typeText("Security System: Combat Prototype Unit activated.\n", 25);
+            typeTextCenteredLine("[BLACKSITE SECURITY LOG]", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("The deeper wing of the laboratory opens.", 25);
+            typeTextCenteredLine("These subjects are different... trained, disciplined, and weaponized.", 25);
+            typeTextCenteredLine("They do not hunt like animals.", 25);
+            typeTextCenteredLine("They move like soldiers.", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("Security System: Combat Prototype Unit activated.", 25);
             waitForEnter();
         }
         // FIRST TIME INTRO ONLY - Zone 4
         else if (zoneIndex == 19 && progress[19] == 0)
         {
             system("cls");
-            typeText("[BLACKSITE CORE LOG]\n\n", 25);
-            typeText("Elemental reactor pressure rising...\n", 25);
-            typeText("Cryo, plasma, and thunder energy detected inside the chamber.\n", 25);
-            typeText("These subjects are not simple mutations anymore.\n", 25);
-            typeText("Their bodies are adapting to unstable elemental power.\n\n", 25);
-            typeText("Security System: Elemental Apex Chamber unlocked.\n", 25);
+            typeTextCenteredLine("[BLACKSITE CORE LOG]", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("Elemental reactor pressure rising...", 25);
+            typeTextCenteredLine("Cryo, plasma, and thunder energy detected inside the chamber.", 25);
+            typeTextCenteredLine("These subjects are not simple mutations anymore.", 25);
+            typeTextCenteredLine("Their bodies are adapting to unstable elemental power.", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("Security System: Elemental Apex Chamber unlocked.", 25);
             waitForEnter();
         }
         // FIRST TIME INTRO ONLY - Zone 5 / Final Boss
         else if (zoneIndex == 20 && progress[20] == 0)
         {
             system("cls");
-            typeText("[FINAL CONTAINMENT - PROJECT CERBERUS]\n\n", 25);
-            typeText("The deepest door of the Blacksite opens.\n", 25);
-            typeText("No patrols. No cages. No warning lights.\n", 25);
-            typeText("Only one containment pod remains active.\n\n", 25);
+            typeTextCenteredLine("[FINAL CONTAINMENT - PROJECT CERBERUS]", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("The deepest door of the Blacksite opens.", 25);
+            typeTextCenteredLine("No patrols. No cages. No warning lights.", 25);
+            typeTextCenteredLine("Only one containment pod remains active.", 25);
+            typeTextCenteredBlank();
 
-            typeText("Dr. Bricky: Every stray... every mutant... every soldier...\n", 25);
-            typeText("Dr. Bricky: They were all unfinished drafts.\n", 25);
-            typeText("Dr. Bricky: But this one... this is my true introduction to the world.\n\n", 25);
+            typeTextCenteredLine("Dr. Bricky: Every stray... every mutant... every soldier...", 25);
+            typeTextCenteredLine("Dr. Bricky: They were all unfinished drafts.", 25);
+            typeTextCenteredLine("Dr. Bricky: But this one... this is my true introduction to the world.", 25);
+            typeTextCenteredBlank();
 
-            typeText("The glass pod cracks from the inside.\n", 25);
-            typeText("A humanoid mutant dog opens its eyes.\n", 25);
-            typeText("Its body is built like a weapon... but it breathes like something alive.\n\n", 25);
+            typeTextCenteredLine("The glass pod cracks from the inside.", 25);
+            typeTextCenteredLine("A humanoid mutant dog opens its eyes.", 25);
+            typeTextCenteredLine("Its body is built like a weapon... but it breathes like something alive.", 25);
+            typeTextCenteredBlank();
 
-            typeText("SYSTEM: Regeneration cycle unstable.\n", 25);
-            typeText("SYSTEM: Subject will fully heal after 22 to 24 turns.\n", 25);
-            typeText("SYSTEM: Blacksite self-destruct timer active: 5 minutes.\n", 25);
+            typeTextCenteredLine("SYSTEM: Regeneration cycle unstable.", 25);
+            typeTextCenteredLine("SYSTEM: Subject will fully heal after 22 to 24 turns.", 25);
+            typeTextCenteredLine("SYSTEM: Blacksite self-destruct timer active: 5 minutes.", 25);
             waitForEnter();
         }
         // REPLAY INTRO ONLY
@@ -198,46 +245,46 @@ void runStage5(Dog *player, int progress[])
 
             if (zoneIndex == 20)
             {
-                typeText("The final containment pod repairs itself...\n", 25);
-                typeText("Project Cerberus waits in silence.\n", 25);
+                typeTextCenteredLine("The final containment pod repairs itself...", 25);
+                typeTextCenteredLine("Project Cerberus waits in silence.", 25);
             }
             else if (zoneIndex == 18)
             {
                 if (rand() % 2 == 0)
                 {
-                    typeText("Combat prototypes return to their patrol routes...\n", 25);
-                    typeText("Their training never stops.\n", 25);
+                    typeTextCenteredLine("Combat prototypes return to their patrol routes...", 25);
+                    typeTextCenteredLine("Their training never stops.", 25);
                 }
                 else
                 {
-                    typeText("The tactical ward resets its combat simulation...\n", 25);
-                    typeText("Another prototype steps forward.\n", 25);
+                    typeTextCenteredLine("The tactical ward resets its combat simulation...", 25);
+                    typeTextCenteredLine("Another prototype steps forward.", 25);
                 }
             }
             else if (zoneIndex == 19)
             {
                 if (rand() % 2 == 0)
                 {
-                    typeText("The Elemental Apex Chamber reactivates...\n", 25);
-                    typeText("Unstable energy gathers around another subject.\n", 25);
+                    typeTextCenteredLine("The Elemental Apex Chamber reactivates...", 25);
+                    typeTextCenteredLine("Unstable energy gathers around another subject.", 25);
                 }
                 else
                 {
-                    typeText("The core refuses to shut down...\n", 25);
-                    typeText("A new elemental mutation awakens.\n", 25);
+                    typeTextCenteredLine("The core refuses to shut down...", 25);
+                    typeTextCenteredLine("A new elemental mutation awakens.", 25);
                 }
             }
             else
             {
                 if (rand() % 2 == 0)
                 {
-                    typeText("The laboratory remains active...\n", 25);
-                    typeText("Enhanced subjects continue their patrols.\n", 25);
+                    typeTextCenteredLine("The laboratory remains active...", 25);
+                    typeTextCenteredLine("Enhanced subjects continue their patrols.", 25);
                 }
                 else
                 {
-                    typeText("The Blacksite grows quieter...\n", 25);
-                    typeText("But the experiments are far from over.\n", 25);
+                    typeTextCenteredLine("The Blacksite grows quieter...", 25);
+                    typeTextCenteredLine("But the experiments are far from over.", 25);
                 }
             }
 
@@ -291,7 +338,7 @@ void runStage5(Dog *player, int progress[])
         if (player->hp <= 0)
         {
             system("cls");
-            typeText("Recover HP before entering the Blacksite Laboratory!\n", 25);
+            typeTextCenteredLine("Recover HP before entering the Blacksite Laboratory!", 25);
             waitForEnter();
             continue;
         }
@@ -300,13 +347,14 @@ void runStage5(Dog *player, int progress[])
         if (zoneIndex == 16 && i == 3)
         {
             system("cls");
-            typeText("Dr. Bricky: So you made it this far...\n", 25);
-            typeText("Dr. Bricky: Impressive.\n", 25);
-            typeText("Dr. Bricky: Allow me to introduce my masterpiece.\n", 25);
-            typeText("Dr. Bricky: Alpha-X... awaken.\n\n", 25);
+            typeTextCenteredLine("Dr. Bricky: So you made it this far...", 25);
+            typeTextCenteredLine("Dr. Bricky: Impressive.", 25);
+            typeTextCenteredLine("Dr. Bricky: Allow me to introduce my masterpiece.", 25);
+            typeTextCenteredLine("Dr. Bricky: Alpha-X... awaken.", 25);
+            typeTextCenteredBlank();
 
-            typeText("Alpha-X steps out of the containment chamber.\n", 25);
-            typeText("Its eyes lock onto you.\n", 25);
+            typeTextCenteredLine("Alpha-X steps out of the containment chamber.", 25);
+            typeTextCenteredLine("Its eyes lock onto you.", 25);
 
             waitForEnter();
         }
@@ -315,11 +363,12 @@ void runStage5(Dog *player, int progress[])
         {
             system("cls");
 
-            typeText("Warning...\n", 25);
-            typeText("Containment breach detected.\n", 25);
-            typeText("Subject LYCAN-REX released.\n\n", 25);
+            typeTextCenteredLine("Warning...", 25);
+            typeTextCenteredLine("Containment breach detected.", 25);
+            typeTextCenteredLine("Subject LYCAN-REX released.", 25);
+            typeTextCenteredBlank();
 
-            typeText("A massive werewolf-like beast emerges from the darkness.\n", 25);
+            typeTextCenteredLine("A massive werewolf-like beast emerges from the darkness.", 25);
 
             waitForEnter();
         }
@@ -328,12 +377,13 @@ void runStage5(Dog *player, int progress[])
         {
             system("cls");
 
-            typeText("Security System: Final prototype authorized.\n", 25);
-            typeText("Blacksite doors lock behind you.\n\n", 25);
-            typeText("A heavily trained combat subject steps forward.\n", 25);
-            typeText("Its armor is scarred from countless test battles.\n", 25);
-            typeText("Dr. Bricky: This one does not need rage.\n", 25);
-            typeText("Dr. Bricky: It was built to end fights quickly.\n", 25);
+            typeTextCenteredLine("Security System: Final prototype authorized.", 25);
+            typeTextCenteredLine("Blacksite doors lock behind you.", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("A heavily trained combat subject steps forward.", 25);
+            typeTextCenteredLine("Its armor is scarred from countless test battles.", 25);
+            typeTextCenteredLine("Dr. Bricky: This one does not need rage.", 25);
+            typeTextCenteredLine("Dr. Bricky: It was built to end fights quickly.", 25);
 
             waitForEnter();
         }
@@ -342,12 +392,13 @@ void runStage5(Dog *player, int progress[])
         {
             system("cls");
 
-            typeText("Warning: Core stability failing.\n", 25);
-            typeText("Elemental pressure has exceeded safe limits.\n\n", 25);
-            typeText("The chamber doors open slowly.\n", 25);
-            typeText("Apex-0 steps forward, surrounded by unstable energy.\n", 25);
-            typeText("Dr. Bricky: This is not training anymore.\n", 25);
-            typeText("Dr. Bricky: This is evolution under pressure.\n", 25);
+            typeTextCenteredLine("Warning: Core stability failing.", 25);
+            typeTextCenteredLine("Elemental pressure has exceeded safe limits.", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("The chamber doors open slowly.", 25);
+            typeTextCenteredLine("Apex-0 steps forward, surrounded by unstable energy.", 25);
+            typeTextCenteredLine("Dr. Bricky: This is not training anymore.", 25);
+            typeTextCenteredLine("Dr. Bricky: This is evolution under pressure.", 25);
 
             waitForEnter();
         }
@@ -356,13 +407,16 @@ void runStage5(Dog *player, int progress[])
         {
             system("cls");
 
-            typeText("[BLACKSITE MELTDOWN WARNING]\n\n", 25);
-            typeText("Project Cerberus steps out of the broken pod.\n", 25);
-            typeText("It stands like a human... but growls like a beast.\n\n", 25);
-            typeText("Dr. Bricky: Do not waste time.\n", 25);
-            typeText("Dr. Bricky: In 10 to 12 turns, Cerberus will regenerate completely.\n", 25);
-            typeText("Dr. Bricky: And in 2 minutes... this whole laboratory disappears.\n\n", 25);
-            typeText("SYSTEM: Defeat Project Cerberus before regeneration and meltdown.\n", 25);
+            typeTextCenteredLine("[BLACKSITE MELTDOWN WARNING]", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("Project Cerberus steps out of the broken pod.", 25);
+            typeTextCenteredLine("It stands like a human... but growls like a beast.", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("Dr. Bricky: Do not waste time.", 25);
+            typeTextCenteredLine("Dr. Bricky: In 10 to 12 turns, Cerberus will regenerate completely.", 25);
+            typeTextCenteredLine("Dr. Bricky: And in 2 minutes... this whole laboratory disappears.", 25);
+            typeTextCenteredBlank();
+            typeTextCenteredLine("SYSTEM: Defeat Project Cerberus before regeneration and meltdown.", 25);
 
             waitForEnter();
         }
@@ -376,68 +430,72 @@ void runStage5(Dog *player, int progress[])
         {
             if (zoneIndex == 16 && progress[16] < zoneMax)
             {
-                printf("\n[DATA LOG]: Enhanced stray contained.");
-                printf("\nZone Progress: %d/%d\n", progress[16], zoneMax);
+                printCentered("[DATA LOG]: Enhanced stray contained.");
+                printCenteredFormat("Zone Progress: %d/%d", progress[16], zoneMax);
                 waitForEnter();
             }
             else if (zoneIndex == 17 && progress[17] < zoneMax)
             {
-                printf("\n[DATA LOG]: Feral mutation contained.");
-                printf("\nZone Progress: %d/%d\n", progress[17], zoneMax);
+                printCentered("[DATA LOG]: Feral mutation contained.");
+                printCenteredFormat("Zone Progress: %d/%d", progress[17], zoneMax);
                 waitForEnter();
             }
             else if (zoneIndex == 18 && progress[18] < zoneMax)
             {
-                printf("\n[DATA LOG]: Combat prototype neutralized.");
-                printf("\nZone Progress: %d/%d\n", progress[18], zoneMax);
+                printCentered("[DATA LOG]: Combat prototype neutralized.");
+                printCenteredFormat("Zone Progress: %d/%d", progress[18], zoneMax);
                 waitForEnter();
             }
             else if (zoneIndex == 19 && progress[19] < zoneMax)
             {
-                printf("\n[DATA LOG]: Elemental apex subject stabilized.");
-                printf("\nZone Progress: %d/%d\n", progress[19], zoneMax);
+                printCentered("[DATA LOG]: Elemental apex subject stabilized.");
+                printCenteredFormat("Zone Progress: %d/%d", progress[19], zoneMax);
                 waitForEnter();
             }
             else if (zoneIndex == 20 && progress[20] < zoneMax)
             {
-                printf("\n[DATA LOG]: Project Cerberus defeated.");
-                printf("\nZone Progress: %d/%d\n", progress[20], zoneMax);
+                printCentered("[DATA LOG]: Project Cerberus defeated.");
+                printCenteredFormat("Zone Progress: %d/%d", progress[20], zoneMax);
                 waitForEnter();
             }
 
             if (zoneIndex == 16 && progress[16] >= 4)
             {
                 system("cls");
-                typeText("ZONE 1: ENHANCED STRAYS COMPLETE\n\n", 20);
-                typeText("If the old Back Alley strays became this strong...\n", 28);
-                typeText("what else is waiting deeper inside the laboratory?\n", 28);
+                typeTextCenteredLine("ZONE 1: ENHANCED STRAYS COMPLETE", 20);
+            typeTextCenteredBlank();
+                typeTextCenteredLine("If the old Back Alley strays became this strong...", 28);
+                typeTextCenteredLine("what else is waiting deeper inside the laboratory?", 28);
                 waitForEnter();
             }
 
             if (zoneIndex == 17 && progress[17] >= 4)
             {
                 system("cls");
-                typeText("ZONE 2: FERAL MUTATION WARD COMPLETE\n\n", 20);
-                typeText("These were no longer ordinary strays...\n", 28);
-                typeText("their instincts had evolved into something savage.\n", 28);
+                typeTextCenteredLine("ZONE 2: FERAL MUTATION WARD COMPLETE", 20);
+            typeTextCenteredBlank();
+                typeTextCenteredLine("These were no longer ordinary strays...", 28);
+                typeTextCenteredLine("their instincts had evolved into something savage.", 28);
                 waitForEnter();
             }
 
             if (zoneIndex == 18 && progress[18] >= 4)
             {
                 system("cls");
-                typeText("ZONE 3: COMBAT PROTOTYPE UNIT COMPLETE\n\n", 20);
-                typeText("These subjects were not wild anymore...\n", 28);
-                typeText("they were trained like weapons inside the Blacksite.\n", 28);
+                typeTextCenteredLine("ZONE 3: COMBAT PROTOTYPE UNIT COMPLETE", 20);
+            typeTextCenteredBlank();
+                typeTextCenteredLine("These subjects were not wild anymore...", 28);
+                typeTextCenteredLine("they were trained like weapons inside the Blacksite.", 28);
                 waitForEnter();
             }
 
             if (zoneIndex == 19 && progress[19] >= 4)
             {
                 system("cls");
-                typeText("ZONE 4: ELEMENTAL APEX CHAMBER COMPLETE\n\n", 20);
-                typeText("The Blacksite core begins to cool down...\n", 28);
-                typeText("but the energy left behind still feels alive.\n", 28);
+                typeTextCenteredLine("ZONE 4: ELEMENTAL APEX CHAMBER COMPLETE", 20);
+            typeTextCenteredBlank();
+                typeTextCenteredLine("The Blacksite core begins to cool down...", 28);
+                typeTextCenteredLine("but the energy left behind still feels alive.", 28);
                 waitForEnter();
             }
 
@@ -453,8 +511,9 @@ void runStage5(Dog *player, int progress[])
                     player->campaignCompleted = 1;
 
                     system("cls");
-                    typeText("[NEW FEATURE UNLOCKED]\n\n", 25);
-                    typeText("Credits Viewer\n", 25);
+                    typeTextCenteredLine("[NEW FEATURE UNLOCKED]", 25);
+            typeTextCenteredBlank();
+                    typeTextCenteredLine("Credits Viewer", 25);
 
                     waitForEnter();
                 }
@@ -494,54 +553,66 @@ void showProjectCerberusEnding(Dog *player)
 {
     system("cls");
 
-    typeText("[FINAL CONTAINMENT ROOM]\n\n", 25);
-    typeText("Project Cerberus collapses to the floor.\n", 25);
-    typeText("The Blacksite alarms begin to fade.\n\n", 25);
+    typeTextCenteredLine("[FINAL CONTAINMENT ROOM]", 25);
+            typeTextCenteredBlank();
+    typeTextCenteredLine("Project Cerberus collapses to the floor.", 25);
+    typeTextCenteredLine("The Blacksite alarms begin to fade.", 25);
+            typeTextCenteredBlank();
 
     waitForEnter();
     system("cls");
 
-    typeText("Dr. Bricky slowly steps out from behind the broken chamber.\n\n", 25);
-    typeText("Dr. Bricky: Amazing...\n", 25);
-    typeText("Dr. Bricky: You actually defeated my final subject.\n\n", 25);
-    typeText("Dr. Bricky: Your dog is not ordinary either.\n", 25);
-    typeText("Dr. Bricky: That strength... that loyalty...\n", 25);
-    typeText("Dr. Bricky: That is exactly what I have been searching for.\n\n", 25);
+    typeTextCenteredLine("Dr. Bricky slowly steps out from behind the broken chamber.", 25);
+            typeTextCenteredBlank();
+    typeTextCenteredLine("Dr. Bricky: Amazing...", 25);
+    typeTextCenteredLine("Dr. Bricky: You actually defeated my final subject.", 25);
+            typeTextCenteredBlank();
+    typeTextCenteredLine("Dr. Bricky: Your dog is not ordinary either.", 25);
+    typeTextCenteredLine("Dr. Bricky: That strength... that loyalty...", 25);
+    typeTextCenteredLine("Dr. Bricky: That is exactly what I have been searching for.", 25);
+            typeTextCenteredBlank();
 
     waitForEnter();
     system("cls");
 
-    typeText("Dr. Bricky: Come with me.\n", 25);
-    typeText("Dr. Bricky: Together, we can create something greater.\n", 25);
-    typeText("Dr. Bricky: No more weak creatures.\n", 25);
-    typeText("Dr. Bricky: Only evolution.\n\n", 25);
+    typeTextCenteredLine("Dr. Bricky: Come with me.", 25);
+    typeTextCenteredLine("Dr. Bricky: Together, we can create something greater.", 25);
+    typeTextCenteredLine("Dr. Bricky: No more weak creatures.", 25);
+    typeTextCenteredLine("Dr. Bricky: Only evolution.", 25);
+            typeTextCenteredBlank();
 
-    typeText("You refuse.\n\n", 25);
-
-    waitForEnter();
-    system("cls");
-
-    typeText("Project Cerberus suddenly moves.\n", 25);
-    typeText("Your dog jumps in front of you.\n\n", 25);
-    typeText("Dr. Bricky raises a hidden injector.\n", 25);
-    typeText("A black serum enters the wound.\n\n", 25);
+    typeTextCenteredLine("You refuse.", 25);
+            typeTextCenteredBlank();
 
     waitForEnter();
     system("cls");
 
-    typeText("Dr. Bricky: Interesting...\n", 25);
-    typeText("Dr. Bricky: Let us see how long this curse follows you.\n\n", 25);
-    typeText("Dr. Bricky: Not by time.\n", 25);
-    typeText("Dr. Bricky: Not by death.\n", 25);
-    typeText("Dr. Bricky: Not even by another timeline.\n\n", 25);
+    typeTextCenteredLine("Project Cerberus suddenly moves.", 25);
+    typeTextCenteredLine("Your dog jumps in front of you.", 25);
+            typeTextCenteredBlank();
+    typeTextCenteredLine("Dr. Bricky raises a hidden injector.", 25);
+    typeTextCenteredLine("A black serum enters the wound.", 25);
+            typeTextCenteredBlank();
 
     waitForEnter();
     system("cls");
 
-    typeText("[BLACKSITE LABORATORY DESTROYED]\n\n", 25);
-    typeText("The final chamber falls silent.\n", 25);
-    typeText("The story is over...\n", 25);
-    typeText("Or so it seems.\n", 25);
+    typeTextCenteredLine("Dr. Bricky: Interesting...", 25);
+    typeTextCenteredLine("Dr. Bricky: Let us see how long this curse follows you.", 25);
+            typeTextCenteredBlank();
+    typeTextCenteredLine("Dr. Bricky: Not by time.", 25);
+    typeTextCenteredLine("Dr. Bricky: Not by death.", 25);
+    typeTextCenteredLine("Dr. Bricky: Not even by another timeline.", 25);
+            typeTextCenteredBlank();
+
+    waitForEnter();
+    system("cls");
+
+    typeTextCenteredLine("[BLACKSITE LABORATORY DESTROYED]", 25);
+            typeTextCenteredBlank();
+    typeTextCenteredLine("The final chamber falls silent.", 25);
+    typeTextCenteredLine("The story is over...", 25);
+    typeTextCenteredLine("Or so it seems.", 25);
 
     waitForEnter();
 }

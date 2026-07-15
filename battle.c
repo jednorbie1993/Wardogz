@@ -959,7 +959,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             }
         }
 
-        // 🔥 WIN/LOSE CHECK
+        // WIN/LOSE CHECK
         if (player->hp <= 0)
         {
             return handlePlayerDefeat(player, &enemy, baseDef, baseSpd);
