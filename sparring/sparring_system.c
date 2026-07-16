@@ -144,7 +144,7 @@ void sparringMenu(Dog *player)
         printf("2. Chubby    (%d/10) (Defense Training)", player->sparringProgress[1]);
         printf("\n");
 
-        printf("3. Jewar     (%d/10) (Accuracy Training)", player->sparringProgress[2]);
+        printf("3. Jeward     (%d/10) (Accuracy Training)", player->sparringProgress[2]);
         printf("\n");
 
         printf("4. Tiny      (%d/10) (Intelligence Training)", player->sparringProgress[3]);
