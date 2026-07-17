@@ -16,6 +16,7 @@
 #include "sparring_skills.h"
 #include "sparring_system.h"
 #include "sparring_status.h"
+#include "../console.h"
 
 
 void createSparPlayer(Dog *orig, Dog *spar)
@@ -137,22 +138,23 @@ void assignSkills(Dog *d, int type)
 
 void showSparringIntro(Dog *enemy, int type)
 {
-    printf("\n=================================\n");
-    printf("SPARRING START: %s\n", enemy->name);
-    printf("=================================\n\n");
+    printBorder();
+    printBlankLine();
+    printCenteredFormat("SPARRING START: %s", enemy->name);
+    printBlankLine();
 
     if (type == 1)
-        printf("%s appears! Aggressive attacker!\n", enemy->name);
+        printCenteredFormat("%s appears! Aggressive attacker!", enemy->name);
     else if (type == 2)
-        printf("%s appears! Defensive tank!\n", enemy->name);
+        printCenteredFormat("%s appears! Defensive tank!", enemy->name);
     else if (type == 3)
-        printf("%s appears! Precision striker!\n", enemy->name);
+        printCenteredFormat("%s appears! Precision striker!", enemy->name);
     else if (type == 4)
-        printf("%s appears! Smart strategist!\n", enemy->name);
+        printCenteredFormat("%s appears! Smart strategist!", enemy->name);
     else if (type == 5)
-        printf("%s appears! Speed demon!\n", enemy->name);
+        printCenteredFormat("%s appears! Speed demon!", enemy->name);
     else if (type == 6)
-        printf("%s appears! Your lifelong rival!\n", enemy->name);
+        printCenteredFormat("%s appears! Your lifelong rival!", enemy->name);
 
     pauseAndClear();
 }
@@ -221,7 +223,7 @@ int sparringBattle(Dog *player, int type)
         enemy.skills[4] = createPowerRushSkill();      
         enemy.skills[5] = createGuardBreakSkill();    
 
-        printf("%s: Let's see how much you've improved.\n", enemy.name);
+        printCenteredFormat("%s: Let's see how much you've improved.", enemy.name);
     }
 
     int bonus = 0;
@@ -254,7 +256,7 @@ int sparringBattle(Dog *player, int type)
             if (enemy.accDebuffTurns == 0)
             {
                 enemy.accTemp = enemy.accuracy;
-                printf("%s recovered accuracy!\n", enemy.name);
+                printCenteredFormat("%s recovered accuracy!", enemy.name);
             }
         }
         if (sparPlayer.accDebuffTurns > 0)
@@ -263,7 +265,7 @@ int sparringBattle(Dog *player, int type)
             if (sparPlayer.accDebuffTurns == 0)
             {
                 sparPlayer.accTemp = sparPlayer.accuracy;
-                printf("You recovered accuracy!\n");
+                printCentered("You recovered accuracy!");
             }
         }
 
@@ -275,19 +277,22 @@ int sparringBattle(Dog *player, int type)
         // CHECK PLAYER STUN
         if (sparPlayer.isStunned && sparPlayer.stunTurns > 0)
         {
-            printf("YOU ARE STUNNED! Turn skipped!\n");
+            printCentered("YOU ARE STUNNED! Turn skipped!");
             sparPlayer.stunTurns--;
             if (sparPlayer.stunTurns == 0)
                 sparPlayer.isStunned = 0;
         }
         else
         {
-            printf("Choose Move:\n");
-            printf("1. Bite\n");
-            printf("2. Scratch\n");
-            printf("3. Charge\n");
-            printf("4. Hip Check\n");
-            printf("Choice: ");
+            printBlankLine();
+            printCentered("CHOOSE MOVE");
+            printBlankLine();
+            printMenuItem(1, "Bite");
+            printMenuItem(2, "Scratch");
+            printMenuItem(3, "Charge");
+            printMenuItem(4, "Hip Check");
+            printBlankLine();
+            printf("%35sChoice: ", "");
 
             int choice;
             char moveInput[10];
@@ -315,7 +320,7 @@ int sparringBattle(Dog *player, int type)
                     break;
 
                 default:
-                    printf("Invalid move!\n");
+                    printCentered("Invalid move!");
                     pauseAndClear();
                     continue;
             }
@@ -324,7 +329,8 @@ int sparringBattle(Dog *player, int type)
             system("cls");
             printSparringStatus(&sparPlayer, &enemy);
 
-            printf("\n--- PLAYER TURN ---\n");
+            printBlankLine();
+            printCentered("--- PLAYER TURN ---");
 
             useSkill(&sparPlayer, &enemy, tempSkill);
 
@@ -339,8 +345,7 @@ int sparringBattle(Dog *player, int type)
 
             //printf("Fatigue -%d\n", fatigueCost);
 
-            printf("\nPress Enter to continue...");
-            getchar();
+            waitForEnter();
             system("cls");
 
             printSparringStatus(&sparPlayer, &enemy);
@@ -352,8 +357,9 @@ int sparringBattle(Dog *player, int type)
         // ================= ENEMY TURN =================
         if (enemy.isStunned && enemy.stunTurns > 0)
         {
-            printf("\n--- ENEMY TURN ---\n");
-            printf("%s is STUNNED! Enemy turn skipped!\n", enemy.name);
+            printBlankLine();
+            printCentered("--- ENEMY TURN ---");
+            printCenteredFormat("%s is STUNNED! Enemy turn skipped!", enemy.name);
             enemy.stunTurns--;
             if (enemy.stunTurns == 0)
                 enemy.isStunned = 0;
@@ -361,7 +367,8 @@ int sparringBattle(Dog *player, int type)
         else
         {
             int enemyMove = chooseEnemyMove(&enemy, &sparPlayer, type);
-            printf("\n--- ENEMY TURN ---\n");
+            printBlankLine();
+            printCentered("--- ENEMY TURN ---");
             useSkill(&enemy, &sparPlayer, enemy.skills[enemyMove]);
         }
 
@@ -369,16 +376,16 @@ int sparringBattle(Dog *player, int type)
             break;
 
         // PAUSE BETWEEN TURNS
-        printf("\nPress Enter to continue...");
-        getchar();
+        waitForEnter();
         system("cls");
     }
 
     // HP CHECK
-    printf("\n=== BATTLE END ===\n");
+    printBlankLine();
+    printCentered("=== BATTLE END ===");
     if (sparPlayer.hp > 0 && enemy.hp <= 0)
     {
-        printf("YOU WIN SPARRING!\n");
+        printCentered("YOU WIN SPARRING!");
 
         // SPARRING PROGRESS SYSTEM
         // Type 1-5 = normal partners, Type 6 = Rival Match.
@@ -393,7 +400,7 @@ int sparringBattle(Dog *player, int type)
     }
     else
     {
-        printf("YOU LOST SPARRING...\n");
+        printCentered("YOU LOST SPARRING...");
 
         if (type >= 1 && type <= 6)
         {
