@@ -14,5 +14,6 @@ void applySkillEffect(Dog *user, Dog *target, Skill skill, int *damage);
 void applySpecialEffects(Dog *player, Dog *enemy, Skill s, int *damage);
 int getSkillTier(Skill s);
 int computeBaseDamage(Dog *player, Dog *enemy, Skill s);
+int useSkill(Dog *attacker, Dog *target, Skill skill);
 
 #endif
