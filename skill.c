@@ -7,6 +7,11 @@
 #include "skill.h"
 #include "cinematic.h"
 #include "console.h"
+#include "sparring/characters/ossas.h"
+#include "sparring/characters/chubby.h"
+#include "sparring/characters/jeward.h"
+#include "sparring/characters/tiny.h"
+#include "sparring/characters/snoop.h"
 
 // ================= DAMAGE TIERS =================
 // Hindi na kailangan magdagdag sa dog.h.
@@ -1029,4 +1034,199 @@ void applySpecialEffects(Dog *player, Dog *enemy, Skill s, int *damage)
 
         printCentered("Combo bonus: +30 damage, Enemy DEF -10, Enemy ATK -5!");
     }
+}
+
+int useSkill(Dog *user, Dog *enemy, Skill skill)
+{
+
+    if (user->isStunned && user->stunTurns > 0)
+    {
+        printCenteredFormat("%s is STUNNED and cannot move!", user->name);
+
+        user->stunTurns--;
+
+        if (user->stunTurns <= 0)
+            user->isStunned = 0;
+
+        return 0;
+    }
+    // ================= HIT CHANCE CALC =================
+    int hitChance = 75 + ((user->accuracy - enemy->speed) / 25);
+
+    // skill accuracy bonus/penalty
+    hitChance += (skill.accuracy - 80) / 4;
+
+    if (hitChance < 45)
+        hitChance = 45;
+
+    if (hitChance > 95)
+        hitChance = 95;
+
+    int roll = rand() % 100;
+
+    if (roll >= hitChance)
+    {
+        printCenteredFormat("%s used %s but MISSED!", user->name, skill.name);
+        return 0; // NO DAMAGE
+    }
+
+    // ================= DAMAGE SKILLS =================
+    if (skill.type == SKILL_DAMAGE)
+    {
+        int dmg = computeBaseDamage(user, enemy, skill);
+
+        if (rand() % 100 < 10)
+        {
+            dmg += dmg / 2;
+
+            int maxCrit = 250;
+
+            if (getSkillTier(skill) == TIER_ULTIMATE)
+                maxCrit = 360;
+
+            if (dmg > maxCrit)
+                dmg = maxCrit;
+
+            printCentered("CRITICAL HIT!");
+        }
+
+        int finalDamage = dmg;
+
+        // Main Battle / Arena skills need their real effects here.
+        // This useSkill() is shared by battle.c, arena.c, and sparring.c.
+        // We skip pure sparring character fights to avoid duplicate effects/unlock messages.
+        int isSparringCharacter =
+            strcmp(user->name, "Ossas") == 0 || strcmp(user->name, "Chubby") == 0 ||
+            strcmp(user->name, "Jeward") == 0 || strcmp(user->name, "Tiny") == 0 ||
+            strcmp(user->name, "Snoopy") == 0 || strcmp(enemy->name, "Ossas") == 0 ||
+            strcmp(enemy->name, "Chubby") == 0 || strcmp(enemy->name, "Jeward") == 0 ||
+            strcmp(enemy->name, "Tiny") == 0 || strcmp(enemy->name, "Snoopy") == 0;
+
+        if (strcmp(skill.name, "Ossas Counter") == 0)
+        {
+            applySpecialEffects(user, enemy, skill, &finalDamage);
+
+            for (int i = 0; i < user->skillCount; i++)
+            {
+                if (strcmp(user->skills[i].name, skill.name) == 0)
+                {
+                    user->skills[i].cdLeft = user->skills[i].cooldown;
+                    break;
+                }
+            }
+
+            return 1;
+        }
+        else if (!isSparringCharacter)
+        {
+            applySpecialEffects(user, enemy, skill, &finalDamage);
+        }
+
+        if (finalDamage < 0)
+            finalDamage = 0;
+
+        enemy->hp -= finalDamage;
+
+        if (enemy->hp < 0)
+            enemy->hp = 0;
+
+        printCenteredFormat("%s used %s! Dealt %d damage!", user->name, skill.name, finalDamage);
+            
+        /*if (rand() % 100 < 10)
+        {
+            dmg += 5;
+            printf("CRITICAL HIT! +%d\n", 5);
+        }*/
+
+        //printf("%s used %s! Dealt %d damage!\n", user->name, skill.name, dmg);
+
+        // APPLY COOLDOWN
+        for (int i = 0; i < user->skillCount; i++)
+        {
+            if (strcmp(user->skills[i].name, skill.name) == 0)
+            {
+                user->skills[i].cdLeft = user->skills[i].cooldown;
+                break;
+            }
+        }
+        // CHARACTER SPECIAL EFFECTS
+
+        if (strcmp(user->name, "Ossas") == 0)
+        {
+            applyOssasEffect(user, enemy, skill, dmg);
+        }
+        else if (strcmp(user->name, "Chubby") == 0)
+        {
+            applyChubbyEffect(user, enemy, skill, dmg);
+        }
+        else if (strcmp(user->name, "Jeward") == 0)
+        {
+            applyJewardEffect(user, enemy, skill, dmg);
+        }
+        else if (strcmp(user->name, "Tiny") == 0)
+        {
+            applyTinyEffect(user, enemy, skill, dmg);
+        }
+        else if (strcmp(user->name, "Snoopy") == 0)
+        {
+            applySnoopyEffect(user, enemy, skill, dmg);
+        }
+
+        // ================= ALL SPECIAL EFFECTS =================
+        // BASIC PLAYER
+        if (strcmp(skill.name, "Hip Check") == 0 && rand() % 100 < 40)
+        {
+            enemy->isStunned = 1; enemy->stunTurns = 2;
+            printCenteredFormat("%s STUNNED!", enemy->name);
+        }
+        if (strcmp(skill.name, "Rival Breaker") == 0)
+        {
+            enemy->defense -= 10;
+            if (enemy->defense < 0)
+                enemy->defense = 0;
+
+            if (rand() % 100 < 35)
+            {
+                enemy->isStunned = 1;
+                enemy->stunTurns = 1;
+                printCenteredFormat("%s STUNNED!", enemy->name);
+            }
+
+            printCentered("Enemy DEF reduced!");
+        }
+        if (strcmp(skill.name, "Charge") == 0)
+        {
+            int recoil = dmg / 5;
+            user->hp -= recoil;
+            if (user->hp < 0)
+                user->hp = 0;
+            printCenteredFormat("%s recoil: %d", user->name, recoil);
+        }
+
+        return 1;
+    }
+
+    // ================= OTHER SKILL TYPES =================
+    else if (skill.type == SKILL_HEAL)
+    {
+        int heal = (user->intelligence / 5) + skill.power;
+        user->hp = (user->hp + heal > user->maxHP) ? user->maxHP : user->hp + heal;
+        printCenteredFormat("%s healed %d HP!", user->name, heal);
+        return 1;
+    }
+    else if (skill.type == SKILL_BUFF)
+    {
+        user->attack += skill.power;
+        printCenteredFormat("%s defense UP!", user->name);
+        return 1;
+    }
+    else if (skill.type == SKILL_DEBUFF)
+    {
+        enemy->attack -= skill.power;
+        if (enemy->attack < 1) enemy->attack = 1;
+        printCenteredFormat("%s attack DOWN!", enemy->name);
+        return 1;
+    }
+
+    return 1;
 }
