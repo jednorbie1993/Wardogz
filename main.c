@@ -141,6 +141,16 @@ int main()
     }
     else
     {
+        player->maxHP = clamp(player->maxHP);
+
+        if (player->hp > player->maxHP)
+            player->hp = player->maxHP;
+
+        if (player->hp < 0)
+            player->hp = 0;    
+
+        saveGame(&game);
+
         system("cls");
 
         printBorder();
