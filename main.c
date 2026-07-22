@@ -147,7 +147,27 @@ int main()
             player->hp = player->maxHP;
 
         if (player->hp < 0)
-            player->hp = 0;    
+            player->hp = 0;
+
+            /*
+            // ===== FIX OLD SAVE PROGRESS =====
+        int progressMax[21] =
+        {
+            3,3,3,
+            3,3,2,4,4,
+            2,4,4,3,
+            2,4,4,3,
+            4,4,4,4,
+            1
+        };
+
+        for (int i = 0; i < 21; i++)
+        {
+            if (game.progress[i] < 0 || game.progress[i] > progressMax[i])
+                game.progress[i] = 0;
+        }
+        // ================================
+        */
 
         saveGame(&game);
 
