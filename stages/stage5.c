@@ -347,6 +347,7 @@ void runStage5(Dog *player, int progress[])
         if (zoneIndex == 16 && i == 3)
         {
             system("cls");
+            printBlankLine();
             typeTextCenteredLine("Dr. Bricky: So you made it this far...", 25);
             typeTextCenteredLine("Dr. Bricky: Impressive.", 25);
             typeTextCenteredLine("Dr. Bricky: Allow me to introduce my masterpiece.", 25);
@@ -413,8 +414,8 @@ void runStage5(Dog *player, int progress[])
             typeTextCenteredLine("It stands like a human... but growls like a beast.", 25);
             typeTextCenteredBlank();
             typeTextCenteredLine("Dr. Bricky: Do not waste time.", 25);
-            typeTextCenteredLine("Dr. Bricky: In 10 to 12 turns, Cerberus will regenerate completely.", 25);
-            typeTextCenteredLine("Dr. Bricky: And in 2 minutes... this whole laboratory disappears.", 25);
+            typeTextCenteredLine("Dr. Bricky: In 22 to 24 turns, Cerberus will regenerate completely.", 25);
+            typeTextCenteredLine("Dr. Bricky: And in 5 minutes... this whole laboratory disappears.", 25);
             typeTextCenteredBlank();
             typeTextCenteredLine("SYSTEM: Defeat Project Cerberus before regeneration and meltdown.", 25);
 
@@ -512,7 +513,7 @@ void runStage5(Dog *player, int progress[])
 
                     system("cls");
                     typeTextCenteredLine("[NEW FEATURE UNLOCKED]", 25);
-            typeTextCenteredBlank();
+                    typeTextCenteredBlank();
                     typeTextCenteredLine("Credits Viewer", 25);
 
                     waitForEnter();
@@ -543,7 +544,8 @@ void runStage5(Dog *player, int progress[])
             };
 
             int msg = rand() % 11;
-            typeText(defeatMsg[msg], 25);
+            typeTextCentered(defeatMsg[msg], 25);
+            printf("\n");
             waitForEnter();
         }
     }
