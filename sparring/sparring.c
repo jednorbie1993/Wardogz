@@ -17,6 +17,7 @@
 #include "sparring_system.h"
 #include "sparring_status.h"
 #include "../console.h"
+#include "../skill.h"
 
 
 void createSparPlayer(Dog *orig, Dog *spar)
