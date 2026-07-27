@@ -5,7 +5,7 @@
 
 void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
 void setEnemySkillsWild(Dog *enemy, int zoneIndex, int enemyLevel);
-void preBattleScene();
+void preBattleScene(int zoneIndex);
 void applyBattleStatGain(Dog *d);
 
 #endif
