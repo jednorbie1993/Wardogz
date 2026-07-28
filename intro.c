@@ -269,14 +269,15 @@ void introStory(Dog *player)
     pressEnterIntro();
     clearScreen();
 
-    printf("\n");
-    introLine("Before we begin...");
-    introBlank();
-    introLine("May I know your name?");
-    introBlank();
-
     while (1)
     {
+        clearScreen();
+
+        printf("\n");
+        introLine("Before we begin...");
+        introBlank();
+        introLine("May I know your name?");
+        introBlank();
         printf("%35sEnter your name: ", "");
 
         fgets(trainerName, sizeof(trainerName), stdin);
@@ -296,7 +297,11 @@ void introStory(Dog *player)
         if (valid)
             break;
 
-        printf("%35sInvalid input. Please enter your name.\n", "");
+        //introBlank();
+        printCentered("Invalid input! Please enter your name.");
+        introBlank();
+        printCentered("Press ENTER to try again...", "");
+        getchar();
     }
 
     clearScreen();
