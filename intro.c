@@ -5,7 +5,24 @@
 #include <windows.h>
 #include "intro.h"
 #include "dog.h"
-#include <windows.h>
+#include "console.h"
+
+/* Function Prototypes */
+static void clearScreen(void);
+static void pressEnterIntro(void);
+static void introTypeText(const char *text, int delay);
+static void introLine(const char *text);
+static void introCenteredType(const char *text, int delay);
+static void introCenteredLine(const char *text);
+static void introCenteredPrompt(const char *text);
+static void introBlank(void);
+static void slowDots(const char *text);
+static void titleScreen(void);
+static char getYesNo(void);
+static int choosePartner(void);
+static void showJamberInfo(void);
+static void showKaneInfo(void);
+
 
 static void clearScreen()
 {
@@ -14,7 +31,8 @@ static void clearScreen()
 
 static void pressEnterIntro()
 {
-    printf("\nPress ENTER to continue...");
+    printBlankLine();
+    printCenteredNoNewline("Press ENTER to continue...");
     fflush(stdout);
 
     char temp[20];
@@ -35,8 +53,27 @@ static void introTypeText(const char *text, int delay)
 
 static void introLine(const char *text)
 {
-    introTypeText(text, 18);
-    introTypeText("\n", 0);
+    introCenteredLine(text);
+}
+
+
+static void introCenteredType(const char *text,int delay)
+{
+    int len=strlen(text),spaces=(CONSOLE_WIDTH-len)/2;
+    if(spaces<0) spaces=0;
+    while(spaces--) printf(" ");
+    introTypeText(text,delay);
+}
+static void introCenteredLine(const char *text)
+{
+    introCenteredType(text,18);
+    printf("\n");
+}
+
+
+static void introCenteredPrompt(const char *text)
+{
+    printCenteredNoNewline(text);
 }
 
 static void introBlank()
@@ -46,6 +83,15 @@ static void introBlank()
 
 static void slowDots(const char *text)
 {
+    int totalLength = strlen(text) + 3;
+    int spaces = (CONSOLE_WIDTH - totalLength) / 2;
+
+    if (spaces < 0)
+        spaces = 0;
+
+    for (int i = 0; i < spaces; i++)
+        printf(" ");
+
     introTypeText(text, 18);
 
     for (int i = 0; i < 3; i++)
@@ -64,11 +110,13 @@ static void titleScreen()
 {
     clearScreen();
 
-    printf("========================================================\n");
-    printf("                     WARDOGZ\n");
-    printf("========================================================\n");
-    printf("               Press ENTER to Start\n");
-    printf("========================================================\n");
+    printBorder();
+    printBlankLine();
+    printCentered("WARDOGZ");
+    printBlankLine();
+    printCentered("Press ENTER to Start");
+    printBlankLine();
+    printBorder();
 
     char temp[20];
     fgets(temp, sizeof(temp), stdin);
@@ -82,7 +130,7 @@ static char getYesNo()
 
     while (1)
     {
-        printf("Choice (Y/N): ");
+        printf("%35sChoice (Y/N): ", "");
         fgets(input, sizeof(input), stdin);
 
         if (toupper(input[0]) == 'Y')
@@ -91,7 +139,7 @@ static char getYesNo()
         if (toupper(input[0]) == 'N')
             return 'N';
 
-        printf("Invalid input! Please enter Y or N.\n");
+        printCentered("Invalid input! Please enter Y or N.");
     }
 }
 
@@ -103,12 +151,14 @@ static int choosePartner()
     while (1)
     {
         clearScreen();
-        printf("========================\n");
-        printf("CHOOSE YOUR PARTNER\n");
-        printf("========================\n\n");
-        printf("1. Jamber  (Power Type)\n");
-        printf("2. Kane    (Speed Type)\n\n");
-        printf("Choice: ");
+        printBorder();
+        printBlankLine();
+        printCentered("CHOOSE YOUR PARTNER");
+        printBlankLine();
+        printMenuItem(1,"Jamber (Power Type)");
+        printMenuItem(2,"Kane (Speed Type)");
+        printBlankLine();
+        printf("%35sChoice: ","");
 
         fgets(input, sizeof(input), stdin);
         choice = atoi(input);
@@ -116,7 +166,7 @@ static int choosePartner()
         if (choice == 1 || choice == 2)
             return choice;
 
-        printf("Invalid choice!\n");
+        printCentered("Invalid choice!");
         pressEnterIntro();
     }
 }
@@ -125,7 +175,7 @@ static void showJamberInfo()
 {
     clearScreen();
 
-    introLine("--------------------------------------------------------");
+    printBorder();
     introBlank();
     introLine("Jamber");
     introBlank();
@@ -152,7 +202,7 @@ static void showKaneInfo()
 {
     clearScreen();
 
-    introLine("--------------------------------------------------------");
+    printBorder();
     introBlank();
     introLine("Kane");
     introBlank();
@@ -183,11 +233,14 @@ void introStory(Dog *player)
     titleScreen();
     clearScreen();
 
-    printf("========================================================\n");
-    printf("                     WARDOGZ\n");
-    printf("                 Planet Kepler-22b\n");
-    printf("                     Year 2207\n");
-    printf("========================================================\n\n");
+    printBorder();
+    printBlankLine();
+    printCentered("WARDOGZ");
+    printCentered("Planet Kepler-22b");
+    printCentered("Year 2207");
+    printBlankLine();
+    printBorder();
+    printBlankLine();
 
     slowDots("Initializing system");
     slowDots("Connecting to WARDOGZ Academy");
@@ -196,6 +249,7 @@ void introStory(Dog *player)
     pressEnterIntro();
     clearScreen();
 
+    printf("\n");
     introLine("Greetings, Trainer.");
     introBlank();
     introLine("Welcome to the WARDOGZ Academy.");
@@ -215,23 +269,42 @@ void introStory(Dog *player)
     pressEnterIntro();
     clearScreen();
 
+    printf("\n");
     introLine("Before we begin...");
     introBlank();
     introLine("May I know your name?");
     introBlank();
-    printf("Enter your name: ");
 
-    fgets(trainerName, sizeof(trainerName), stdin);
-    trainerName[strcspn(trainerName, "\n")] = 0;
+    while (1)
+    {
+        printf("%35sEnter your name: ", "");
 
-    if (trainerName[0] == '\0')
-        strcpy(trainerName, "Trainer");
+        fgets(trainerName, sizeof(trainerName), stdin);
+        trainerName[strcspn(trainerName, "\n")] = '\0';
+
+        int valid = 0;
+
+        for (int i = 0; trainerName[i] != '\0'; i++)
+        {
+            if (!isspace((unsigned char)trainerName[i]))
+            {
+                valid = 1;
+                break;
+            }
+        }
+
+        if (valid)
+            break;
+
+        printf("%35sInvalid input. Please enter your name.\n", "");
+    }
 
     clearScreen();
 
-    introTypeText("Ah... ", 18);
-    introTypeText(trainerName, 18);
-    introTypeText(".\n\n", 18);
+    char greetingLine[100];
+    snprintf(greetingLine, sizeof(greetingLine), "Ah... %s.", trainerName);
+    introCenteredLine(greetingLine);
+    introBlank();
 
     introLine("It's a pleasure to meet you.");
     introBlank();
@@ -321,7 +394,7 @@ void introStory(Dog *player)
     pressEnterIntro();
     clearScreen();
 
-    introLine("--------------------------------------------------------");
+    printBorder();
     introBlank();
     introLine("Your journey begins today.");
     introBlank();
@@ -339,9 +412,10 @@ void introStory(Dog *player)
     introLine("Only those with determination");
     introLine("can reach the top.");
     introBlank();
-    introTypeText("Good luck, ", 18);
-    introTypeText(trainerName, 18);
-    introTypeText(".\n\n", 18);
+    char goodLuckLine[100];
+    snprintf(goodLuckLine, sizeof(goodLuckLine), "Good luck, %s.", trainerName);
+    introCenteredLine(goodLuckLine);
+    introBlank();
     introLine("May you and your partner");
     introLine("become the greatest team");
     introLine("the WARDOGZ Academy");
