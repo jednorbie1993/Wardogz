@@ -28,26 +28,42 @@ void printSparringStatus(Dog *player, Dog *enemy)
     enemyBar[10] = '\0';
 
     snprintf(playerLine, sizeof(playerLine),
-             "%-10s: [%s] [%d/%d]",
+             "%-10s: [%s] [%4d/%4d]",
              player->name, playerBar, player->hp, player->maxHP);
 
+    char playerStatus[12];
+
     if (player->isStunned && player->stunTurns > 0)
-    {
-        char status[30];
-        snprintf(status, sizeof(status), " (STUN %d)", player->stunTurns);
-        strncat(playerLine, status, sizeof(playerLine) - strlen(playerLine) - 1);
-    }
+        snprintf(playerStatus, sizeof(playerStatus), "(STUN %d)", player->stunTurns);
+    else
+        strcpy(playerStatus, "");
+
+    snprintf(playerLine, sizeof(playerLine),
+            "%-10s: [%s] [%4d/%4d] %-10s",
+            player->name,
+            playerBar,
+            player->hp,
+            player->maxHP,
+            playerStatus);
 
     snprintf(enemyLine, sizeof(enemyLine),
-             "%-10s: [%s] [%d/%d]",
+             "%-10s: [%s] [%4d/%4d]",
              enemy->name, enemyBar, enemy->hp, enemy->maxHP);
 
+    char enemyStatus[12];
+
     if (enemy->isStunned && enemy->stunTurns > 0)
-    {
-        char status[30];
-        snprintf(status, sizeof(status), " (STUN %d)", enemy->stunTurns);
-        strncat(enemyLine, status, sizeof(enemyLine) - strlen(enemyLine) - 1);
-    }
+        snprintf(enemyStatus, sizeof(enemyStatus), "(STUN %d)", enemy->stunTurns);
+    else
+        strcpy(enemyStatus, "");
+
+    snprintf(enemyLine, sizeof(enemyLine),
+            "%-10s: [%s] [%4d/%4d] %-10s",
+            enemy->name,
+            enemyBar,
+            enemy->hp,
+            enemy->maxHP,
+            enemyStatus);
 
     printBorder();
     printCentered(playerLine);
