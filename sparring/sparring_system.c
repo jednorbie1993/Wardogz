@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include "sparring_unlocks.h"
 #include "../stat.h"
+#include "../console.h"
 
 void initSparringProgress(Dog *d) {
     for (int i = 0; i < 6; i++) {
@@ -20,12 +21,15 @@ void updateSparringProgress(Dog *d, int enemyIndex, int win) {
 
     if (enemyIndex < 0 || enemyIndex >= 6)
     {
-        printf("Invalid sparring enemy index!\n");
+        printCentered("Invalid sparring enemy index!");
         waitForEnter();
         return;
     }
 
-    printf("=== SPARRING RESULTS ===\n");
+    printBorder();
+    printBlankLine();
+    printCentered("SPARRING RESULTS");
+    printBlankLine();
 
     if (win) {
         int oldProgress = d->sparringProgress[enemyIndex];
@@ -33,16 +37,14 @@ void updateSparringProgress(Dog *d, int enemyIndex, int win) {
         if (d->sparringProgress[enemyIndex] < 10)
             d->sparringProgress[enemyIndex]++;
 
-        printf("WIN! %s progress: %d/10", sparringEnemies[enemyIndex], d->sparringProgress[enemyIndex]);
+        printCenteredFormat("WIN! %s progress: %d/10", sparringEnemies[enemyIndex], d->sparringProgress[enemyIndex]);
 
         if (oldProgress < 10 && d->sparringProgress[enemyIndex] == 10) {
             //printf("  TECHNIQUE UNLOCKED!\n");
             checkSparringUnlock(d);
-        } else {
-            printf("\n");
         }
     } else {
-        printf("LOSS! %s progress: %d/10 (no gain)\n", sparringEnemies[enemyIndex], d->sparringProgress[enemyIndex]);
+        printCenteredFormat("LOSS! %s progress: %d/10 (no gain)", sparringEnemies[enemyIndex], d->sparringProgress[enemyIndex]);
     }
 
     waitForEnter();
@@ -66,7 +68,9 @@ void applySparReward(Dog *player, int type)
 {
     int hp = 0, atk = 0, def = 0, spd = 0, acc = 0, intel = 0;
 
-    printf("\n=== STATS INCREASED ===\n");
+    printBlankLine();
+    printCentered("STATS INCREASED");
+    printBlankLine();
 
     if (type == 1) // Ossas
     {
@@ -108,22 +112,60 @@ void applySparReward(Dog *player, int type)
         intel = randGain(2, 5);
     }
 
-    player->maxHP += hp;
-    player->hp += hp;
-    player->attack += atk;
-    player->defense += def;
-    player->speed += spd;
-    player->accuracy += acc;
-    player->intelligence += intel;
+    player->maxHP = clamp(player->maxHP + hp);
+    player->hp = clamp(player->hp + hp);
 
-    if (hp > 0) printf("HP  +%-2d   ", hp);
-    if (atk > 0) printf("ATK +%-2d   ", atk);
-    if (def > 0) printf("DEF +%-2d   ", def);
-    if (spd > 0) printf("SPD +%-2d   ", spd);
-    if (acc > 0) printf("ACC +%-2d   ", acc);
-    if (intel > 0) printf("INT +%-2d   ", intel);
+    player->attack = clamp(player->attack + atk);
+    player->defense = clamp(player->defense + def);
+    player->speed = clamp(player->speed + spd);
+    player->accuracy = clamp(player->accuracy + acc);
+    player->intelligence = clamp(player->intelligence + intel);
 
-    printf("\n");
+    char rewardLine[160] = "";
+
+    if (hp > 0)
+    {
+        char part[24];
+        snprintf(part, sizeof(part), "HP +%d  ", hp);
+        strncat(rewardLine, part, sizeof(rewardLine) - strlen(rewardLine) - 1);
+    }
+
+    if (atk > 0)
+    {
+        char part[24];
+        snprintf(part, sizeof(part), "ATK +%d  ", atk);
+        strncat(rewardLine, part, sizeof(rewardLine) - strlen(rewardLine) - 1);
+    }
+
+    if (def > 0)
+    {
+        char part[24];
+        snprintf(part, sizeof(part), "DEF +%d  ", def);
+        strncat(rewardLine, part, sizeof(rewardLine) - strlen(rewardLine) - 1);
+    }
+
+    if (spd > 0)
+    {
+        char part[24];
+        snprintf(part, sizeof(part), "SPD +%d  ", spd);
+        strncat(rewardLine, part, sizeof(rewardLine) - strlen(rewardLine) - 1);
+    }
+
+    if (acc > 0)
+    {
+        char part[24];
+        snprintf(part, sizeof(part), "ACC +%d  ", acc);
+        strncat(rewardLine, part, sizeof(rewardLine) - strlen(rewardLine) - 1);
+    }
+
+    if (intel > 0)
+    {
+        char part[24];
+        snprintf(part, sizeof(part), "INT +%d", intel);
+        strncat(rewardLine, part, sizeof(rewardLine) - strlen(rewardLine) - 1);
+    }
+
+    printCentered(rewardLine);
 
     waitForEnter();
 }
@@ -136,30 +178,32 @@ void sparringMenu(Dog *player)
     {
         system("cls");
 
-        printf("==== SPARRING TRAINING ====\n");
-        // SHOW PROGRESS
-        printf("1. Ossas     (%d/10) (Attack Training)", player->sparringProgress[0]);
-        printf("\n");
+        printBorder();
+        printBlankLine();
+        printCentered("SPARRING TRAINING");
+        printBlankLine();
 
-        printf("2. Chubby    (%d/10) (Defense Training)", player->sparringProgress[1]);
-        printf("\n");
+        printMenuItemFormat(1, "Ossas  (%d/10) (Attack Training)",
+                            player->sparringProgress[0]);
+        printMenuItemFormat(2, "Chubby (%d/10) (Defense Training)",
+                            player->sparringProgress[1]);
+        printMenuItemFormat(3, "Jeward (%d/10) (Accuracy Training)",
+                            player->sparringProgress[2]);
+        printMenuItemFormat(4, "Tiny   (%d/10) (Intelligence Training)",
+                            player->sparringProgress[3]);
+        printMenuItemFormat(5, "Snoopy (%d/10) (Speed Training)",
+                            player->sparringProgress[4]);
 
-        printf("3. Jeward     (%d/10) (Accuracy Training)", player->sparringProgress[2]);
-        printf("\n");
-
-        printf("4. Tiny      (%d/10) (Intelligence Training)", player->sparringProgress[3]);
-        printf("\n");
-
-        printf("5. Snoopy    (%d/10) (Speed Training)", player->sparringProgress[4]);
-        printf("\n");
-        //player->sparringProgress[5] = 9;
         if (player->dogType == 1)
-            printf("6. Kane      (%d/10) (Rival Match)\n", player->sparringProgress[5]);
+            printMenuItemFormat(6, "Kane   (%d/10) (Rival Match)",
+                                player->sparringProgress[5]);
         else
-            printf("6. Jamber    (%d/10) (Rival Match)\n", player->sparringProgress[5]);
+            printMenuItemFormat(6, "Jamber (%d/10) (Rival Match)",
+                                player->sparringProgress[5]);
 
-        printf("7. Return\n");
-        printf("Choice: ");
+        printMenuItem(7, "Return");
+        printBlankLine();
+        printf("%35sChoice: ", "");
 
         char input[10];
         fgets(input, sizeof(input), stdin);
@@ -167,7 +211,7 @@ void sparringMenu(Dog *player)
 
         if (input[0] == '\0' || !isdigit(input[0]))
         {
-            printf("Invalid input!\n");
+            printCentered("Invalid input!");
             waitForEnter();
             continue;
         }
@@ -182,7 +226,7 @@ void sparringMenu(Dog *player)
 
         if (t < 1 || t > 6)
         {
-            printf("Invalid choice!\n");
+            printCentered("Invalid choice!");
             waitForEnter();
             continue;
         }
@@ -194,13 +238,20 @@ void sparringMenu(Dog *player)
         if (t == 6)
         {
             if (player->dogType == 1)
-                printf("\nRival Match: Kane! Let's go!\n");
+            {
+                printBlankLine();
+                printCentered("Rival Match: Kane! Let's go!");
+            }
             else
-                printf("\nRival Match: Jamber! Let's go!\n");
+            {
+                printBlankLine();
+                printCentered("Rival Match: Jamber! Let's go!");
+            }
         }
         else
         {
-            printf("\nSparring %s! Let's go!\n", names[enemyIndex]);
+            printBlankLine();
+            printCenteredFormat("Sparring %s! Let's go!", names[enemyIndex]);
         }
 
         waitForEnter();
