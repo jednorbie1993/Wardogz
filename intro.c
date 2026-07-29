@@ -297,10 +297,10 @@ void introStory(Dog *player)
         if (valid)
             break;
 
-        //introBlank();
+        introBlank();
         printCentered("Invalid input! Please enter your name.");
         introBlank();
-        printCentered("Press ENTER to try again...", "");
+        printCentered("Press ENTER to try again...");
         getchar();
     }
 
