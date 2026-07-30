@@ -1,6 +1,7 @@
 #include "sparring_unlocks.h"
 #include <stdio.h>
 #include <string.h>
+#include "../console.h"
 
 void checkSparringUnlock(Dog *d)
 {
@@ -10,7 +11,7 @@ void checkSparringUnlock(Dog *d)
         d->skills[d->skillCount].power = 18;
         d->skills[d->skillCount].cost = 12;
         d->skills[d->skillCount].type = SKILL_ATTACK;
-        printf("OSSAS DEFEATED 10/10! UNLOCKED: Ossas Counter!\n");
+        printCentered("OSSAS DEFEATED 10/10! UNLOCKED: Ossas Counter!");
         d->skillCount++;
     }
 
@@ -20,7 +21,7 @@ void checkSparringUnlock(Dog *d)
         d->skills[d->skillCount].power = 22;
         d->skills[d->skillCount].cost = 14;
         d->skills[d->skillCount].type = SKILL_ATTACK;
-        printf("CHUBBY DEFEATED 10/10! UNLOCKED: Chubby Bulldozer!\n");
+        printCentered("CHUBBY DEFEATED 10/10! UNLOCKED: Chubby Bulldozer!");
         d->skillCount++;
     }
 
@@ -30,7 +31,7 @@ void checkSparringUnlock(Dog *d)
         d->skills[d->skillCount].power = 20;
         d->skills[d->skillCount].cost = 13;
         d->skills[d->skillCount].type = SKILL_ATTACK;
-        printf("TINY DEFEATED 10/10! UNLOCKED: Tiny Blitz!\n");
+        printCentered("TINY DEFEATED 10/10! UNLOCKED: Tiny Blitz!");
         d->skillCount++;
     }
 
@@ -40,7 +41,7 @@ void checkSparringUnlock(Dog *d)
         d->skills[d->skillCount].power = 25;
         d->skills[d->skillCount].cost = 15;
         d->skills[d->skillCount].type = SKILL_ATTACK;
-        printf("JEWARD DEFEATED 10/10! UNLOCKED: Jeward Precision!\n");
+        printCentered("JEWARD DEFEATED 10/10! UNLOCKED: Jeward Precision!");
         d->skillCount++;
     }
 
@@ -50,7 +51,7 @@ void checkSparringUnlock(Dog *d)
         d->skills[d->skillCount].power = 28;
         d->skills[d->skillCount].cost = 16;
         d->skills[d->skillCount].type = SKILL_ATTACK;
-        printf("SNOOP DEFEATED 10/10! UNLOCKED: Snoop Phantom!\n");
+        printCentered("SNOOP DEFEATED 10/10! UNLOCKED: Snoop Phantom!");
         d->skillCount++;
     }
 
@@ -64,6 +65,7 @@ void checkSparringUnlock(Dog *d)
 
         d->skillCount++;
 
-        printf("\nNEW SKILL UNLOCKED: Rival Breaker!\n");
+        printBlankLine();
+        printCentered("NEW SKILL UNLOCKED: Rival Breaker!");
     }
 }
