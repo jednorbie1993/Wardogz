@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "jeward.h"
+#include "../../console.h"
 
 void createJeward(Dog *e)
 {
@@ -50,6 +51,6 @@ void applyJewardEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
         int counter = user->attack / 7;
         enemy->hp -= counter;
 
-        printf("Counter! %d damage!\n", counter);
+        printCenteredFormat("Counter! %d damage!\n", counter);
     }
 }
