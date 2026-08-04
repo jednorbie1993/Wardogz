@@ -10,7 +10,8 @@
         August: 
             1 - chubby.h push and centered the text
             2 - jeward.c push and centered the text
-            3 - jeward.h push and centered the text                 
+            3 - jeward.h push and centered the text
+            4 - ossas.c push and centered the text                 
 
     gcc *.c enemies/*.c stages/*.c skills/*.c ui/*.c -o wardogz.exe
 
