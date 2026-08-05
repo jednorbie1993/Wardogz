@@ -2,6 +2,7 @@
 #define OSSAS_H
 
 #include "../../dog.h"
+#include "../../skill.h"
 
 void createOssas(Dog *e);
 void assignOssasSkills(Dog *e);
