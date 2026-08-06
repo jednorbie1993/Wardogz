@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "snoop.h"
+#include "../../console.h"
 
 void createSnoopy(Dog *e)
 {
@@ -58,7 +59,7 @@ void applySnoopyEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
             int extra = user->attack / 10;
             enemy->hp -= extra;
 
-            printf("Extra bite #%d: %d damage!\n", i + 1, extra);
+            printCenteredFormat("Extra bite #%d: %d damage!\n", i + 1, extra);
         }
     }
     else if (strcmp(skill.name, "Wind Kick") == 0 && rand() % 100 < 30)
@@ -67,6 +68,6 @@ void applySnoopyEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
             ? enemy->accuracy - 20
             : 30;
 
-        printf("%s vision blurred!\n", enemy->name);
+        printCenteredFormat("%s vision blurred!\n", enemy->name);
     }
 }
