@@ -128,19 +128,16 @@ static char getYesNo()
 {
     char input[20];
 
-    while (1)
-    {
-        printf("%35sChoice (Y/N): ", "");
-        fgets(input, sizeof(input), stdin);
+    printf("%35sChoice (Y/N): ", "");
+    fgets(input, sizeof(input), stdin);
 
-        if (toupper(input[0]) == 'Y')
-            return 'Y';
+    if (toupper((unsigned char)input[0]) == 'Y')
+        return 'Y';
 
-        if (toupper(input[0]) == 'N')
-            return 'N';
+    if (toupper((unsigned char)input[0]) == 'N')
+        return 'N';
 
-        printCentered("Invalid input! Please enter Y or N.");
-    }
+    return '\0';
 }
 
 static int choosePartner()
@@ -334,12 +331,27 @@ void introStory(Dog *player)
     {
         partnerChoice = choosePartner();
 
-        if (partnerChoice == 1)
-            showJamberInfo();
-        else
-            showKaneInfo();
+        while (1)
+        {
+            if (partnerChoice == 1)
+                showJamberInfo();
+            else
+                showKaneInfo();
 
-        confirm = getYesNo();
+            confirm = getYesNo();
+
+            if (confirm == 'Y')
+                break;
+
+            if (confirm == 'N')
+                break;
+
+            introBlank();
+            printCentered("Invalid input! Please enter Y or N.");
+            introBlank();
+            printCentered("Press ENTER to try again...");
+            getchar();
+        }
 
         if (confirm == 'Y')
             break;

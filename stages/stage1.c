@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <windows.h>
 
 #include "stage1.h"
 #include "../battle.h"
 #include "../dog.h"
 #include "../cinematic.h"
 #include "../console.h"
+
+static void introLine(const char *text);
 
 #define STAGE1_MAX_ENEMIES 3
 
@@ -129,30 +133,30 @@ static void showStage1BossIntro(int zoneIndex, int progress[])
 
     if (zoneIndex == 0)
     {
-        printCentered("Heavy footsteps echo through the alley.");
-        printCentered("The Alley Alpha finally appears.");
+        introLine("Heavy footsteps echo through the alley.");
+        introLine("The Alley Alpha finally appears.");
 
         printBlankLine();
-        printCentered("Alley Alpha:");
-        printCentered("\"This territory belongs to ME.\"");
+        introLine("Alley Alpha:");
+        introLine("\"This territory belongs to ME.\"");
     }
     else if (zoneIndex == 1)
     {
-        printCentered("Metal scraps rattle in the darkness.");
-        printCentered("A massive dog steps out from the junkyard.");
+        introLine("Metal scraps rattle in the darkness.");
+        introLine("A massive dog steps out from the junkyard.");
 
         printBlankLine();
-        printCentered("Iron Jaw:");
-        printCentered("\"Scrap or flesh... everything breaks.\"");
+        introLine("Iron Jaw:");
+        introLine("\"Scrap or flesh... everything breaks.\"");
     }
     else if (zoneIndex == 2)
     {
-        printCentered("The abandoned block falls completely silent.");
-        printCentered("A terrifying presence approaches slowly.");
+        introLine("The abandoned block falls completely silent.");
+        introLine("A terrifying presence approaches slowly.");
 
         printBlankLine();
-        printCentered("Street King:");
-        printCentered("\"Only one king rules these streets.\"");
+        introLine("Street King:");
+        introLine("\"Only one king rules these streets.\"");
     }
 
     waitForEnter();
@@ -250,4 +254,25 @@ void runStage1(Dog *player, int progress[])
         if (result == 2)
             showStage1SurrenderOutro();
     }
+}
+
+
+/* Boss intro typing effect */
+extern int animationOn;
+static void introLine(const char *text)
+{
+    int len = (int)strlen(text);
+    int spaces = (CONSOLE_WIDTH - len) / 2;
+    if (spaces < 0) spaces = 0;
+
+    while (spaces--) printf(" ");
+
+    for (int i = 0; text[i] != '\0'; i++)
+    {
+        putchar(text[i]);
+        fflush(stdout);
+        if (animationOn)
+            Sleep(18);
+    }
+    putchar('\n');
 }

@@ -2,6 +2,7 @@
 #define TINY_H
 
 #include "../../dog.h"
+#include "../../skill.h"
 
 void createTiny(Dog *e);
 void assignTinySkills(Dog *d);

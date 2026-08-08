@@ -14,7 +14,8 @@
             4 - ossas.c push and centered the text
             5 - oosas.h push and centered the text
             6 - snoop.c push and centered the text
-            7 - snoop.h push and centered the text                 
+            7 - snoop.h push and centered the text
+            8 - tiny.c / tiny.h push and centered the text                 
 
     gcc *.c enemies/*.c stages/*.c skills/*.c ui/*.c -o wardogz.exe
 

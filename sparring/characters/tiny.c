@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "tiny.h"
+#include "../../console.h"
 
 void createTiny(Dog *e)
 {
@@ -52,12 +53,12 @@ void applyTinyEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
         enemy->isConfused = 1;
         enemy->confuseTurns = 2;
 
-        printf("%s MIND BROKEN!\n", enemy->name);
+        printCenteredFormat("%s MIND BROKEN!\n", enemy->name);
     }
     else if (strcmp(skill.name, "Brain Crush") == 0)
     {
         user->intelligence += 5;
 
-        printf("%s became smarter!\n", user->name);
+        printCenteredFormat("%s became smarter!\n", user->name);
     }
 }
