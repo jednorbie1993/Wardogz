@@ -27,6 +27,8 @@
     
     .\wardogz.exe
 
+    mingw32-make run
+
     */
   /*int progress[19] =
         {
