@@ -10,10 +10,8 @@ void checkSkillUnlock(Dog *d);
 void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage);
 int useSkill(Dog *user, Dog *target, Skill skill);
 int calculateDamage(Dog *attacker, Dog *defender, Skill skill);
-void applySkillEffect(Dog *user, Dog *target, Skill skill, int *damage);
 void applySpecialEffects(Dog *player, Dog *enemy, Skill s, int *damage);
 int getSkillTier(Skill s);
 int computeBaseDamage(Dog *player, Dog *enemy, Skill s);
-int useSkill(Dog *attacker, Dog *target, Skill skill);
 
 #endif
