@@ -3,7 +3,6 @@
 
 #include "dog.h"
 
-void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
 void setEnemySkillsWild(Dog *enemy, int zoneIndex, int enemyLevel);
 void preBattleScene(int zoneIndex);
 void applyBattleStatGain(Dog *d);

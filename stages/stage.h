@@ -4,7 +4,6 @@
 #include "../dog.h"
 
 void startStage(Dog *player, int progress[]);
-void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
 int battle(Dog *player, int zoneIndex, int progress[]);
 int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIndex);
 
