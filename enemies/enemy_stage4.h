@@ -2,7 +2,6 @@
 #define ENEMY_STAGE4_H
 
 #include "../dog.h"
-#include "enemy_stage4.h"
 
 
 // function declaration (prototype)
