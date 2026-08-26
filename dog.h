@@ -211,8 +211,6 @@ typedef struct {
 // ================= CORE FUNCTIONS =================
 void createDog(Dog *d);
 void printDog(Dog d);
-int battle(Dog *player, int zoneIndex, int progress[]);
-void displayBattleStatus(Dog player, Dog enemy);
 void trainDog(Dog *d, int type);
 
 void waitForEnter();              
