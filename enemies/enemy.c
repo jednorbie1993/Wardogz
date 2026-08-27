@@ -246,7 +246,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
         }
 
         // =========================
-        // ZONE: BIO-LAB (ADD THIS)
+        // Bio-Lab zone
         // =========================
         else if (enemy->zoneType == ZONE_BIOLAB)
         {
@@ -500,7 +500,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending)
             useAmbushStrike(enemy, player);
             break;
         // =========================
-        // BIO LAB SKILLS (ADD THIS)
+        // Bio-Lab skills
         // =========================
         case SKILL_MUTATION_SURGE:
             useMutationSurge(enemy, player);
