@@ -1,5 +1,5 @@
-#ifndef ARENA_ENEMY3_H
-#define ARENA_ENEMY3_H
+#ifndef ARENA_ENEMY4_H
+#define ARENA_ENEMY4_H
 
 #include "../dog.h"
 
