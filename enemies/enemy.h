@@ -8,7 +8,7 @@ int enemyAttack(Dog *player, Dog *enemy, int *defending);
 void createEnemy(Dog *e);
 void enemyTurn(Dog *player, Dog *enemy, int *defending);
 
-void createEnemy(Dog *e);
+
 void setEnemyByZone(Dog *enemy, int zoneIndex, int i);
 void setEnemySkillsWild(Dog *enemy, int zoneIndex, int enemyLevel);
 void enemyQuickAttack(Dog *player, Dog *enemy);
