@@ -220,9 +220,6 @@ void playerAttack(Dog *player, Dog *enemy);
 int playerTurn(Dog *player, Dog *enemy, int *defending);
 void skillMenu(Dog *d);
 
-int clamp(int value);
-int clampFatigue(int f, int max);
-int getFatiguePenalty(int fatigue);
 int isCritical(int hp, int maxHP);
 
 // ================= SKILL SYSTEM =================
