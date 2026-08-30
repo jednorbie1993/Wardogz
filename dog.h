@@ -224,17 +224,9 @@ int isCritical(int hp, int maxHP);
 
 // ================= SKILL SYSTEM =================
 int hasSkill(Dog *d, char name[]);
-void checkSkillUnlock(Dog *d);
-void applySkillEffect(Dog *player, Dog *enemy, Skill s, int *damage);
 
 // ================= ENEMY =================
-void createEnemy(Dog *e);
-void enemyTurn(Dog *player, Dog *enemy, int *defending);
 
 // ================= WILD SKILLS =================
-int usePackAttack(Dog *user, Dog *target);
-int useAmbush(Dog *user, Dog *target);
-int useHowlDebuff(Dog *user, Dog *target);
-int useFeralRush(Dog *user, Dog *target);
 
 #endif
