@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "jeward.h"
 #include "../../console.h"
 
 void createJeward(Dog *e)
