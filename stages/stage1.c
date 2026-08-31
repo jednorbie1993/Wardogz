@@ -1,9 +1,10 @@
+#include "../enemies/enemy_stages.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <windows.h>
 
-#include "stage1.h"
+#include "stage.h"
 #include "../battle.h"
 #include "../dog.h"
 #include "../cinematic.h"

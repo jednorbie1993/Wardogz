@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "stage2.h"
+#include "stage.h"
 #include "../battle.h"
 #include "../dog.h"
 #include "../cinematic.h"
 #include "../enemies/enemy.h"
+#include "../enemies/enemy_stages.h"
 #include "../replay_system.h"
 #include "../console.h"
 
@@ -272,8 +273,6 @@ void runStage2(Dog *player, int progress[])
         if (progress[zoneIndex] < maxEnemies)
         {
             printBlankLine();
-            printCenteredFormat("Fighting: %s", enemy.name);
-            waitForEnter();
         }
 
         // PLAYER DEAD CHECK

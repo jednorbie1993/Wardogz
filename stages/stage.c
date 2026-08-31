@@ -3,11 +3,6 @@
 #include <string.h>
 
 #include "stage.h"
-#include "stage1.h"
-#include "stage2.h"
-#include "stage3.h"
-#include "stage4.h"
-#include "stage5.h"
 #include "../dog.h"
 #include "../cinematic.h"
 #include "../console.h"
