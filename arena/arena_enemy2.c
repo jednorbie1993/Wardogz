@@ -2,7 +2,6 @@
 #include <string.h>
 #include <windows.h>
 
-#include "arena_enemy2.h"
 #include "arena_enemy.h"
 #include "arena.h"
 #include "../skill.h"
