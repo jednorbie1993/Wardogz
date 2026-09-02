@@ -4,8 +4,10 @@
 #include "enemy.h"
 #include "../dog.h"
 #include "enemy_stage5.h"
+#include "enemy_stages.h"
 #include "../replay_system.h"
 #include "../console.h"
+#include "../stat.h"
 
 // =========================
 // STAGE 5 BALANCE HELPERS

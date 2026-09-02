@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include "enemy.h"
 #include "../dog.h"
-#include "enemy_stage3.h"
+#include "enemy_stages.h"
 #include "../replay_system.h"
 #include "../console.h"
+#include "../stat.h"
 
 // =========================
 // BALANCE HELPERS

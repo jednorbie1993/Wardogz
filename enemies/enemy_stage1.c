@@ -4,7 +4,7 @@
 #include <windows.h>
 
 #include "enemy.h"
-#include "enemy_stage1.h"
+#include "enemy_stages.h"
 #include "../cinematic.h"
 #include "../battle.h"
 #include "../replay_system.h"

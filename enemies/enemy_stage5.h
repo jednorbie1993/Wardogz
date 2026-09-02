@@ -3,7 +3,6 @@
 
 #include "../dog.h"
 
-void loadStage5Enemies(Dog *enemy, int zoneIndex, int enemyIndex);
 
 // Zone 1 skill setters / skills
 void setEnhancedStraySkills(Dog *enemy);

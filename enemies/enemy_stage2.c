@@ -2,8 +2,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include "enemy.h"
+#include "enemy_stages.h"
 #include "../replay_system.h"
 #include "../console.h"
+#include "../stat.h"
 
 // =========================
 // WILD TERRITORY ENEMIES

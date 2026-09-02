@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "enemy.h"
 #include "../dog.h"
-#include "enemy_stage4.h"
+#include "enemy_stages.h"
 #include "../replay_system.h"
 #include "../console.h"
 
