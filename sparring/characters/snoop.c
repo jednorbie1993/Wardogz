@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "snoop.h"
 #include "../../console.h"
 
 void createSnoopy(Dog *e)

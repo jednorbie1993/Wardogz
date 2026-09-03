@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "tiny.h"
 #include "../../console.h"
 
 void createTiny(Dog *e)

@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "ossas.h"
 #include "../../console.h"
 
 void createOssas(Dog *e)
