@@ -738,7 +738,7 @@ void skillMenu(Dog *d)
 
             system("cls");
 
-            // 👉 show current first (very important UX)
+            //  show current first (very important UX)
             printBorder();
             printBlankLine();
             printCentered("CURRENT SKILLS");
