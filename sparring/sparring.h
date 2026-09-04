@@ -7,7 +7,7 @@
 
 #include "../dog.h"
 
-// 🥊 SPARRING-SPECIFIC SKILL IDS (local only)
+//SPARRING-SPECIFIC SKILL IDS (local only)
 typedef enum {
     SP_SKILL_ATTACK = SKILL_DAMAGE,
     SP_SKILL_HEAL   = SKILL_HEAL,
@@ -22,7 +22,6 @@ void createSparPartner(Dog *e, int type);
 
 void assignSkills(Dog *d, int type);
 void createSparPlayer(Dog *orig, Dog *spar);
-void updateDebuffs(Dog *d);
 
 
 
