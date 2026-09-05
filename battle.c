@@ -4,17 +4,18 @@
 #include <windows.h>
 #include "dog.h"
 #include "enemies/enemy.h"
+#include "enemies/enemy_stages.h"
 #include "skill.h"
 #include "sparring/sparring.h"
 #include "dog_utils.h"
 #include "cinematic.h"
 #include "battle.h"
-#include "enemies/enemy_stage3.h"
-#include "stages/stage4.h"
+#include "stages/stage.h"
 #include "dialogue/battle_dialogue.h"
 #include "replay_system.h"
 #include "enemies/enemy_stage5.h"
 #include "console.h"
+#include "stat.h"
 
 // extern globals from dog.c
 extern int animationOn;
@@ -606,7 +607,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
     zoneStoryIntro(zoneIndex, progress[zoneIndex]);
     preBattleScene(zoneIndex);
 
-    // 🔥 RESET HP BAR STATES (DITO MO ILALAGAY)
+    //  RESET HP BAR STATES (DITO MO ILALAGAY)
     showHPBarPlayer(-1, 1);
     showHPBarEnemy(-1, 1);
 
@@ -614,7 +615,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
     int cerberusTimerActive = (strcmp(enemy.name, "Project Cerberus") == 0);
     DWORD cerberusStartTime = GetTickCount();
 
-    // 🔥 MAIN BATTLE LOOP
+    //  MAIN BATTLE LOOP
     while (player->hp > 0 && enemy.hp > 0)
     {
         system("cls");
@@ -836,7 +837,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
                                  player->maxFatigue);
             }
 
-        } // ✅ IMPORTANT: ito yung kulang mo
+        } //  IMPORTANT: ito yung kulang mo
 
         else if (choice == 2) // Defend
         {
@@ -875,7 +876,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             return 2;
         }
 
-        // 🔥 ENEMY TURN
+        //  ENEMY TURN
         if (player->hp > 0 && enemy.hp > 0)
         {
             Sleep(500);
@@ -912,8 +913,8 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
 
             defending = 0;
         }
-        // 👉 RESET DEFENSE AFTER TURN
-        // 🔥 FATIGUE REGEN
+        //  RESET DEFENSE AFTER TURN
+        //  FATIGUE REGEN
         player->fatigue += 2;
         if (player->fatigue > player->maxFatigue)
             player->fatigue = player->maxFatigue;
