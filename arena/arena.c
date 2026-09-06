@@ -4,13 +4,6 @@
 #include <windows.h>
 
 #include "arena_enemy.h"
-#include "arena_enemy2.h"
-#include "arena_enemy3.h"
-#include "arena_enemy4.h"
-#include "arena_enemy5.h"
-#include "arena_enemy6.h"
-#include "arena_enemy7.h"
-#include "arena_enemy8.h"
 #include "arena.h"
 #include "../battle.h"
 #include "../skill.h"
