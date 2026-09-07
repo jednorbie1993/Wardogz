@@ -282,7 +282,7 @@ void checkSkillUnlock(Dog *d)
         strcpy(d->skills[d->skillCount].name, "Quick Dash");
         d->skills[d->skillCount].power = 7;
         d->skills[d->skillCount].cost = 6;
-        d->skills[d->skillCount].type = SKILL_DAMAGE; // ✅ FIX
+        d->skills[d->skillCount].type = SKILL_DAMAGE; //  FIX
 
         printCentered("NEW SKILL UNLOCKED: Quick Dash!");
         d->skillCount++;
@@ -293,7 +293,7 @@ void checkSkillUnlock(Dog *d)
         strcpy(d->skills[d->skillCount].name, "Flash Step");
         d->skills[d->skillCount].power = 9;
         d->skills[d->skillCount].cost = 7;
-        d->skills[d->skillCount].type = SKILL_DAMAGE; // ✅ FIX
+        d->skills[d->skillCount].type = SKILL_DAMAGE; //  FIX
 
         printCentered("NEW SKILL UNLOCKED: Flash Step!");
         d->skillCount++;
