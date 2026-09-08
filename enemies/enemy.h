@@ -2,7 +2,7 @@
 #define ENEMY_H
 
 #include "../dog.h"
-#include "enemy_stage3.h"
+#include "enemy_stages.h"
 
 int enemyAttack(Dog *player, Dog *enemy, int *defending);
 void createEnemy(Dog *e);
@@ -28,12 +28,11 @@ int useSelfDestruct(Dog *user, Dog *target);
 int useMilitaryCharge(Dog *user, Dog *target);
 int useBarrageFire(Dog *user, Dog *target);
 
-void setEnemySkillsMilitary(Dog *enemy, int zoneIndex);
 int useAmbushStrike(Dog *user, Dog *target);
 
 // Add this at the TOP of enemy.c (after your includes):
 
-// 🧬 BIO LAB SKILLS FORWARD DECLARATIONS
+//  BIO LAB SKILLS FORWARD DECLARATIONS
 int useMutationSurge(Dog *user, Dog *target);
 int useBioShield(Dog *user, Dog *target);
 int useCellRegen(Dog *user, Dog *target);
@@ -48,8 +47,5 @@ int useWildPounce(Dog *user, Dog *target);
 int useBoneBreaker(Dog *user, Dog *target);
 int usePredatorFrenzy(Dog *user, Dog *target);
 
-void loadStage1Enemies(Dog *enemy, int zoneIndex, int enemyIndex);
-void loadStage2Enemies(Dog *enemy, int zoneIndex, int enemyIndex);
-void loadStage3Enemies(Dog *enemy, int zoneIndex, int enemyIndex);
 
 #endif
