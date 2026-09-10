@@ -2,11 +2,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "stage5.h"
+#include "stage.h"
 #include "../battle.h"
 #include "../dog.h"
 #include "../cinematic.h"
 #include "../enemies/enemy.h"
+#include "../enemies/enemy_stages.h"
 #include "../enemies/enemy_stage5.h"
 #include "../replay_system.h"
 #include "../credit.h"
