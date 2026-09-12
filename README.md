@@ -8,7 +8,7 @@ A console-based RPG game written in C where players train, upgrade, and battle d
 
 Wardogz is a personal project created to practice C programming, modular design, and game development fundamentals.
 
-Players raise a dog, improve its abilities, challenge enemies, unlock new areas, and participate in sparring battles. The project focuses on learning software organization through multiple source files and game systems rather than advanced graphics.
+Players raise a dog, improve its abilities, challenge enemies, unlock new areas, participate in sparring battles, and compete in the arena. The project focuses on learning software organization through multiple source files and game systems rather than advanced graphics.
 
 The game demonstrates:
 
@@ -17,6 +17,7 @@ The game demonstrates:
 * Turn-based combat mechanics
 * Enemy AI behavior
 * Progression and unlock systems
+* Save and load functionality
 * Menu-driven game design
 
 ---
@@ -29,67 +30,127 @@ The game demonstrates:
 * Multiple enemy types
 * Damage calculation and combat outcomes
 * Enemy personalities and AI decision making
+* Skills and status effects
+* Battle dialogue and encounter events
 
 ### Character Progression
 
 * Dog leveling system
 * Stat growth and upgrades
-* Unlockable content
+* Unlockable skills and content
+* Progress tracking
 
 ### Stages
 
 * Multiple battle stages
 * Zone progression system
 * Locked areas that unlock through completion
+* Story and enemy progression across stages
 
 ### Sparring Mode
 
 * Practice battles against unique opponents
 * Character-specific sparring encounters
-* Progress tracking and rewards
+* Sparring AI and skill systems
+* Status effects and unlock rewards
+* Progress tracking
+
+### Arena Mode
+
+* Separate arena battle system
+* Multiple arena enemy classes
+* Progressive arena opponents
+* Higher-level combat challenges
 
 ### Dialogue System
 
 * Story and battle dialogue
 * Event and encounter messages
+* Stage-specific dialogue
 
-### Project Structure
+### Save and Load System
+
+* Save game progress
+* Load existing progress
+* Persistent player data through `save.dat`
+
+---
+
+## Project Structure
 
 ```text
 Wardogz/
 │
-├── enemies/
-├── stages/
+├── arena/
 ├── dialogue/
+├── enemies/
+├── guide/
 ├── sparring/
+│   └── characters/
+├── stages/
 │
-├── main.c
 ├── battle.c
+├── battle.h
+├── console.c
+├── console.h
 ├── dog.c
-└── other core files
+├── dog.h
+├── main.c
+├── save.c
+├── save.h
+├── skill.c
+├── skill.h
+├── stat.c
+├── stat.h
+├── build.bat
+├── makefile
+└── README.md
 ```
 
 ---
 
 ## Planned Improvements
 
-* Save and load system
 * Expanded inventory system
 * Additional sparring characters
-* Boss encounters
+* Additional arena opponents
 * More stages and story content
 * Improved terminal interface
 * Additional skills and status effects
+* Further balancing and gameplay polish
 
 ---
 
 ## Build
 
+Using `mingw32-make`:
+
 ```bash
-gcc *.c enemies/*.c stages/*.c dialogue/*.c sparring/*.c -o wardogz.exe
+mingw32-make
 ```
 
+Or use:
+
+```bash
+build.bat
+```
+
+For a clean rebuild:
+
+```bash
+mingw32-make clean
+mingw32-make
+```
+
+---
+
 ## Run
+
+```bash
+mingw32-make run
+```
+
+Or run the executable directly:
 
 ```bash
 wardogz.exe
@@ -99,4 +160,4 @@ wardogz.exe
 
 ## Purpose
 
-Wardogz was developed as a learning project while studying C programming. The goal is to gain practical experience with software design, code organization, debugging, and game system implementation.
+Wardogz was developed as a learning project while studying C programming. The goal is to gain practical experience with software design, code organization, debugging, modular programming, and game system implementation.
