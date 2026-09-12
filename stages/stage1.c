@@ -259,7 +259,6 @@ void runStage1(Dog *player, int progress[])
 
 
 /* Boss intro typing effect */
-extern int animationOn;
 static void introLine(const char *text)
 {
     int len = (int)strlen(text);
