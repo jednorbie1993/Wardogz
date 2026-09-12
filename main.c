@@ -46,7 +46,7 @@ void showMainMenu(GameData *game, Dog *player)
     printf("%35sEnter choice: ", "");
 }
 
-void showWardogzSubMenu()
+void showWardogzSubMenu(void)
 {
     system("cls");
 
@@ -63,7 +63,7 @@ void showWardogzSubMenu()
     printf("%35sChoice: ", "");
 }
 
-void showTrainMenu()
+void showTrainMenu(void)
 {
     system("cls");
 
@@ -82,7 +82,7 @@ void showTrainMenu()
     printf("%35sChoice: ", "");
 }
 
-void showBattleMenu()
+void showBattleMenu(void)
 {
     system("cls");
 
@@ -99,7 +99,7 @@ void showBattleMenu()
     printf("%35sChoice: ", "");
 }
 
-void showOptionsMenu()
+void showOptionsMenu(void)
 {
     system("cls");
 
@@ -116,7 +116,7 @@ void showOptionsMenu()
     printf("%35sEnter choice: ", "");
 }
 
-int main()
+int main(void)
 {
     setupConsole();
     srand(time(NULL));

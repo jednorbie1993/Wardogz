@@ -39,7 +39,7 @@ static void showStage1Menu(int progress[])
     printf("%35sChoice: ", "");
 }
 
-static int getStage1Choice()
+static int getStage1Choice(void)
 {
     char input[10];
 
@@ -75,7 +75,7 @@ static int isStage1ZoneUnlocked(int zoneChoice, int progress[])
     return 1;
 }
 
-static void showPlayerMustRest()
+static void showPlayerMustRest(void)
 {
     system("cls");
 
@@ -86,7 +86,7 @@ static void showPlayerMustRest()
     waitForEnter();
 }
 
-static void showStage1ReplayIntro()
+static void showStage1ReplayIntro(void)
 {
     int replayLine = rand() % 4;
 
@@ -163,7 +163,7 @@ static void showStage1BossIntro(int zoneIndex, int progress[])
     waitForEnter();
 }
 
-static void showStage1SurrenderOutro()
+static void showStage1SurrenderOutro(void)
 {
     system("cls");
 

@@ -8,7 +8,6 @@
 #include "skill.h"
 #include "enemies/enemy.h"
 #include "dog.h"
-#include "battle.h"
 #include "stat.h"
 #include "cinematic.h"
 #include "sparring/sparring_system.h"
@@ -70,57 +69,6 @@ int isCritical(int currentHP, int maxHP)
     }
 
     return roll < critChance;
-}
-
-void zoneStoryIntro(int zoneIndex, int progress)
-{
-    system("cls");
-
-    const char *lines[3];
-    int count = 0;
-
-    if (zoneIndex == 0 && progress == 0)
-    {
-        lines[0] = "The alley reeks of rust and old blood.";
-        lines[1] = "Weak strays wander these streets...";
-        lines[2] = "But something stronger lurks deeper inside.";
-        count = 3;
-    }
-    else if (zoneIndex == 1 && progress == 0)
-    {
-        lines[0] = "Mountains of scrap tower around you.";
-        lines[1] = "The junkyard dogs fight without fear.";
-        count = 2;
-    }
-    else if (zoneIndex == 2 && progress == 0)
-    {
-        lines[0] = "The abandoned block feels lifeless.";
-        lines[1] = "But hidden eyes follow your every step.";
-        count = 2;
-    }
-    else if (zoneIndex == 3 && progress == 0)
-    {
-        lines[0] = "The river carries the scent of wild packs.";
-        lines[1] = "You are far from the city now.";
-        count = 2;
-    }
-
-    for (int j = 0; j < count; j++)
-    {
-        int len = strlen(lines[j]);
-        int spaces = (CONSOLE_WIDTH - len) / 2;
-
-        if (spaces < 0)
-            spaces = 0;
-
-        for (int i = 0; i < spaces; i++)
-            printf(" ");
-
-        typeText(lines[j], 25);
-        printf("\n");
-    }
-
-    printBlankLine();
 }
 
 void preBattleScene(int zoneIndex)
@@ -548,12 +496,12 @@ void createDog(Dog *d)
     strcpy(d->skills[0].name, "Bite");
     d->skills[0].power = 5;
     d->skills[0].cost = 5;
-    d->skills[0].type = SKILL_ATTACK;
+    d->skills[0].type = SKILL_DAMAGE;
 
     strcpy(d->skills[1].name, "Scratch");
     d->skills[1].power = 3;
     d->skills[1].cost = 3;
-    d->skills[1].type = SKILL_ATTACK;
+    d->skills[1].type = SKILL_DAMAGE;
 
     /*strcpy(d->skills[0].name, "Hip Check");
     d->skills[0].power = 9;
@@ -613,8 +561,6 @@ int hasSkill(Dog *d, char name[])
 
 void skillMenu(Dog *d)
 {
-    int choice;
-
     while (1)
     {
         system("cls");
@@ -907,7 +853,7 @@ void typeText(const char *text, int delay)
         Sleep(delay);
     }
 }
-void waitForEnter()
+void waitForEnter(void)
 {
     printBlankLine();
     printCenteredNoNewline("Press Enter to continue...");
@@ -915,7 +861,7 @@ void waitForEnter()
         ; // wait until Enter lang
 }
 
-void pauseAndClear()
+void pauseAndClear(void)
 {
     printBlankLine();
     printCenteredNoNewline("Press Enter to continue...");

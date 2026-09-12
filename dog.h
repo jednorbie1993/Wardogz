@@ -213,14 +213,13 @@ void createDog(Dog *d);
 void printDog(Dog d);
 void trainDog(Dog *d, int type);
 
-void waitForEnter();              
-void pauseAndClear();            
+void waitForEnter(void);              
+void pauseAndClear(void);            
 
-void playerAttack(Dog *player, Dog *enemy);
-int playerTurn(Dog *player, Dog *enemy, int *defending);
 void skillMenu(Dog *d);
 
 int isCritical(int hp, int maxHP);
+void setCriticalUserIntelligence(Dog *user);
 
 // ================= SKILL SYSTEM =================
 int hasSkill(Dog *d, char name[]);

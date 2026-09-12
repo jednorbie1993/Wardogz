@@ -14,7 +14,6 @@ static void introTypeText(const char *text, int delay);
 static void introLine(const char *text);
 static void introCenteredType(const char *text, int delay);
 static void introCenteredLine(const char *text);
-static void introCenteredPrompt(const char *text);
 static void introBlank(void);
 static void slowDots(const char *text);
 static void titleScreen(void);
@@ -24,12 +23,12 @@ static void showJamberInfo(void);
 static void showKaneInfo(void);
 
 
-static void clearScreen()
+static void clearScreen(void)
 {
     system("cls");
 }
 
-static void pressEnterIntro()
+static void pressEnterIntro(void)
 {
     printBlankLine();
     printCenteredNoNewline("Press ENTER to continue...");
@@ -71,12 +70,8 @@ static void introCenteredLine(const char *text)
 }
 
 
-static void introCenteredPrompt(const char *text)
-{
-    printCenteredNoNewline(text);
-}
 
-static void introBlank()
+static void introBlank(void)
 {
     printf("\n");
 }
@@ -106,7 +101,7 @@ static void slowDots(const char *text)
     printf("\n");
 }
 
-static void titleScreen()
+static void titleScreen(void)
 {
     clearScreen();
 
@@ -124,7 +119,7 @@ static void titleScreen()
     Beep(800, 150);
 }
 
-static char getYesNo()
+static char getYesNo(void)
 {
     char input[20];
 
@@ -140,7 +135,7 @@ static char getYesNo()
     return '\0';
 }
 
-static int choosePartner()
+static int choosePartner(void)
 {
     char input[20];
     int choice;
@@ -168,7 +163,7 @@ static int choosePartner()
     }
 }
 
-static void showJamberInfo()
+static void showJamberInfo(void)
 {
     clearScreen();
 
@@ -195,7 +190,7 @@ static void showJamberInfo()
     introBlank();
 }
 
-static void showKaneInfo()
+static void showKaneInfo(void)
 {
     clearScreen();
 

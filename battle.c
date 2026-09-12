@@ -164,7 +164,7 @@ void cinematicDots(const char *text)
     printf("\n");
 }
 
-void battleDivider()
+void battleDivider(void)
 {
     printBorder();
 }

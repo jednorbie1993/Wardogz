@@ -12,7 +12,6 @@
 #include "enemy.h"
 #include "enemy_stage5.h"
 
-extern int systemLog;
 
 static void typeTextCentered(const char *text, int delay)
 {
