@@ -15,6 +15,7 @@
 #include <stdarg.h>
 #include "save.h"
 #include "console.h"
+#include "stat.h"
 
 void showMainMenu(GameData *game, Dog *player)
 {
