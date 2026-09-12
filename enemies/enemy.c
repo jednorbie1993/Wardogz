@@ -1,11 +1,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../dog.h"
 #include <windows.h>
-#include "enemy.h"
+
+#include "../dog.h"
+#include "../stat.h"
+#include "../battle.h"
 #include "../cinematic.h"
 #include "../console.h"
+
+#include "enemy.h"
 #include "enemy_stage5.h"
 
 extern int systemLog;
