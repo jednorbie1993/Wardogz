@@ -10,6 +10,7 @@
 #include "../enemies/enemy_stages.h"
 #include "../replay_system.h"
 #include "../console.h"
+#include "../menu_shortcuts.h"
 
 static void typeCenteredLine(const char *text, int delay)
 {
@@ -57,10 +58,12 @@ static void showStage2Menu(int progress[])
 
     printMenuItem(6, "Back");
     printBlankLine();
+    printMenuShortcutLegend();
+    printBlankLine();
     printf("%35sChoice: ", "");
 }
 
-static void showStage2ReplayIntro()
+static void showStage2ReplayIntro(void)
 {
     int replayLine = rand() % 4;
 
@@ -93,7 +96,7 @@ static void showStage2ReplayIntro()
     waitForEnter();
 }
 
-static void showPlayerMustRestStage2()
+static void showPlayerMustRestStage2(void)
 {
     system("cls");
     typeCenteredLine("You must rest before you battle again!", 25);
@@ -117,7 +120,7 @@ static void showStage2BossIntro(int zoneIndex, int isBossFight)
     }
 }
 
-static void showStage2SurrenderOutro()
+static void showStage2SurrenderOutro(void)
 {
     system("cls");
 
@@ -164,6 +167,14 @@ void runStage2(Dog *player, int progress[])
         showStage2Menu(progress);
 
         fgets(input, sizeof(input), stdin);
+
+        if (handleMenuShortcut(input))
+        {
+            if (menuNavigationRequested())
+                return;
+
+            continue;
+        }
 
         if (input[0] == '\n')
         {

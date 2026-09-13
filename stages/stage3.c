@@ -10,6 +10,7 @@
 #include "../enemies/enemy_stages.h"
 #include "../replay_system.h"
 #include "../console.h"
+#include "../menu_shortcuts.h"
 
 int getZoneMax(int zoneIndex)
 {
@@ -52,9 +53,19 @@ void runStage3(Dog *player, int progress[])
 
         printMenuItem(5, "Back");
         printBlankLine();
+        printMenuShortcutLegend();
+        printBlankLine();
         printf("%35sChoice: ", "");
 
         fgets(input, sizeof(input), stdin);
+
+        if (handleMenuShortcut(input))
+        {
+            if (menuNavigationRequested())
+                return;
+
+            continue;
+        }
 
         if (input[0] == '\n')
         {

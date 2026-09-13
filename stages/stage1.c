@@ -9,6 +9,7 @@
 #include "../dog.h"
 #include "../cinematic.h"
 #include "../console.h"
+#include "../menu_shortcuts.h"
 
 static void introLine(const char *text);
 
@@ -36,6 +37,8 @@ static void showStage1Menu(int progress[])
     printMenuItem(4, "Back");
 
     printBlankLine();
+    printMenuShortcutLegend();
+    printBlankLine();
     printf("%35sChoice: ", "");
 }
 
@@ -44,6 +47,14 @@ static int getStage1Choice(void)
     char input[10];
 
     fgets(input, sizeof(input), stdin);
+
+    if (handleMenuShortcut(input))
+    {
+        if (menuNavigationRequested())
+            return -2;
+
+        return -3;
+    }
 
     if (input[0] == '\n')
         return -1;
@@ -214,6 +225,12 @@ void runStage1(Dog *player, int progress[])
 
         int zoneChoice = getStage1Choice();
 
+        if (zoneChoice == -3)
+            continue;
+
+        if (zoneChoice == -2)
+            return;
+
         if (zoneChoice == -1)
         {
             printCentered("Please select a number.");
@@ -271,7 +288,7 @@ static void introLine(const char *text)
     {
         putchar(text[i]);
         fflush(stdout);
-        if (animationOn)
+        if (textDelayOn)
             Sleep(18);
     }
     putchar('\n');

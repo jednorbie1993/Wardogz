@@ -10,6 +10,7 @@
 #include "../enemies/enemy_stages.h"
 #include "../replay_system.h"
 #include "../console.h"
+#include "../menu_shortcuts.h"
 
 static void typeCentered(const char *text, int delay)
 {
@@ -66,11 +67,19 @@ static void showStage4Menu(int progress[])
     printf("%35sChoice: ", "");
 }
 
-static int getStage4Choice()
+static int getStage4Choice(void)
 {
     char input[10];
 
     fgets(input, sizeof(input), stdin);
+
+    if (handleMenuShortcut(input))
+    {
+        if (menuNavigationRequested())
+            return -2;
+
+        return -3;
+    }
 
     if (input[0] == '\n')
         return -1;
@@ -144,7 +153,7 @@ static void showStage4Intro(int zoneIndex)
     waitForEnter();
 }
 
-static void showStage4RestWarning()
+static void showStage4RestWarning(void)
 {
     system("cls");
     printBorder();
@@ -153,7 +162,7 @@ static void showStage4RestWarning()
     waitForEnter();
 }
 
-static void showPrototypeZeroIntro()
+static void showPrototypeZeroIntro(void)
 {
     system("cls");
 
@@ -168,7 +177,7 @@ static void showPrototypeZeroIntro()
     waitForEnter();
 }
 
-static void showStage4Complete()
+static void showStage4Complete(void)
 {
     system("cls");
 
@@ -183,7 +192,7 @@ static void showStage4Complete()
     waitForEnter();
 }
 
-static void showStage4DefeatMessage()
+static void showStage4DefeatMessage(void)
 {
     char *defeatMsg[] =
     {
@@ -212,6 +221,12 @@ void runStage4(Dog *player, int progress[])
         showStage4Menu(progress);
 
         int zoneChoice = getStage4Choice();
+
+        if (zoneChoice == -3)
+            continue;
+
+        if (zoneChoice == -2)
+            return;
 
         if (zoneChoice == -1)
         {

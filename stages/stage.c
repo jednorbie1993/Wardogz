@@ -6,6 +6,7 @@
 #include "../dog.h"
 #include "../cinematic.h"
 #include "../console.h"
+#include "../menu_shortcuts.h"
 
 void startStage(Dog *player, int progress[])
 {
@@ -92,10 +93,20 @@ void startStage(Dog *player, int progress[])
 
         printMenuItem(6, "Back");
         printBlankLine();
+        printMenuShortcutLegend();
+        printBlankLine();
         printf("%35sChoice: ", "");
 
         char input[10];
         fgets(input, sizeof(input), stdin);
+
+        if (handleMenuShortcut(input))
+        {
+            if (menuNavigationRequested())
+                return;
+
+            continue;
+        }
 
         if (input[0] == '\n')
         {
@@ -119,6 +130,9 @@ void startStage(Dog *player, int progress[])
         if (stageChoice == 1)
         {
             runStage1(player, progress);
+
+            if (menuNavigationRequested())
+                return;
         }
         else if (stageChoice == 2)
         {
@@ -130,6 +144,9 @@ void startStage(Dog *player, int progress[])
             }
 
             runStage2(player, progress);
+
+            if (menuNavigationRequested())
+                return;
         }
         else if (stageChoice == 3)
         {
@@ -141,6 +158,9 @@ void startStage(Dog *player, int progress[])
             }
 
             runStage3(player, progress);
+
+            if (menuNavigationRequested())
+                return;
         }
         else if (stageChoice == 4)
         {
@@ -152,6 +172,9 @@ void startStage(Dog *player, int progress[])
             }
 
             runStage4(player, progress);
+
+            if (menuNavigationRequested())
+                return;
         }
         else if (stageChoice == 5)
         {
@@ -163,6 +186,9 @@ void startStage(Dog *player, int progress[])
             }
 
             runStage5(player, progress);
+
+            if (menuNavigationRequested())
+                return;
         }
     }
 }
