@@ -45,6 +45,8 @@ void assignJewardSkills(Dog *d)
 
 void applyJewardEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
 {
+    (void)dmg;
+
     if (strcmp(skill.name, "Counter Snap") == 0 && rand() % 100 < 30)
     {
         int counter = user->attack / 7;
