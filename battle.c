@@ -91,7 +91,8 @@ static void typeTextCentered(const char *text, int delay)
     {
         printf("%c", text[i]);
         fflush(stdout);
-        Sleep(delay);
+        if (textDelayOn)
+            Sleep(delay);
     }
 }
 
@@ -139,7 +140,7 @@ static void printCenteredHPLineAnimated(const char *label, int hp, int maxHp)
 
 void cinematicPause(int ms)
 {
-    if (cinematicMode)
+    if (animationOn)
         Sleep(ms);
 }
 
@@ -148,7 +149,7 @@ void cinematicDots(const char *text)
     printBlankLine();
     printCenteredNoNewline(text);
 
-    if (!cinematicMode)
+    if (!animationOn)
     {
         printf("...\n");
         return;
@@ -420,14 +421,16 @@ void loseSequence(Dog *player, Dog *enemy)
 {
     printBlankLine();
     printCentered("YOU LOST...");
-    Sleep(500);
+    if (animationOn)
+        Sleep(500);
 
     printCenteredNoNewline("Recovering");
     for (int i = 0; i < 3; i++)
     {
         printf(".");
         fflush(stdout);
-        Sleep(150);
+        if (animationOn)
+            Sleep(150);
     }
 
     player->hp = player->maxHP;
@@ -462,7 +465,8 @@ int handlePlayerDefeat(Dog *player, Dog *enemy, int baseDef, int baseSpd)
         printCentered("You can no longer continue fighting...");
     }
 
-    Sleep(900);
+    if (animationOn)
+        Sleep(900);
 
     printBlankLine();
     printCentered("YOU LOSE");
@@ -504,7 +508,8 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
         printCenteredFormat("%s collapsed...", enemy->name);
     }
 
-    Sleep(700);
+    if (animationOn)
+        Sleep(700);
 
     if (strcmp(enemy->name, "Blackclaw") == 0)
     {
@@ -926,7 +931,8 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
         //  ENEMY TURN
         if (player->hp > 0 && enemy.hp > 0)
         {
-            Sleep(500);
+            if (animationOn)
+                Sleep(500);
 
             // Arena backup stun check.
             // Kahit may stun check na sa enemyAttack(), dito muna natin hinaharang
