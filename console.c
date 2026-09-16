@@ -4,7 +4,7 @@
 #include <stdarg.h>
 #include "console.h"
 
-void setupConsole()
+void setupConsole(void)
 {
     system("chcp 65001 > nul");
     system("mode con: cols=120 lines=40");
@@ -51,12 +51,12 @@ void printCenteredFormat(const char *format, ...)
     printCentered(buffer);
 }
 
-void printBorder()
+void printBorder(void)
 {
     printCentered("------------------------------------------------------------------------------------------------------");
 }
 
-void printBlankLine()
+void printBlankLine(void)
 {
     printf("\n");
 }
