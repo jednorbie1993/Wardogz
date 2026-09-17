@@ -13,9 +13,11 @@
 #include "sparring/sparring_system.h"
 #include "arena/arena.h"
 #include "console.h"
+#include "menu_shortcuts.h"
 
 int systemLog = 0;
-int animationOn = 1; //  NEW (default ON)
+int animationOn = 1;
+int textDelayOn = 1;
 
 
 // Intelligence critical bonus support.
@@ -154,7 +156,8 @@ void preBattleScene(int zoneIndex)
     {
         printf("%c", messages[r][i]);
         fflush(stdout);
-        Sleep(25);
+        if (textDelayOn)
+            Sleep(25);
     }
     
     printf("\n");
@@ -574,6 +577,8 @@ void skillMenu(Dog *d)
         printMenuItem(3, "Equip Skills");
         printMenuItem(4, "Back");
         printBlankLine();
+        printMenuShortcutLegend();
+        printBlankLine();
         printf("%35sChoice: ", "");
 
         char input[20];
@@ -581,6 +586,14 @@ void skillMenu(Dog *d)
 
         fgets(input, sizeof(input), stdin);
         input[strcspn(input, "\n")] = 0;
+
+        if (handleMenuShortcut(input))
+        {
+            if (menuNavigationRequested())
+                return;
+
+            continue;
+        }
 
         if (input[0] == '\0')
         {
@@ -850,7 +863,8 @@ void typeText(const char *text, int delay)
     {
         printf("%c", text[i]);
         fflush(stdout);
-        Sleep(delay);
+        if (textDelayOn)
+            Sleep(delay);
     }
 }
 void waitForEnter(void)
