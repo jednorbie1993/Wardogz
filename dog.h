@@ -8,6 +8,7 @@
 
 extern int systemLog;
 extern int animationOn;
+extern int textDelayOn;
 
 // ================= SKILL TYPES =================
 typedef enum {
