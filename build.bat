@@ -1,12 +1,13 @@
 @echo off
+setlocal
 
-gcc *.c enemies/*.c stages/*.c dialogue/*.c sparring/*.c sparring/characters/*.c arena/*.c -o wardogz.exe
+gcc -std=c11 -Wall -Wextra *.c enemies/*.c stages/*.c dialogue/*.c sparring/*.c sparring/characters/*.c arena/*.c -o wardogz.exe
 
-if %errorlevel% neq 0 (
+if errorlevel 1 (
     echo.
     echo BUILD FAILED
     pause
-    exit /b
+    exit /b 1
 )
 
 echo.
@@ -16,3 +17,4 @@ echo.
 wardogz.exe
 
 pause
+endlocal
