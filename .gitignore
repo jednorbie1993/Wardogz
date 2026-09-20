@@ -1,3 +1,7 @@
+# Build output
 *.exe
 *.out
 *.o
+
+# Runtime save data
+save.dat
