@@ -45,7 +45,7 @@ static void introTypeText(const char *text, int delay)
         printf("%c", text[i]);
         fflush(stdout);
 
-        if (animationOn)
+        if (textDelayOn)
             Sleep(delay);
     }
 }
@@ -94,7 +94,7 @@ static void slowDots(const char *text)
         printf(".");
         fflush(stdout);
 
-        if (animationOn)
+        if (textDelayOn)
             Sleep(250);
     }
 
