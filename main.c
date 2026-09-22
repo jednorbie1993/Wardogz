@@ -16,6 +16,8 @@
 #include "save.h"
 #include "console.h"
 #include "stat.h"
+#include "menu_shortcuts.h"
+#include "tutorial.h"
 
 void showMainMenu(GameData *game, Dog *player)
 {
@@ -31,17 +33,20 @@ void showMainMenu(GameData *game, Dog *player)
     printMenuItem(3, "Battle");
     printMenuItemFormat(4, "Rest (%d/%d)", game->restCount, player->maxRest);
     printMenuItem(5, "Options");
+    printMenuItem(6, "Tutorial / Help");
 
     if (player->campaignCompleted)
     {
-        printMenuItem(6, "Credits");
-        printMenuItem(7, "Exit");
+        printMenuItem(7, "Credits");
+        printMenuItem(8, "Exit");
     }
     else
     {
-        printMenuItem(6, "Exit");
+        printMenuItem(7, "Exit");
     }
 
+    printBlankLine();
+    printMenuShortcutLegend();
     printBlankLine();
     printf("%35sEnter choice: ", "");
 }
@@ -59,6 +64,8 @@ void showWardogzSubMenu(void)
     printMenuItem(2, "Skills");
     printMenuItem(3, "Back");
 
+    printBlankLine();
+    printMenuShortcutLegend();
     printBlankLine();
     printf("%35sChoice: ", "");
 }
@@ -79,6 +86,8 @@ void showTrainMenu(void)
     printMenuItem(5, "Return");
 
     printBlankLine();
+    printMenuShortcutLegend();
+    printBlankLine();
     printf("%35sChoice: ", "");
 }
 
@@ -96,6 +105,8 @@ void showBattleMenu(void)
     printMenuItem(3, "Back");
 
     printBlankLine();
+    printMenuShortcutLegend();
+    printBlankLine();
     printf("%35sChoice: ", "");
 }
 
@@ -109,11 +120,72 @@ void showOptionsMenu(void)
     printBlankLine();
 
     printMenuItemFormat(1, "System Log (%s)", systemLog ? "ON" : "OFF");
-    printMenuItemFormat(2, "Animation (%s)", animationOn ? "ON" : "OFF");
-    printMenuItem(3, "Back");
+    printMenuItemFormat(2, "Battle Animations (%s)", animationOn ? "ON" : "OFF");
+    printMenuItemFormat(3, "Text Delay (%s)", textDelayOn ? "ON" : "OFF");
+    printMenuItem(4, "Back");
 
     printBlankLine();
+    printMenuShortcutLegend();
+    printBlankLine();
     printf("%35sEnter choice: ", "");
+}
+
+static void runOptionsMenu(void)
+{
+    char input[16];
+
+    while (1)
+    {
+        int optChoice;
+        showOptionsMenu();
+
+        if (!fgets(input, sizeof(input), stdin))
+            return;
+
+        if (handleMenuShortcut(input))
+        {
+            if (menuNavigationRequested())
+                return;
+
+            continue;
+        }
+
+        optChoice = atoi(input);
+
+        if (optChoice == 1)
+        {
+            systemLog = !systemLog;
+            printBlankLine();
+            printCenteredFormat("System Log is now %s", systemLog ? "ON" : "OFF");
+            printBlankLine();
+            waitForEnter();
+        }
+        else if (optChoice == 2)
+        {
+            animationOn = !animationOn;
+            printBlankLine();
+            printCenteredFormat("Battle Animations are now %s", animationOn ? "ON" : "OFF");
+            printBlankLine();
+            waitForEnter();
+        }
+        else if (optChoice == 3)
+        {
+            textDelayOn = !textDelayOn;
+            printBlankLine();
+            printCenteredFormat("Text Delay is now %s", textDelayOn ? "ON" : "OFF");
+            printBlankLine();
+            waitForEnter();
+        }
+        else if (optChoice == 4)
+        {
+            return;
+        }
+        else
+        {
+            printCentered("Invalid choice!");
+            waitForEnter();
+        }
+    }
 }
 
 int main(void)
@@ -125,6 +197,8 @@ int main(void)
     GameData game;
     Dog *player = &game.player;
     int choice;
+
+    initMenuShortcuts(&game);
 
     if (!loadGame(&game))
     {
@@ -188,10 +262,30 @@ int main(void)
 
     while (running)
     {
+        if (consumeQuitRequest())
+        {
+            printCentered("Exiting game...");
+            saveGame(&game);
+            break;
+        }
+
+        consumeHomeRequest();
+
+        if (consumeOptionsRequest())
+        {
+            runOptionsMenu();
+            saveGame(&game);
+            continue;
+        }
+
         showMainMenu(&game, player);
 
-        char input[10];
+        char input[16];
         fgets(input, sizeof(input), stdin);
+
+        if (handleMenuShortcut(input))
+            continue;
+
         choice = atoi(input);
 
         // ================= WARDOGZ MENU =================
@@ -205,6 +299,14 @@ int main(void)
 
                 fgets(input, sizeof(input), stdin);
                 input[strcspn(input, "\n")] = 0;
+
+                if (handleMenuShortcut(input))
+                {
+                    if (menuNavigationRequested())
+                        break;
+
+                    continue;
+                }
 
                 if (input[0] == '\0')
                 {
@@ -224,6 +326,9 @@ int main(void)
                 else if (sub == 2)
                 {
                     skillMenu(player);
+
+                    if (menuNavigationRequested())
+                        break;
                 }
                 else if (sub == 3)
                 {
@@ -246,9 +351,17 @@ int main(void)
             {
                 showTrainMenu();
 
-                char input[10];
+                char input[16];
                 fgets(input, sizeof(input), stdin);
                 input[strcspn(input, "\n")] = 0;
+
+                if (handleMenuShortcut(input))
+                {
+                    if (menuNavigationRequested())
+                        break;
+
+                    continue;
+                }
 
                 // ================= EMPTY INPUT =================
                 if (input[0] == '\0')
@@ -282,6 +395,10 @@ int main(void)
                 {
                     sparringMenu(player);
                     game.restCount = 0;
+
+                    if (menuNavigationRequested())
+                        break;
+
                     continue;
                 }
 
@@ -308,18 +425,35 @@ int main(void)
                 showBattleMenu();
 
                 fgets(battleInput, sizeof(battleInput), stdin);
+
+                if (handleMenuShortcut(battleInput))
+                {
+                    if (menuNavigationRequested())
+                        break;
+
+                    continue;
+                }
+
                 battleChoice = atoi(battleInput);
 
                 if (battleChoice == 1)
                 {
                     system("cls");
                     startStage(player, game.progress);
+
+                    if (menuNavigationRequested())
+                        break;
+
                     game.restCount = 0;
                     player->fatigue = clampFatigue(player->fatigue - 2, player->maxFatigue);
                 }
                 else if (battleChoice == 2)
                 {
                     arenaMenu(player);
+
+                    if (menuNavigationRequested())
+                        break;
+
                     game.restCount = 0;
                     player->fatigue = clampFatigue(player->fatigue - 2, player->maxFatigue);
                 }
@@ -414,48 +548,24 @@ int main(void)
         // ================= OPTIONS =================
         else if (choice == 5)
         {
-            int optChoice;
+            runOptionsMenu();
+        }
 
-            while (1)
-            {
-                showOptionsMenu();
-
-                fgets(input, sizeof(input), stdin);
-                optChoice = atoi(input);
-
-                if (optChoice == 1)
-                {
-                    systemLog = !systemLog;
-                    printCenteredFormat("System Log is now %s", systemLog ? "ON" : "OFF");
-                    waitForEnter();
-                }
-                else if (optChoice == 2)
-                {
-                    animationOn = !animationOn;
-                    printCenteredFormat("Animation is now %s", animationOn ? "ON" : "OFF");
-                    waitForEnter();
-                }
-                else if (optChoice == 3)
-                {
-                    break;
-                }
-                else
-                {
-                    printCentered("Invalid choice!");
-                    waitForEnter();
-                }
-            }
+        // ================= TUTORIAL / HELP =================
+        else if (choice == 6)
+        {
+            tutorialHelpMenu();
         }
 
         // ================= CREDITS / EXIT =================
-        else if (player->campaignCompleted && choice == 6)
+        else if (player->campaignCompleted && choice == 7)
         {
             showCredits();
         }
         else if
         (
-            (player->campaignCompleted && choice == 7) ||
-            (!player->campaignCompleted && choice == 6)
+            (player->campaignCompleted && choice == 8) ||
+            (!player->campaignCompleted && choice == 7)
         )
         {
             printCentered("Exiting game...");
