@@ -1,4 +1,5 @@
 CC = gcc
+CFLAGS = -std=c11 -Wall -Wextra
 TARGET = wardogz.exe
 
 SOURCES = $(wildcard *.c) \
@@ -11,17 +12,29 @@ SOURCES = $(wildcard *.c) \
 
 OBJECTS = $(SOURCES:.c=.o)
 
+.PHONY: all run clean
+
+all: $(TARGET)
+
 $(TARGET): $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(TARGET)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $(TARGET)
 
 %.o: %.c
-	$(CC) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 run: $(TARGET)
 	./$(TARGET)
 
 clean:
-	del /s /q *.o
-	del /q $(TARGET)
+	del /s /q *.o 2>nul
+	del /q $(TARGET) 2>nul
 
+	
+	//mingw32-make clean
+	//mingw32-make
+	
 	//mingw32-make run
+
+	//for /r %f in (*.o) do del "%f"
+	//del wardogz.exe
+	//pang delete ng .o
