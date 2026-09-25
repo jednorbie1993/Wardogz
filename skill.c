@@ -105,6 +105,8 @@ void applyAttackSkill(Dog *player, Dog *enemy, Skill s, int *damage)
 
 void applyBuffSkill(Dog *player, Dog *enemy, Skill s)
 {
+    (void)enemy;
+
     printCenteredFormat("You used %s!", s.name);
 
     if (strcmp(s.name, "Titan Aegis") == 0)
@@ -763,9 +765,7 @@ void applySpecialEffects(Dog *player, Dog *enemy, Skill s, int *damage)
 
             printCenteredFormat("%s is STUNNED!", enemy->name);
         }
-
-        checkSkillUnlock(player);
-    }
+}
 
     else if (strcmp(s.name, "Rolling Tackle") == 0)
     {
