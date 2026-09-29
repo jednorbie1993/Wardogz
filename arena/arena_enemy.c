@@ -117,7 +117,8 @@ static void typeArenaTextCentered(const char *text, int delay)
     {
         printf("%c", text[i]);
         fflush(stdout);
-        Sleep(delay);
+        if (textDelayOn)
+            Sleep(delay);
     }
 
     printf("\n");
