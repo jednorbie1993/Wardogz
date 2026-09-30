@@ -165,14 +165,14 @@ void loadArenaClassSSEnemy(Dog *enemy, int enemyIndex)
         enemy->personalityType = PERSONALITY_DESPERATE;
 
         // ===== Skills from skill.c =====
-        setNameBasedEnemySkill(enemy, 0, "Ragnarok Fang", 25, 15, SKILL_ATTACK);
-        setNameBasedEnemySkill(enemy, 1, "Zero Phantom", 24, 14, SKILL_ATTACK);
-        setNameBasedEnemySkill(enemy, 2, "Judgement Eye", 22, 14, SKILL_ATTACK);
+        setNameBasedEnemySkill(enemy, 0, "Ragnarok Fang", 25, 15, SKILL_DAMAGE);
+        setNameBasedEnemySkill(enemy, 1, "Zero Phantom", 24, 14, SKILL_DAMAGE);
+        setNameBasedEnemySkill(enemy, 2, "Judgement Eye", 22, 14, SKILL_DAMAGE);
         setNameBasedEnemySkill(enemy, 3, "Titan Aegis", 0, 15, SKILL_BUFF);
 
         // ===== Skills from sparring_unlocks.c =====
-        setNameBasedEnemySkill(enemy, 4, "Tiny Blitz", 20, 13, SKILL_ATTACK);
-        setNameBasedEnemySkill(enemy, 5, "Snoop Phantom", 28, 16, SKILL_ATTACK);
+        setNameBasedEnemySkill(enemy, 4, "Tiny Blitz", 20, 13, SKILL_DAMAGE);
+        setNameBasedEnemySkill(enemy, 5, "Snoop Phantom", 28, 16, SKILL_DAMAGE);
     }
     else if (enemyIndex == 6)
     {
