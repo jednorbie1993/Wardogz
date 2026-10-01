@@ -67,7 +67,7 @@ void loadArenaClassSSSEnemy(Dog *enemy, int enemyIndex)
         setArenaSkill(enemy, 1, "Humanoid Jaw Crush", 76, 80, SKILL_HUMANOID_JAW_CRUSH);
         setArenaSkill(enemy, 2, "Apex Overdrive", 74, 78, SKILL_APEX_OVERDRIVE);
         setArenaSkill(enemy, 3, "Predator Instinct", 0, 100, SKILL_PREDATOR_INSTINCT);
-        setNameBasedEnemySkill(enemy, 4, "Ragnarok Fang", 30, 16, SKILL_ATTACK);
+        setNameBasedEnemySkill(enemy, 4, "Ragnarok Fang", 30, 16, SKILL_DAMAGE);
         setArenaSkill(enemy, 5, "Armor Break", 64, 86, SKILL_ARMOR_BREAK);
     }
     else if (enemyIndex == 1)
@@ -107,8 +107,8 @@ void loadArenaClassSSSEnemy(Dog *enemy, int enemyIndex)
         setArenaSkill(enemy, 1, "Timeline Maul", 72, 80, SKILL_TIMELINE_MAUL);
         setArenaSkill(enemy, 2, "Cryo Lock", 64, 90, SKILL_CRYO_LOCK);
         setArenaSkill(enemy, 3, "Thunder Surge", 0, 100, SKILL_THUNDER_SURGE);
-        setNameBasedEnemySkill(enemy, 4, "Zero Phantom", 30, 15, SKILL_ATTACK);
-        setNameBasedEnemySkill(enemy, 5, "Snoop Phantom", 32, 16, SKILL_ATTACK);
+        setNameBasedEnemySkill(enemy, 4, "Zero Phantom", 30, 15, SKILL_DAMAGE);
+        setNameBasedEnemySkill(enemy, 5, "Snoop Phantom", 32, 16, SKILL_DAMAGE);
     }
     else if (enemyIndex == 3)
     {
@@ -128,7 +128,7 @@ void loadArenaClassSSSEnemy(Dog *enemy, int enemyIndex)
         setArenaSkill(enemy, 2, "Humanoid Jaw Crush", 80, 80, SKILL_HUMANOID_JAW_CRUSH);
         setArenaSkill(enemy, 3, "Timeline Maul", 78, 80, SKILL_TIMELINE_MAUL);
         setArenaSkill(enemy, 4, "Cursed Instinct", 0, 100, SKILL_CURSED_INSTINCT);
-        setNameBasedEnemySkill(enemy, 5, "Judgement Eye", 32, 15, SKILL_ATTACK);
+        setNameBasedEnemySkill(enemy, 5, "Judgement Eye", 32, 15, SKILL_DAMAGE);
     }
     else
     {
