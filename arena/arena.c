@@ -11,6 +11,7 @@
 #include "../cinematic.h"
 #include "../enemies/enemy.h"
 #include "../console.h"
+#include "../menu_shortcuts.h"
 
 
 void showHPBarPlayer(int hp, int maxHp);
@@ -546,7 +547,8 @@ int arenaBattle(Dog *player, char selectedRank)
         if (enemy.hp <= 0)
             break;
 
-        Sleep(400);
+        if (animationOn)
+            Sleep(400);
         enemyAttack(player, &enemy, &defending);
         defending = 0;
 
@@ -675,9 +677,20 @@ void enterArena(Dog *player, char selectedRank)
         printMenuItem(1, "Start Match");
         printMenuItem(2, "Back");
         printBlankLine();
+        printMenuShortcutLegend();
+        printBlankLine();
         printf("%35sChoice: ", "");
 
         fgets(input, sizeof(input), stdin);
+
+        if (handleMenuShortcut(input))
+        {
+            if (menuNavigationRequested())
+                return;
+
+            continue;
+        }
+
         choice = atoi(input);
 
         if (choice == 1)
@@ -705,6 +718,9 @@ void selectArenaMenu(Dog *player)
 
     while (1)
     {
+        if (menuNavigationRequested())
+            return;
+
         system("cls");
 
         printBorder();
@@ -741,9 +757,20 @@ void selectArenaMenu(Dog *player)
         printBlankLine();
         printMenuItem(0, "Back");
         printBlankLine();
+        printMenuShortcutLegend();
+        printBlankLine();
         printf("%35sChoice: ", "");
 
         fgets(input, sizeof(input), stdin);
+
+        if (handleMenuShortcut(input))
+        {
+            if (menuNavigationRequested())
+                return;
+
+            continue;
+        }
+
         choice = atoi(input);
 
         if (choice == 1)
@@ -793,13 +820,29 @@ void arenaMenu(Dog *player)
         printMenuItem(2, "Arena Stats");
         printMenuItem(3, "Exit");
         printBlankLine();
+        printMenuShortcutLegend();
+        printBlankLine();
         printf("%35sChoice: ", "");
 
         fgets(input, sizeof(input), stdin);
+
+        if (handleMenuShortcut(input))
+        {
+            if (menuNavigationRequested())
+                return;
+
+            continue;
+        }
+
         choice = atoi(input);
 
         if (choice == 1)
+        {
             selectArenaMenu(player);
+
+            if (menuNavigationRequested())
+                return;
+        }
         else if (choice == 2)
             showArenaRecord(player);
         else if (choice == 3)
