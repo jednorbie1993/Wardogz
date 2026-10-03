@@ -265,6 +265,8 @@ int usePrecisionShot(Dog *user, Dog *target)
 
 int useTacticalGuard(Dog *user, Dog *target)
 {
+    (void)target;
+
     user->defense += 5;
     user->guardTurns = 3;
     printCenteredFormat("%s raises Tactical Guard!", user->name);
@@ -273,6 +275,8 @@ int useTacticalGuard(Dog *user, Dog *target)
 
 int useReinforcement(Dog *user, Dog *target)
 {
+    (void)target;
+
     int heal = 18 + (rand() % 13);
 
     user->hp += heal;
