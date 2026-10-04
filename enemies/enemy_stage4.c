@@ -256,6 +256,8 @@ int useMutationSurge(Dog *user, Dog *target)
 
 int useBioShield(Dog *user, Dog *target)
 {
+    (void)target;
+
     user->defense += 6;
     user->guardTurns = 3;
     printCenteredFormat("%s activates Bio Shield!", user->name);
@@ -264,6 +266,8 @@ int useBioShield(Dog *user, Dog *target)
 
 int useCellRegen(Dog *user, Dog *target)
 {
+    (void)target;
+
     int heal = 25 + (user->maxHP / 25) + (rand() % 12);
 
     if (heal > 70)
