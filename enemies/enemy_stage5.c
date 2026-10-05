@@ -494,6 +494,8 @@ int useCombatRush(Dog *user, Dog *target)
 
 int usePredatorInstinct(Dog *user, Dog *target)
 {
+    (void)target;
+
     user->attack += 6;
     user->speed += 5;
 
@@ -544,6 +546,8 @@ int useRazorSlash(Dog *user, Dog *target)
 
 int useBloodFrenzy(Dog *user, Dog *target)
 {
+    (void)target;
+
     user->attack += 8;
     user->speed += 4;
 
@@ -696,6 +700,8 @@ int useCryoLock(Dog *user, Dog *target)
 
 int useThunderSurge(Dog *user, Dog *target)
 {
+    (void)target;
+
     user->attack += 6;
     user->speed += 8;
 
@@ -731,6 +737,8 @@ int useApexOverdrive(Dog *user, Dog *target)
 
 int useMutationOverdrive(Dog *user, Dog *target)
 {
+    (void)target;
+
     user->attack += 10;
     user->defense += 6;
     user->speed += 5;
