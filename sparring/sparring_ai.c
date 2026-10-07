@@ -1,19 +1,11 @@
 #include "sparring_ai.h"
-#include "../dog.h"
-#include <string.h>
+
 #include <stdlib.h>
-#include <stdio.h>
-#include "characters/ossas.h"
-#include "characters/chubby.h"
-#include "characters/jeward.h"
-#include "characters/snoop.h"
-#include "characters/tiny.h"
-#include "../skill.h"
-#include "../console.h"
+#include <string.h>
 
 int chooseEnemyMove(Dog *enemy, Dog *player, int type)
 {
-    int candidates[10];
+    int candidates[MAX_SKILLS];
     int count = 0;
 
     int mode;
