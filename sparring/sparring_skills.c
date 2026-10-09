@@ -2,74 +2,44 @@
 
 #include <string.h>
 
-Skill createBiteSkill(void)
+static Skill createDamageSkill(const char *name, int power, int accuracy)
 {
     Skill skill;
 
-    strcpy(skill.name, "Bite");
+    strcpy(skill.name, name);
     skill.type = SKILL_DAMAGE;
-    skill.power = 10;
-    skill.accuracy = 90;
+    skill.power = power;
+    skill.accuracy = accuracy;
 
     return skill;
+}
+
+Skill createBiteSkill(void)
+{
+    return createDamageSkill("Bite", 10, 90);
 }
 
 Skill createScratchSkill(void)
 {
-    Skill skill;
-
-    strcpy(skill.name, "Scratch");
-    skill.type = SKILL_DAMAGE;
-    skill.power = 8;
-    skill.accuracy = 95;
-
-    return skill;
+    return createDamageSkill("Scratch", 8, 95);
 }
 
 Skill createChargeSkill(void)
 {
-    Skill skill;
-
-    strcpy(skill.name, "Charge");
-    skill.type = SKILL_DAMAGE;
-    skill.power = 12;
-    skill.accuracy = 80;
-
-    return skill;
+    return createDamageSkill("Charge", 12, 80);
 }
 
 Skill createHipCheckSkill(void)
 {
-    Skill skill;
-
-    strcpy(skill.name, "Hip Check");
-    skill.type = SKILL_DAMAGE;
-    skill.power = 9;
-    skill.accuracy = 85;
-
-    return skill;
+    return createDamageSkill("Hip Check", 9, 85);
 }
 
 Skill createPowerRushSkill(void)
 {
-    Skill skill;
-
-    strcpy(skill.name, "Power Rush");
-    skill.type = SKILL_DAMAGE;
-    skill.power = 15;
-    skill.accuracy = 80;
-
-    return skill;
+    return createDamageSkill("Power Rush", 15, 80);
 }
 
 Skill createGuardBreakSkill(void)
 {
-    Skill skill;
-
-    strcpy(skill.name, "Guard Break");
-    skill.type = SKILL_DAMAGE;
-    skill.power = 13;
-    skill.accuracy = 90;
-
-    return skill;
+    return createDamageSkill("Guard Break", 13, 90);
 }
