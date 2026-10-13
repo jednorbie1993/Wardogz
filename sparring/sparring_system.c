@@ -1,23 +1,41 @@
 #include "sparring_system.h"
-#include "sparring.h"
+
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include "sparring_unlocks.h"
-#include "../stat.h"
-#include "../console.h"
 
-void initSparringProgress(Dog *d) {
-    for (int i = 0; i < 6; i++) {
+#include "../console.h"
+#include "../menu_shortcuts.h"
+#include "../stat.h"
+#include "sparring.h"
+#include "sparring_unlocks.h"
+
+static int randGain(int min, int max)
+{
+    return min + rand() % (max - min + 1);
+}
+
+void initSparringProgress(Dog *d)
+{
+    for (int i = 0; i < 6; i++)
+    {
         d->sparringProgress[i] = 0;
     }
 }
 
-void updateSparringProgress(Dog *d, int enemyIndex, int win) {
-    system("cls");
+void updateSparringProgress(Dog *d, int enemyIndex, int win)
+{
+    static const char *sparringEnemies[6] = {
+        "Ossas",
+        "Chubby",
+        "Jeward",
+        "Tiny",
+        "Snoopy",
+        "Rival"
+    };
 
-    const char* sparringEnemies[6] = {"Ossas", "Chubby", "Jewar", "Tiny", "Snoopy", "Rival"};
+    system("cls");
 
     if (enemyIndex < 0 || enemyIndex >= 6)
     {
@@ -31,20 +49,33 @@ void updateSparringProgress(Dog *d, int enemyIndex, int win) {
     printCentered("SPARRING RESULTS");
     printBlankLine();
 
-    if (win) {
+    if (win)
+    {
         int oldProgress = d->sparringProgress[enemyIndex];
 
         if (d->sparringProgress[enemyIndex] < 10)
+        {
             d->sparringProgress[enemyIndex]++;
+        }
 
-        printCenteredFormat("WIN! %s progress: %d/10", sparringEnemies[enemyIndex], d->sparringProgress[enemyIndex]);
+        printCenteredFormat(
+            "WIN! %s progress: %d/10",
+            sparringEnemies[enemyIndex],
+            d->sparringProgress[enemyIndex]
+        );
 
-        if (oldProgress < 10 && d->sparringProgress[enemyIndex] == 10) {
-            //printf("  TECHNIQUE UNLOCKED!\n");
+        if (oldProgress < 10 && d->sparringProgress[enemyIndex] == 10)
+        {
             checkSparringUnlock(d);
         }
-    } else {
-        printCenteredFormat("LOSS! %s progress: %d/10 (no gain)", sparringEnemies[enemyIndex], d->sparringProgress[enemyIndex]);
+    }
+    else
+    {
+        printCenteredFormat(
+            "LOSS! %s progress: %d/10 (no gain)",
+            sparringEnemies[enemyIndex],
+            d->sparringProgress[enemyIndex]
+        );
     }
 
     waitForEnter();
@@ -55,61 +86,65 @@ void updateCooldowns(Dog *d)
     for (int i = 0; i < d->skillCount; i++)
     {
         if (d->skills[i].cdLeft > 0)
+        {
             d->skills[i].cdLeft--;
+        }
     }
-}
-
-int randGain(int min, int max)
-{
-    return min + rand() % (max - min + 1);
 }
 
 void applySparReward(Dog *player, int type)
 {
-    int hp = 0, atk = 0, def = 0, spd = 0, acc = 0, intel = 0;
+    int hp = 0;
+    int atk = 0;
+    int def = 0;
+    int spd = 0;
+    int acc = 0;
+    int intel = 0;
 
     printBlankLine();
     printCentered("STATS INCREASED");
     printBlankLine();
 
-    if (type == 1) // Ossas
+    switch (type)
     {
-        atk = randGain(3, 6);
-        hp  = randGain(1, 3);
-        def = randGain(1, 2);
-    }
-    else if (type == 2) // Chubby
-    {
-        def = randGain(3, 6);
-        hp  = randGain(2, 4);
-        atk = randGain(1, 2);
-    }
-    else if (type == 3) // Jewar
-    {
-        acc = randGain(3, 6);
-        spd = randGain(1, 2);
-        intel = randGain(1, 2);
-    }
-    else if (type == 4) // Tiny
-    {
-        intel = randGain(3, 6);
-        acc = randGain(1, 2);
-        hp = randGain(1, 3);
-    }
-    else if (type == 5) // Snoopy
-    {
-        spd = randGain(3, 6);
-        acc = randGain(1, 2);
-        atk = randGain(1, 2);
-    }
-    else if (type == 6) // Rival Match
-    {
-        hp    = randGain(2, 5);
-        atk   = randGain(2, 5);
-        def   = randGain(2, 5);
-        spd   = randGain(2, 5);
-        acc   = randGain(2, 5);
-        intel = randGain(2, 5);
+        case 1: // Ossas
+            atk = randGain(3, 6);
+            hp = randGain(1, 3);
+            def = randGain(1, 2);
+            break;
+
+        case 2: // Chubby
+            def = randGain(3, 6);
+            hp = randGain(2, 4);
+            atk = randGain(1, 2);
+            break;
+
+        case 3: // Jeward
+            acc = randGain(3, 6);
+            spd = randGain(1, 2);
+            intel = randGain(1, 2);
+            break;
+
+        case 4: // Tiny
+            intel = randGain(3, 6);
+            acc = randGain(1, 2);
+            hp = randGain(1, 3);
+            break;
+
+        case 5: // Snoopy
+            spd = randGain(3, 6);
+            acc = randGain(1, 2);
+            atk = randGain(1, 2);
+            break;
+
+        case 6: // Rival Match
+            hp = randGain(2, 5);
+            atk = randGain(2, 5);
+            def = randGain(2, 5);
+            spd = randGain(2, 5);
+            acc = randGain(2, 5);
+            intel = randGain(2, 5);
+            break;
     }
 
     player->maxHP = clamp(player->maxHP + hp);
@@ -166,16 +201,25 @@ void applySparReward(Dog *player, int type)
     }
 
     printCentered(rewardLine);
-
     waitForEnter();
 }
 
 void sparringMenu(Dog *player)
 {
-    int t;
+    static const char *names[6] = {
+        "Ossas",
+        "Chubby",
+        "Jeward",
+        "Tiny",
+        "Snoopy",
+        "Rival"
+    };
 
     while (1)
     {
+        int t;
+        char input[10];
+
         system("cls");
 
         printBorder();
@@ -183,33 +227,67 @@ void sparringMenu(Dog *player)
         printCentered("SPARRING TRAINING");
         printBlankLine();
 
-        printMenuItemFormat(1, "Ossas  (%d/10) (Attack Training)",
-                            player->sparringProgress[0]);
-        printMenuItemFormat(2, "Chubby (%d/10) (Defense Training)",
-                            player->sparringProgress[1]);
-        printMenuItemFormat(3, "Jeward (%d/10) (Accuracy Training)",
-                            player->sparringProgress[2]);
-        printMenuItemFormat(4, "Tiny   (%d/10) (Intelligence Training)",
-                            player->sparringProgress[3]);
-        printMenuItemFormat(5, "Snoopy (%d/10) (Speed Training)",
-                            player->sparringProgress[4]);
+        printMenuItemFormat(
+            1,
+            "Ossas  (%d/10) (Attack Training)",
+            player->sparringProgress[0]
+        );
+        printMenuItemFormat(
+            2,
+            "Chubby (%d/10) (Defense Training)",
+            player->sparringProgress[1]
+        );
+        printMenuItemFormat(
+            3,
+            "Jeward (%d/10) (Accuracy Training)",
+            player->sparringProgress[2]
+        );
+        printMenuItemFormat(
+            4,
+            "Tiny   (%d/10) (Intelligence Training)",
+            player->sparringProgress[3]
+        );
+        printMenuItemFormat(
+            5,
+            "Snoopy (%d/10) (Speed Training)",
+            player->sparringProgress[4]
+        );
 
         if (player->dogType == 1)
-            printMenuItemFormat(6, "Kane   (%d/10) (Rival Match)",
-                                player->sparringProgress[5]);
+        {
+            printMenuItemFormat(
+                6,
+                "Kane   (%d/10) (Rival Match)",
+                player->sparringProgress[5]
+            );
+        }
         else
-            printMenuItemFormat(6, "Jamber (%d/10) (Rival Match)",
-                                player->sparringProgress[5]);
+        {
+            printMenuItemFormat(
+                6,
+                "Jamber (%d/10) (Rival Match)",
+                player->sparringProgress[5]
+            );
+        }
 
         printMenuItem(7, "Return");
         printBlankLine();
+        printMenuShortcutLegend();
+        printBlankLine();
         printf("%35sChoice: ", "");
 
-        char input[10];
         fgets(input, sizeof(input), stdin);
-        input[strcspn(input, "\n")] = 0;
+        input[strcspn(input, "\n")] = '\0';
 
-        if (input[0] == '\0' || !isdigit(input[0]))
+        if (handleMenuShortcut(input))
+        {
+            if (menuNavigationRequested())
+                return;
+
+            continue;
+        }
+
+        if (input[0] == '\0' || !isdigit((unsigned char)input[0]))
         {
             printCentered("Invalid input!");
             waitForEnter();
@@ -231,35 +309,27 @@ void sparringMenu(Dog *player)
             continue;
         }
 
-        // SIMPLE: HARDCODED NAMES ARRAY
-        const char* names[6] = {"Ossas", "Chubby", "Jewar", "Tiny", "Snoopy", "Rival"};
         int enemyIndex = t - 1;
+
+        printBlankLine();
 
         if (t == 6)
         {
             if (player->dogType == 1)
             {
-                printBlankLine();
                 printCentered("Rival Match: Kane! Let's go!");
             }
             else
             {
-                printBlankLine();
                 printCentered("Rival Match: Jamber! Let's go!");
             }
         }
         else
         {
-            printBlankLine();
             printCenteredFormat("Sparring %s! Let's go!", names[enemyIndex]);
         }
 
         waitForEnter();
-
-        // BATTLE
         sparringBattle(player, t);
-
-        // NO NEED for updateSparringProgress here anymore!
     }
 }
-
