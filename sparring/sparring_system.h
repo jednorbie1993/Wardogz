@@ -5,7 +5,7 @@
 
 void initSparringProgress(Dog *d);
 void updateSparringProgress(Dog *d, int enemyIndex, int win);
-void updateCooldowns(Dog *dog);
+void updateCooldowns(Dog *d);
 void applySparReward(Dog *player, int type);
 void sparringMenu(Dog *player);
 
