@@ -1,68 +1,93 @@
 #include "sparring_unlocks.h"
-#include <stdio.h>
+
 #include <string.h>
+
 #include "../console.h"
+
+static void unlockSkill(
+    Dog *d,
+    int progressIndex,
+    char *skillName,
+    int power,
+    int cost,
+    const char *message
+)
+{
+    if (d->sparringProgress[progressIndex] != 10)
+        return;
+
+    if (d->skillCount >= MAX_SKILLS)
+        return;
+
+    if (hasSkill(d, skillName))
+        return;
+
+    strcpy(d->skills[d->skillCount].name, skillName);
+    d->skills[d->skillCount].power = power;
+    d->skills[d->skillCount].cost = cost;
+    d->skills[d->skillCount].type = SKILL_DAMAGE;
+    d->skillCount++;
+
+    printCentered(message);
+}
 
 void checkSparringUnlock(Dog *d)
 {
-    if (d->sparringProgress[0] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Ossas Counter"))
-    {
-        strcpy(d->skills[d->skillCount].name, "Ossas Counter");
-        d->skills[d->skillCount].power = 18;
-        d->skills[d->skillCount].cost = 12;
-        d->skills[d->skillCount].type = SKILL_ATTACK;
-        printCentered("OSSAS DEFEATED 10/10! UNLOCKED: Ossas Counter!");
-        d->skillCount++;
-    }
+    unlockSkill(
+        d,
+        0,
+        "Ossas Counter",
+        18,
+        12,
+        "OSSAS DEFEATED 10/10! UNLOCKED: Ossas Counter!"
+    );
 
-    if (d->sparringProgress[1] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Chubby Bulldozer"))
-    {
-        strcpy(d->skills[d->skillCount].name, "Chubby Bulldozer");
-        d->skills[d->skillCount].power = 22;
-        d->skills[d->skillCount].cost = 14;
-        d->skills[d->skillCount].type = SKILL_ATTACK;
-        printCentered("CHUBBY DEFEATED 10/10! UNLOCKED: Chubby Bulldozer!");
-        d->skillCount++;
-    }
+    unlockSkill(
+        d,
+        1,
+        "Chubby Bulldozer",
+        22,
+        14,
+        "CHUBBY DEFEATED 10/10! UNLOCKED: Chubby Bulldozer!"
+    );
 
-    if (d->sparringProgress[2] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Tiny Blitz"))
-    {
-        strcpy(d->skills[d->skillCount].name, "Tiny Blitz");
-        d->skills[d->skillCount].power = 20;
-        d->skills[d->skillCount].cost = 13;
-        d->skills[d->skillCount].type = SKILL_ATTACK;
-        printCentered("TINY DEFEATED 10/10! UNLOCKED: Tiny Blitz!");
-        d->skillCount++;
-    }
+    unlockSkill(
+        d,
+        2,
+        "Jeward Precision",
+        25,
+        15,
+        "JEWARD DEFEATED 10/10! UNLOCKED: Jeward Precision!"
+    );
 
-    if (d->sparringProgress[3] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Jeward Precision"))
-    {
-        strcpy(d->skills[d->skillCount].name, "Jeward Precision");
-        d->skills[d->skillCount].power = 25;
-        d->skills[d->skillCount].cost = 15;
-        d->skills[d->skillCount].type = SKILL_ATTACK;
-        printCentered("JEWARD DEFEATED 10/10! UNLOCKED: Jeward Precision!");
-        d->skillCount++;
-    }
+    unlockSkill(
+        d,
+        3,
+        "Tiny Blitz",
+        20,
+        13,
+        "TINY DEFEATED 10/10! UNLOCKED: Tiny Blitz!"
+    );
 
-    if (d->sparringProgress[4] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Snoop Phantom"))
-    {
-        strcpy(d->skills[d->skillCount].name, "Snoop Phantom");
-        d->skills[d->skillCount].power = 28;
-        d->skills[d->skillCount].cost = 16;
-        d->skills[d->skillCount].type = SKILL_ATTACK;
-        printCentered("SNOOP DEFEATED 10/10! UNLOCKED: Snoop Phantom!");
-        d->skillCount++;
-    }
+    unlockSkill(
+        d,
+        4,
+        "Snoop Phantom",
+        28,
+        16,
+        "SNOOP DEFEATED 10/10! UNLOCKED: Snoop Phantom!"
+    );
 
-    // ================= RIVAL SPARRING SKILL =================
-    if (d->sparringProgress[5] == 10 && d->skillCount < MAX_SKILLS && !hasSkill(d, "Rival Breaker"))
+    if (
+        d->sparringProgress[5] == 10 &&
+        d->skillCount < MAX_SKILLS &&
+        !hasSkill(d, "Rival Breaker")
+    )
     {
         strcpy(d->skills[d->skillCount].name, "Rival Breaker");
         d->skills[d->skillCount].power = 35;
         d->skills[d->skillCount].cost = 20;
-        d->skills[d->skillCount].type = SKILL_ATTACK;
-
+        d->skills[d->skillCount].type = SKILL_DAMAGE;
         d->skillCount++;
 
         printBlankLine();
