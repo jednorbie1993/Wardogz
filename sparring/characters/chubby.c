@@ -47,6 +47,8 @@ void assignChubbySkills(Dog *d)
 
 void applyChubbyEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
 {
+    (void)dmg;
+
     if (strcmp(skill.name, "Body Slam") == 0)
     {
         user->defense += 4;
