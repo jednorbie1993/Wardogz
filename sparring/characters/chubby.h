@@ -2,7 +2,6 @@
 #define CHUBBY_H
 
 #include "../../dog.h"
-#include "../../skill.h"
 
 void createChubby(Dog *e);
 void assignChubbySkills(Dog *d);
