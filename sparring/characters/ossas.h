@@ -2,11 +2,9 @@
 #define OSSAS_H
 
 #include "../../dog.h"
-#include "../../skill.h"
 
 void createOssas(Dog *e);
 void assignOssasSkills(Dog *e);
-int chooseOssasMove(Dog *enemy);
 void applyOssasEffect(Dog *user, Dog *enemy, Skill skill, int dmg);
 
 #endif
