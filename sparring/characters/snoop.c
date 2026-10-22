@@ -49,6 +49,8 @@ void assignSnoopySkills(Dog *d)
 
 void applySnoopyEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
 {
+    (void)dmg;
+
     if (strcmp(skill.name, "Triple Bite") == 0)
     {
         int hits = 2 + (rand() % 2);
