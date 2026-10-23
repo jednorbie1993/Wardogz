@@ -2,7 +2,6 @@
 #define SNOOP_H
 
 #include "../../dog.h"
-#include "../../skill.h"
 
 void createSnoopy(Dog *e);
 void assignSnoopySkills(Dog *d);
