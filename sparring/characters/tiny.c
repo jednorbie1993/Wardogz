@@ -47,6 +47,8 @@ void assignTinySkills(Dog *d)
 
 void applyTinyEffect(Dog *user, Dog *enemy, Skill skill, int dmg)
 {
+    (void)dmg;
+
     if (strcmp(skill.name, "Mind Bite") == 0 && rand() % 100 < 35)
     {
         enemy->isConfused = 1;
