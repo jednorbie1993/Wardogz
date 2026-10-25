@@ -12,6 +12,7 @@
 #include "../replay_system.h"
 #include "../credit.h"
 #include "../console.h"
+#include "../menu_shortcuts.h"
 
 
 static void typeTextCentered(const char *text, int delay)
@@ -34,7 +35,7 @@ static void typeTextCenteredLine(const char *text, int delay)
     printf("\n");
 }
 
-static void typeTextCenteredBlank()
+static void typeTextCenteredBlank(void)
 {
     printf("\n");
 }
@@ -90,9 +91,19 @@ void runStage5(Dog *player, int progress[])
 
         printMenuItem(6, "Back");
         printBlankLine();
+        printMenuShortcutLegend();
+        printBlankLine();
         printf("%35sChoice: ", "");
 
         fgets(input, sizeof(input), stdin);
+
+        if (handleMenuShortcut(input))
+        {
+            if (menuNavigationRequested())
+                return;
+
+            continue;
+        }
 
         if (input[0] == '\n')
         {
@@ -554,6 +565,8 @@ void runStage5(Dog *player, int progress[])
 
 void showProjectCerberusEnding(Dog *player)
 {
+    (void)player;
+
     system("cls");
 
     typeTextCenteredLine("[FINAL CONTAINMENT ROOM]", 25);
