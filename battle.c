@@ -1,3 +1,4 @@
+#include "rpg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -550,6 +551,8 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
         player->defeatedGrimfangX = 1;
     }
 
+    player->defense = baseDef;
+    player->speed = baseSpd;
     applyBattleStatGain(player);
     printBlankLine(); //printf("\n");
     checkSkillUnlock(player);
@@ -571,8 +574,7 @@ int handleEnemyDefeat(Dog *player, Dog *enemy, int zoneIndex, int progress[], in
 
     player->fatigue = clampFatigue(player->fatigue + 20, player->maxFatigue);
 
-    player->defense = baseDef;
-    player->speed = baseSpd;
+
 
     waitForEnter();
 
@@ -614,6 +616,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
     }
 
     int choice, move, defending = 0;
+    rpgBegin(player);
     int baseDef = player->defense;
     int baseSpd = player->speed;
 
@@ -696,14 +699,14 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
         if (player->fatigue <= 20)
             printCentered("Exhausted!");
 
-        printCentered("1. Attack  2. Defend  3. Heal  4. Surrender");
+        printCentered("1. Attack  2. Defend  3. Heal  4. Surrender  5. Items");
         printf("\n");
         printBattleInputPrompt("Choice: ");
 
         char buffer[10];
         fgets(buffer, sizeof(buffer), stdin);
 
-        if (sscanf(buffer, "%d", &choice) != 1 || choice < 1 || choice > 4)
+        if (sscanf(buffer, "%d", &choice) != 1 || choice < 1 || choice > 5)
         {
             printCentered("Invalid!");
             waitForEnter();
@@ -720,6 +723,7 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             printCentered("SKILLS");
             printBlankLine();
 
+            rpgPrintSkills();
             int half = (player->maxSkillSlots + 1) / 2;
 
             for (int i = 0; i < half; i++)
@@ -770,6 +774,11 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             printBattleInputPrompt("Choice: ");
 
             fgets(buffer, sizeof(buffer), stdin);
+            if (sscanf(buffer, "%d", &move) == 1 && (move == 9 || move == 10)) {
+                if (!rpgUseSkill(player, &enemy, move)) { waitForEnter(); continue; }
+                waitForEnter();
+                goto rpg_action_done;
+            }
             if (sscanf(buffer, "%d", &move) != 1 || move < 1 || move > player->maxSkillSlots)
             {
                 printCentered("Invalid skill!");
@@ -917,6 +926,10 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
             printCenteredFormat("Healed +%d HP!", healAmount);
             waitForEnter();
         }
+        else if (choice == 5)
+        {
+            if (!rpgItemMenu(player)) continue;
+        }
         else if (choice == 4) // Surrender
         {
             printBlankLine();
@@ -925,11 +938,14 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
 
             player->defense = baseDef;
             player->speed = baseSpd;
+            rpgEnd(player);
             return 2;
         }
 
+rpg_action_done:;
+        int rpgSkipEnemy = rpgEnemyTurn(&enemy);
         //  ENEMY TURN
-        if (player->hp > 0 && enemy.hp > 0)
+        if (player->hp > 0 && enemy.hp > 0 && !rpgSkipEnemy)
         {
             if (animationOn)
                 Sleep(500);
@@ -1016,17 +1032,22 @@ int battleWithEnemyIndex(Dog *player, int zoneIndex, int progress[], int enemyIn
         // WIN/LOSE CHECK
         if (player->hp <= 0)
         {
-            return handlePlayerDefeat(player, &enemy, baseDef, baseSpd);
+            int outcome = handlePlayerDefeat(player, &enemy, baseDef, baseSpd);
+            rpgEnd(player);
+            return outcome;
         }
 
         if (enemy.hp <= 0)
         {
-            return handleEnemyDefeat(player, &enemy, zoneIndex, progress, baseDef, baseSpd);
+            rpgEnd(player);
+            rpgReward(player, zoneIndex, i, 0);
+            return handleEnemyDefeat(player, &enemy, zoneIndex, progress, player->defense, player->speed);
         }
         
     }
 
     player->defense = baseDef;
     player->speed = baseSpd;
+    rpgEnd(player);
     return -1;
 }
