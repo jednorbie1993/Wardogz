@@ -18,6 +18,7 @@
 #include "stat.h"
 #include "menu_shortcuts.h"
 #include "tutorial.h"
+#include "rpg.h"
 
 void showMainMenu(GameData *game, Dog *player)
 {
@@ -61,13 +62,14 @@ void showWardogzSubMenu(void)
     printBlankLine();
 
     printMenuItem(1, "View Stats");
-    printMenuItem(2, "Skills");
-    printMenuItem(3, "Back");
+    printMenuItem(2, "Equipment");
+    printMenuItem(3, "Skills");
+    printMenuItem(0, "Back");
 
     printBlankLine();
     printMenuShortcutLegend();
     printBlankLine();
-    printf("%35sChoice: ", "");
+    printf("%*sChoice: ", MENU_MARGIN, "");
 }
 
 void showTrainMenu(void)
@@ -194,13 +196,20 @@ int main(void)
     srand(time(NULL));
     setbuf(stdout, NULL);
 
-    GameData game;
+    GameData game = {0};
     Dog *player = &game.player;
     int choice;
 
     initMenuShortcuts(&game);
 
-    if (!loadGame(&game))
+    rpgInit();
+    rpgBind(player);
+    int loadStatus = loadGame(&game);
+    if (loadStatus < 0) {
+        fprintf(stderr, "Save is invalid or unsupported. Original file left untouched.\n");
+        return 1;
+    }
+    if (loadStatus == 0)
     {
         introStory(player);
         player->campaignCompleted = 0;
@@ -325,12 +334,18 @@ int main(void)
                 }
                 else if (sub == 2)
                 {
+                    rpgMenu(player);
+                    saveGame(&game);
+                    if (menuNavigationRequested()) break;
+                }
+                else if (sub == 3)
+                {
                     skillMenu(player);
 
                     if (menuNavigationRequested())
                         break;
                 }
-                else if (sub == 3)
+                else if (sub == 0)
                 {
                     break;
                 }
@@ -580,4 +595,5 @@ int main(void)
 
         saveGame(&game);
     }
+    return 0;
 }
