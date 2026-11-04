@@ -1,40 +1,22 @@
 CC = gcc
 CFLAGS = -std=c11 -Wall -Wextra
 TARGET = wardogz.exe
-
-SOURCES = $(wildcard *.c) \
-          $(wildcard enemies/*.c) \
-          $(wildcard stages/*.c) \
-          $(wildcard dialogue/*.c) \
-          $(wildcard sparring/*.c) \
-          $(wildcard sparring/characters/*.c) \
-          $(wildcard arena/*.c)
-
+SOURCES = $(wildcard *.c enemies/*.c stages/*.c dialogue/*.c sparring/*.c sparring/characters/*.c arena/*.c)
 OBJECTS = $(SOURCES:.c=.o)
-
+DEPS = $(OBJECTS:.o=.d)
 .PHONY: all run clean
-
 all: $(TARGET)
-
 $(TARGET): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $(TARGET)
-
+	$(CC) $(CFLAGS) $(OBJECTS) -o $@
 %.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
+	$(CC) $(CFLAGS) -MMD -MP -c $< -o $@
+-include $(DEPS)
 run: $(TARGET)
 	./$(TARGET)
-
 clean:
-	del /s /q *.o 2>nul
-	del /q $(TARGET) 2>nul
-
-	
-	//mingw32-make clean
-	//mingw32-make
-	
-	//mingw32-make run
-
-	//for /r %f in (*.o) do del "%f"
-	//del wardogz.exe
-	//pang delete ng .o
+ifeq ($(OS),Windows_NT)
+	-del /s /q *.o *.d 2>nul
+	-del /q $(TARGET) 2>nul
+else
+	rm -f $(OBJECTS) $(DEPS) $(TARGET)
+endif
