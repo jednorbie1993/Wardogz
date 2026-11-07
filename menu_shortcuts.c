@@ -53,6 +53,14 @@ int handleMenuShortcut(const char *input)
 
     if (strcmp(command, "h") == 0 || strcmp(command, "home") == 0)
     {
+        // Returning Home should reset Rest, just like returning normally.
+        // Do this before navigation so nested menus cannot skip the reset.
+        if (activeGame != NULL)
+        {
+            activeGame->restCount = 0;
+            saveGame(activeGame);
+        }
+
         homeRequested = 1;
         return 1;
     }
@@ -70,7 +78,7 @@ int handleMenuShortcut(const char *input)
 
     if (strcmp(command, "l") == 0 || strcmp(command, "load") == 0)
     {
-        if (activeGame != NULL && loadGame(activeGame))
+        if (activeGame != NULL && loadGame(activeGame) > 0)
             printCentered("Game loaded successfully.");
         else
             printCentered("No save data could be loaded.");
