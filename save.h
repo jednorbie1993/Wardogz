@@ -13,6 +13,7 @@ typedef struct
 } GameData;
 
 int saveGame(GameData *game);
+/* 1 loaded, 0 missing, -1 invalid/unreadable; never overwrite an invalid save. */
 int loadGame(GameData *game);
 
 #endif
