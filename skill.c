@@ -1,3 +1,4 @@
+#include "rpg.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -1126,6 +1127,7 @@ int useSkill(Dog *user, Dog *enemy, Skill skill)
             finalDamage = 0;
 
         enemy->hp -= finalDamage;
+        if (finalDamage > 0) rpgOnHit(user, enemy);
 
         if (enemy->hp < 0)
             enemy->hp = 0;
