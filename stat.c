@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "stat.h"
 #include "dog.h"
+#include "rpg.h"
 #include "console.h"
 
 int randRange(int min, int max)
@@ -104,7 +105,7 @@ void applyBattleStatGain(Dog *d)
             chosen[stat] = 1;
             count++;
 
-            int gain = (rand() % 5) + 1; // +1 to +5
+            int gain = (rand() % 5) + 1 + rpgGrowth(d); // +1 to +5
 
             switch (stat)
             {
