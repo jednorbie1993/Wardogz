@@ -1,3 +1,4 @@
+#include "../rpg.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -356,6 +357,7 @@ int arenaBattle(Dog *player, char selectedRank)
 
     int choice, move;
     int defending = 0;
+    rpgBegin(player);
     int baseDef = player->defense;
     int baseSpd = player->speed;
 
@@ -379,14 +381,14 @@ int arenaBattle(Dog *player, char selectedRank)
         printCenteredFormat("Opponent: %s", enemy.name);
         printBlankLine();
         printCentered("--- YOUR TURN ---");
-        printCentered("1. Attack    2. Defend    3. Heal    4. Surrender");
+        printCentered("1. Attack    2. Defend    3. Heal    4. Surrender  5. Items");
         printBlankLine();
         printf("%35sChoice: ", "");
 
         char input[10];
         fgets(input, sizeof(input), stdin);
 
-        if (sscanf(input, "%d", &choice) != 1 || choice < 1 || choice > 4)
+        if (sscanf(input, "%d", &choice) != 1 || choice < 1 || choice > 5)
         {
             printCentered("Invalid choice!");
             waitForEnter();
@@ -401,6 +403,7 @@ int arenaBattle(Dog *player, char selectedRank)
             printCentered("SKILLS");
             printBlankLine();
 
+            rpgPrintSkills();
             int half = (player->maxSkillSlots + 1) / 2;
 
             for (int i = 0; i < half; i++)
@@ -451,6 +454,11 @@ int arenaBattle(Dog *player, char selectedRank)
             printf("%35sChoice: ", "");
             fgets(input, sizeof(input), stdin);
 
+            if (sscanf(input, "%d", &move) == 1 && (move == 9 || move == 10)) {
+                if (!rpgUseSkill(player, &enemy, move)) { waitForEnter(); continue; }
+                waitForEnter();
+                goto rpg_action_done;
+            }
             if (sscanf(input, "%d", &move) != 1 || move < 1 || move > player->maxSkillSlots)
             {
                 printCentered("Invalid skill!");
@@ -533,6 +541,10 @@ int arenaBattle(Dog *player, char selectedRank)
             printCentered("Healed +20 HP!");
             waitForEnter();
         }
+        else if (choice == 5)
+        {
+            if (!rpgItemMenu(player)) continue;
+        }
         else if (choice == 4)
         {
             printBlankLine();
@@ -541,15 +553,18 @@ int arenaBattle(Dog *player, char selectedRank)
             player->defense = baseDef;
             player->speed = baseSpd;
             waitForEnter();
+            rpgEnd(player);
             return 2;
         }
 
+rpg_action_done:;
+        int rpgSkipEnemy = rpgEnemyTurn(&enemy);
         if (enemy.hp <= 0)
             break;
 
         if (animationOn)
             Sleep(400);
-        enemyAttack(player, &enemy, &defending);
+        if (!rpgSkipEnemy) enemyAttack(player, &enemy, &defending);
         defending = 0;
 
         player->fatigue += 2;
@@ -580,6 +595,7 @@ int arenaBattle(Dog *player, char selectedRank)
         player->speed = baseSpd;
 
         waitForEnter();
+        rpgEnd(player);
         return 0;
     }
 
@@ -587,13 +603,14 @@ int arenaBattle(Dog *player, char selectedRank)
     printCentered("YOU WIN THE ARENA MATCH!");
     printCenteredFormat("%s can no longer fight.", enemy.name);
 
+    rpgEnd(player);
+    rpgReward(player, -1, -1, selectedRank);
     applyArenaWinProgress(player, selectedRank);
     applyBattleStatGain(player);
     checkSkillUnlock(player);
 
     player->fatigue = clampFatigue(player->fatigue + 10, player->maxFatigue);
-    player->defense = baseDef;
-    player->speed = baseSpd;
+
 
     waitForEnter();
     return 1;
